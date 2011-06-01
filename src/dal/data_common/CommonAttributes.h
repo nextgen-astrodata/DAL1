@@ -30,7 +30,7 @@
 
 // DAL header files
 #include <data_common/Filename.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <core/dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   

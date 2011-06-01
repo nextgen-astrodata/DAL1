@@ -35,7 +35,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- Name of the dataset to open.
   */
   RM_RootGroup::RM_RootGroup (std::string const &filename)
-    : HDF5CommonInterface()
+    : HDF5GroupBase()
   {
     if (!open (0,filename,false)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
@@ -54,10 +54,10 @@ namespace DAL { // Namespace DAL -- begin
            exist yet?
   */
   RM_RootGroup::RM_RootGroup (DAL::Filename &infile,
-			      bool const &create)
-    : HDF5CommonInterface()
+			      IO_Mode const &flags)
+    : HDF5GroupBase()
   {
-    if (!open (0,infile.filename(),create)) {
+    if (!open (0,infile.filename(),flags)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
@@ -74,9 +74,9 @@ namespace DAL { // Namespace DAL -- begin
            exist yet?
   */
   RM_RootGroup::RM_RootGroup (CommonAttributes const &attributes,
-			      bool const &create)
+			      IO_Mode const &flags)
   {
-    if (!open (0,attributes.filename(),create)) {
+    if (!open (0,attributes.filename(),flags)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
@@ -150,14 +150,14 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                      summary
   
   void RM_RootGroup::summary (std::ostream &os,
-			    bool const &showAttributes)
+			      bool const &showAttributes)
   {
     os << "[RM_RootGroup] Summary of internal parameters." << std::endl;
     os << "-- Filename                    = " << filename_p            << std::endl;
     os << "-- Location ID                 = " << location_p            << std::endl;
     os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
     os << "-- nof. SysLog groups          = " << sysLog_p.size()       << std::endl;
-
+    
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
     }
@@ -206,19 +206,18 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through HDF5CommonInterface,
+           structure is attached; parameter inherited through HDF5GroupBase,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool RM_RootGroup::open (hid_t const &location,
 			   std::string const &name,
-			   bool const &create)
+			   IO_Mode const &flags)
   {
     bool status (true);
     
@@ -250,7 +249,8 @@ namespace DAL { // Namespace DAL -- begin
       commonAttributes_p.h5read(location_p);
     } else {
       /* If failed to open file, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Fcreate (name.c_str(),
 				H5F_ACC_TRUNC,
 				H5P_DEFAULT,
@@ -277,7 +277,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[RM_RootGroup::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -293,9 +293,9 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no primary pointing direction groups were found.
    */
-  bool RM_RootGroup::openEmbedded (bool const &create)
+  bool RM_RootGroup::openEmbedded (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status = flags.flags();
     std::set<std::string> groups;
     std::set<std::string>::iterator it;
 
@@ -305,7 +305,7 @@ namespace DAL { // Namespace DAL -- begin
 			  H5G_GROUP);
     
     /* Open system log group ... */
-    status = openSysLog (create);
+    status = openSysLog (flags);
     /* ... and remove its name from the previously retrieved list */
     groups.erase("SysLog");
 
@@ -315,12 +315,12 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool RM_RootGroup::openSysLog (bool const &create)
+  bool RM_RootGroup::openSysLog (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status = flags.flags();
 
     if (sysLog_p.size() == 0 && location_p > 0) {
-      sysLog_p["SysLog"] = SysLog (location_p,create);
+      sysLog_p["SysLog"] = SysLog (location_p,flags);
     }
     
     return status;

@@ -326,14 +326,14 @@ namespace DAL { // Namespace DAL -- begin
 		 unsigned int const &nofSamples,
 		 unsigned int const &nofSubbands,
 		 unsigned int const &nofChannels,
-		 bool const &overwriteExisting=false);
+		 IO_Mode::Flags const &flags=IO_Mode::CreateNew);
     
     //! Create a new Stokes dataset
     bool create (hid_t const &location,
 		 DAL::Stokes::Component const &component,
 		 unsigned int const &nofSamples,
 		 std::vector<unsigned int> const &nofChannels,
-		 bool const &overwriteExisting=false);
+		 IO_Mode::Flags const &flags=IO_Mode::CreateNew);
     
     // === Static methods =======================================================
     

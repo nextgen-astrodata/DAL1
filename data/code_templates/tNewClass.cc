@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren <bahren@astron.nl>                                       *
+ *   Copyright (C) <year>                                                  *
+ *   <author> (<mail>)                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,18 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessMode.h>
+#include <<newModule>/<newClass>.h>
 
 // Namespace usage
-using DAL::AccessMode;
+using DAL::<newClass>;
 
 /*!
-  \file tAccessMode.cc
+  \file t<newClass>.cc
 
-  \ingroup DAL
-  \ingroup core
+  \ingroup <newModule>
 
-  \brief A collection of test routines for the AccessMode class
+  \brief A collection of test routines for the <newClass> class
  
   \author <author>
  
@@ -40,20 +39,20 @@ using DAL::AccessMode;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new AccessMode object
+  \brief Test constructors for a new <newClass> object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tAccessMode::test_constructors]\n" << std::endl;
+  std::cout << "\n[t<newClass>::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    AccessMode newObject;
+    <newClass> newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {

@@ -143,8 +143,8 @@ int test_timeseries (hid_t const &fileID)
     //
     observer = "Lars Baehren";
     project  = "CR";
-    status = DAL::h5set_attribute (fileID,"OBSERVER",observer);
-    status = DAL::h5set_attribute (fileID,"PROJECT",project);
+    status = DAL::HDF5Attribute::write (fileID, "OBSERVER", observer);
+    status = DAL::HDF5Attribute::write (fileID, "PROJECT",  project);
     if (status) {
       DAL::h5get_attribute (fileID,"OBSERVER",observer);
       DAL::h5get_attribute (fileID,"PROJECT",project);
@@ -155,8 +155,8 @@ int test_timeseries (hid_t const &fileID)
     //
     observer = "UNDEFINED";
     project  = "UNDEFINED";
-    status = DAL::h5set_attribute (fileID,"OBSERVER",observer);
-    status = DAL::h5set_attribute (fileID,"PROJECT",project);
+    status = DAL::HDF5Attribute::write (fileID, "OBSERVER", observer);
+    status = DAL::HDF5Attribute::write (fileID, "PROJECT",  project);
     cout << "-- reverted to original values" << endl;
   }
   catch (std::string message) {

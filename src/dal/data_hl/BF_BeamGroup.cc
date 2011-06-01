@@ -41,20 +41,30 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 BF_BeamGroup
   
+  /*!
+    \param location -- Identifier of the object the beam group is attached to.
+    \param name     -- Name of the beam group to be opened.
+  */
   BF_BeamGroup::BF_BeamGroup (hid_t const &location,
 			      std::string const &name)
   {
-    open (location,name,false);
+    open (location,name,IO_Mode(IO_Mode::Open));
   }
   
   //_____________________________________________________________________________
   //                                                                 BF_BeamGroup
   
+  /*!
+    \param location -- Identifier of the object the beam group is attached to.
+    \param index    -- 
+    \param flags    -- I/O mode flags.
+  */
   BF_BeamGroup::BF_BeamGroup (hid_t const &location,
 			      unsigned int const &index,
-			      bool const &create)
+			      IO_Mode const &flags)
   {
-    open (location,getName(index),create);
+    std::string name = getName(index);
+    open (location,name,flags);
   }
   
   // ============================================================================
@@ -64,7 +74,7 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                     ~BF_BeamGroup
+  //                                                                ~BF_BeamGroup
 
   BF_BeamGroup::~BF_BeamGroup ()
   {
@@ -108,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
   
@@ -123,14 +133,15 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("TARGET");
     attributes_p.insert("NOF_STATIONS");
     attributes_p.insert("STATIONS_LIST");
+    attributes_p.insert("TRACKING");
     attributes_p.insert("POINT_RA");
     attributes_p.insert("POINT_DEC");
     attributes_p.insert("POSITION_OFFSET_RA");
     attributes_p.insert("POSITION_OFFSET_DEC");
-    attributes_p.insert("PB_DIAMETER_RA");
-    attributes_p.insert("PB_DIAMETER_DEC");
-    attributes_p.insert("PB_CENTER_FREQUENCY");
-    attributes_p.insert("PB_CENTER_FREQUENCY_UNIT");
+    attributes_p.insert("BEAM_DIAMETER_RA");
+    attributes_p.insert("BEAM_DIAMETER_DEC");
+    attributes_p.insert("BEAM_FREQUENCY_CENTER");
+    attributes_p.insert("BEAM_FREQUENCY_CENTER_UNIT");
     attributes_p.insert("FOLDED_DATA");
     attributes_p.insert("FOLD_PERIOD");
     attributes_p.insert("FOLD_PERIOD_UNIT");
@@ -138,6 +149,7 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("DISPERSION_MEASURE");
     attributes_p.insert("DISPERSION_MEASURE_UNIT");
     attributes_p.insert("BARYCENTER");
+    attributes_p.insert("NOF_STOKES");
     attributes_p.insert("STOKES_COMPONENTS");
     attributes_p.insert("COMPLEX_VOLTAGE");
     attributes_p.insert("SIGNAL_SUM");
@@ -151,143 +163,79 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_BeamGroup::open (hid_t const &location,
 			   std::string const &name,
-			   bool const &create)
+			   IO_Mode const &flags)
   {
-    bool status (true);
-
-    /* Set up the list of attributes attached to the Beam group */
-    setAttributes();
-
-    /* Try to open the group: get list of groups attached to 'location' and
-       check if 'name' is part of it.
-    */
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
-    } else {
-      location_p = 0;
-    }
+    bool status    = true;
+    bool truncated = HDF5GroupBase::open (location_p,
+					  location,
+					  name,
+					  flags);
     
-    if (location_p > 0) {
-      status = true;
-    } else {
-      /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
-	location_p = H5Gcreate (location,
-				name.c_str(),
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  std::string grouptype ("Beam");
-	  std::string undefined ("UNDEFINED");
-	  bool ok (false);
-	  std::vector<std::string> stations (1,undefined);
-	  std::vector<std::string> stokes (1,undefined);
-	  /* double-type attributes */
-	  std::vector<std::string> attributesDouble;
-	  attributesDouble.push_back("POINT_RA");
-	  attributesDouble.push_back("POINT_DEC");
-	  attributesDouble.push_back("POSITION_OFFSET_RA");
-	  attributesDouble.push_back("POSITION_OFFSET_DEC");
-	  attributesDouble.push_back("PB_DIAMETER_RA");
-	  attributesDouble.push_back("PB_DIAMETER_DEC");
-	  attributesDouble.push_back("PB_CENTER_FREQUENCY");
-	  /* string-type attributes */
-	  std::vector<std::string> attributesString;
-	  attributesString.push_back("TARGET");
-	  attributesString.push_back("FOLD_PERIOD_UNIT");
-	  attributesString.push_back("DEDISPERSION");
-	  attributesString.push_back("DISPERSION_MEASURE_UNIT");
-	  attributesString.push_back("SIGNAL_SUM");
-	  attributesString.push_back("PB_CENTER_FREQUENCY_UNIT");
-	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",          grouptype   );
-	  HDF5Attribute::write (location_p,"NOF_STATIONS",       int(0)      );
-	  HDF5Attribute::write (location_p,"STATIONS_LIST",      stations    );
-	  HDF5Attribute::write (location_p, attributesDouble,    double(0.0) );
-	  HDF5Attribute::write (location_p, attributesString,    undefined   );
-	  HDF5Attribute::write (location_p,"FOLDED_DATA",        ok          );
-	  HDF5Attribute::write (location_p,"FOLD_PERIOD",        float(0.0)  );
-	  HDF5Attribute::write (location_p,"DISPERSION_MEASURE", float(0.0)  );
- 	  HDF5Attribute::write (location_p,"BARYCENTER",         ok          );
- 	  HDF5Attribute::write (location_p,"STOKES_COMPONENTS",  stokes      );
- 	  HDF5Attribute::write (location_p,"COMPLEX_VOLTAGE",    ok          );
-	} else {
-	  std::cerr << "[BF_BeamGroup::open] Failed to create group "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
-      } else {
-	std::cerr << "[BF_BeamGroup::open] Failed to open group "
-		  << name
-		  << std::endl;
-	status = false;
+    if ( H5Iis_valid(location_p) ) {
+
+      // List of recognized attributes _____________________
+      setAttributes();
+      
+      if (truncated) {
+
+	// Initial values for the attributes _______________
+	
+	bool valBool           = false;
+	int valInt             = 0;
+	double valFloat        = 0.0;
+	double valDouble       = 0.0;
+	std::string grouptype  = "Beam";
+	std::string undefined  = "UNDEFINED";
+	std::string MHz        = "MHz";
+	std::string foldPeriod = "pc/cm^3";
+	std::vector<std::string> vectString (1,undefined);
+	
+	// Write attribute values __________________________
+	
+	HDF5Attribute::write (location_p,"GROUPTYPE",                  grouptype  );
+	HDF5Attribute::write (location_p,"TARGET",                     vectString );
+	HDF5Attribute::write (location_p,"NOF_STATIONS",               valInt     );
+	HDF5Attribute::write (location_p,"STATIONS_LIST",              vectString );
+	HDF5Attribute::write (location_p,"TRACKING",                   undefined  );
+	HDF5Attribute::write (location_p,"POINT_RA",                   valDouble  );
+	HDF5Attribute::write (location_p,"POINT_DEC",                  valDouble  );
+	HDF5Attribute::write (location_p,"POSITION_OFFSET_RA" ,        valDouble  );
+	HDF5Attribute::write (location_p,"POSITION_OFFSET_DEC",        valDouble  );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_RA",           valFloat   );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_DEC",          valFloat   );
+	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER",      valDouble  );
+	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER_UNIT", MHz        );
+	HDF5Attribute::write (location_p,"FOLDED_DATA",                valBool    );
+	HDF5Attribute::write (location_p,"FOLD_PERIOD",                valFloat   );
+	HDF5Attribute::write (location_p,"FOLD_PERIOD_UNIT",           foldPeriod );
+	HDF5Attribute::write (location_p,"DEDISPERSION",               undefined  );
+	HDF5Attribute::write (location_p,"DISPERSION_MEASURE",         valFloat   );
+	HDF5Attribute::write (location_p,"DISPERSION_MEASURE_UNIT",    undefined  );
+	HDF5Attribute::write (location_p,"BARYCENTER",                 valBool    );
+	HDF5Attribute::write (location_p,"NOF_STOKES",                 valInt     );
+	HDF5Attribute::write (location_p,"STOKES_COMPONENTS",          vectString );
+	HDF5Attribute::write (location_p,"COMPLEX_VOLTAGE",            valBool    );
+	HDF5Attribute::write (location_p,"SIGNAL_SUM",                 undefined  );
       }
-    }
-    
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (create);
+      
+      // Open embedded groups ______________________________
+      
+      status = openEmbedded (flags);
+      
     } else {
-      std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
-    return status;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  bool BF_BeamGroup::openEmbedded (bool const &create)
-  {
-    bool status = true;
-    std::set<std::string>::iterator it;
-    std::set<std::string> groups;
-    std::set<std::string> datasets;
-    
-    /*________________________________________________________________
-      Extract the names of the groups and datasets attached to this 
-      beam group.
-    */
-    
-    if (H5Iis_valid(location_p)) {
-      status = h5get_names (groups,   location_p, H5G_GROUP   );
-      status = h5get_names (datasets, location_p, H5G_DATASET );
-    } else {
-      std::cerr << "[BF_BeamGroup::openEmbedded]"
-		<< " No connection to valid HDF5 object!"
+      std::cerr << "[BF_BeamGroup::open]"
+		<< " Failed to open/create group " << name
 		<< std::endl;
       return false;
     }
     
-    /*________________________________________________________________
-      Open groups with processing history and coordinate information.
-    */
-
-    if (itsProcessingHistory.size() == 0 && location_p > 0) {
-      itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
-    }
-
-    /*________________________________________________________________
-      Open Stokes datasets.
-    */
-
-    for (it=datasets.begin(); it!=datasets.end(); ++it) {
-      status *= openStokesDataset (*it);
-    }
     
     return status;
   }
@@ -335,64 +283,66 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
+  //                                                            openStokesDataset
 
   /*!
-    \param index       -- ID of the Stokes dataset to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
     \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
-					  unsigned int const &nofSamples,
-					  unsigned int const &nofSubbands,
-					  unsigned int const &nofChannels,
-					  DAL::Stokes::Component const &component,
-					  hid_t const &datatype,
-                                          bool const &truncate)
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					unsigned int const &nofSubbands,
+					unsigned int const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
   {
     /* Put input parameters into proper format to be forwarded */
     std::vector<unsigned int> channels (nofSubbands,nofChannels);
     /* Open/create Stokes dataset. */
-    return createStokesDataset (index,
-				nofSamples,
-				channels,
-				component,
-				datatype,
-				truncate);
+    return openStokesDataset (stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
   }
   
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
+  //                                                            openStokesDataset
   
   /*!
-    \param index       -- ID of the Stokes dataset to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
     \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
-					  unsigned int const &nofSamples,
-					  std::vector<unsigned int> const &nofChannels,
-					  DAL::Stokes::Component const &component,
-					  hid_t const &datatype,
-                                          bool const &truncate)
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					std::vector<unsigned int> const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
   {
     bool status = true;
-    std::string name = BF_StokesDataset::getName(index);
+    std::string name = BF_StokesDataset::getName(stokesID);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     /*________________________________________________________________
       Check input parameters.
     */    
-
+    
     if (nofChannels.empty()) {
       std::cerr << "[BF_BeamGroup::createStokesDataset]"
 		<< " Empty array of frequency channels!"
@@ -411,7 +361,9 @@ namespace DAL { // Namespace DAL -- begin
       /* Dataset not yet opened */
       status = true;
     } else {
-      if (truncate) {
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::Truncate) ) {
 	/* Removing dataset from internal book-keeping */
 	itsStokesDatasets.erase(it);
 	/* Delete dataset */
@@ -430,7 +382,7 @@ namespace DAL { // Namespace DAL -- begin
     */    
     
     itsStokesDatasets[name] = BF_StokesDataset (location_p,
-						index,
+						stokesID,
 						nofSamples,
 						nofChannels,
 						component,
@@ -518,4 +470,55 @@ namespace DAL { // Namespace DAL -- begin
     return name;
   }
   
+  // ============================================================================
+  //
+  //  Private methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool BF_BeamGroup::openEmbedded (IO_Mode const &flags)
+  {
+    bool status = true;
+    std::set<std::string>::iterator it;
+    std::set<std::string> groups;
+    std::set<std::string> datasets;
+    
+    /*________________________________________________________________
+      Extract the names of the groups and datasets attached to this 
+      beam group.
+    */
+    
+    if (H5Iis_valid(location_p)) {
+      status = h5get_names (groups,   location_p, H5G_GROUP   );
+      status = h5get_names (datasets, location_p, H5G_DATASET );
+    } else {
+      std::cerr << "[BF_BeamGroup::openEmbedded]"
+		<< " No connection to valid HDF5 object!"
+		<< std::endl;
+      return false;
+    }
+    
+    /*________________________________________________________________
+      Open groups with processing history and coordinate information.
+    */
+
+    if (itsProcessingHistory.size() == 0 && location_p > 0) {
+      itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,
+									flags);
+    }
+
+    /*________________________________________________________________
+      Open Stokes datasets.
+    */
+
+    for (it=datasets.begin(); it!=datasets.end(); ++it) {
+      status *= openStokesDataset (*it);
+    }
+    
+    return status;
+  }
+
 } // Namespace DAL -- end

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/Sky_RootGroup.h>
+#include "Sky_RootGroup.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   Sky_RootGroup::Sky_RootGroup (Sky_RootGroup const &other)
-    : HDF5CommonInterface(other)
+    : HDF5GroupBase(other)
   {
     copy (other);
   }
@@ -108,15 +108,14 @@ namespace DAL { // Namespace DAL -- begin
   
   bool Sky_RootGroup::open (hid_t const &location,
 			    std::string const &name,
-			    bool const &create)
+			    IO_Mode const &flags)
   {
-    bool status = true;
-
+    bool status = flags.flags();
+    
     std::cout << "[Sky_RootGroup::open]" << std::endl;
-    std::cout << "-- Location ID    = " << location << std::endl;
-    std::cout << "-- Group name     = " << name     << std::endl;
-    std::cout << "-- Create object? = " << create   << std::endl;
-
+    std::cout << "-- Location ID    = " << location      << std::endl;
+    std::cout << "-- Group name     = " << name          << std::endl;
+    
     return status;
   }
   

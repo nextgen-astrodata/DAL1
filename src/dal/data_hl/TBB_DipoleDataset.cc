@@ -53,7 +53,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
                                         std::string const &name)
-    : HDF5CommonInterface ()
+    : HDF5GroupBase ()
   {
     datatype_p  = -1;
     dataspace_p = -1;
@@ -302,7 +302,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::open (hid_t const &location,
 				std::string const &name,
-				bool const &create)
+				IO_Mode const &flags)
   {
     bool status (true);
     bool ok (true);
@@ -346,7 +346,8 @@ namespace DAL {  // Namespace DAL -- begin
 	ok = false;
       }
       /* If failed to open the group, check if we are supposed to create one */
-      if (create && ok) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	// Create Dataspace
 	int rank = shape_p.size();
 	hsize_t dimensions [rank];
@@ -403,7 +404,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded ();
     } else {
       std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -461,9 +462,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_DipoleDataset::openEmbedded (bool const &create)
+  bool TBB_DipoleDataset::openEmbedded (IO_Mode const &flags)
   {
-    bool status (create);
+    bool status = flags.flags();
     std::vector<hsize_t> shape;
     
     status = HDF5Dataspace::shape (location_p,shape);

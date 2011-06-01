@@ -18,15 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ACCESSMODE_H
-#define ACCESSMODE_H
+#ifndef IO_MODE_H
+#define IO_MODE_H
 
-#include "HDF5Object.h"
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <dal_config.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class AccessMode
+    \class IO_Mode
     
     \ingroup DAL
     \ingroup core
@@ -37,17 +41,13 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2010/10/19
 
-    \test tAccessMode.cc
+    \test tIO_Mode.cc
     
     <h3>Prerequisite</h3>
-    
-    <ul type="square">
-      <li>[start filling in your text here]
-    </ul>
-    
-    <h3>Synopsis</h3>
 
-    Available file access property flags:
+    Given the intention of making the DAL an abstraction layer on top of a
+    number of lower-level access libraries, one of the issues need to be
+    addressed is the question of access flags/modes.
 
     <ul>
       <li>\b HDF5 <br>
@@ -59,22 +59,47 @@ namespace DAL { // Namespace DAL -- begin
       We're assuming that these constants are used rather early in the hdf5
       session.
       \code
-      //____________________________________________________
+      //____________________________________________________________________
       // H5Fpublic.h
 
-      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)     //  absence of rdwr => rd-only
-      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)     //  open for read and write
-      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)     //  overwrite existing files
-      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)     //  fail if file already exists
-      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)     //  print debug info
-      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)     //  create non-existing files
+      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)     //  Absence of rdwr => rd-only
+      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)     //  Open for read and write
+      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)     //  Overwrite existing files
+      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)     //  Fail if file already exists
+      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)     //  Print debug info
+      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)     //  Create non-existing files
       \endcode
-      Four access modes address these concerns, with H5Fcreate and H5Fopen each
-      accepting two of them:
+      Four access modes address these concerns, with \c H5Fcreate and \c H5Fopen
+      each accepting two of them:
       <ul>
-        <li>\c H5Fcreate accepts \c H5F_ACC_TRUNC or \c H5F_ACC_EXCL. All newly
-	created files are opened for both reading and writing. 
-	<li>\c H5Fopen accepts \c H5F_ACC_RDONLY or \c H5F_ACC_RDWR.
+        <li>\c H5Fcreate is the primary function for creating HDF5 files; it
+	creates a new HDF5 file with the specified name and property lists and
+	specifies whether an existing file of same name should be overwritten.
+
+	The name parameter specifies the name of the new file.
+
+	The flags parameter specifies whether an existing file is to be
+	overwritten. It should be set to either \c H5F_ACC_TRUNC to overwrite an
+	existing file or \c H5F_ACC_EXCL, instructing the function to fail if the
+	file already exists.
+
+	New files are always created in read-write mode, so the read-write and
+	read-only flags, \c H5F_ACC_RDWR and \c H5F_ACC_RDONLY, respectively,
+	are not relevant in this function. Further note that a specification of
+	\c H5F_ACC_RDONLY will be ignored; the file will be created in read-write
+	mode, regardless.
+
+	<li>\c H5Fopen is the primary function for accessing existing HDF5
+	files. This function opens the named file in the specified access mode
+	and with the specified access property list.
+
+	Note that \c H5Fopen does not create a file if it does not already exist.
+	The \e name parameter specifies the name of the file to be opened.
+
+	The flags parameter specifies whether the file will be opened in
+	read-write or read-only mode, \c H5F_ACC_RDWR or \c H5F_ACC_RDONLY,
+	respectively. More complex behaviors of file access are controlled
+	through the file-access property list.
       </ul>
       For more detailed information see chapter 3 ("The HDF5 File") of the
       <i>HDF5 User's Guide</i>.
@@ -90,6 +115,8 @@ namespace DAL { // Namespace DAL -- begin
       <li>\b casacore
 
       <li>\b mirlib
+
+      Mirlib build on top of the GNU C Library file access flags:
 
       \code
       //____________________________________________________
@@ -170,8 +197,28 @@ namespace DAL { // Namespace DAL -- begin
       “read-only” or “write-only” is a misnomer, \c fcntl.h defines additional
       names for the file access modes. These names are preferred when writing
       GNU-specific code. But most programs will want to be portable to other
-      POSIX.1 systems and should use the POSIX.1 names above instead. 
+      POSIX.1 systems and should use the POSIX.1 names above instead.
 
+      A (possible minor) variation on the above can be found on Darwin systems:
+      \code
+      #define O_CREAT         0x0200          // create if nonexistant
+      #define O_TRUNC         0x0400          // truncate to zero length
+      #define O_EXCL          0x0800          // error if already exists
+      \endcode
+      
+    <li>\b Qt
+      
+      \code
+      // File I/O ---------------------------------------------------------
+      #define _O_RDONLY       0x0001
+      #define _O_RDWR         0x0002
+      #define _O_WRONLY       0x0004
+      #define _O_CREAT        0x0008
+      #define _O_TRUNC        0x0010
+      #define _O_APPEND       0x0020
+      #define _O_EXCL         0x0040
+      \endcode
+      
       <li><b>.NET Framework</b> (System.IO)
 
       <a href="http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx">FileMode
@@ -194,17 +241,17 @@ namespace DAL { // Namespace DAL -- begin
         <tr valign=top>
 	  <td>\c CreateNew</td>
 	  <td>Specifies that the operating system should create a new file. This
-	  requires FileIOPermissionAccess::Write. If the file already exists, an
+	  requires <tt>FileIOPermissionAccess::Write</tt>. If the file already exists, an
 	  IOException is thrown.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Create</td>
 	  <td>Specifies that the operating system should create a new file. If
 	  the file already exists, it will be overwritten. This requires
-	  FileIOPermissionAccess::Write. System.IO.FileMode.Create is equivalent
-	  to requesting that if the file does not exist, use CreateNew; otherwise,
-	  use Truncate. If the file already exists but is a hidden file, an
-	  UnauthorizedAccessException is thrown.</td>
+	  <tt>FileIOPermissionAccess::Write</tt>. <tt>System.IO.FileMode.Create</tt>
+	  is equivalent to requesting that if the file does not exist, use
+	  \c CreateNew; otherwise, use \c Truncate. If the file already exists
+	  but is a hidden file, an \c UnauthorizedAccessException is thrown.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Open</td>
@@ -217,25 +264,25 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>\c OpenOrCreate</td>
 	  <td>Specifies that the operating system should open a file if it
 	  exists; otherwise, a new file should be created. If the file is
-	  opened with FileAccess.Read, FileIOPermissionAccess::Read is required.
-	  If the file access is FileAccess.Write then FileIOPermissionAccess::Write
-	  is required. If the file is opened with FileAccess.ReadWrite, both
-	  FileIOPermissionAccess::Read and FileIOPermissionAccess::Write are
-	  required. If the file access is FileAccess.Append, then
-	  FileIOPermissionAccess::Append is required.</td>
+	  opened with <tt>FileAccess.Read</tt>, <tt>FileIOPermissionAccess::Read</tt> is required.
+	  If the file access is <tt>FileAccess.Write</tt> then <tt>FileIOPermissionAccess::Write</tt>
+	  is required. If the file is opened with <tt>FileAccess.ReadWrite</tt>, both
+	  <tt>FileIOPermissionAccess::Read</tt> and <tt>FileIOPermissionAccess::Write</tt> are
+	  required. If the file access is <tt>FileAccess.Append</tt>, then
+	  <tt>FileIOPermissionAccess::Append</tt> is required.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Truncate</td>
 	  <td>Specifies that the operating system should open an existing file.
 	  Once opened, the file should be truncated so that its size is zero
-	  bytes. This requires FileIOPermissionAccess::Write. Attempts to read
+	  bytes. This requires <tt>FileIOPermissionAccess::Write</tt>. Attempts to read
 	  from a file opened with Truncate cause an exception.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Append</td>
 	  <td>Opens the file if it exists and seeks to the end of the file, or
-	  creates a new file. FileMode.Append can only be used in conjunction
-	  with FileAccess.Write. Attempting to seek to a position before the
+	  creates a new file. <tt>FileMode.Append</tt> can only be used in conjunction
+	  with <tt>FileAccess.Write</tt>. Attempting to seek to a position before the
 	  end of the file will throw an IOException and any attempt to read
 	  fails and throws an NotSupportedException.</td>
 	</tr>
@@ -310,70 +357,186 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>Data can be added to the file</td>
 	</tr>
       </table>
-
     </ul>
-    
+
+    <h3>Synopsis</h3>
+
+    \image html DAL_IO_Mode.png
+
     <h3>Example(s)</h3>
     
   */  
-  class AccessMode {
-    
+  class IO_Mode {
+
   public:
-    
-    //! Object mode parameter
-    enum Mode {
-      //! Creates a new object. Overwrites any existing object.
-      Create,
-      //! Creates a new object. If the object already exists, an exception is thrown.
-      CreateNew,
+
+    /*!
+      \brief Enumeration with file modes
+      
+      <center>
+      <table>
+        <tr>
+          <td class="indexkey">DAL</td>
+	  <td class="indexkey">GNU</td>
+	  <td class="indexkey">Qt</td>
+	  <td class="indexkey">HDF5</td>
+	  <td class="indexkey">C#</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Create</td>
+	  <td>O_CREAT | O_TRUNC</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_TRUNC)</td>
+	  <td>Create</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::CreateNew</td>
+	  <td>O_CREAT | O_EXCL</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_CREAT)</td>
+	  <td>CreateNew</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Open</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>Open</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::OpenOrCreate</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>OpenOrCreate</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadOnly</td>
+	  <td>O_RDONLY</td>
+	  <td>_O_RDONLY</td>
+	  <td>ACC_RDONLY</td>
+	  <td>Read</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::WriteOnly</td>
+	  <td>O_WRONLY</td>
+	  <td>_O_WRONLY</td>
+	  <td>---</td>
+	  <td>Write</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadWrite</td>
+	  <td>O_RDWR</td>
+	  <td>_O_RDWR</td>
+	  <td>ACC_RDWR</td>
+	  <td>ReadWrite</td>
+	</tr>
+      </table>
+      </center>
+    */
+    enum Flags {
       //! Opens an existing object.
-      Open,
+      Open         = 1,
       //! Opens a new object. If there is no object, it creates a new object. 
-      OpenOrCreate
-    };
-    
-    //! Object access parameter
-    enum Access {
-      //! Read access to the object
-      Read,
-      //! Read and write access to the object
-      ReadWrite,
-      //! Write access to the object
-      Write
+      OpenOrCreate = 2,
+      //! Creates a new object. Overwrites any existing object.
+      Create       = 4,
+      //! Creates a new object. If the object already exists, an exception is thrown.
+      CreateNew    = 8,
+      //! Truncates an existing file.
+      Truncate     = 16,
+      //! Read access to the object.
+      ReadOnly     = 32,
+      //! Write access to the object.
+      WriteOnly    = 64,
+      //! Read and write access to the object.
+      ReadWrite    = 128
     };
 
+  private:
+
+    //! Object I/O mode flags
+    int itsFlags;
+
+  public:
+    
     // === Construction =========================================================
     
     //! Default constructor
-    AccessMode ();
+    IO_Mode ();
+    
+    //! Argumented constructor
+    IO_Mode (IO_Mode::Flags const &flag);
+    
+    //! Argumented constructor
+    IO_Mode (int const &flags);
     
     //! Copy constructor
-    AccessMode (AccessMode const &other);
+    IO_Mode (IO_Mode const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~AccessMode ();
+    ~IO_Mode ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another AccessMode object from which to make a copy.
+      \param other -- Another IO_Mode object from which to make a copy.
     */
-    AccessMode& operator= (AccessMode const &other); 
+    IO_Mode& operator= (IO_Mode const &other); 
     
     // === Parameter access =====================================================
     
-    /*!
-      \brief Get the name of the class
-      
-      \return className -- The name of the class, AccessMode.
-    */
-    inline std::string className () const {
-      return "AccessMode";
+    //! Get object I/O mode flags
+    inline int flags () const {
+      return itsFlags;
     }
+
+    /*!
+      \brief Set object I/O mode flag
+      \param mode    -- Object I/O mode flag
+      \return status -- Status of the operation.
+    */
+    inline bool setFlag (IO_Mode::Flags const &flag) {
+      itsFlags = flag;
+      return verifyFlags(itsFlags,true);
+    }
+
+    /*!
+      \brief Set object I/O mode flags
+      \param mode    -- Object I/O mode flag
+      \return status -- Status of the operation.
+    */
+    inline bool setFlags (int const &flags) {
+      itsFlags = flags;
+      return verifyFlags(itsFlags,true);
+    }
+
+    //! Add flag to the current seetings
+    bool addFlag (IO_Mode::Flags const &flag);
+
+    //! Remove flag from the current seetings
+    bool removeFlag (IO_Mode::Flags const &flag);
+
+    //! Reset the object I/O mode flags
+    bool resetFlags ();
+
+    // === Public methods =======================================================
+
+    //! Get array containing the available flag names
+    std::vector<std::string> names ();
+
+    //! Check if a given \e flag is part of the I/O mode settings
+    bool haveFlag (IO_Mode::Flags const &which);
+
+#ifdef DAL_WITH_HDF5
+    inline hid_t flagH5Fcreate () {
+      return flagH5Fcreate (itsFlags);
+    }
+#endif
 
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
@@ -383,24 +546,56 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
-    // === Public methods =======================================================
+    /*!
+      \brief Get the name of the class
+      
+      \return className -- The name of the class, IO_Mode.
+    */
+    inline std::string className () const {
+      return "IO_Mode";
+    }
+
+    // === Static methods =======================================================
+
+    //! Get map containing the available flags
+    static std::map<IO_Mode::Flags,std::string> flagsMap ();
+
+    //! Get array containing the available flag values
+    static std::vector<IO_Mode::Flags> flagsType ();
+
+    //! Get array containing the available flag names
+    static std::vector<std::string> flagsName ();
+
+    //! Get array containing the flag names encoded in \c flags
+    static std::vector<std::string> names (IO_Mode::Flags const &flags);
     
+    //! Get array containing the flag names encoded in \c flags
+    static std::vector<std::string> names (int const &flags);
     
+    //! Verify the I/O mode flags
+    static bool verifyFlags (int &flags,
+			     bool const &correctFlags=false);
+    
+#ifdef DAL_WITH_HDF5
+    static hid_t flagH5Fcreate (int const &flags);
+#endif
     
   private:
-    
-    AccessMode::Mode itsMode;
-    AccessMode::Access itsAccess;
 
+    //! Initialize internal parameters
+    inline void init () {
+      itsFlags = IO_Mode::Open | IO_Mode::ReadOnly;
+    }
+    
     //! Unconditional copying
-    void copy (AccessMode const &other);
+    void copy (IO_Mode const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class AccessMode -- end
+  }; // Class IO_Mode -- end
   
 } // Namespace DAL -- end
 
-#endif /* ACCESSMODE_H */
+#endif /* IO_MODE_H */
   

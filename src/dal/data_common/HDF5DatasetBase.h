@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,31 +18,33 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SKY_IMAGEDATASET_H
-#define SKY_IMAGEDATASET_H
+#ifndef HDF5DATASETBASE_H
+#define HDF5DATASETBASE_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <sstream>
 
 // DAL header files
-#include <data_common/HDF5DatasetBase.h>
+#include <core/HDF5Dataset.h>
+#include <core/IO_Mode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class Sky_ImageDataset
+    \class HDF5DatasetBase
     
     \ingroup DAL
-    \ingroup data_hl
+    \ingroup data_common
     
-    \brief Brief description for class Sky_ImageDataset
+    \brief Common interface for datasets using HDF5 for underlying storage
     
     \author Lars B&auml;hren
 
     \date 2011/02/01
 
-    \test tSky_ImageDataset.cc
+    \test tHDF5DatasetBase.cc
     
     <h3>Prerequisite</h3>
     
@@ -55,44 +57,87 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_ImageDataset : public HDF5DatasetBase {
+  class HDF5DatasetBase : public HDF5Dataset {
+
+  protected:
     
+    //! I/O mode flags
+    IO_Mode itsFlags;
+    //! Set of attributes attached to the dataset
+    std::set<std::string> itsAttributes;
+    //! Group type descriptor
+    std::string itsGroupType;
+    //! Path to the coordinates group
+    std::string itsWCSinfo;
+
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    Sky_ImageDataset ();
+    HDF5DatasetBase ();
     
     //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
-		      std::string const &name);
+    HDF5DatasetBase (hid_t const &location,
+		     std::string const &name,
+		     IO_Mode const &flags=IO_Mode());
     
     //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
-		      unsigned int const &index);
+    HDF5DatasetBase (hid_t const &location,
+		     unsigned int const &index);
+    
+    //! Argumented constructor to create new dataset
+    HDF5DatasetBase (hid_t const &location,
+		     std::string const &name,
+		     std::vector< hsize_t > const &shape,
+		     hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     //! Copy constructor
-    Sky_ImageDataset (Sky_ImageDataset const &other);
+    HDF5DatasetBase (HDF5DatasetBase const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
-    ~Sky_ImageDataset ();
+    ~HDF5DatasetBase ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    Sky_ImageDataset& operator= (Sky_ImageDataset const &other); 
+    HDF5DatasetBase& operator= (HDF5DatasetBase const &other); 
     
     // === Parameter access =====================================================
     
+    //! Attributes attached to the dataset
+    inline std::set<std::string> attributes () const {
+      return itsAttributes;
+    }
+
+    //! Get the group type descriptor
+    inline std::string groupType () const {
+      return itsGroupType;
+    }
+
+    //! Set the group type descriptor
+    inline void setGroupType (std::string const &grouptype) {
+      itsGroupType = grouptype;
+    }
+
+    //! Get the path to the coordinates group
+    inline std::string WCSinfo () const {
+      return itsWCSinfo;
+    }
+    
+    //! Set the path to the coordinates group
+    inline void setWCSinfo (std::string const &WCSinfo) {
+      itsWCSinfo = WCSinfo;
+    }
+    
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, Sky_ImageDataset.
+      \return className -- The name of the class, HDF5DatasetBase.
     */
     inline std::string className () const {
-      return "Sky_ImageDataset";
+      return "HDF5DatasetBase";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -104,23 +149,34 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
+
+    //! Open Dataset
+    bool open (const hid_t &location,
+	       const std::string &name,
+	       const IO_Mode &flags=IO_Mode());
     
+    // === Static methods =======================================================
     
+    //! Convert dataset index to name of the HDF5 dataset
+    static std::string getName (unsigned int const &index);
     
   private:
+    
+    //! Initialize internal parameters
+    void init (IO_Mode const &flags=IO_Mode());
 
     //! Set up and initialize the list of attributes
     void setAttributes ();
     
     //! Unconditional copying
-    void copy (Sky_ImageDataset const &other);
+    void copy (HDF5DatasetBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class Sky_ImageDataset -- end
+  }; // Class HDF5DatasetBase -- end
   
 } // Namespace DAL -- end
 
-#endif /* SKY_IMAGEDATASET_H */
-  
+#endif /* HDF5DATASETBASE_H */
+

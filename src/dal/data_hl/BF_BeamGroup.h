@@ -29,7 +29,7 @@
 // DAL header files
 #include <core/HDF5Attribute.h>
 #include <coordinates/CoordinatesGroup.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_hl/BF_ProcessingHistory.h>
 #include <data_hl/BF_StokesDataset.h>
 
@@ -97,7 +97,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_BeamGroup : public HDF5CommonInterface {
+  class BF_BeamGroup : public HDF5GroupBase {
 
     //! Procesing history group
     std::map<std::string,BF_ProcessingHistory> itsProcessingHistory;
@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     BF_BeamGroup (hid_t const &location,
 		  unsigned int const &index,
-		  bool const &create);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction =========================================================
     
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
     ~BF_BeamGroup ();
     
     // === Parameter access =====================================================
-
+    
     //! Get the number of Stokes datasets embedded inside this group
     inline unsigned int nofStokesDatasets () const {
       return itsStokesDatasets.size();
@@ -158,30 +158,30 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     // Open an existing Stokes dataset from within a beam group
     bool openStokesDataset (unsigned int const &stokesID);
 
     // Open an existing Stokes dataset from within a beam group
     bool openStokesDataset (std::string const &name);
-
-    // Create a new Stokes dataset from within a beam group
-    bool createStokesDataset (unsigned int const &index,
-			      unsigned int const &nofSamples,
-			      unsigned int const &nofSubbands,
-			      unsigned int const &nofChannels,
-			      DAL::Stokes::Component const &component=DAL::Stokes::I,
-			      hid_t const &datatype=H5T_NATIVE_FLOAT,
-			      bool const &truncate=false);
     
-    //! Open an existing Stokes dataset
-    bool createStokesDataset (unsigned int const &index,
-			      unsigned int const &nofSamples,
-			      std::vector<unsigned int> const &nofChannels,
-			      DAL::Stokes::Component const &component=DAL::Stokes::I,
-			      hid_t const &datatype=H5T_NATIVE_FLOAT,
-			      bool const &truncate=false);
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    unsigned int const &nofSubbands,
+			    unsigned int const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    std::vector<unsigned int> const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Retrieve a specific Stokes dataset
     BF_StokesDataset getStokesDataset (unsigned int const &stokesID);
@@ -240,7 +240,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 

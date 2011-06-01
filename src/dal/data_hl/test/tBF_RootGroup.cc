@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_common/CommonAttributes.h>
 #include <data_hl/BF_RootGroup.h>
 
 // Namespace usage
@@ -75,9 +74,9 @@ int test_constructors ()
   
   cout << "[1] Testing construction with Filename ..." << endl;
   try {
-    BF_RootGroup dataset (file);
+    DAL::BF_RootGroup bf (file);
     //
-    dataset.summary();
+    bf.summary();
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -128,14 +127,14 @@ int test_subGroups ()
   Filename file = getFilename();
   BF_RootGroup dataset (file);
   
-  cout << "[1] Open PrimaryPointing groups ..." << endl;
+  cout << "[1] Open SubArrayPointing groups ..." << endl;
   try {
-    dataset.openPrimaryPointing(0,true);
-    dataset.openPrimaryPointing(1,true);
-    dataset.openPrimaryPointing(2,true);
-    dataset.openPrimaryPointing(3,true);
+    dataset.openSubArrayPointing(0,true);
+    dataset.openSubArrayPointing(1,true);
+    dataset.openSubArrayPointing(2,true);
+    dataset.openSubArrayPointing(3,true);
     //
-    dataset.openPrimaryPointing(0,true);
+    dataset.openSubArrayPointing(0,true);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -146,11 +145,11 @@ int test_subGroups ()
   cout << "[3] Open Beam groups ..." << endl;
   try {
     unsigned int nofBeams (5);
-    // open Beam groups within existing PrimaryPointing group
+    // open Beam groups within existing SubArrayPointing group
     dataset.openBeam(0,0,true);
     dataset.openBeam(0,1,true);
     dataset.openBeam(0,2,true);
-    // open Beam groups without previously existing PrimaryPointing group
+    // open Beam groups without previously existing SubArrayPointing group
     for (unsigned int beam(0); beam<nofBeams; ++beam) {
       dataset.openBeam(10,beam,true);
     }
@@ -196,7 +195,7 @@ int test_methods ()
     ++nofFailedTests;
   }
 
-  cout << "[2] Extract PrimaryPointing group from BF dataset ..." << endl;
+  cout << "[2] Extract SubArrayPointing group from BF dataset ..." << endl;
   try {
     DAL::BF_SubArrayPointing pointing = dataset.primaryPointing (0);
     //

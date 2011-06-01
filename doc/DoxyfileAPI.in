@@ -449,7 +449,7 @@ SORT_GROUP_NAMES       = YES
 # Note: This option applies only to the class list, not to the
 # alphabetical list.
 
-SORT_BY_SCOPE_NAME     = NO
+SORT_BY_SCOPE_NAME     = YES
 
 # If the STRICT_PROTO_MATCHING option is enabled and doxygen fails to
 # do proper type resolution of all parameters of a function it will reject a
@@ -1053,7 +1053,7 @@ DISABLE_INDEX          = NO
 # documentation. Note that a value of 0 will completely suppress the enum
 # values from appearing in the overview section.
 
-ENUM_VALUES_PER_LINE   = 4
+ENUM_VALUES_PER_LINE   = 1
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information.

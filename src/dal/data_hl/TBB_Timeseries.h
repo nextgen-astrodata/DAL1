@@ -27,7 +27,7 @@
 #endif
 
 #include <data_common/CommonAttributes.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_hl/SysLog.h>
 #include <data_hl/TBB_StationGroup.h>
 #include <data_hl/TBB_StationTrigger.h>
@@ -144,7 +144,7 @@ namespace DAL {  // Namespace DAL -- begin
     </ol>
     
   */
-  class TBB_Timeseries : public HDF5CommonInterface {
+  class TBB_Timeseries : public HDF5GroupBase {
     
     //! Typedef for the iterator on the map holding the TBB_DipoleDataset
     typedef std::map<std::string,TBB_DipoleDataset>::iterator iterDipoleDataset;
@@ -299,7 +299,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Open the file containing the TBB time-series data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Retrieve the list of dipole number contained within this data file
     std::vector<int> dipoleNumbers ();
     //! Retrieve the list of dipole names contained within this data file
@@ -389,12 +389,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   private:
 
     //! Open the group acting as a container for system-wide logs
-    bool openSysLog (bool const &create);
+    bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Locate and register the station groups contained within the file
     bool openStationGroups ();
     //! Set local map used for book-keeping on selected dipole datasets

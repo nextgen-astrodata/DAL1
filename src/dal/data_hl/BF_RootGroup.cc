@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "BF_RootGroup.h"
+#include <data_hl/BF_RootGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -35,9 +35,9 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- Name of the dataset to open.
   */
   BF_RootGroup::BF_RootGroup (std::string const &filename)
-    : HDF5CommonInterface()
+    : HDF5GroupBase()
   {
-    if (!open (0,filename,false)) {
+    if (!open (0,filename,IO_Mode(IO_Mode::Open))) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< filename
 		<< std::endl;
@@ -46,18 +46,17 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                                 BF_RootGroup
-
+  
   /*!
     \param filename -- Filename object from which the actual file name of the
            dataset is derived.
-    \param create   -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags    -- I/O mode flags.
   */
   BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
-			  bool const &create)
-    : HDF5CommonInterface()
+			      IO_Mode const &flags)
+    : HDF5GroupBase()
   {
-    if (!open (0,infile.filename(),create)) {
+    if (!open (0,infile.filename(),flags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
@@ -70,13 +69,12 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param attributes -- CommonAttributes object from which the actual file name
            of the dataset is extracted.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags      -- I/O mode flags.
   */
   BF_RootGroup::BF_RootGroup (CommonAttributes const &attributes,
-			  bool const &create)
+			      IO_Mode const &flags)
   {
-    if (!open (0,attributes.filename(),create)) {
+    if (!open (0,attributes.filename(),flags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
@@ -154,11 +152,11 @@ namespace DAL { // Namespace DAL -- begin
 			      bool const &showAttributes)
   {
     os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
-    os << "-- Filename                  = " << itsFilename           << std::endl;
-    os << "-- Location ID               = " << location_p            << std::endl;
-    os << "-- nof. attributes           = " << attributes_p.size()   << std::endl;
-    os << "-- nof. SysLog groups        = " << itsSystemLog.size()   << std::endl;
-    os << "-- nof. primary pointings    = " << nofPrimaryPointings() << std::endl;
+    os << "-- Filename                = " << itsFilename            << std::endl;
+    os << "-- Location ID             = " << location_p             << std::endl;
+    os << "-- nof. attributes         = " << attributes_p.size()    << std::endl;
+    os << "-- nof. SysLog groups      = " << itsSystemLog.size()    << std::endl;
+    os << "-- nof. primary pointings  = " << nofSubArrayPointings() << std::endl;
     
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
@@ -222,102 +220,69 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through HDF5CommonInterface,
+           structure is attached; parameter inherited through HDF5GroupBase,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
-    
+
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_RootGroup::open (hid_t const &location,
-			 std::string const &name,
-			 bool const &create)
+			   std::string const &name,
+			   IO_Mode const &flags)
   {
-    bool status (true);
-
     // Initialize private variables ________________________
+
     location_p  = location;
     itsFilename = name;
     setAttributes();
     itsSubarrayPointings.clear();
     itsSystemLog.clear();
-    
-    // Try to open the file ________________________________
 
-    std::ifstream infile;
-    infile.open (name.c_str(), std::ifstream::in);
+    // Open or create file _________________________________
 
-    if (infile.is_open() && infile.good()) {
-      // If the file already exists, close it ...
-      infile.close();
-      // ... and open it as HDF5 file
-      location_p = H5Fopen (name.c_str(),
-			    H5F_ACC_RDWR,
-			    H5P_DEFAULT);
-    } else {
-      infile.close();
-      location_p = 0;
+    bool fileTruncated = HDF5Object::openFile (location_p,
+					       name,
+					       flags);
+    
+    // Set attributes ______________________________________
+    
+    if (fileTruncated) {
+      itsCommonAttributes.h5write(location_p);
+      /* Write the additional attributes attached to the root group */
+      bool valBool          = true;
+      float valFloat        = 0.0;
+      std::string undefined = "UNDEFINED";
+      std::vector<float> vectF (1,valFloat);
+      std::vector<double> vectD (1,0.0);
+      //
+      HDF5Attribute::write (location_p,"FILENAME",                  name        );
+      HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     valBool     );
+      HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
+      HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
+      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valFloat    );
+      HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
+      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valFloat    );
+      HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
+      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valFloat    );
+      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
+      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
+      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
+      HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
+      /* Read back in the common attributes after storing default values */
+      // itsCommonAttributes.h5read(location_p);
     }
     
-    if (location_p > 0) {
-      // Read the common LOFAR attributes
-      itsCommonAttributes.h5read(location_p);
-    } else {
-      /* If failed to open file, check if we are supposed to create one */
-      if (create) {
-	location_p = H5Fcreate (name.c_str(),
-				H5F_ACC_TRUNC,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* Write LOFAR common attribute to the root group of the file */
-	itsCommonAttributes.h5write(location_p);
-	/* Write the additional attributes attached to the root group */
-	std::string undefined ("UNDEFINED");
-	std::vector<float> vectF (1,0.0);
-	std::vector<double> vectD (1,0.0);
-	bool trueBool (true);
-	//
-	HDF5Attribute::write (location_p,"FILENAME",                  name        );
- 	HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     trueBool    );
- 	HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
-	HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
-	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
-	HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
-	HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
-	HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
-	HDF5Attribute::write (location_p,"BEAM_DIAMETER",             float(0.0)  );
-	HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
-	HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
-	HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
-	HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
-	/* Read back in the common attributes after storing default values */
-	itsCommonAttributes.h5read(location_p);
-      } else {
-	std::cerr << "[BF_RootGroup::open] Failed to open file "
-		  << name
-		  << std::endl;
-	status = false;
-      }
-    }
-    
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (create);
-    } else {
-      std::cerr << "[BF_RootGroup::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
-    return status;
+    // Open embedded groups ________________________________
+
+    return openEmbedded ();
   }
   
   //_____________________________________________________________________________
@@ -327,25 +292,32 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no primary pointing direction groups were found.
    */
-  bool BF_RootGroup::openEmbedded (bool const &create)
+  bool BF_RootGroup::openEmbedded (IO_Mode const &flags)
   {
-    bool status (true);
-    std::set<std::string> groups;
-    std::set<std::string>::iterator it;
+    bool status = flags.flags();
 
-    /* Retrieve the names of the groups attached to the root group */
-    status = h5get_names (groups,
-			  location_p,
-			  H5G_GROUP);
-    
-    /* Open system log group ... */
-    status = openSysLog (create);
-    /* ... and remove its name from the previously retrieved list */
-    groups.erase("SysLog");
+    if (H5Iis_valid(location_p)) {
 
-    /* Open the PrimaryPointingDirection groups */
-    for (it=groups.begin(); it!=groups.end(); ++it) {
-      status *= openPrimaryPointing (*it);
+      std::set<std::string> groups;
+      std::set<std::string>::iterator it;
+
+      /* Retrieve the names of the groups attached to the root group */
+      status = h5get_names (groups,
+			    location_p,
+			    H5G_GROUP);
+      
+      /* Open system log group ... */
+      status = openSysLog ();
+      /* ... and remove its name from the previously retrieved list */
+      groups.erase("SysLog");
+      
+      /* Open the SubArrayPointingDirection groups */
+      for (it=groups.begin(); it!=groups.end(); ++it) {
+	status *= openSubArrayPointing (*it);
+      }
+      
+    } else {
+      status = false;
     }
     
     return status;
@@ -354,83 +326,74 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool BF_RootGroup::openSysLog (bool const &create)
+  bool BF_RootGroup::openSysLog (IO_Mode const &flags)
   {
     bool status (true);
 
     if (itsSystemLog.size() == 0 && location_p > 0) {
-      itsSystemLog["SysLog"] = SysLog (location_p,create);
+      itsSystemLog["SysLog"] = SysLog (location_p,flags);
     }
     
     return status;
   }
 
   //_____________________________________________________________________________
-  //                                                          openPrimaryPointing
+  //                                                         openSubArrayPointing
   
   /*!
     \param pointingID -- ID of the sub-array pointing group.
-    \param create     -- Create new group, if not existing yet?
+    \param flags      -- I/O mode flags.
   */
-  bool BF_RootGroup::openPrimaryPointing (unsigned int const &pointingID,
-					  bool const &create)
+  bool BF_RootGroup::openSubArrayPointing (unsigned int const &pointingID,
+					  IO_Mode const &flags)
   {
-    bool status (true);
-    htri_t validLocation = H5Iis_valid(location_p);
+    bool status      = true;
     std::string name = BF_SubArrayPointing::getName (pointingID);
 
-    if (location_p > 0 && validLocation) {
-      int nofPrimaryBeams;
-      std::map<std::string,BF_SubArrayPointing>::iterator it;
-      // convert station ID to group name
-      it   = itsSubarrayPointings.find(name);
-      // check if the station beam group indeed exists
-      if (it == itsSubarrayPointings.end()) {
-	// open/create the station beam group
-	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
+    /*______________________________________________________
+      Check if the group has been opened already.
+    */
+
+    if ( itsSubarrayPointings.find(name) == itsSubarrayPointings.end() ) {
+      // open/create group
+      itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
 							pointingID,
-							create);
-	// attributes for book-keeping
-	nofPrimaryBeams = itsSubarrayPointings.size();
-	HDF5Attribute::write (location_p,
-			      "NOF_PRIMARY_BEAMS",
-			      nofPrimaryBeams);
-      }
+							flags);
+      // internal book-keeping
+      int nofPrimaryBeams = itsSubarrayPointings.size();
+      HDF5Attribute::write (location_p,
+			    "NOF_PRIMARY_BEAMS",
+			    nofPrimaryBeams);
     }
-    else {
-      status = false;
-    }
-    
+
     return status;
   }
   
   //_____________________________________________________________________________
-  //                                                          openPrimaryPointing
+  //                                                         openSubArrayPointing
   
   /*!
-    \param name   -- 
-    \param create -- 
+    \param name -- Name of the primary array pointing group to be opened.
   */
-  bool BF_RootGroup::openPrimaryPointing (std::string const &name)
+  bool BF_RootGroup::openSubArrayPointing (std::string const &name)
   {
-    bool status (true);
+    bool status = true;
 
-    if (location_p > 0 && H5Iis_valid(location_p)) {
-      std::map<std::string,BF_SubArrayPointing>::iterator it;
-      // convert station ID to group name
-      it = itsSubarrayPointings.find(name);
-      // check if the station beam group indeed exists
-      if (it == itsSubarrayPointings.end()) {
-	// open the primary pointing direction group
-	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,name);
-      }
+    /*______________________________________________________
+      Check if the group has been opened already.
+    */
+
+    if ( itsSubarrayPointings.find(name) == itsSubarrayPointings.end() ) {
+      // open/create group
+      itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
+							name);
+      // internal book-keeping
+      int nofPrimaryBeams = itsSubarrayPointings.size();
+      HDF5Attribute::write (location_p,
+			    "NOF_PRIMARY_BEAMS",
+			    nofPrimaryBeams);
     }
-    else {
-      std::cerr << "[BF_RootGroup::openPrimaryPointing] Not attached to file!"
-		<< std::endl;
-      status = false;
-    }
-    
+
     return status;
   }
   
@@ -438,53 +401,42 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                     openBeam
   
   /*!
-    \param pointingID -- Identifier for the primary pointing direction.
+    \param pointingID -- Identifier for the sub-array pointing direction.
     \param beamID     -- Identifier for the beam within the primary pointing
            direction.
     \param create     -- Create the group if it does not exist yet?
   */
   bool BF_RootGroup::openBeam (unsigned int const &pointingID,
 			       unsigned int const &beamID,
-			       bool const &create)
+			       IO_Mode const &flags)
   {
-    bool status (true);
-    htri_t validLocation = H5Iis_valid(location_p);
-
-    if (location_p > 0 && validLocation) {
-      /* Open PrimaryPointing group */
-      status = openPrimaryPointing (pointingID, create);
-
-      /* Open Beam group */
-      if (status) {
-	std::string name;
-	std::map<std::string,BF_SubArrayPointing>::iterator it;
-	// get pointer to PrimaryPointing object
-	name = BF_SubArrayPointing::getName (pointingID);
-	it   = itsSubarrayPointings.find(name);
-	// forward function call to open beam
-	if ( it != itsSubarrayPointings.end() ) {
-	  it->second.openBeam(beamID,create);
-	}
-	else {
-	  std::cout << "[BF_RootGroup::openBeam] " << BF_BeamGroup::getName(beamID)
-		    << " already exists."
-		    << std::endl;
-	}
-      } else {
-	std::cerr << "[BF_RootGroup::openBeam] Failed to open StationGroup!"
-		  << std::endl;
-	status = false;
-      }
-    }  //  end -- (location_p>0)
-    else {
-      std::cerr << "[BF_RootGroup::openBeam] No connection to dataset!"
-		<< std::endl;
-      std::cerr << "-- Location ID       = " << location_p    << std::endl;
-      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
-      status = false;
-    }
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
     
-    return status;
+    /*______________________________________________________
+      Open/Create primary array pointing group
+    */
+    
+    std::string name = BF_SubArrayPointing::getName (pointingID);
+    bool status      = openSubArrayPointing (pointingID,
+					     flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+
+    it = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      std::cerr << "[BF_RootGroup::openBeam]"
+		<< " Unable to open sub-array direction group " << name
+		<< std::endl;
+      status = false;
+    } else {
+      it->second.openBeam (beamID, flags);
+    }
+
+    return true;
   }
 
   //_____________________________________________________________________________
@@ -521,22 +473,138 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
+  //                                                            openStokesDataset
   
   bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
 					unsigned int const &beamID,
-					unsigned int const &stokesID)
+					unsigned int const &stokesID,
+					IO_Mode const &flags)
   {
     bool status = true;
+    
+    /*______________________________________________________
+      Open/Create primary array pointing group
+    */
 
-    std::cout << "[BF_RootGroup::openStokesDataset]" << std::endl;
-    std::cout << "-- Primary array pointing ID = " << pointingID << std::endl;
-    std::cout << "-- Beam group ID             = " << beamID     << std::endl;
-    std::cout << "-- Stokes dataset ID         = " << stokesID   << std::endl;
+    status = openSubArrayPointing (pointingID,
+				   flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
+    
+    name = BF_SubArrayPointing::getName (pointingID);
+    it   = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      status = false;
+    } else {
+      it->second.openStokesDataset (beamID, stokesID);
+    }
 
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param pointingID  -- ID of the sub-array pointing group.
+    \param beamID      -- ID of the beam group.
+    \param stokesID    -- ID of the Stokes dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+					unsigned int const &beamID,
+					unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					unsigned int const &nofSubbands,
+					unsigned int const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
+  {
+    std::vector<unsigned int> channels (nofSubbands,nofChannels);
+    
+    return openStokesDataset (pointingID,
+			      beamID,
+			      stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+  
+  /*!
+    \param pointingID  -- ID of the sub-array pointing group.
+    \param beamID      -- ID of the beam group.
+    \param stokesID    -- ID of the Stokes dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+					unsigned int const &beamID,
+					unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					std::vector<unsigned int> const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
+  {
+    bool status = true;
+    
+    /*______________________________________________________
+      Open/Create sub-array pointing direction group.
+    */
+    
+    status = openSubArrayPointing (pointingID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
+    
+    name = BF_SubArrayPointing::getName (pointingID);
+    it   = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      status = false;
+    } else {
+      status = it->second.openStokesDataset (beamID,
+					     stokesID,
+					     nofSamples,
+					     nofChannels,
+					     component,
+					     datatype,
+					     flags);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                                       sysLog
   

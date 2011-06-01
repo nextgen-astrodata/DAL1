@@ -22,7 +22,7 @@
 #define DIRECTIONCOORDINATE_H
 
 // DAL header files
-#include <coordinates/CoordinateInterface.h>
+#include <coordinates/CoordinateBase.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/DirectionCoordinate.h>
@@ -55,7 +55,7 @@ namespace DAL {   // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class DirectionCoordinate : public CoordinateInterface<double> {
+  class DirectionCoordinate : public CoordinateBase<double> {
     
     //! Reference code for the celestial coordinate system
     std::string system_p;

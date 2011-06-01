@@ -33,11 +33,11 @@
 #include "pydal.h"
 
 // namespace usage
-using DAL::dalArray;
 using DAL::dalData;
 using DAL::dalDataset;
 using DAL::dalGroup;
-using DAL::dalTable;
+using DAL::IO_Mode;
+using DAL::HDF5Hyperslab;
 
 // ==============================================================================
 //
@@ -124,203 +124,6 @@ namespace DAL {
     return mjd_time;
   }
   
-}
-
-// ==============================================================================
-//
-//                                                                       dalArray
-//
-// ==============================================================================
-
-void DAL::dalArray::extend_boost (bpl::list pydims )
-{
-  std::vector<int> dims;
-  
-  for (int ii=0; ii<bpl::len(pydims); ii++) {
-    dims.push_back(bpl::extract<int>(pydims[ii]));
-  }
-  
-  extend( dims );
-}
-
-bool DAL::dalArray::setAttribute_char( std::string attrname,
-				       char data )
-{
-  return setAttribute( attrname, &data );
-}
-
-bool DAL::dalArray::setAttribute_short (std::string const &name,
-					short const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_int (std::string const &name,
-				      int const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_uint (std::string const &name,
-				       uint const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_long (std::string const &name,
-				       long const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_float (std::string const &name,
-					float const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_double (std::string const &name,
-					 double const &data)
-{
-  return HDF5Attribute::write (itsDatasetID, name, data);
-}
-
-bool DAL::dalArray::setAttribute_string (std::string attrname,
-					 std::string data)
-{
-  return setAttribute( attrname, &data );
-}
-
-bool DAL::dalArray::setAttribute_char_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<char> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<char>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_short_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<short> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<short>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_int_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<int> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<int>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_uint_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<uint> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<uint>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_long_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<long> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<long>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_float_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<float> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<float>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_double_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<double> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<double>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
-}
-
-bool DAL::dalArray::setAttribute_string_vector (std::string attrname, bpl::list data )
-{
-  int size = bpl::len(data);
-  std::vector<std::string> mydata;
-  
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<std::string>(data[ii]));
-  
-  return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
-}
-
-void export_dalArray ()
-{  
-  bpl::class_<dalArray>("dalArray")
-    .def( "setAttribute_char", &dalArray::setAttribute_char,
-	  "Set a character attribute" )
-    .def( "setAttribute_char", &dalArray::setAttribute_char_vector,
-	  "Set an attribute from a list of chars." )
-    .def( "setAttribute_short", &dalArray::setAttribute_short,
-	  "Set a short integer attribute" )
-    .def( "setAttribute_short", &dalArray::setAttribute_short_vector,
-	  "Set an attribute from a list of shorts." )
-    .def( "setAttribute_int", &dalArray::setAttribute_int,
-	  "Set a integer attribute" )
-    .def( "setAttribute_int", &dalArray::setAttribute_int_vector,
-	  "Set an attribute from a list of integers." )
-    .def( "setAttribute_uint", &dalArray::setAttribute_uint,
-	  "Set a unsigned integer attribute" )
-    .def( "setAttribute_uint", &dalArray::setAttribute_uint_vector,
-	  "Set an attribute from a list of unsigned integers." )
-    .def( "setAttribute_long", &dalArray::setAttribute_long,
-	  "Set a long integer attribute" )
-    .def( "setAttribute_long", &dalArray::setAttribute_long_vector,
-	  "Set an attribute from a list of longs." )
-    .def( "setAttribute_float", &dalArray::setAttribute_float,
-	  "Set a floating point attribute" )
-    .def( "setAttribute_float", &dalArray::setAttribute_float_vector,
-	  "Set an attribute from a list of floats." )
-    .def( "setAttribute_double", &dalArray::setAttribute_double,
-	  "Set a double precision floating point attribute" )
-    .def( "setAttribute_double", &dalArray::setAttribute_double_vector,
-	  "Set an attribute from a list of doubles." )
-    .def( "setAttribute_string", &dalArray::setAttribute_string,
-	  "Set a string attribute" )
-    .def( "setAttribute_string", &dalArray::setAttribute_string_vector,
-	  "Set a string attribute" )
-    .def( "getAttributes", &dalArray::getAttributes,
-	  "Print the attributes of the array." )
-    .def( "extend", &dalArray::extend_boost,
-	  "Extend an array." )
-    .def( "close", &dalArray::close,
-          "Close an array." )
-    ;
 }
 
 // ==============================================================================
@@ -446,3 +249,125 @@ void export_dalData ()
     ;
 }
 
+// ==============================================================================
+//
+//                                                                        IO_Mode
+//
+// ==============================================================================
+
+void export_IO_Mode ()
+{
+  //________________________________________________________
+  // Enumeration: I/O mode flags
+
+  bpl::enum_<IO_Mode::Flags>("Flags")
+    .value("ReadOnly",     IO_Mode::ReadOnly)
+    .value("ReadWrite",    IO_Mode::ReadWrite)
+    .value("WriteOnly",    IO_Mode::WriteOnly)
+    .value("Open",         IO_Mode::Open)
+    .value("OpenOrCreate", IO_Mode::OpenOrCreate)
+    .value("Create",       IO_Mode::Create)
+    .value("CreateNew",    IO_Mode::CreateNew)
+    .value("Truncate",     IO_Mode::Truncate)
+    ;
+  
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  // std::vector<std::string> (IO_Mode::*names1)() 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names2)(IO_Mode::Flags const &) 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names3)(int const &) 
+  //   = &IO_Mode::names;
+  void (IO_Mode::*summary1)() 
+    = &IO_Mode::summary;
+  void (IO_Mode::*summary2)(std::ostream &) 
+    = &IO_Mode::summary;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<IO_Mode>("IO_Mode")
+    // Construction
+    .def( bpl::init<>())
+    .def( bpl::init<IO_Mode::Flags>())
+    .def( bpl::init<int>())
+    .def( bpl::init<IO_Mode>())
+    // Parameter access
+    .def("flags",
+	 &IO_Mode::flags,
+	 "Get object I/O mode flags.")
+    .def("setFlag",
+	 &IO_Mode::setFlag,
+	 "Set object I/O mode flag.")
+    .def("setFlags",
+	 &IO_Mode::setFlags,
+	 "Set object I/O mode flags. ")
+    .def("addFlag",
+	 &IO_Mode::addFlag,
+	 "Add flag to the current seetings.")
+    .def("removeFlag",
+	 &IO_Mode::removeFlag,
+	 "Remove flag from the current seetings.")
+    .def("resetFlags",
+	 &IO_Mode::resetFlags,
+	 "Reset the object I/O mode flags.")
+    // .def("names",
+    // 	 &names1,
+    // 	 "Get array containing the available flag names.")
+    .def("className",
+	 &IO_Mode::className,
+	 "Get the name of the class.")
+    // Methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    ;
+}
+
+// ==============================================================================
+//
+//                                                                  HDF5Hyperslab
+//
+// ==============================================================================
+
+void export_HDF5Hyperslab ()
+{
+  void (HDF5Hyperslab::*summary1)() 
+    = &HDF5Hyperslab::summary;
+  void (HDF5Hyperslab::*summary2)(std::ostream &) 
+    = &HDF5Hyperslab::summary;
+  
+  bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
+    .def( bpl::init<>())
+    .def( bpl::init<int const &>())
+    // Parameter access
+    .def( "shape", &HDF5Hyperslab::rank,
+	  "Get the rank of the array to which the hyperslab is applied.")
+    .def( "start", &HDF5Hyperslab::start,
+	  "Get the offset of the starting element of the specified hyperslab.")
+    .def( "setStart", &HDF5Hyperslab::setStart,
+	  "Set the offset of the starting element of the specified hyperslab.")
+    .def( "stride", &HDF5Hyperslab::stride,
+	  "Get the number of elements to separate each element or block.")
+    .def( "setStride", &HDF5Hyperslab::setStride,
+	  "Set the number of elements to separate each element or block.")
+    .def( "count", &HDF5Hyperslab::count,
+	  "Get the number of elements or blocks to select along each dimension.")
+    .def( "setCount", &HDF5Hyperslab::setCount,
+	  "Set the number of elements or blocks to select along each dimension.")
+    .def( "block", &HDF5Hyperslab::block,
+	  "Get the size of the element block selected from the dataspace.")
+    .def( "setBlock", &HDF5Hyperslab::setBlock,
+	  "Set the size of the element block selected from the dataspace.")
+    // Methods
+    .def( "className", &HDF5Hyperslab::className,
+	  "Get the name of the class.")
+    .def("summary", summary1)
+    .def("summary", summary2)
+    ; 
+}

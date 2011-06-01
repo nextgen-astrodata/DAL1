@@ -34,7 +34,7 @@
 #endif
 
 #include <core/Enumerations.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 
 namespace DAL {  // Namespace DAL -- begin
 
@@ -90,7 +90,7 @@ namespace DAL {  // Namespace DAL -- begin
   </ul>
 
   */
-  class TBB_DipoleDataset : public HDF5CommonInterface {
+  class TBB_DipoleDataset : public HDF5GroupBase {
     
     //! Datatype identifier
     hid_t datatype_p;
@@ -168,7 +168,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Open a dipole dataset
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Open a dipole dataset
     bool open (hid_t const &location,
 	       uint const &stationID,
@@ -219,7 +219,7 @@ namespace DAL {  // Namespace DAL -- begin
   private:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     

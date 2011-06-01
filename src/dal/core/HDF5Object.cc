@@ -33,16 +33,22 @@ namespace DAL { // Namespace DAL -- begin
   
   HDF5Object::HDF5Object ()
   {
+    itsFlags    = IO_Mode();
     itsLocation = -1;
   }
   
   //_____________________________________________________________________________
   //                                                                   HDF5Object
-  
-  HDF5Object::HDF5Object (std::string const &filename,
-			  hid_t const &access)
+
+  /*!
+    \param name  -- Name of the object.
+    \param flags -- I/O mode flags.
+  */
+  HDF5Object::HDF5Object (std::string const &name,
+			  IO_Mode const &flags)
   {
-    open (filename, access);
+    itsFlags    = flags;
+    itsLocation = openFile (name, flags);
   }
   
   //_____________________________________________________________________________
@@ -51,15 +57,18 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location -- File or group identifier.
     \param name     -- Path to the object, relative to \c location.
-    \param access   -- Access property list identifier for the link pointing to
-           the object.
+    \param flags    -- I/O mode flags.
   */
   HDF5Object::HDF5Object (hid_t const &location,
 			  std::string const &name,
-			  hid_t const &access)
+			  IO_Mode const &flags)
   {
-    itsLocation = open (location, name, access);
+    itsFlags    = flags;
+    itsLocation = open (location, name, flags);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                   HDF5Object
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
@@ -156,65 +165,6 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Change time               = " << changeTime()       << std::endl;
     os << "-- Birth time                = " << birthTime()        << std::endl;
     os << "-- nof. attached attributes  = " << nofAttributes()    << std::endl;
-  }
-  
-  // ============================================================================
-  //
-  //  Public methods
-  //
-  // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                         open
-  
-  /*!
-    \param filename -- Path to the object.
-    \param access   -- Access property list identifier for the link pointing to
-           the object.
-    \return status  -- Status of the operation; returns \e false in case an error 
-            was encountered, e.g. because no object \c name could be found.
-  */
-  bool HDF5Object::open (std::string const &filename,
-			 hid_t const &access)
-  {
-    bool status (true);
-
-    /* _______________________________________________________________
-       Check if the file actually exists is this is not the case, 
-       there is no use trying to open it up.
-    */
-
-    std::ifstream infile;
-    infile.open (filename.c_str(), std::ifstream::in);
-    
-    if (infile.is_open() && infile.good()) {
-      status = true;
-    } else {
-      status = false;
-    }
-    infile.close();
-    
-    /* _______________________________________________________________
-       Case handling matrix to either open or create the HDF5 file
-    */
-
-    if (status) {
-      
-      if (access == hid_t(H5F_ACC_TRUNC)) {
-	itsLocation = H5Fcreate (filename.c_str(),
-				 access,
-				 H5P_DEFAULT,
-				 H5P_DEFAULT);
-      } else {
-	itsLocation = H5Fopen (filename.c_str(),
-			       access,
-			       H5P_DEFAULT);
-      }
-      
-    } else {
-    }
-    
-    return status;
   }
   
   // ============================================================================
@@ -734,10 +684,105 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         open
   
   /*!
+    \param filename -- Name of the file to be opened.
+    \param flags    -- I/O mode flags.
+    \return fileID  -- HDF5 object identifier for the opened file; returns \e 0 
+            in case the operation failed.
+   */
+  hid_t HDF5Object::openFile (std::string const &filename,
+			  IO_Mode const &flags)
+  {
+    hid_t fileID = 0;
+
+    /* Forward the function call */
+    open (fileID, filename, flags);
+
+    return fileID;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  /*!
+    \retvalfileID    --
+    \param filename  -- 
+    \param flags     --
+    \return fileTruncated -- Was the file truncated? Returns \e true is this 
+            was the case.
+  */
+  bool HDF5Object::openFile (hid_t &fileID,
+			     std::string const &filename,
+			     IO_Mode const &flags)
+  {
+    bool fileExists    = false;
+    bool fileTruncated = false; 
+    std::ifstream infile (filename.c_str(), std::ifstream::in);
+    
+    /*______________________________________________________
+      Check if the file already exists
+    */
+    
+    if (infile.is_open() && infile.good()) {
+      fileExists = true;
+    } else {
+      fileExists = false;
+    }
+    infile.close();
+    
+    /*______________________________________________________
+      Open or create file.
+    */
+    
+    if (fileExists) {
+      if ( flags.flags() & IO_Mode::Truncate ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	fileID        = H5Fcreate (filename.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
+      } else if ( flags.flags() & IO_Mode::Create ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	fileID        = H5Fcreate (filename.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
+      } else {
+	if ( flags.flags() & IO_Mode::ReadWrite ) {
+	  /* Open file as read/write */
+	  fileTruncated = false;
+	  fileID        = H5Fopen (filename.c_str(),
+				   H5F_ACC_RDWR,
+				   H5P_DEFAULT);
+	} else {
+	  /* Open file as read-only */
+	  fileTruncated = false;
+	  fileID        = H5Fopen (filename.c_str(),
+				   H5F_ACC_RDONLY,
+				   H5P_DEFAULT);
+	}
+      }
+    } else {
+      /* Create new file from scratch */
+      fileTruncated = true;
+      fileID        = H5Fcreate (filename.c_str(),
+				 H5F_ACC_TRUNC,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT);
+    }
+
+    return fileTruncated;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
     Generic method to open up an HDF5 object; uses several layers of checks --
     e.g. through \c H5Lexists and \c H5Lget_info -- before actually attempting
     to open object of given \e name attached to a \e location.
-
+    
     \param location -- File or group identifier.
     \param name     -- Path to the object, relative to \c location.
     \param access   -- Access property list identifier for the link pointing to
@@ -747,7 +792,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   hid_t HDF5Object::open (hid_t const &location,
 			  std::string const &name,
-			  hid_t const &access)
+			  IO_Mode const &flags)
   {
     if (H5Iis_valid(location)) {
       /*____________________________________________________________
@@ -764,12 +809,12 @@ namespace DAL { // Namespace DAL -- begin
       case H5I_ATTR:
 	return H5Aopen (location,
 			name.c_str(),
-			access);
+			H5P_DEFAULT);
 	break;
       case H5I_DATASET:
 	return H5Dopen (location,
 			name.c_str(),
-			access);
+			H5P_DEFAULT);
 	break;
       case H5I_DATASPACE:
 	std::cerr << "[HDF5Object::open] Unable to open object "
@@ -781,12 +826,10 @@ namespace DAL { // Namespace DAL -- begin
       case H5I_GROUP:
 	return H5Gopen (location,
 			name.c_str(),
-			access);
+			H5P_DEFAULT);
 	break;
       case H5I_FILE:
-	return H5Fopen (name.c_str(),
-			H5F_ACC_RDWR,
-			access);
+	return openFile (name, flags);
 	break;
       case H5I_BADID:
 	std::cerr << "[HDF5Object::open] Unable to open object "
@@ -798,7 +841,7 @@ namespace DAL { // Namespace DAL -- begin
       default:
 	return H5Oopen (location,
 			name.c_str(),
-			access);
+			H5P_DEFAULT);
       };   //   END -- switch (otype)
     }   //   END -- H5Iis_valid(location)
     else {
@@ -824,15 +867,15 @@ namespace DAL { // Namespace DAL -- begin
   hid_t HDF5Object::open (hid_t const &location,
 			  std::string const &name,
 			  H5I_type_t const &otype,
-			  hid_t const &access)
+			  IO_Mode const &flags)
   {
-    hid_t objectID = open (location, name, access);
-
+    hid_t objectID = open (location, name, flags);
+    
     if (otype != objectType(objectID)) {
       close (objectID);
       objectID = -1;
     }
-
+    
     return objectID;
   }
   

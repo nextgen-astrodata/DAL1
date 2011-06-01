@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) <year>                                                  *
+ *   <author> (<mail>)                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessMode.h>
+#include "<newClass>.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessMode::AccessMode ()
+  <newClass>::<newClass> ()
   {;}
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  AccessMode::AccessMode (AccessMode const &other)
+  <newClass>::<newClass> (<newClass> const &other)
   {
     copy (other);
   }
@@ -46,12 +46,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessMode::~AccessMode ()
+  <newClass>::~<newClass> ()
   {
     destroy();
   }
   
-  void AccessMode::destroy ()
+  void <newClass>::destroy ()
   {;}
   
   // ============================================================================
@@ -63,7 +63,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  AccessMode& AccessMode::operator= (AccessMode const &other)
+  /*!
+    \param other -- Another <newClass> object from which to make a copy.
+  */
+  <newClass>& <newClass>::operator= (<newClass> const &other)
   {
     if (this != &other) {
       destroy ();
@@ -75,11 +78,8 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void AccessMode::copy (AccessMode const &other)
-  {
-    itsMode   = other.itsMode;
-    itsAccess = other.itsAccess;
-  }
+  void <newClass>::copy (<newClass> const &other)
+  {;}
 
   // ============================================================================
   //
@@ -93,14 +93,22 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void AccessMode::summary (std::ostream &os)
+  void <newClass>::summary (std::ostream &os)
   {
-    os << "[AccessMode] Summary of internal parameters." << std::endl;
+    os << "[<newClass>] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
+  //
+  // ============================================================================
+  
+  
+
+  // ============================================================================
+  //
+  //  Static methods
   //
   // ============================================================================
   

@@ -26,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_hl/BF_BeamGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -44,6 +44,7 @@ namespace DAL { // Namespace DAL -- begin
     \date 2009/10/28
 
     \test tBF_SubArrayPointing.cc
+    \test test_bf2h5writer.cc
     
     <h3>Prerequisite</h3>
     
@@ -58,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
       </ul>
     </ul>
@@ -66,21 +67,22 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
 
     \verbatim
-    PrimaryPointing001
-    |-- Beam000
+    SubArrayPointing000             ...  BF_SubArrayPointing
+    |-- Beam000                     ...  BF_BeamGroup
     |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
+    |   |-- ProcessingHistory
+    |   |-- Stokes0                 ...  BF_StokesDataset
+    |   |-- Stokes1
+    |   |-- Stokes2
+    |   `-- Stokes3
     |-- Beam001
-    |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
-    |-- Beam002
     |
     \endverbatim
     
     <h3>Example(s)</h3>
     
   */  
-  class BF_SubArrayPointing : public HDF5CommonInterface {
+  class BF_SubArrayPointing : public HDF5GroupBase {
     
     //! Station beams
     std::map<std::string,BF_BeamGroup> itsBeams;
@@ -94,12 +96,13 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     BF_SubArrayPointing (hid_t const &location,
-			std::string const &name);
+			 std::string const &name,
+			 IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     BF_SubArrayPointing (hid_t const &location,
-			unsigned int const &index,
-			bool const &create);
+			 unsigned int const &index,
+			 IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
@@ -131,18 +134,18 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
-    //! Convert PrimaryPointing index to name of the HDF5 group
+    //! Convert Sub-array pointing direction index to name of the HDF5 group
     static std::string getName (unsigned int const &index);
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Open a beam group
     bool openBeam (unsigned int const &beamID,
-			 bool const &create=true);
-
+		   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Get the number of embedded Beam object/groups
     inline unsigned int nofBeams () {
       return itsBeams.size();
@@ -154,6 +157,31 @@ namespace DAL { // Namespace DAL -- begin
     //! Retrieve a specific Beam group
     bool getBeamGroup (BF_BeamGroup *beam,
 		       unsigned int const &beamID);
+
+
+    //! Open an existing Stokes dataset
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    unsigned int const &nofSubbands,
+			    unsigned int const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    std::vector<unsigned int> const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Retrieve a specific Stokes dataset
     BF_StokesDataset getStokesDataset (unsigned int const &beamID,
@@ -169,7 +197,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   }; // Class BF_SubArrayPointing -- end
   

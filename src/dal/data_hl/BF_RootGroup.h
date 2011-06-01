@@ -26,10 +26,10 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
-#include "BF_SubArrayPointing.h"
-#include "SysLog.h"
+#include <data_hl/BF_SubArrayPointing.h>
+#include <data_hl/SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -46,6 +46,7 @@ namespace DAL { // Namespace DAL -- begin
     \date 2009/10/28
 
     \test tBF_RootGroup.cc
+    \test test_bf2h5writer.cc
     
     <h3>Prerequisite</h3>
     
@@ -60,7 +61,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>BF_SubArrayPointing
 	<li>BF_StokesDataset
@@ -84,10 +85,12 @@ namespace DAL { // Namespace DAL -- begin
 
     Basic hierarchical structure used DAL classes:
     \verbatim
-    /
-    |-- SubArrayPointing000
-    |   |-- Beam000
-    |   |   |-- Stokes0
+    /                                   ...  BF_RootGroup
+    |-- SubArrayPointing000             ...  BF_SubArrayPointing
+    |   |-- Beam000                     ...  BF_BeamGroup
+    |   |   |-- CoordinatesGroup
+    |   |   |-- ProcessingHistory
+    |   |   |-- Stokes0                 ...  BF_StokesDataset
     |   |   |-- Stokes1
     |   |   |-- Stokes2
     |   |   `-- Stokes3
@@ -153,19 +156,19 @@ namespace DAL { // Namespace DAL -- begin
       The resulting structure within the file will be:
       \verbatim
       /                            ...  Root group
-      `-- PrimaryPointing010       ...  Primary pointing direction group
+      `-- SubArrayPointing010      ...  Sub-array pointing group
           `-- Beam003              ...  Beam group
       \endverbatim
     </ol>
     
   */  
-  class BF_RootGroup : public HDF5CommonInterface {
+  class BF_RootGroup : public HDF5GroupBase {
 
     //! Name of the data file
     std::string itsFilename;
     //! LOFAR common attributes attached to the root group of the dataset
     CommonAttributes itsCommonAttributes;
-    //! Primary Pointing Directions
+    //! Sub-array pointing directions
     std::map<std::string,BF_SubArrayPointing> itsSubarrayPointings;
     //! Container for system-wide logs
     std::map<std::string,SysLog> itsSystemLog;
@@ -179,19 +182,19 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     BF_RootGroup (DAL::Filename &infile,
-		bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     BF_RootGroup (CommonAttributes const &attributes,
-		bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
     //! Default destructor
     ~BF_RootGroup ();
     
-    // --------------------------------------------------------------- Parameters
-
+    // === Parameter access =====================================================
+    
     //! Get the set of common attributes attached to the root group of the file
     CommonAttributes commonAttributes ();
 
@@ -225,43 +228,59 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
-
-    //! Open a PrimaryPointing direction group
-    bool openPrimaryPointing (unsigned int const &pointingID,
-			      bool const &create=true);
-
-    //! Get the number of primary pointing direction objects
-    inline unsigned int nofPrimaryPointings () const {
-      return itsSubarrayPointings.size();
-    }
-
-    //! Get a primary pointing direction group
-    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
-
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Open a SubArrayPointing direction group
+    bool openSubArrayPointing (unsigned int const &pointingID,
+			       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,
 		   unsigned int const &beamID,
-		   bool const &create=true);
-
-    //! Open an existing Stokes dataset
+		   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Open a Stokes dataset
     bool openStokesDataset (unsigned int const &pointingID,
 			    unsigned int const &beamID,
-			    unsigned int const &stokesID);
+			    unsigned int const &stokesID,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
-    //! Create a new Stokes dataset
-    bool createStokesDataset (unsigned int const &pointingID,
-			      unsigned int const &beamID,
-			      unsigned int const &stokesID,
-			      bool const &overwriteExisting=false);
+    //! Create a new Stokes dataset.
+    bool openStokesDataset (unsigned int const &pointingID,
+			    unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    unsigned int const &nofSubbands,
+			    unsigned int const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
+    //! Create a new Stokes dataset.
+    bool openStokesDataset (unsigned int const &pointingID,
+			    unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    std::vector<unsigned int> const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Get the number of primary pointing direction objects
+    inline unsigned int nofSubArrayPointings () const {
+      return itsSubarrayPointings.size();
+    }
+    
+    //! Get a primary pointing direction group
+    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
+
     //! Get the SysLog group
     SysLog sysLog ();
     
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
@@ -270,9 +289,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
     //! Open a system log group
-    bool openSysLog (bool const &create=true);
-    //! Open a PrimaryPointing direction group
-    bool openPrimaryPointing (std::string const &name);
+    bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    //! Open a SubArrayPointing direction group
+    bool openSubArrayPointing (std::string const &name);
       
   }; // Class BF_RootGroup -- end
   

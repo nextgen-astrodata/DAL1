@@ -39,12 +39,16 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       SysLog
   
+  /*
+    \param location -- 
+    \param flags    -- I/O mode flags.
+   */
   SysLog::SysLog (hid_t const &location,
-			bool const &create)
+		  IO_Mode const &flags)
   {
     open (location,
 	  "SysLog",
-	  create);
+	  flags);
   }
   
   // ============================================================================
@@ -112,30 +116,42 @@ namespace DAL { // Namespace DAL -- begin
             an error was encountered.
   */
   bool SysLog::open (hid_t const &location,
-			std::string const &name,
-			bool const &create)
+		     std::string const &name,
+		     IO_Mode const &flags)
   {
     bool status (true);
 
-    /* Set up the list of attributes attached to the root group */
-    setAttributes();
-
-    /* Try to open the group: get list of groups attached to 'location' and
-       check if 'name' is part of it.
+    /*______________________________________________________
+      Check if the provided location ID points to a valid 
+      object.
     */
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+    
+    if (H5Iis_valid(location)) {
+      /* Set up the list of attributes attached to the root group */
+      setAttributes();
+      
+      /* Try to open the group: get list of groups attached to 'location' and
+	 check if 'name' is part of it.
+      */
+      if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+	location_p = H5Gopen (location,
+			      name.c_str(),
+			      H5P_DEFAULT);
+      } else {
+	location_p = 0;
+      }
     } else {
-      location_p = 0;
+      std::cerr << "[SysLog::open] Invalid location ID - aborting!" << std::endl;
+      return false;
     }
     
     if (location_p > 0) {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
@@ -160,15 +176,6 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  bool SysLog::openEmbedded (bool const &create)
-  {
-    bool status = create;
     return status;
   }
   

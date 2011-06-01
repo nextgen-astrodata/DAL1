@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
 #include <data_hl/SysLog.h>
 
@@ -62,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>SysLog
       </ul>
@@ -121,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class RM_RootGroup : public HDF5CommonInterface {
+  class RM_RootGroup : public HDF5GroupBase {
 
     //! Name of the data file
     std::string filename_p;
@@ -139,11 +136,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     RM_RootGroup (DAL::Filename &infile,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     RM_RootGroup (CommonAttributes const &attributes,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
@@ -185,7 +182,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     //! Get the SysLog group
     SysLog sysLog ();
@@ -193,7 +190,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
@@ -202,7 +199,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
     //! Open a system log group
-    bool openSysLog (bool const &create=true);
+    bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
       
   }; // Class RM_RootGroup -- end
   

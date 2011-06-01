@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-#include <dal_config.h>
+#include <core/IO_Mode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -164,6 +164,8 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
 
+    //! I/O mode flags
+    IO_Mode itsFlags;
     //! HDF5 object identifier
     hid_t itsLocation;
     
@@ -175,19 +177,19 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Object ();
     
     //! Argumented constructor
-    HDF5Object (std::string const &filename,
-		hid_t const &access=H5P_DEFAULT);
+    HDF5Object (std::string const &name,
+		IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     HDF5Object (hid_t const &location,
 		std::string const &name,
-		hid_t const &access=H5P_DEFAULT);
+		IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Copy constructor
     HDF5Object (HDF5Object const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~HDF5Object ();
     
@@ -257,16 +259,10 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Provide a summary of the object's internal parameters and status
-    void summary (std::ostream &os);    
+    void summary (std::ostream &os);
 
-    // === Public methods =======================================================
-
-    //! Open HDF5 file
-    bool open (std::string const &filename,
-	       hid_t const &access=H5P_DEFAULT);
-    
     // === Static methods =======================================================
-
+    
     //! Map between object types and object names
     static std::map<H5I_type_t,std::string> objectTypesMap ();
     //! Object types
@@ -305,15 +301,23 @@ namespace DAL { // Namespace DAL -- begin
     //! nof. attributes attached to the object
     static hsize_t nofAttributes (hid_t const &location);
     
+    //! Open HDF5 file
+    static hid_t openFile (std::string const &filename,
+			   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    //! Open HDF5 file
+    static bool openFile (hid_t &fileID,
+			  std::string const &filename,
+			  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Open an object in an HDF5 file
     static hid_t open (hid_t const &location,
 		       std::string const &name,
-		       hid_t const &access=H5P_DEFAULT);
+		       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Open an object in an HDF5 file
     static hid_t open (hid_t const &location,
 		       std::string const &name,
 		       H5I_type_t const &otype,
-		       hid_t const &access=H5P_DEFAULT);
+		       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Closes an object in an HDF5 file.
     static herr_t close (hid_t const &location);
 

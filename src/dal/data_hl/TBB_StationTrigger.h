@@ -1,8 +1,4 @@
-
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +25,7 @@
 #include <iostream>
 #include <string>
 
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -51,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>DAL::HDF5CommonInterface
+      <li>DAL::HDF5GroupBase
       <li>DAL::TBB_Timeseries
     </ul>
     
@@ -60,7 +56,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationTrigger : public HDF5CommonInterface {
+  class TBB_StationTrigger : public HDF5GroupBase {
     
   public:
     
@@ -71,11 +67,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     TBB_StationTrigger (hid_t const &location,
-		      std::string const &name="StationTrigger",
-		      bool const &create=true);
+			std::string const &name="StationTrigger",
+			IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~TBB_StationTrigger ();
     
@@ -115,14 +111,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a station group
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   private:
 
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) {
+      return flags.flags();
+    }
     //! Unconditional copying
     void copy (TBB_StationTrigger const &other);
     //! Unconditional deletion 

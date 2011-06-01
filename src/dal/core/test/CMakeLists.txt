@@ -36,7 +36,7 @@ endforeach (src)
 ## Test with no further conditions required ______
 
 foreach (_test
-    tAccessMode
+    tIO_Mode
     tdalBaseTypes
     tdalCommon
     tdalCommon_operators
@@ -50,6 +50,7 @@ foreach (_test
     tdalGroup
     tDatabase
     tHDF5Dataset
+    tHDF5Hyperslab
     tValMatrix
     test_std_cerr
     )

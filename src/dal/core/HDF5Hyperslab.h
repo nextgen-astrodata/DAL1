@@ -27,8 +27,8 @@
 #include <vector>
 
 // DAL header files
-#include <core/dalCommon.h>
-#include <core/HDF5Dataspace.h>
+#include "dalCommon.h"
+#include "HDF5Dataspace.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
     \class HDF5Hyperslab
     
     \ingroup DAL
-    \ingroup data_common
+    \ingroup core
     
     \brief A hyperslab region for selective access to a dataspace
     
@@ -301,12 +301,7 @@ namespace DAL { // Namespace DAL -- begin
 		   std::vector<int> const &block,
 		   H5S_seloper_t const &selection=H5S_SELECT_SET);
 
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another HDF5Hyperslab object from which to create this new
-             one.
-    */
+    //! Copy constructor
     HDF5Hyperslab (HDF5Hyperslab const &other);
     
     // === Destruction ==========================================================

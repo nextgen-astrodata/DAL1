@@ -125,7 +125,7 @@ namespace DAL { // Namespace DAL -- begin
 				     bool const &create)
   {
     std::string name ("StationCalibration");
-
+    
     return open (location, name, create);
   }
 
@@ -137,15 +137,14 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool TBB_StationCalibration::open (hid_t const &location,
-				     std::string const &name,
-				     bool const &create)
+			   std::string const &name,
+			   IO_Mode const &flags)
   {
     bool status (true);
 
@@ -164,7 +163,8 @@ namespace DAL { // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
@@ -191,7 +191,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_StationCalibration::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -199,16 +199,5 @@ namespace DAL { // Namespace DAL -- begin
  
     return status;
   }
-  
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  bool TBB_StationCalibration::openEmbedded (bool const &create)
-  {
-    bool status (create);
-    
-    return status;
-  }
-  
   
 } // Namespace DAL -- end

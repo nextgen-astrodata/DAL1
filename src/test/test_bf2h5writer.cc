@@ -1,6 +1,6 @@
-//# tDAL_HDF5: Test DAL HDF5 routines
+//# test_bf2h5writer: Test DAL HDF5 routines
 //#
-//#  Copyright (C) 2001
+//#  Copyright (C) 2011
 //#  ASTRON (Netherlands Foundation for Research in Astronomy)
 //#  P.O.Box 2, 7990 AA Dwingeloo, The Netherlands, seg@astron.nl
 //#
@@ -18,6 +18,31 @@
 //#  along with this program; if not, write to the Free Software
 //#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/*!
+  \file test_bf2h5writer.cc
+
+  \ingroup DAL
+  \ingroup data_hl
+
+  \brief Integrated test for the creation of BF data sets.
+ 
+  \author Jan David Mol
+  \author Lars B&auml;hren
+
+  <h3>Prerequisite</h3>
+  
+  <ul>
+    <li>DAL::BF_RootGroup -- High-level interface to the root-group of
+        Beam-Formed data.
+    <li>DAL::BF_SubArrayPointing -- High-level interface to the Sub-Array
+        pointing group of Beam-Formed data.
+    <li>DAL::BF_BeamGroup -- High-level interface to the Beam group of
+        Beam-Formed Data.
+    <li>DAL::BF_StokesDataset -- High-level interface to the Stokes dataset
+        of Beam-Formed Data.
+  </ul>
+*/
+
 #ifdef DAL_WITH_LOFAR
 #include <lofar_config.h>
 #endif
@@ -27,7 +52,6 @@
 #define SUBBANDS        60
 #define BLOCKS          10
 
-#include <data_common/CommonAttributes.h>
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
 
@@ -62,8 +86,8 @@ DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 
 int main()
 {
-  const unsigned nofSamples  = SAMPLES;
-  const unsigned nofChannels = SUBBANDS * CHANNELS;  
+  const unsigned nofPointings = 5;
+  const unsigned nofBeams     = 10;
   
   /*__________________________________________________________________
     Create DAL::Filename object for generation of proper filename,
@@ -86,29 +110,63 @@ int main()
   DAL::CommonAttributes attributes = commonAttributes (filename);
 
   /*__________________________________________________________________
-    Create new BF file with basic structure.
+    Create new BF file; we are using "IO_Mode::Truncate" in order to
+    always start with a freshly created file - otherwise previously 
+    created structure elements will remain in place.
   */
   
   std::cout << "-- Creating new file " << filename.filename() << endl;
-  DAL::BF_RootGroup rootGroup (filename);
+
+  DAL::BF_RootGroup rootGroup (attributes,
+			       DAL::IO_Mode(DAL::IO_Mode::Create));
+
+  /*__________________________________________________________________
+    Create primary array pointing groups with embedded beam groups.
+  */
+
+  for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
+    std::cout << "-- Pointing " <<  numPointing << ": [";
+    for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
+      // progress message
+      std::cout << " " << numBeam;
+      // recursively open beam group
+      rootGroup.openBeam ( numPointing, numBeam );
+    }
+    std::cout << " ]" << std::endl;
+  }
+
+  std::cout << "--> Finished opening sub-groups." << std::endl;
   
-  cout << "-- Creating primary pointing 0" << endl;
-  rootGroup.openPrimaryPointing ( 0, true );
-  
-  // cout << "-- Creating tied-array beam 0" << endl;
-  // rootGroup.openBeam ( 0, 0, true );
+  /*__________________________________________________________________
+    Create Stokes dataset for Stokes::I data.
+  */
+
+  const unsigned nofSamples  = SAMPLES;
+  const unsigned nofChannels = SUBBANDS * CHANNELS;
+
+
+  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
+			       0,                 // ID of beam group
+			       0,                 // ID of Stokes dataset
+			       nofSamples,
+			       SUBBANDS,
+			       CHANNELS,
+			       DAL::Stokes::I);
+  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
+			       0,                 // ID of beam group
+			       1,                 // ID of Stokes dataset
+			       nofSamples,
+			       SUBBANDS,
+			       CHANNELS,
+			       DAL::Stokes::Q);
   
   return 0;
 
-  /*__________________________________________________________________
-    Re-open the previously created BF file, before creating Stokes
-    dataset.
-  */
-  
   {
     hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;
-    DAL::BF_StokesDataset stokesDataset(fileID, 0,
+    DAL::BF_StokesDataset stokesDataset(fileID,
+					0,
 					nofSamples,
 					SUBBANDS,
 					CHANNELS,
@@ -138,7 +196,7 @@ int main()
     count[1] = nofChannels;
     block[1] = 1;
     
-    DAL::HDF5Hyperslab hyperslab( start, stride, count, block );
+    DAL::HDF5Hyperslab hyperslab ( start, stride, count, block );
     hyperslab.summary( cout );
     
     for (unsigned i = 0; i < BLOCKS; i++ ) {

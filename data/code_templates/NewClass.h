@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) <year>                                                  *
+ *   <author> (<mail>)                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,36 +18,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATASETINTERFACE_H
-#define DATASETINTERFACE_H
+#ifndef <NEWCLASS>_H
+#define <NEWCLASS>_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
 
-// DAL header files
-#include <core/HDF5Dataset.h>
-
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class InterfaceDataset
+    \class <newClass>
     
-    \ingroup DAL
-    \ingroup data_common
+    \ingroup <newModule>
     
-    \brief Common interface for datasets using HDF5 for underlying storage
+    \brief Brief description for class <newClass>
     
-    \author Lars B&auml;hren
+    \author <author>
 
-    \date 2011/02/01
+    \date <date>
 
-    \test tInterfaceDataset.cc
+    \test t<newClass>.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>\ref dal_icd_004
+      <li>[start filling in your text here]
     </ul>
     
     <h3>Synopsis</h3>
@@ -55,84 +51,36 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class InterfaceDataset : public HDF5Dataset {
-
-  protected:
+  class <newClass> {
     
-    //! Set of attributes attached to the dataset
-    std::set<std::string> itsAttributes;
-    //! Group type descriptor
-    std::string itsGroupType;
-    //! Path to the coordinates group
-    std::string itsWCSinfo;
-
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    InterfaceDataset ();
-    
-    //! Argumented constructor to open existing dataset
-    InterfaceDataset (hid_t const &location,
-		      std::string const &name);
-    
-    //! Argumented constructor to open existing dataset
-    InterfaceDataset (hid_t const &location,
-		      unsigned int const &index);
-
-    //! Argumented constructor to create new dataset
-    InterfaceDataset (hid_t const &location,
-		      std::string const &name,
-		      std::vector< hsize_t > const &shape,
-		      hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    <newClass> ();
     
     //! Copy constructor
-    InterfaceDataset (InterfaceDataset const &other);
+    <newClass> (<newClass> const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~InterfaceDataset ();
+    ~<newClass> ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    InterfaceDataset& operator= (InterfaceDataset const &other); 
+    <newClass>& operator= (<newClass> const &other); 
     
     // === Parameter access =====================================================
     
-    //! Attributes attached to the dataset
-    inline std::set<std::string> attributes () const {
-      return itsAttributes;
-    }
-
-    //! Get the group type descriptor
-    inline std::string groupType () const {
-      return itsGroupType;
-    }
-
-    //! Set the group type descriptor
-    inline void setGroupType (std::string const &grouptype) {
-      itsGroupType = grouptype;
-    }
-
-    //! Get the path to the coordinates group
-    inline std::string WCSinfo () const {
-      return itsWCSinfo;
-    }
-    
-    //! Set the path to the coordinates group
-    inline void setWCSinfo (std::string const &WCSinfo) {
-      itsWCSinfo = WCSinfo;
-    }
-    
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, InterfaceDataset.
+      \return className -- The name of the class, <newClass>.
     */
     inline std::string className () const {
-      return "InterfaceDataset";
+      return "<newClass>";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -147,20 +95,21 @@ namespace DAL { // Namespace DAL -- begin
     
     
     
+    // === Static methods =======================================================
+    
+    
+    
   private:
-
-    //! Set up and initialize the list of attributes
-    void setAttributes ();
     
     //! Unconditional copying
-    void copy (InterfaceDataset const &other);
+    void copy (<newClass> const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class InterfaceDataset -- end
+  }; // Class <newClass> -- end
   
 } // Namespace DAL -- end
 
-#endif /* DATASETINTERFACE_H */
+#endif /* <NEWCLASS>_H */
   

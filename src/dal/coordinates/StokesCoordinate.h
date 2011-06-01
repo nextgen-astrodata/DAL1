@@ -23,7 +23,7 @@
 
 // DAL header files
 #include <coordinates/Stokes.h>
-#include <coordinates/CoordinateInterface.h>
+#include <coordinates/CoordinateBase.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/StokesCoordinate.h>
@@ -56,7 +56,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */
-  class StokesCoordinate : public CoordinateInterface<std::string> {
+  class StokesCoordinate : public CoordinateBase<std::string> {
 
     //! Set of Stokes components represented by this coordinate
     std::vector<DAL::Stokes> itsValues;

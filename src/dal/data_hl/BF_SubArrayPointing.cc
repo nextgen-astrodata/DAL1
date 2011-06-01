@@ -33,16 +33,19 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_SubArrayPointing::BF_SubArrayPointing ()
   {
-    location_p = 0;
+    location_p   = 0;
+    itsGroupType = "SubArrayPointing";
   }
   
   //_____________________________________________________________________________
   //                                                          BF_SubArrayPointing
   
   BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
-					    std::string const &name)
+					    std::string const &name,
+					    IO_Mode const &flags)
   {
-    open (location,name,false);
+    itsGroupType = "SubArrayPointing";
+    open (location,name,flags);
   }
   
   //_____________________________________________________________________________
@@ -50,9 +53,10 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
 					    unsigned int const &index,
-					    bool const &create)
+					    IO_Mode const &flags)
   {
-    open (location,getName(index),create);
+    itsGroupType = "SubArrayPointing";
+    open (location,getName(index),flags);
   }
   
   // ============================================================================
@@ -139,106 +143,88 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_SubArrayPointing::open (hid_t const &location,
 				  std::string const &name,
-				  bool const &create)
+				  IO_Mode const &flags)
   {
-    bool status (true);
+    bool status    = true;
+    bool truncated = HDF5GroupBase::open (location_p,
+					  location,
+					  name,
+					  flags);
     
-    /* Set up the list of attributes attached to the root group */
-    setAttributes();
-    
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
-    } else {
-      location_p = 0;
-    }
+    if ( H5Iis_valid(location_p) ) {
 
-    if (location_p > 0) {
-      status = true;
-    } else {
-      /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
-	location_p = H5Gcreate (location,
-				name.c_str(),
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  std::string grouptype ("PrimaryPointingDirection");
-	  std::string mhz ("MHz");
-	  std::string tracking ("OFF");
-	  std::string second ("s");
-	  std::string usecond ("us");
-	  std::vector<std::string> stationsList (1,"UNDEFINED");
-	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",                grouptype   );
-	  HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
-	  HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
-	  HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
-	  HDF5Attribute::write (location_p,"POINT_DEC",                double(0.0) );
-	  HDF5Attribute::write (location_p,"TRACKING",                 tracking    );
-	  HDF5Attribute::write (location_p,"POINT_ALTITUDE",           double(0.0) );
-	  HDF5Attribute::write (location_p,"POINT_AZIMUTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"CLOCK_RATE",               double(0.0) );
-	  HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",          mhz         );
-	  HDF5Attribute::write (location_p,"NOF_SAMPLES",              int(0)      );
-	  HDF5Attribute::write (location_p,"SAMPLING_RATE",            double(0.0) );
-	  HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"SAMPLING_TIME",            float(0.0)  );
-	  HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",       usecond     );
-	  HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
-	  HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
-	  HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
-	  HDF5Attribute::write (location_p,"SUBBAND_WIDTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"CHANNEL_WIDTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"NOF_BEAMS",                int(0)      );
-	} else {
-	  std::cerr << "[BF_SubArrayPointing::open] Failed to create group "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
-      } else {
-	std::cerr << "[BF_SubArrayPointing::open] Failed to open group "
-		  << name
-		  << std::endl;
-	status = false;
+      // List of recognized attributes _____________________
+      setAttributes();
+      
+      if (truncated) {
+
+	// Initial values for the attributes _______________
+	
+	std::string mhz ("MHz");
+	std::string tracking ("OFF");
+	std::string second ("s");
+	std::string usecond ("us");
+	std::vector<std::string> stationsList (1,"UNDEFINED");
+	
+	// Write attribute values __________________________
+	
+	HDF5Attribute::write (location_p,"GROUPTYPE",                itsGroupType);
+	HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
+	HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
+	HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
+	HDF5Attribute::write (location_p,"POINT_DEC",                double(0.0) );
+	HDF5Attribute::write (location_p,"TRACKING",                 tracking    );
+	HDF5Attribute::write (location_p,"POINT_ALTITUDE",           double(0.0) );
+	HDF5Attribute::write (location_p,"POINT_AZIMUTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"CLOCK_RATE",               double(0.0) );
+	HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",          mhz         );
+	HDF5Attribute::write (location_p,"NOF_SAMPLES",              int(0)      );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE",            double(0.0) );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME",            float(0.0)  );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",       usecond     );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
+	HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"NOF_BEAMS",                int(0)      );
       }
+
+      // Open embedded groups ______________________________
+
+      status = openEmbedded (flags);
+
+    } else {
+      std::cerr << "[BF_SubArrayPointing::open]"
+		<< " Failed to open/create group " << name
+		<< std::endl;
+      return false;
     }
     
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (create);
-    } else {
-      std::cerr << "[BF_SubArrayPointing::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
+    
     return status;
   }
   
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_SubArrayPointing::openEmbedded (bool const &create)
+  bool BF_SubArrayPointing::openEmbedded (IO_Mode const &flags)
   {
-    bool status (create);
+    bool status = flags.flags();
     std::set<std::string> groupnames;
     std::set<std::string>::iterator it;
     
-    /* Retrieve the names of the groups attached to the PrimaryPointing group */
+    /* Retrieve the names of the groups attached to the sub-array pointing group */
     status = h5get_names (groupnames,
 			  location_p,
 			  H5G_GROUP);
@@ -258,31 +244,30 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param beamID -- Identifier for the Beam within the Primary Pointing 
            Direction group.
-    \param create -- 
+    \param flags  -- I/O mode flags.
   */
   bool BF_SubArrayPointing::openBeam (unsigned int const &beamID,
-				      bool const &create)
+				      IO_Mode const &flags)
   {
-    bool status          = true;
-    htri_t validLocation = H5Iis_valid(location_p);
-    std::string name     = BF_BeamGroup::getName (beamID);
-    
-    if (location_p > 0 && validLocation) {
-      // open Beam group
-      BF_BeamGroup beam (location_p,beamID,create);
-      itsBeams[name] = beam;
-      // book-keeping
+    bool status      = true;
+    std::string name = BF_BeamGroup::getName (beamID);
+
+    /*______________________________________________________
+      Check if the group has been opened already.
+    */
+
+    if ( itsBeams.find(name) == itsBeams.end() ) {
+      // open/create group
+      itsBeams[name] = BF_BeamGroup (location_p,
+				     beamID,
+				     flags);
+      // internal book-keeping
       int nofBeams = itsBeams.size();
-      HDF5Attribute::write (location_p,"NOF_BEAMS",nofBeams);
-    } else {
-      std::cerr << "[BF_SubArrayPointing::openBeam] Not connected to dataset."
-		<< std::endl;
-      std::cerr << "-- Location ID       = " << location_p    << std::endl;
-      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
-      std::cerr << "-- Beam group        = " << name          << std::endl;
-      status = false;
+      HDF5Attribute::write (location_p,
+			    "NOF_BEAMS",
+			    nofBeams);
     }
-    
+
     return status;
   }
 
@@ -321,7 +306,139 @@ namespace DAL { // Namespace DAL -- begin
       return true;
     }
   }
+
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param beamID   -- Beam group index.
+    \param stokesID -- Stokes dataset index.
+    \param flags    -- I/O mode flags.
+    \return status  -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       IO_Mode const &flags)
+  {
+    bool status = true;
+    
+    /*______________________________________________________
+      Open/Create beam group
+    */
+    
+    status = openBeam (beamID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_BeamGroup>::iterator it;
+    
+    name = BF_BeamGroup::getName (beamID);
+    it   = itsBeams.find(name);
+    
+    if (it==itsBeams.end()) {
+      status = false;
+    } else {
+      it->second.openStokesDataset (stokesID);
+    }
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param beamID      -- ID of the beam group to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       unsigned int const &nofSamples,
+					       unsigned int const &nofSubbands,
+					       unsigned int const &nofChannels,
+					       DAL::Stokes::Component const &component,
+					       hid_t const &datatype,
+					       IO_Mode const &flags)
+  {
+    std::vector<unsigned int> channels (nofSubbands,nofChannels);
+    
+    return openStokesDataset (beamID,
+			      stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
+  }
   
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+  
+  /*!
+    \param beamID      -- ID of the beam group to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       unsigned int const &nofSamples,
+					       std::vector<unsigned int> const &nofChannels,
+					       DAL::Stokes::Component const &component,
+					       hid_t const &datatype,
+					       IO_Mode const &flags)
+  {
+    bool status = true;
+    
+    /*______________________________________________________
+      Open/Create beam group
+    */
+    
+    status = openBeam (beamID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_BeamGroup>::iterator it;
+    
+    name = BF_BeamGroup::getName (beamID);
+    it   = itsBeams.find(name);
+    
+    if (it==itsBeams.end()) {
+      status = false;
+    } else {
+      status = it->second.openStokesDataset (stokesID,
+					     nofSamples,
+					     nofChannels,
+					     component,
+					     datatype,
+					     flags);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                             getStokesDataset
   
@@ -330,7 +447,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string name = BF_BeamGroup::getName (beamID);
     std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
-
+    
     if (it==itsBeams.end()) {
       std::cerr << "[BF_SubArrayPointing::getStokesDataset]"
 		<< " Unable to find Beam group " << name << std::endl;
@@ -366,7 +483,7 @@ namespace DAL { // Namespace DAL -- begin
     \param index -- Index identifying the station beam.
     
     \return name -- The name of the station beam group,
-            <tt>PrimaryPointing<index></tt>
+            <tt>SubArrayPointing<index></tt>
   */
   std::string BF_SubArrayPointing::getName (unsigned int const &index)
   {
@@ -377,7 +494,7 @@ namespace DAL { // Namespace DAL -- begin
     
     std::string name (uid);
     
-    name = "PrimaryPointingDirection" + name;
+    name = "SUB_ARRAY_POINTING_" + name;
     
     return name;
   }

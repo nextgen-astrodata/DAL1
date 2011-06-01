@@ -61,7 +61,9 @@ BOOST_PYTHON_MODULE(pydal)
   export_dalData ();
   export_dalDataset ();
   export_dalGroup ();
-  export_dalTable ();  
+  export_dalTable ();
+  export_IO_Mode ();
+  export_HDF5Hyperslab ();
 
   // ============================================================================
   //
@@ -84,7 +86,6 @@ BOOST_PYTHON_MODULE(pydal)
   export_CommonAttributes ();
   export_Timestamp ();
   export_SAS_Settings ();
-  export_HDF5Hyperslab ();
   
   // ============================================================================
   //

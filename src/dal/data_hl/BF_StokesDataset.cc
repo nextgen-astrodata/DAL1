@@ -376,7 +376,7 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_StokesDataset::open (hid_t const &location,
 			       std::string const &name)
   {
-    bool status = HDF5Dataset::open (location, name, false);
+    bool status = HDF5Dataset::open (location, name, IO_Mode::Open);
 
     if (status) {
       init ();
@@ -408,11 +408,11 @@ namespace DAL { // Namespace DAL -- begin
 				 unsigned int const &nofSamples,
 				 unsigned int const &nofSubbands,
 				 unsigned int const &nofChannels,
-				 bool const &overwriteExisting)
+				 IO_Mode::Flags const &flags)
   {
     if (nofSubbands>0) {
       std::vector<unsigned int> tmp (nofSubbands,nofChannels);
-      return create (location, component, nofSamples, tmp, overwriteExisting);
+      return create (location, component, nofSamples, tmp, flags);
     } else {
       return false;
     }
@@ -435,9 +435,9 @@ namespace DAL { // Namespace DAL -- begin
 				 DAL::Stokes::Component const &component,
 				 unsigned int const &nofSamples,
 				 std::vector<unsigned int> const &nofChannels,
-				 bool const &overwriteExisting)
+				 IO_Mode::Flags const &flags)
   {
-    bool status (true);
+    bool status = flags;
     std::vector<hsize_t> shape (2,1);
 
     /*________________________________________________________________

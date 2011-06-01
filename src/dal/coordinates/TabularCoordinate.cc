@@ -43,7 +43,7 @@ namespace DAL {  // Namespace DAL -- begin
   template <class T>
   void TabularCoordinate<T>::copy (TabularCoordinate const &other)
   {
-    CoordinateInterface<T>::copy (other);
+    CoordinateBase<T>::copy (other);
   }
 
   // ============================================================================
@@ -62,11 +62,11 @@ namespace DAL {  // Namespace DAL -- begin
 					     std::vector<std::string> const &worldValues)
   {
     /* Initialize base class */
-    CoordinateInterface<std::string>::init (Coordinate::TABULAR,
+    CoordinateBase<std::string>::init (Coordinate::TABULAR,
 					    1,
 					    Coordinate::TABULAR);
-    CoordinateInterface<std::string>::setAxisNames (axisNames);
-    CoordinateInterface<std::string>::setAxisUnits (axisUnits);
+    CoordinateBase<std::string>::setAxisNames (axisNames);
+    CoordinateBase<std::string>::setAxisUnits (axisUnits);
     setAxisValues (pixelValues, worldValues);
   }
   

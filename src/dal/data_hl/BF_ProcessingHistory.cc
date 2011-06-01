@@ -40,13 +40,13 @@ namespace DAL { // Namespace DAL -- begin
   //                                                         BF_ProcessingHistory
   
   BF_ProcessingHistory::BF_ProcessingHistory (hid_t const &location,
-					      bool const &create)
+					      IO_Mode const &flags)
   {
     std::string name ("ProcessingHistory");
     
     open (location,
 	  name,
-	  create);
+	  flags);
   }
   
   // ============================================================================
@@ -123,21 +123,20 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_ProcessingHistory::open (hid_t const &location,
 				   std::string const &name,
-				   bool const &create)
+				   IO_Mode const &flags)
   {
     bool status (true);
-
+    
     /* Basic initialization */
     init ();
-
+    
     /* Try to open the group: get list of groups attached to 'location' and
        check if 'name' is part of it.
     */
@@ -150,11 +149,13 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     if (location_p > 0) {
-      status = openEmbedded(create);
+      status = openEmbedded();
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
@@ -181,20 +182,6 @@ namespace DAL { // Namespace DAL -- begin
 	status = false;
       }
     }
-    
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  /*!
-    \return status -- Status of the operation; return \e false in case an error 
-            was encountered.
-   */
-  bool BF_ProcessingHistory::openEmbedded (bool const &create)
-  {
-    bool status = create;
     
     return status;
   }

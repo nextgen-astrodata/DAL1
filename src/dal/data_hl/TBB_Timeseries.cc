@@ -78,7 +78,7 @@ namespace DAL {  // Namespace DAL -- begin
            new one.
   */
   TBB_Timeseries::TBB_Timeseries (TBB_Timeseries const &other)
-    : HDF5CommonInterface ()
+    : HDF5GroupBase ()
   {
     copy (other);
   }
@@ -216,22 +216,21 @@ namespace DAL {  // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through HDF5CommonInterface,
+           structure is attached; parameter inherited through HDF5GroupBase,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool TBB_Timeseries::open (hid_t const &location,
 			     std::string const &name,
-			     bool const &create)
+			     IO_Mode const &flags)
   {
     bool status (true);
-
+    
     /* Initialize private variables*/
     location_p = location;
     filename_p = name;
@@ -265,7 +264,8 @@ namespace DAL {  // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open file, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::OpenOrCreate) ) {
 	location_p = H5Fcreate (name.c_str(),
 				H5F_ACC_TRUNC,
 				H5P_DEFAULT,
@@ -285,7 +285,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_Timeseries::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -297,12 +297,12 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_Timeseries::openEmbedded (bool const &create)
+  bool TBB_Timeseries::openEmbedded (IO_Mode const &flags)
   {
     bool status (true);
 
     // Open system-wide logs _____________________
-    status *= openSysLog (create);
+    status *= openSysLog (flags);
 
     // Open the station groups ___________________
     status *= openStationGroups();
@@ -313,19 +313,12 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool TBB_Timeseries::openSysLog (bool const &create)
+  bool TBB_Timeseries::openSysLog (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status           = flags.flags();
     std::string groupName = SysLog::getName();
 
-    if (H5Lexists (location_p, groupName.c_str(), H5P_DEFAULT)) {
-      sysLog_p[groupName] = SysLog (location_p,false);
-    }
-    else {
-      if (create) {
-	sysLog_p[groupName] = SysLog (location_p,false);
-      }
-    }
+    sysLog_p[groupName] = SysLog (location_p,flags);
     
     return status;
   }

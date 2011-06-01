@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren <bahren@astron.nl>                                       *
+ *   Copyright (C) 2011                                                    *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,36 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SKY_ROOTGROUP_H
-#define SKY_ROOTGROUP_H
+#ifndef ITS_DATASET_H
+#define ITS_DATASET_H
 
-// Standard library header files
+/* Standard library header files */
 #include <iostream>
 #include <string>
 
-// DAL header files
-#include <data_common/HDF5GroupBase.h>
+/* DAL header files*/
+#include <data_comon/HDF5DatasetBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class Sky_RootGroup
+    \class ITS_Dataset
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Root group of a Radio Sky Image Cube
+    \brief Brief description for class ITS_Dataset
     
     \author Lars B&auml;hren
 
-    \date 2010/10/19
+    \date 2011-05-29
 
-    \test tSky_RootGroup.cc
+    \test tITS_Dataset.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICD: Radio Sky Image Cubes (LOFAR-USG-ICD-004)
+      <li>[start filling in your text here]
     </ul>
     
     <h3>Synopsis</h3>
@@ -55,41 +55,36 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_RootGroup : public HDF5GroupBase {
+  class ITS_Dataset : public HDF5DatasetBase {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    Sky_RootGroup ();
+    ITS_Dataset ();
     
     //! Copy constructor
-    Sky_RootGroup (Sky_RootGroup const &other);
+    ITS_Dataset (ITS_Dataset const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~Sky_RootGroup ();
+    ~ITS_Dataset ();
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another Sky_RootGroup object from which to make a copy.
-    */
-    Sky_RootGroup& operator= (Sky_RootGroup const &other); 
+    //! Overloading of the copy operator
+    ITS_Dataset& operator= (ITS_Dataset const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
-      
-      \return className -- The name of the class, Sky_RootGroup.
+      \return className -- The name of the class, ITS_Dataset.
     */
     inline std::string className () const {
-      return "Sky_RootGroup";
+      return "ITS_Dataset";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -100,33 +95,25 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
     
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
-
+    
+    
+    // === Static methods =======================================================
+    
+    
+    
   private:
-
-    void setAttributes ()
-    {
-      attributes_p.clear();
-    }
     
-    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate))
-    {
-      return flags.flags();
-    }
-
     //! Unconditional copying
-    void copy (Sky_RootGroup const &other);
+    void copy (ITS_Dataset const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class Sky_RootGroup -- end
+  }; // Class ITS_Dataset -- end
   
 } // Namespace DAL -- end
 
-#endif /* SKY_ROOTGROUP_H */
+#endif /* ITS_DATASET_H */
   

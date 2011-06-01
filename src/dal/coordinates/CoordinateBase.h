@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef COORDINATEINTERFACE_H
-#define COORDINATEINTERFACE_H
+#ifndef COORDINATEBASE_H
+#define COORDINATEBASE_H
 
 /* DAL header files */
 #include <core/dalCommon.h>
@@ -34,7 +34,7 @@
 namespace DAL {   // Namespace DAL -- begin
 
   /*!
-    \class CoordinateInterface
+    \class CoordinateBase
 
     \ingroup DAL
     \ingroup coordinates
@@ -60,11 +60,11 @@ namespace DAL {   // Namespace DAL -- begin
 
     <h3>Example(s)</h3>
 
-    As CoordinateInterface defines an abstract base class, it cannot be used
+    As CoordinateBase defines an abstract base class, it cannot be used
     directly.
 
   */
-  template <class T> class CoordinateInterface {
+  template <class T> class CoordinateBase {
     
   protected:
 
@@ -154,27 +154,27 @@ namespace DAL {   // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    CoordinateInterface (DAL::Coordinate const &coord=DAL::Coordinate(),
-			 unsigned int const &nofAxes=0,
-			 DAL::Coordinate const &storageType=DAL::Coordinate()) {
+    CoordinateBase (DAL::Coordinate const &coord=DAL::Coordinate(),
+		    unsigned int const &nofAxes=0,
+		    DAL::Coordinate const &storageType=DAL::Coordinate()) {
       init (coord, nofAxes, storageType);
     }
     //! Copy constructor
-    CoordinateInterface (CoordinateInterface const &other) {
+    CoordinateBase (CoordinateBase const &other) {
       *this = other;
     }
     
     // === Destruction ==========================================================
     
     //! Destructor
-    virtual ~CoordinateInterface () {
+    virtual ~CoordinateBase () {
       destroy();
     }
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    CoordinateInterface<T>& operator= (CoordinateInterface<T> const &other) {
+    CoordinateBase<T>& operator= (CoordinateBase<T> const &other) {
       if (this != &other) {
 	/* Copy basic attributes */
 	coord_p       = other.coord_p;
@@ -263,7 +263,7 @@ namespace DAL {   // Namespace DAL -- begin
       if (axisNames.size() == nofAxes_p) {
 	axisNames_p = axisNames;
       } else {
-	std::cerr << "[CoordinateInterface::setAxisNames]"
+	std::cerr << "[CoordinateBase::setAxisNames]"
 		  << " Error in length of input vector!"
 		  << std::endl;
 	status = false;
@@ -298,7 +298,7 @@ namespace DAL {   // Namespace DAL -- begin
       if (axisUnits.size() == nofAxes_p) {
 	axisUnits_p = axisUnits;
       } else {
-	std::cerr << "[CoordinateInterface::setAxisUnits]"
+	std::cerr << "[CoordinateBase::setAxisUnits]"
 		  << " Error in length of input vector!"
 		  << std::endl;
 	status = false;
@@ -326,7 +326,7 @@ namespace DAL {   // Namespace DAL -- begin
 	  if (refValue.size() == nofAxes_p) {
 	    refValue_p = refValue;
 	  } else {
-	    std::cerr << "[CoordinateInterface::setRefValue]"
+	    std::cerr << "[CoordinateBase::setRefValue]"
 		      << " Error in length of input vector!"
 		      << std::endl;
 	    status = false;
@@ -345,7 +345,7 @@ namespace DAL {   // Namespace DAL -- begin
 	break;
       default:
 	{
-	  std::cerr << "[CoordinateInterface::setRefValue]"
+	  std::cerr << "[CoordinateBase::setRefValue]"
 		    << " Reference value not defined for storage type "
 		    << storageType_p.name() << "!" 
 		    << std::endl;
@@ -374,7 +374,7 @@ namespace DAL {   // Namespace DAL -- begin
 	  if (refPixel.size() == nofAxes_p) {
 	    refPixel_p = refPixel;
 	  } else {
-	    std::cerr << "[CoordinateInterface::setRefPixel]"
+	    std::cerr << "[CoordinateBase::setRefPixel]"
 		      << " Error in length of input vector!"
 		      << std::endl;
 	    status = false;
@@ -393,7 +393,7 @@ namespace DAL {   // Namespace DAL -- begin
 	break;
       default:
 	{
-	  std::cerr << "[CoordinateInterface::setRefPixel]"
+	  std::cerr << "[CoordinateBase::setRefPixel]"
 		    << " Reference pixel not defined for storage type "
 		    << storageType_p.name() << "!" 
 		    << std::endl;
@@ -425,7 +425,7 @@ namespace DAL {   // Namespace DAL -- begin
 	  if (increment.size() == nofAxes_p) {
 	    increment_p = increment;
 	  } else {
-	    std::cerr << "[CoordinateInterface::setIncrement]"
+	    std::cerr << "[CoordinateBase::setIncrement]"
 		      << " Error in length of input vector!"
 		      << std::endl;
 	    status = false;
@@ -434,7 +434,7 @@ namespace DAL {   // Namespace DAL -- begin
 	break;
       default:
 	{
-	  std::cerr << "[CoordinateInterface::setIncrement]"
+	  std::cerr << "[CoordinateBase::setIncrement]"
 		    << " Reference pixel not defined for storage type "
 		    << storageType_p.name() << "!" 
 		    << std::endl;
@@ -476,7 +476,7 @@ namespace DAL {   // Namespace DAL -- begin
 	if (pc.size() == nelem) {
 	  pc_p = pc;
 	} else {
-	  std::cerr << "[CoordinateInterface::setPc]"
+	  std::cerr << "[CoordinateBase::setPc]"
 		    << " Error in number of matrix elements!"
 		    << std::endl;
 	  status = false;
@@ -491,7 +491,7 @@ namespace DAL {   // Namespace DAL -- begin
       break;
     default:
       {
-	std::cerr << "[CoordinateInterface::setPc]"
+	std::cerr << "[CoordinateBase::setPc]"
 		  << " Trnasformation matrix not defined for storage type "
 		  << storageType_p.name() << "!" 
 		  << std::endl;
@@ -529,7 +529,7 @@ namespace DAL {   // Namespace DAL -- begin
 	  } else {
 	    /* Reject input values if number of elements does not match that of
 	       the already assigned world axis values. */
-	    std::cerr << "[CoordinateInterface::setPixelValues]"
+	    std::cerr << "[CoordinateBase::setPixelValues]"
 		      << " Wrong number of elements in the provided array!"
 		      << std::endl;
 	    status = false;
@@ -539,7 +539,7 @@ namespace DAL {   // Namespace DAL -- begin
 	if ((nelem = itsPixelValues.size())) {
 	  itsPixelValues = values;
 	} else {
-	  std::cerr << "[CoordinateInterface::setPixelValues]"
+	  std::cerr << "[CoordinateBase::setPixelValues]"
 		    << " Wrong number of elements in the provided array!"
 		    << std::endl;
 	  status = false;
@@ -573,7 +573,7 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Provide a summary of the internal status
     void summary (std::ostream &os) {
-      os << "[CoordinateInterface] Summary of internal parameters." << std::endl;
+      os << "[CoordinateBase] Summary of internal parameters." << std::endl;
       os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
       os << "-- Storage type     = " << storageType_p.type()
 	 << " / " <<  storageType_p.name() << std::endl;

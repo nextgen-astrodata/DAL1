@@ -79,7 +79,7 @@ namespace DAL {  // Namespace DAL -- begin
            one.
   */
   StokesCoordinate::StokesCoordinate (StokesCoordinate const &other)
-    : CoordinateInterface<std::string> (other)
+    : CoordinateBase<std::string> (other)
   {
     *this = other;
   }

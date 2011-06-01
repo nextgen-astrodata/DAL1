@@ -23,48 +23,56 @@
           `-- Beam group                          BF_BeamGroup
               `-- Stokes dataset                  BF_StokesDataset
   \endverbatim
+
+  In order to allow for the recursive creation of the above structure, the
+  individual classes permit the creation of structures at hierarchical levels
+  below.
+
+  \section dal_devel_bf_code Code example
+
+  The following code example is taken from test_bf2h5writer.cc, demonstrating
+  the basic steps in creating a new BF data set:
+
+  \code
+  //____________________________________________________________________________
+  // Create DAL::Filename object for generation of proper filename,matching the
+  // rules as  defined in ICD-005.
+
+  DAL::Filename filename ("1234567890",
+			  "test",
+			  DAL::Filename::bf,
+			  DAL::Filename::h5);
+
+  //____________________________________________________________________________
+  // Set up LOFAR Common Attributes.
+
+  DAL::CommonAttributes attributes (filename);
+
+  //____________________________________________________________________________
+  // Create new BF data set; using IO_Mode::Create or IO_Mode::Truncate will
+  // cause overwriting an exiting file - if you rather wish to add to an
+  // existing data set, use IO_Mode::OpenOrCreate as I/O mode flags.
+
+  DAL::BF_RootGroup rootGroup (attributes,
+			       DAL::IO_Mode(DAL::IO_Mode::Create));
+
+  //____________________________________________________________________________
+  // Create sub-array pointing direction groups and beam groups; this can be
+  // done using a single function call - openBeam(...) - which will create
+  // intermediate object in case they are missing.
+
+  const unsigned nofPointings = 5;
+  const unsigned nofBeams     = 10;
+
+  for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
+    for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
+      rootGroup.openBeam ( numPointing, numBeam );
+    }
+  }
+  \endcode
   
-  Accessing (open/create) a Stokes dataset from within a beam group:
+  \section dal_devel_bf_hdfview Data inspection using HDFView
 
-  \code
-  // Open an existing Stokes dataset from within a beam group
-  bool BF_BeamGroup::openStokesDataset (std::string const &name);
-
-  // Open an existing Stokes dataset from within a beam group
-  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID);
-
-  // Create a new Stokes dataset from within a beam group
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &stokesID,
-                                          bool const &overwriteExisting=false);
-  \endcode
-
-  Accessing (open/create) a Stokes dataset from within a primary pointing
-  direction group:
-
-  \code
-  // Open an existing Stokes dataset from within a primary pointing direction group
-  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
-                                               unsigned int const &stokesID);
-    
-  // Create a new Stokes dataset from within a root group
-  bool BF_SubArrayPointing::createStokesDataset (unsigned int const &beamID,
-                                                 unsigned int const &stokesID,
-                                                 bool const &overwriteExisting=false);
-  \endcode
-
-  Accessing (open/create) a Stokes dataset from within the root group:
-
-  \code
-  // Open an existing Stokes dataset from within a root group
-  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
-                                        unsigned int const &beamID,
-                                        unsigned int const &stokesID);
-    
-  // Create a new Stokes dataset from within a root group
-  bool BF_RootGroup::createStokesDataset (unsigned int const &pointingID,
-                                          unsigned int const &beamID,
-                                          unsigned int const &stokesID,
-                                          bool const &overwriteExisting=false);
-  \endcode
+  \image html BF_HDFView.png
 
 */

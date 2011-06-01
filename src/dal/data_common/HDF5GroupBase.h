@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef HDF5COMMONINTERFACE_H
-#define HDF5COMMONINTERFACE_H
+#ifndef HDF5GROUPBASE_H
+#define HDF5GROUPBASE_H
 
 // Standard library header files
 #include <iostream>
@@ -33,12 +33,13 @@
 // DAL header files
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
+#include <core/HDF5Object.h>
 #include <data_common/CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class HDF5CommonInterface
+    \class HDF5GroupBase
 
     \ingroup DAL
     \ingroup data_common
@@ -76,7 +77,7 @@ namespace DAL { // Namespace DAL -- begin
 
     <h3>Requirements for derived classes</h3>
 
-    The HDF5CommonInterface requires derived classes to implement the following
+    The HDF5GroupBase requires derived classes to implement the following
     methods:
 
     <ol>
@@ -181,7 +182,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
     </ol>
   */  
-  class HDF5CommonInterface {
+  class HDF5GroupBase {
 
   protected:
 
@@ -191,6 +192,8 @@ namespace DAL { // Namespace DAL -- begin
     hid_t location_p;
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
+    //! Group type descriptor
+    std::string itsGroupType;
 
     /* === Protected functions which define basic interface === */
 
@@ -203,7 +206,7 @@ namespace DAL { // Namespace DAL -- begin
       \return status -- Status of the operation; returns <tt>false</tt> in case
               an error was encountered.
     */
-    virtual bool openEmbedded (bool const &create) = 0;
+    virtual bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) = 0;
     //! Set up the list of attributes attached to the structure
     virtual void setAttributes () = 0;
 
@@ -211,7 +214,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Destruction ==========================================================
 
-    virtual ~HDF5CommonInterface () {
+    virtual ~HDF5GroupBase () {
       attributes_p.clear();
       destroy();
     };
@@ -219,7 +222,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Operators ============================================================
 
     //! Copy operator
-    HDF5CommonInterface& operator= (HDF5CommonInterface const &other); 
+    HDF5GroupBase& operator= (HDF5GroupBase const &other); 
     
     // === Parameter accesss ====================================================
     
@@ -257,10 +260,10 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, HDF5CommonInterface.
+      \return className -- The name of the class, HDF5GroupBase.
     */
     inline std::string className () const {
-      return "HDF5CommonInterface";
+      return "HDF5GroupBase";
     }
     //! Provide a summary of the internal status
     inline void summary () {
@@ -308,8 +311,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       bool const &create) = 0;
-
+		       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) = 0;
+    
     /*!
       \brief Get the value of an attribute
       
@@ -332,13 +335,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -367,13 +370,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -403,13 +406,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -473,23 +476,29 @@ namespace DAL { // Namespace DAL -- begin
 				     val);
       }
 #endif
+
+    // === Static methods =======================================================
+
+    //! Open a group inside the structure
+    static bool open (hid_t &groupID,
+		      hid_t const &location,
+		      std::string const &name,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
-    // === Private methods ======================================================
-
   private:
-
+    
     //! Increment the reference count for a HDF5 object
     void incrementRefCount ();
 
     //! Unconditional copying
-    void copy (HDF5CommonInterface const &other);
+    void copy (HDF5GroupBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);
 
-  }; // Class HDF5CommonInterface -- end
+  }; // Class HDF5GroupBase -- end
   
 } // Namespace DAL -- end
 
-#endif /* HDF5COMMONINTERFACE_H */
+#endif /* HDF5GROUPBASE_H */
   

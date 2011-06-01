@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +26,7 @@
 #include <string>
 
 #include <coordinates/CoordinatesGroup.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -58,7 +55,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationCalibration : public HDF5CommonInterface {
+  class TBB_StationCalibration : public HDF5GroupBase {
     
     //! Complex electronic gain as function of frequency
     hid_t gainCurve_p;
@@ -119,7 +116,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open a station calibration group
     bool open (hid_t const &location,
-	       bool const &create=true);
+	       bool const &create);
 
   private:
     
@@ -129,10 +126,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a station calibration group
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) {
+      return flags.flags();
+    }
 
     //! Unconditional copying
     void copy (TBB_StationCalibration const &other);
