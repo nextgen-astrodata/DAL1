@@ -137,15 +137,30 @@ int main()
 
   std::cout << "--> Finished opening sub-groups." << std::endl;
   
-  return 0;
-
   /*__________________________________________________________________
-    Re-open the previously created BF file, before creating Stokes
-    dataset.
+    Create Stokes dataset for Stokes::I data.
   */
-  
+
   const unsigned nofSamples  = SAMPLES;
   const unsigned nofChannels = SUBBANDS * CHANNELS;
+
+
+  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
+			       0,                 // ID of beam group
+			       0,                 // ID of Stokes dataset
+			       nofSamples,
+			       SUBBANDS,
+			       CHANNELS,
+			       DAL::Stokes::I);
+  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
+			       0,                 // ID of beam group
+			       1,                 // ID of Stokes dataset
+			       nofSamples,
+			       SUBBANDS,
+			       CHANNELS,
+			       DAL::Stokes::Q);
+  
+  return 0;
 
   {
     hid_t fileID = rootGroup.locationID();

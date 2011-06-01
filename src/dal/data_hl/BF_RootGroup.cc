@@ -510,6 +510,102 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param pointingID  -- ID of the sub-array pointing group.
+    \param beamID      -- ID of the beam group.
+    \param stokesID    -- ID of the Stokes dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+					unsigned int const &beamID,
+					unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					unsigned int const &nofSubbands,
+					unsigned int const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
+  {
+    std::vector<unsigned int> channels (nofSubbands,nofChannels);
+    
+    return openStokesDataset (pointingID,
+			      beamID,
+			      stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+  
+  /*!
+    \param pointingID  -- ID of the sub-array pointing group.
+    \param beamID      -- ID of the beam group.
+    \param stokesID    -- ID of the Stokes dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+					unsigned int const &beamID,
+					unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					std::vector<unsigned int> const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
+  {
+    bool status = true;
+    
+    /*______________________________________________________
+      Open/Create sub-array pointing direction group.
+    */
+    
+    status = openSubArrayPointing (pointingID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
+    
+    name = BF_SubArrayPointing::getName (pointingID);
+    it   = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      status = false;
+    } else {
+      status = it->second.openStokesDataset (beamID,
+					     stokesID,
+					     nofSamples,
+					     nofChannels,
+					     component,
+					     datatype,
+					     flags);
+    }
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                                       sysLog
   
   SysLog BF_RootGroup::sysLog ()
