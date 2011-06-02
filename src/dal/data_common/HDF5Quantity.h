@@ -70,7 +70,7 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
 
-    //! Name of the quanity used a base for the attributes
+    //! Name of the quantity used a base for the attributes
     std::string itsName;
     //! Suffix appended to the attribute storing the value(s)
     std::string itsValueSuffix;
@@ -106,11 +106,13 @@ namespace DAL { // Namespace DAL -- begin
 		  std::string const &unit);
     
     //! Argumented constructor
-    HDF5Quantity (std::vector<double> const &value,
+    HDF5Quantity (std::string const &name,
+		  std::vector<double> const &value,
 		  std::string const &unit);
     
     //! Argumented constructor
-    HDF5Quantity (std::vector<double> const &value,
+    HDF5Quantity (std::string const &name,
+		  std::vector<double> const &value,
 		  std::vector<std::string> const &units);
 
     //! Copy constructor
@@ -128,12 +130,12 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Get the name of the quanity used a base for the attributes. 
+    //! Get the name of the quantity used a base for the attributes. 
     inline std::string name () const {
       return itsName;
     }
     
-    //! Set the name of the quanity used a base for the attributes. 
+    //! Set the name of the quantity used a base for the attributes. 
     inline bool setName (std::string const &name) {
       itsName = name;
       return true;

@@ -34,42 +34,46 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   /*!
-    \param name  -- 
-    \param value -- 
-    \param unit  -- 
+    \param name  -- Name of the quantity used a base for the attributes.
+    \param value -- Numerical value.
+    \param unit  -- Physical unit associated with the value.
     \param frame -- 
   */
   HDF5Measure::HDF5Measure (std::string const &name,
 			    double const &value,
 			    std::string const &unit,
 			    std::string const &frame)
-    : HDF5Quantity (name,value, unit)
+    : HDF5Quantity (name, value, unit)
   {
     setFrame (frame);
   }
   
   /*!
+    \param name   -- Name of the quantity used a base for the attributes.
     \param values -- 
     \param unit   -- 
     \param frame  -- 
   */
-  HDF5Measure::HDF5Measure (std::vector<double> const &values,
+  HDF5Measure::HDF5Measure (std::string const &name,
+			    std::vector<double> const &values,
 			    std::string const &unit,
 			    std::string const &frame)
-    : HDF5Quantity (values, unit)
+    : HDF5Quantity (name, values, unit)
   {
     setFrame (frame);
   }
   
   /*!
+    \param name   -- Name of the quantity used a base for the attributes.
     \param values -- 
     \param units  -- 
     \param frame  -- 
   */
-  HDF5Measure::HDF5Measure (std::vector<double> const &values,
+  HDF5Measure::HDF5Measure (std::string const &name,
+			    std::vector<double> const &values,
 			    std::vector<std::string> const &units,
 			    std::string const &frame)
-    : HDF5Quantity (values, units)
+    : HDF5Quantity (name, values, units)
   {
     setMeasure (values, units, frame);
   }

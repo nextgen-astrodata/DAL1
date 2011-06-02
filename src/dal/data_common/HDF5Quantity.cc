@@ -34,7 +34,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   /*!
-    \param name - Name of the quanity used a base for the attributes.
+    \param name  -- Name of the quantity used a base for the attributes.
   */
   HDF5Quantity::HDF5Quantity (std::string const &name)
   {
@@ -43,7 +43,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   /*!
-    \param name - Name of the quanity used a base for the attributes.
+    \param name        -- Name of the quantity used a base for the attributes.
     \param valueSuffix -- 
     \param unitsSuffix -- 
     \param separator   -- 
@@ -61,7 +61,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   /*!
-    \param name - Name of the quanity used a base for the attributes.
+    \param name  -- Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
     \param unit  -- Physical unit associated with the value.
   */
@@ -75,24 +75,30 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   /*!
+    \param name - Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
     \param unit  -- Physical unit associated with the value.
   */
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &value,
+  HDF5Quantity::HDF5Quantity (std::string const &name,
+			      std::vector<double> const &value,
 			      std::string const &unit)
   {
     init ();
+    setName (name);
     setQuantity (value, unit);
   }
   
   /*!
+    \param name - Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
     \param units -- Physical units associated with the value.
   */
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &value,
+  HDF5Quantity::HDF5Quantity (std::string const &name,
+			      std::vector<double> const &value,
 			      std::vector<std::string> const &units)
   {
     init ();
+    setName (name);
     setQuantity (value, units);
   }
   
