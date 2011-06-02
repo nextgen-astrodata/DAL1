@@ -123,7 +123,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Destruction ==========================================================
 
     //! Destructor
-    ~HDF5Quantity () {
+    virtual ~HDF5Quantity () {
       destroy();
     }
     

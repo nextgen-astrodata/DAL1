@@ -138,9 +138,9 @@ int test_convertVector ()
   cout << "\n[tdalConversions::test_convertVector]\n" << endl;
 
   int nofFailedTests = 0;
-  unsigned int nelem = 10;
   
 #ifdef DAL_WITH_CASA
+  unsigned int nelem = 10;
 
   cout << "[1] Convert std::vector<int> to casa::Vector<T> ..." << endl;
   try {

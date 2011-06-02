@@ -83,7 +83,7 @@ int test_constructors ()
 
   cout << "\n[3] Testing HDF5Quantity(string,string,string,string) ..." << endl;
   try {
-    HDF5Quantity q ("Time","Value","Units","");
+    HDF5Quantity q ("Time","Value","Units",".");
     //
     q.summary(); 
   } catch (std::string message) {
