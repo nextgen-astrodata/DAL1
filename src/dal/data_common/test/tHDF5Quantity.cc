@@ -21,6 +21,7 @@
 #include <data_common/HDF5Quantity.h>
 
 // Namespace usage
+using std::endl;
 using DAL::HDF5Quantity;
 
 /*!
@@ -47,17 +48,49 @@ using DAL::HDF5Quantity;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tHDF5Quantity::test_constructors]\n" << std::endl;
+  std::cout << "\n[tHDF5Quantity::test_constructors]" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "\n[1] Testing HDF5Quantity() ..." << endl;
   try {
     HDF5Quantity q;
     //
     q.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "\n[2] Testing HDF5Quantity(string) ..." << endl;
+  try {
+    HDF5Quantity q ("TIME");
+    //
+    q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "\n[3] Testing HDF5Quantity(string,string,string,string) ..." << endl;
+  try {
+    HDF5Quantity q ("Time","Value","Units","");
+    //
+    q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "\n[4] Testing HDF5Quantity(double,string) ..." << endl;
+  try {
+    double timeValue (1.0);
+    std::string timeUnit ("s");
+    HDF5Quantity q ("TIME",timeValue, timeUnit);
+    //
+    q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   

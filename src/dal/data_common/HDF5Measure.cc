@@ -34,14 +34,16 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   /*!
+    \param name  -- 
     \param value -- 
     \param unit  -- 
     \param frame -- 
   */
-  HDF5Measure::HDF5Measure (double const &value,
+  HDF5Measure::HDF5Measure (std::string const &name,
+			    double const &value,
 			    std::string const &unit,
 			    std::string const &frame)
-    : HDF5Quantity (value, unit)
+    : HDF5Quantity (name,value, unit)
   {
     setFrame (frame);
   }

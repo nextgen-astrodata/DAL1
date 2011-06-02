@@ -34,33 +34,66 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   /*!
+    \param name - Name of the quanity used a base for the attributes.
+  */
+  HDF5Quantity::HDF5Quantity (std::string const &name)
+  {
+    init ();
+    setName (name);
+  }
+  
+  /*!
+    \param name - Name of the quanity used a base for the attributes.
+    \param valueSuffix -- 
+    \param unitsSuffix -- 
+    \param separator   -- 
+  */
+  HDF5Quantity::HDF5Quantity (std::string const &name,
+			      std::string const &valueSuffix,
+			      std::string const &unitsSuffix,
+			      std::string const &separator)
+  {
+    init ();
+    setName (name);
+    setValueSuffix (valueSuffix);
+    setUnitsSuffix (unitsSuffix);
+    setSeparator (separator);
+  }
+
+  /*!
+    \param name - Name of the quanity used a base for the attributes.
     \param value -- Numerical value.
     \param unit  -- Physical unit associated with the value.
   */
-  HDF5Quantity::HDF5Quantity (double const &value,
+  HDF5Quantity::HDF5Quantity (std::string const &name,
+			      double const &value,
 			      std::string const &unit)
   {
+    init ();
+    setName (name);
     setQuantity (value, unit);
   }
   
   /*!
-    \param values -- Numerical values.
-    \param unit   -- Physical unit associated with the values.
+    \param value -- Numerical value.
+    \param unit  -- Physical unit associated with the value.
   */
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &values,
+  HDF5Quantity::HDF5Quantity (std::vector<double> const &value,
 			      std::string const &unit)
   {
-    setQuantity (values, unit);
+    init ();
+    setQuantity (value, unit);
   }
   
   /*!
-    \param values -- Numerical values.
-    \param units  -- Physical units associated with the values.
+    \param value -- Numerical value.
+    \param units -- Physical units associated with the value.
   */
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &values,
+  HDF5Quantity::HDF5Quantity (std::vector<double> const &value,
 			      std::vector<std::string> const &units)
   {
-    setQuantity (values, units);
+    init ();
+    setQuantity (value, units);
   }
   
   /*!
@@ -115,8 +148,8 @@ namespace DAL { // Namespace DAL -- begin
   */
   void HDF5Quantity::copy (HDF5Quantity const &other)
   {
-    itsValues.resize(other.itsValues.size());
-    itsValues = other.itsValues;
+    itsValue.resize(other.itsValue.size());
+    itsValue = other.itsValue;
 
     itsUnits.resize(other.itsUnits.size());
     itsUnits = other.itsUnits;
@@ -153,34 +186,34 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                  setQuantity
   
   /*!
-    \param values  -- Numerical values.
-    \param unit    -- Physical unit associated with the values.
+    \param value   -- Numerical value.
+    \param unit    -- Physical unit associated with the value.
     \return status -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool HDF5Quantity::setQuantity (std::vector<double> const &values,
+  bool HDF5Quantity::setQuantity (std::vector<double> const &value,
 				  std::string const &unit)
   {
-    std::vector<std::string> units (values.size(),unit);
-    return setQuantity (values,units);
+    std::vector<std::string> units (value.size(),unit);
+    return setQuantity (value,units);
   }
   
   //_____________________________________________________________________________
   //                                                                  setQuantity
   
   /*!
-    \param values  -- Numerical values.
-    \param units   -- Physical units associated with the values.
+    \param value   -- Numerical value.
+    \param units   -- Physical units associated with the value.
     \return status -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool HDF5Quantity::setQuantity (std::vector<double> const &values,
+  bool HDF5Quantity::setQuantity (std::vector<double> const &value,
 				  std::vector<std::string> const &units)
   {
-    if (values.size() == units.size()) {
+    if (value.size() == units.size()) {
       // Value(s)
-      itsValues.resize(values.size());
-      itsValues = values;
+      itsValue.resize(value.size());
+      itsValue = value;
       // Unit(s)
       itsUnits.resize(units.size());
       itsUnits = units;
@@ -199,11 +232,15 @@ namespace DAL { // Namespace DAL -- begin
   */
   void HDF5Quantity::summary (std::ostream &os)
   {
-    os << "[HDF5Quantity] Summary of internal parameters." << std::endl;
-    os << "-- Name base        = '" << itsName        << "'" << std::endl;
-    os << "-- Value suffix     = '" << itsValueSuffix << "'" << std::endl;
-    os << "-- Unit suffix      = '" << itsUnitSuffix  << "'" << std::endl;
-    os << "-- Separation token = '" << itsSeparator   << "'" << std::endl;
+    os << "[HDF5Quantity] Summary of internal parameters."   << std::endl;
+    os << "-- Numerical value      = " << itsValue       << std::endl;
+    os << "-- Physical units       = " << itsUnits       << std::endl;
+    os << "-- Name base            = " << itsName        << std::endl;
+    os << "-- Value suffix         = " << itsValueSuffix << std::endl;
+    os << "-- Unit suffix          = " << itsUnitSuffix  << std::endl;
+    os << "-- Separation token     = " << itsSeparator   << std::endl;
+    os << "-- Attribute name value = " << nameValue()    << std::endl;
+    os << "-- Attribute name units = " << nameUnits()    << std::endl;
   }
   
   // ============================================================================
@@ -212,15 +249,38 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void HDF5Quantity::init ()
   {
-    itsValues.clear();
+    itsValue.clear();
     itsUnits.clear();
     
-    itsName        = "";
+    itsName        = "QUANTITY";
     itsValueSuffix = "VALUE";
     itsUnitSuffix  = "UNITS";
     itsSeparator   = "_";
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    nameValue
+  
+  std::string HDF5Quantity::nameValue ()
+  {
+    std::string name = itsName + itsSeparator + itsValueSuffix;
+
+    return name;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    nameValue
+  
+  std::string HDF5Quantity::nameUnits ()
+  {
+    std::string name = itsName + itsSeparator + itsUnitSuffix;
+
+    return name;
   }
 
   // ============================================================================

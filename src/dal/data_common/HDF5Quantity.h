@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include <core/dalCommon.h>
 #include <core/HDF5Object.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -52,17 +53,22 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
     
+    The attrinute name of the components is constructed as follows:
+
+    \verbatim
+    <name><separator><valueSuffix>
+    <name><separator><unitSuffix>
+    \endverbatim
+
+    Example: An storing an instance of a \e Time by default would be -- using
+    <tt>name=TIME</tt>  -- <tt>TIME_VALUE</tt> and <tt>TIME_UNITS</tt>
+    
     <h3>Example(s)</h3>
     
   */  
   class HDF5Quantity {
 
   protected:
-
-    //! Numerical value(s)
-    std::vector<double> itsValues;
-    //! Physical unit(s) associated with the value(s)
-    std::vector<std::string> itsUnits;
 
     //! Name of the quanity used a base for the attributes
     std::string itsName;
@@ -73,6 +79,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Separator inserted betwen the base and the suffix of the name
     std::string itsSeparator;
     
+    //! Numerical value(s)
+    std::vector<double> itsValue;
+    //! Physical unit(s) associated with the value(s)
+    std::vector<std::string> itsUnits;
+
   public:
     
     // === Construction =========================================================
@@ -81,15 +92,25 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Quantity ();
 
     //! Argumented constructor
-    HDF5Quantity (double const &value,
-		  std::string const &unit);
+    HDF5Quantity (std::string const &name);
 
     //! Argumented constructor
-    HDF5Quantity (std::vector<double> const &values,
+    HDF5Quantity (std::string const &name,
+		  std::string const &valueSuffix,
+		  std::string const &unitsSuffix,
+		  std::string const &separator);
+
+    //! Argumented constructor
+    HDF5Quantity (std::string const &name,
+		  double const &value,
 		  std::string const &unit);
     
     //! Argumented constructor
-    HDF5Quantity (std::vector<double> const &values,
+    HDF5Quantity (std::vector<double> const &value,
+		  std::string const &unit);
+    
+    //! Argumented constructor
+    HDF5Quantity (std::vector<double> const &value,
 		  std::vector<std::string> const &units);
 
     //! Copy constructor
@@ -107,35 +128,13 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Get the numerical value(s)
-    inline std::vector<double> values () const {
-      return itsValues;
-    }
-    
-    //! Get the physical unit(s) associated with the value(s)
-    inline std::vector<std::string> units () const {
-      return itsUnits;
-    }
-
-    //! Set quantity composed of single value and unit
-    bool setQuantity (double const &value,
-		      std::string const &unit);
-
-    //! Set quantity composed of multiple values with common single unit
-    bool setQuantity (std::vector<double> const &values,
-		      std::string const &unit);
-
-    //! Set quantity
-    bool setQuantity (std::vector<double> const &values,
-		      std::vector<std::string> const &units);
-
     //! Get the name of the quanity used a base for the attributes. 
     inline std::string name () const {
       return itsName;
     }
     
     //! Set the name of the quanity used a base for the attributes. 
-    inline bool name (std::string const &name) {
+    inline bool setName (std::string const &name) {
       itsName = name;
       return true;
     }
@@ -155,24 +154,46 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string unitSuffix () const {
       return itsUnitSuffix;
     }
-
+    
     //! Set the suffix appended to the attribute storing the unit(s) 
-    inline bool setUnitSuffix (std::string const &suffix) {
+    inline bool setUnitsSuffix (std::string const &suffix) {
       itsUnitSuffix = suffix;
       return true;
     }
-
+    
     //! Get the separator inserted betwen the base and the suffix of the name. 
     inline std::string separator () const {
       return itsSeparator;
     }
-
+    
     //! Set the separator inserted betwen the base and the suffix of the name. 
-    inline bool separator (std::string const &separator) {
+    inline bool setSeparator (std::string const &separator) {
       itsSeparator = separator;
       return true;
     }
-
+    
+    //! Get the numerical value(s)
+    inline std::vector<double> value () const {
+      return itsValue;
+    }
+    
+    //! Get the physical unit(s) associated with the value(s)
+    inline std::vector<std::string> units () const {
+      return itsUnits;
+    }
+    
+    //! Set quantity composed of single value and unit
+    bool setQuantity (double const &value,
+		      std::string const &unit);
+    
+    //! Set quantity composed of multiple value with common single unit
+    bool setQuantity (std::vector<double> const &value,
+		      std::string const &unit);
+    
+    //! Set quantity
+    bool setQuantity (std::vector<double> const &value,
+		      std::vector<std::string> const &units);
+    
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, HDF5Quantity.
@@ -180,7 +201,7 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string className () const {
       return "HDF5Quantity";
     }
-
+    
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
@@ -190,6 +211,12 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
+
+    //! Get the name for the attribute storing the value of the quantity
+    std::string nameValue ();
+
+    //! Get the name for the attribute storing the units of the quantity
+    std::string nameUnits ();
 
     //! Write quantity to HDF5 file/group identified by \c location
     bool write (hid_t const &location);

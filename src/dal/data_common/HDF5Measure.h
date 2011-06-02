@@ -70,7 +70,8 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Measure ();
 
     //! Argumented constructor
-    HDF5Measure (double const &value,
+    HDF5Measure (std::string const &name,
+		 double const &value,
 		 std::string const &unit,
 		 std::string const &frame);
     
