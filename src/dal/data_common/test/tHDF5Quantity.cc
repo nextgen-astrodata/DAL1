@@ -21,6 +21,7 @@
 #include <data_common/HDF5Quantity.h>
 
 // Namespace usage
+using std::cout;
 using std::endl;
 using DAL::HDF5Quantity;
 
@@ -48,11 +49,14 @@ using DAL::HDF5Quantity;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tHDF5Quantity::test_constructors]" << endl;
+  cout << "\n[tHDF5Quantity::test_constructors]" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "\n[1] Testing HDF5Quantity() ..." << endl;
+  //________________________________________________________
+  // Test 1 : Default constructor
+
+  cout << "\n[1] Testing HDF5Quantity() ..." << endl;
   try {
     HDF5Quantity q;
     //
@@ -62,7 +66,10 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "\n[2] Testing HDF5Quantity(string) ..." << endl;
+  //________________________________________________________
+  // Test 2 : Argumented constructor
+
+  cout << "\n[2] Testing HDF5Quantity(string) ..." << endl;
   try {
     HDF5Quantity q ("TIME");
     //
@@ -72,7 +79,9 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "\n[3] Testing HDF5Quantity(string,string,string,string) ..." << endl;
+  //________________________________________________________
+
+  cout << "\n[3] Testing HDF5Quantity(string,string,string,string) ..." << endl;
   try {
     HDF5Quantity q ("Time","Value","Units","");
     //
@@ -82,13 +91,70 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "\n[4] Testing HDF5Quantity(double,string) ..." << endl;
+  //________________________________________________________
+
+  cout << "\n[4] Testing HDF5Quantity(string,double,string) ..." << endl;
   try {
-    double timeValue (1.0);
-    std::string timeUnit ("s");
-    HDF5Quantity q ("TIME",timeValue, timeUnit);
+    double value (1.0);
+    std::string unit ("s");
+    HDF5Quantity q ("TIME",value, unit);
     //
     q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+
+  cout << "\n[5] Testing HDF5Quantity(string,vector<double>,string) ..." << endl;
+  try {
+    std::vector<double> value (3,1.0);
+    std::string unit ("m");
+    HDF5Quantity q ("POSITION",value, unit);
+    //
+    q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+
+  cout << "\n[6] Testing HDF5Quantity(vector<string>,vector<double>,string) ..."
+       << endl;
+  try {
+    unsigned int nelem (3);
+    std::vector<double> value (nelem);
+    std::vector<std::string> units (nelem);
+    //
+    value[0] = 0;
+    value[1] = 90;
+    value[2] = 1;
+    units[0] = "deg";
+    units[1] = "deg";
+    units[2] = "m";
+    //
+    HDF5Quantity q ("POSITION",value, units);
+    //
+    q.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+
+  cout << "\n[7] Testing HDF5Quantity(HDF5Quantity) ..." << endl;
+  try {
+    std::vector<double> value (3,1.0);
+    std::string unit ("m");
+    //
+    HDF5Quantity q ("POSITION",value, unit);
+    q.summary(); 
+    //
+    HDF5Quantity copy (q);
+    copy.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
