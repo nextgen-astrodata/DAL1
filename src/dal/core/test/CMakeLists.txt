@@ -42,7 +42,6 @@ foreach (_test
     tdalCommon_operators
     tdalCommon_tbb
     tdalConversions
-    tEnumerations
     tdalFileType
     tdalArray
     tdalDataset
