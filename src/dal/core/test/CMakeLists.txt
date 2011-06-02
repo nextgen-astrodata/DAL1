@@ -40,7 +40,6 @@ foreach (_test
     tdalBaseTypes
     tdalCommon
     tdalCommon_operators
-    tdalCommon_tbb
     tdalConversions
     tdalFileType
     tdalArray
@@ -55,12 +54,6 @@ foreach (_test
     )
   add_test (${_test} ${_test})
 endforeach (_test)
-
-## tdalCommon ____________________________________
-
-if (dataset_tbb AND dataset_beamformed)
-  add_test (tdalCommon_bf tdalCommon ${dataset_tbb} ${dataset_beamformed})
-endif (dataset_tbb AND dataset_beamformed)
 
 ## tHDF5Object ___________________________________
 
