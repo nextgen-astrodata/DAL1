@@ -18,20 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_common/HDF5Quantity.h>
+#include <data_common/HDF5Measure.h>
 
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::HDF5Quantity;
+using DAL::HDF5Measure;
 
 /*!
-  \file tHDF5Quantity.cc
+  \file tHDF5Measure.cc
 
   \ingroup DAL
   \ingroup data_common
 
-  \brief A collection of test routines for the HDF5Quantity class
+  \brief A collection of test routines for the HDF5Measure class
   
   \author Lars B&auml;hren
   
@@ -42,25 +42,25 @@ using DAL::HDF5Quantity;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new HDF5Quantity object
+  \brief Test constructors for a new HDF5Measure object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  cout << "\n[tHDF5Quantity::test_constructors]" << endl;
+  cout << "\n[tHDF5Measure::test_constructors]" << endl;
 
-  int nofFailedTests = 0;
+  int nofFailedTests (0);
   
   //________________________________________________________
   // Test 1 : Default constructor
 
-  cout << "\n[1] Testing HDF5Quantity() ..." << endl;
+  cout << "\n[1] Testing HDF5Measure() ..." << endl;
   try {
-    HDF5Quantity q;
+    HDF5Measure m;
     //
-    q.summary(); 
+    m.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -69,92 +69,24 @@ int test_constructors ()
   //________________________________________________________
   // Test 2 : Argumented constructor
 
-  cout << "\n[2] Testing HDF5Quantity(string) ..." << endl;
+  cout << "\n[2] Testing HDF5Measure(string) ..." << endl;
   try {
-    HDF5Quantity q ("TIME");
+    HDF5Measure m ("TIME");
     //
-    q.summary(); 
+    m.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
   //________________________________________________________
+  // Test 3 : Argumented constructor
 
-  cout << "\n[3] Testing HDF5Quantity(string,string,string,string) ..." << endl;
+  cout << "\n[3] Testing HDF5Measure(string) ..." << endl;
   try {
-    HDF5Quantity q ("Time","Value","Units","");
+    HDF5Measure m ("TIME",1.0,"s","UTC");
     //
-    q.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //________________________________________________________
-
-  cout << "\n[4] Testing HDF5Quantity(string,double,string) ..." << endl;
-  try {
-    double value (1.0);
-    std::string unit ("s");
-    HDF5Quantity q ("TIME",value, unit);
-    //
-    q.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //________________________________________________________
-
-  cout << "\n[5] Testing HDF5Quantity(string,vector<double>,string) ..." << endl;
-  try {
-    std::vector<double> value (3,1.0);
-    std::string unit ("m");
-    HDF5Quantity q ("POSITION",value, unit);
-    //
-    q.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //________________________________________________________
-
-  cout << "\n[6] Testing HDF5Quantity(vector<string>,vector<double>,string) ..."
-       << endl;
-  try {
-    unsigned int nelem (3);
-    std::vector<double> value (nelem);
-    std::vector<std::string> units (nelem);
-    //
-    value[0] = 0;
-    value[1] = 90;
-    value[2] = 1;
-    units[0] = "deg";
-    units[1] = "deg";
-    units[2] = "m";
-    //
-    HDF5Quantity q ("POSITION",value, units);
-    //
-    q.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //________________________________________________________
-
-  cout << "\n[7] Testing HDF5Quantity(HDF5Quantity) ..." << endl;
-  try {
-    std::vector<double> value (3,1.0);
-    std::string unit ("m");
-    //
-    HDF5Quantity q ("POSITION",value, unit);
-    q.summary(); 
-    //
-    HDF5Quantity copy (q);
-    copy.summary(); 
+    m.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

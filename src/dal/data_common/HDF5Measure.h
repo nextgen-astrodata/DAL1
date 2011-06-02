@@ -47,15 +47,31 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>DAL::HDF5Quantity
     </ul>
     
     <h3>Synopsis</h3>
+    
+    The attrinute name of the components is constructed as follows:
+
+    \verbatim
+    <name><separator><valueSuffix>
+    <name><separator><unitSuffix>
+    <name><separator><frameSuffix>
+    \endverbatim
+
+    Example: An storing an instance of a \e Time by default would be -- using
+    <tt>name=TIME</tt>:
+    - <tt>TIME_VALUE</tt>
+    - <tt>TIME_UNITS</tt>
+    - <tt>TIME_FRAME</tt>
     
     <h3>Example(s)</h3>
     
   */  
   class HDF5Measure : public HDF5Quantity {
+
+  protected:
 
     //! Name of the reference frame
     std::string itsFrame;
@@ -69,6 +85,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     HDF5Measure ();
 
+    //! Argumented constructor
+    HDF5Measure (std::string const &name);
+    
+    //! Argumented constructor
+    HDF5Measure (std::string const &name,
+		 std::string const &valueSuffix,
+		 std::string const &unitsSuffix,
+		 std::string const &frameSuffix,
+		 std::string const &separator);
+    
     //! Argumented constructor
     HDF5Measure (std::string const &name,
 		 double const &value,
@@ -94,39 +120,46 @@ namespace DAL { // Namespace DAL -- begin
     //! Copy constructor
     HDF5Measure (HDF5Measure const &other);
     
-    // === Destruction ==========================================================
-    
-    //! Destructor
-    ~HDF5Measure ();
-    
     // === Operators ============================================================
     
     //! Overloading of the copy operator
     HDF5Measure& operator= (HDF5Measure const &other); 
     
     // === Parameter access =====================================================
-    
+
+    //! Get the name of the reference frame
     inline std::string frame () const {
       return itsFrame;
     }
 
+    //! Set the name of the reference frame
     inline bool setFrame (std::string const &frame) {
       itsFrame = frame;
       return true;
     }
     
+    //! Get the suffix appended to the attribute storing the frame
     inline std::string frameSuffix () const {
       return itsFrameSuffix;
     }
-      
+
+    //! Set the suffix appended to the attribute storing the frame
+    inline bool setFrameSuffix (std::string const &suffix) {
+      itsFrameSuffix = suffix;
+      return true;
+    }
+
+    //! Set the measure
     bool setMeasure (double const &value,
 		     std::string const &unit,
 		     std::string const &frame);
     
+    //! Set the measure
     bool setMeasure (std::vector<double> const &values,
 		     std::string const &unit,
 		     std::string const &frame);
     
+    //! Set the measure
     bool setMeasure (std::vector<double> const &values,
 		     std::vector<std::string> const &units,
 		     std::string const &frame);
@@ -149,6 +182,9 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
+    //! Get the name for the attribute storing the frame of the measure
+    std::string nameFrame ();
+
     //! Write measure to HDF5 file/group identified by \c location
     bool write (hid_t const &location);
     
@@ -160,6 +196,10 @@ namespace DAL { // Namespace DAL -- begin
     
     
   private:
+
+    //! Initialize internal parameters
+    void init (std::string const &frame="",
+	       std::string const &suffix="FRAME");
 
     //! Unconditional copying
     void copy (HDF5Measure const &other);

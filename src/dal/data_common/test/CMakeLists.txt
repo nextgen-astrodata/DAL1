@@ -2,7 +2,14 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-file (GLOB tests_data_common *.cc)
+set (tests_data_common 
+  tCommonAttributes.cc
+  tFilename.cc
+  tHDF5Measure.cc
+  tHDF5Quantity.cc
+  tSAS_Settings.cc
+  tTimestamp.cc
+  )
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
@@ -35,11 +42,12 @@ endforeach (src)
 
 ## C++ library
 
-add_test (tHDF5Quantity tHDF5Quantity)
-add_test (tTimestamp tTimestamp)
-add_test (tFilename tFilename)
+add_test (tHDF5Quantity tHDF5Quantity )
+add_test (tHDF5Measure  tHDF5Measure  )
+add_test (tTimestamp    tTimestamp    )
+add_test (tFilename     tFilename     )
+add_test (tSAS_Settings tSAS_Settings )
 add_test (tCommonAttributes tCommonAttributes)
-add_test (tSAS_Settings tSAS_Settings)
 
 if (H5DUMP_EXECUTABLE)
   add_test (tCommonAttributes_h5dump ${H5DUMP_EXECUTABLE} tCommonAttributes.h5)

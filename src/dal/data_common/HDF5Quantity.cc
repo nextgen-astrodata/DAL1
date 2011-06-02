@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5Quantity.h"
+#include <data_common/HDF5Quantity.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,38 +28,49 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
+  
   HDF5Quantity::HDF5Quantity ()
   {
     init ();
   }
 
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
+  
   /*!
     \param name  -- Name of the quantity used a base for the attributes.
   */
   HDF5Quantity::HDF5Quantity (std::string const &name)
   {
-    init ();
-    setName (name);
+    init (name);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
   
   /*!
     \param name        -- Name of the quantity used a base for the attributes.
-    \param valueSuffix -- 
-    \param unitsSuffix -- 
-    \param separator   -- 
+    \param valueSuffix -- Suffix appended to the attribute storing the value(s).
+    \param unitsSuffix -- Suffix appended to the attribute storing the unit(s).
+    \param separator   -- Separator inserted betwen the base and the suffix of
+           the name.
   */
   HDF5Quantity::HDF5Quantity (std::string const &name,
 			      std::string const &valueSuffix,
 			      std::string const &unitsSuffix,
 			      std::string const &separator)
   {
-    init ();
-    setName (name);
+    init (name);
     setValueSuffix (valueSuffix);
     setUnitsSuffix (unitsSuffix);
     setSeparator (separator);
   }
 
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
+  
   /*!
     \param name  -- Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
@@ -69,13 +80,15 @@ namespace DAL { // Namespace DAL -- begin
 			      double const &value,
 			      std::string const &unit)
   {
-    init ();
-    setName (name);
+    init (name);
     setQuantity (value, unit);
   }
   
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
+  
   /*!
-    \param name - Name of the quantity used a base for the attributes.
+    \param name  -- Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
     \param unit  -- Physical unit associated with the value.
   */
@@ -83,13 +96,15 @@ namespace DAL { // Namespace DAL -- begin
 			      std::vector<double> const &value,
 			      std::string const &unit)
   {
-    init ();
-    setName (name);
+    init (name);
     setQuantity (value, unit);
   }
   
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
+  
   /*!
-    \param name - Name of the quantity used a base for the attributes.
+    \param name  -- Name of the quantity used a base for the attributes.
     \param value -- Numerical value.
     \param units -- Physical units associated with the value.
   */
@@ -97,10 +112,12 @@ namespace DAL { // Namespace DAL -- begin
 			      std::vector<double> const &value,
 			      std::vector<std::string> const &units)
   {
-    init ();
-    setName (name);
+    init (name);
     setQuantity (value, units);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                 HDF5Quantity
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
@@ -116,11 +133,6 @@ namespace DAL { // Namespace DAL -- begin
   //  Destruction
   //
   // ============================================================================
-  
-  HDF5Quantity::~HDF5Quantity ()
-  {
-    destroy();
-  }
   
   void HDF5Quantity::destroy ()
   {;}
@@ -238,15 +250,15 @@ namespace DAL { // Namespace DAL -- begin
   */
   void HDF5Quantity::summary (std::ostream &os)
   {
-    os << "[HDF5Quantity] Summary of internal parameters."   << std::endl;
-    os << "-- Numerical value      = " << itsValue       << std::endl;
-    os << "-- Physical units       = " << itsUnits       << std::endl;
-    os << "-- Name base            = " << itsName        << std::endl;
-    os << "-- Value suffix         = " << itsValueSuffix << std::endl;
-    os << "-- Unit suffix          = " << itsUnitSuffix  << std::endl;
-    os << "-- Separation token     = " << itsSeparator   << std::endl;
-    os << "-- Attribute name value = " << nameValue()    << std::endl;
-    os << "-- Attribute name units = " << nameUnits()    << std::endl;
+    os << "[HDF5Quantity] Summary of internal parameters." << std::endl;
+    os << "-- Numerical value      = " << itsValue         << std::endl;
+    os << "-- Physical units       = " << itsUnits         << std::endl;
+    os << "-- Name base            = " << itsName          << std::endl;
+    os << "-- Value suffix         = " << itsValueSuffix   << std::endl;
+    os << "-- Unit suffix          = " << itsUnitSuffix    << std::endl;
+    os << "-- Separation token     = " << itsSeparator     << std::endl;
+    os << "-- Attribute name value = " << nameValue()      << std::endl;
+    os << "-- Attribute name units = " << nameUnits()      << std::endl;
   }
   
   // ============================================================================
@@ -254,47 +266,40 @@ namespace DAL { // Namespace DAL -- begin
   //  Public methods
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                         init
   
-  void HDF5Quantity::init ()
+  /*!
+    \param name  -- Name of the quantity used a base for the attributes.
+  */
+  void HDF5Quantity::init (std::string const &name)
   {
     itsValue.clear();
     itsUnits.clear();
     
-    itsName        = "QUANTITY";
+    itsName        = name;
     itsValueSuffix = "VALUE";
     itsUnitSuffix  = "UNITS";
     itsSeparator   = "_";
   }
 
   //_____________________________________________________________________________
-  //                                                                    nameValue
+  //                                                                        write
   
-  std::string HDF5Quantity::nameValue ()
+  bool HDF5Quantity::write (hid_t const &location)
   {
-    std::string name = itsName + itsSeparator + itsValueSuffix;
-
-    return name;
+    bool status = location;
+    return status;
   }
-
+  
   //_____________________________________________________________________________
-  //                                                                    nameValue
+  //                                                                         read
   
-  std::string HDF5Quantity::nameUnits ()
+  bool HDF5Quantity::read (hid_t const &location)
   {
-    std::string name = itsName + itsSeparator + itsUnitSuffix;
-
-    return name;
+    bool status = location;
+    return status;
   }
-
-  // ============================================================================
-  //
-  //  Static methods
-  //
-  // ============================================================================
   
-  
-
 } // Namespace DAL -- end

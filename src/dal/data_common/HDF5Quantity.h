@@ -61,7 +61,9 @@ namespace DAL { // Namespace DAL -- begin
     \endverbatim
 
     Example: An storing an instance of a \e Time by default would be -- using
-    <tt>name=TIME</tt>  -- <tt>TIME_VALUE</tt> and <tt>TIME_UNITS</tt>
+    <tt>name=TIME</tt>:
+    - <tt>TIME_VALUE</tt>
+    - <tt>TIME_UNITS</tt>
     
     <h3>Example(s)</h3>
     
@@ -121,7 +123,9 @@ namespace DAL { // Namespace DAL -- begin
     // === Destruction ==========================================================
 
     //! Destructor
-    ~HDF5Quantity ();
+    ~HDF5Quantity () {
+      destroy();
+    }
     
     // === Operators ============================================================
     
@@ -215,25 +219,27 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
 
     //! Get the name for the attribute storing the value of the quantity
-    std::string nameValue ();
-
+    std::string nameValue () {
+      std::string name = itsName + itsSeparator + itsValueSuffix;
+      return name;
+    }
+    
     //! Get the name for the attribute storing the units of the quantity
-    std::string nameUnits ();
-
+    std::string nameUnits () {
+      std::string name = itsName + itsSeparator + itsUnitSuffix;  
+      return name;
+    }
+    
     //! Write quantity to HDF5 file/group identified by \c location
-    bool write (hid_t const &location);
+    virtual bool write (hid_t const &location);
     
     //! Read quantity from HDF5 file/group identified by \c location
-    bool read (hid_t const &location);
-    
-    // === Static methods =======================================================
-    
-    
+    virtual bool read (hid_t const &location);
     
   private:
 
     //! Initialize internal parameters
-    void init ();
+    void init (std::string const &name="QUANTITY");
     
     //! Unconditional copying
     void copy (HDF5Quantity const &other);

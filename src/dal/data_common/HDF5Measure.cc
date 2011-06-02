@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5Measure.h"
+#include <data_common/HDF5Measure.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,10 +28,49 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
+  
   HDF5Measure::HDF5Measure ()
-    : HDF5Quantity()
   {
+    init();
   }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
+  
+  /*!
+    \param name  -- Name of the quantity used a base for the attributes.
+  */
+  HDF5Measure::HDF5Measure (std::string const &name)
+    : HDF5Quantity (name)
+  {
+    init();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
+  
+  /*!
+    \param name        -- Name of the quantity used a base for the attributes.
+    \param valueSuffix -- Suffix appended to the attribute storing the value(s).
+    \param unitsSuffix -- Suffix appended to the attribute storing the unit(s).
+    \param frameSuffix -- 
+    \param separator   -- Separator inserted betwen the base and the suffix of
+           the name.
+  */
+  HDF5Measure::HDF5Measure (std::string const &name,
+			    std::string const &valueSuffix,
+			    std::string const &unitsSuffix,
+			    std::string const &frameSuffix,
+			    std::string const &separator)
+    : HDF5Quantity (name, valueSuffix, unitsSuffix, separator)
+  {
+    setFrameSuffix(frameSuffix);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
   
   /*!
     \param name  -- Name of the quantity used a base for the attributes.
@@ -45,13 +84,16 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &frame)
     : HDF5Quantity (name, value, unit)
   {
-    setFrame (frame);
+    init(frame);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
   
   /*!
     \param name   -- Name of the quantity used a base for the attributes.
-    \param values -- 
-    \param unit   -- 
+    \param values -- Numerical values.
+    \param unit   -- Physical unit associated with the value.
     \param frame  -- 
   */
   HDF5Measure::HDF5Measure (std::string const &name,
@@ -60,8 +102,11 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &frame)
     : HDF5Quantity (name, values, unit)
   {
-    setFrame (frame);
+    init(frame);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
   
   /*!
     \param name   -- Name of the quantity used a base for the attributes.
@@ -75,8 +120,11 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &frame)
     : HDF5Quantity (name, values, units)
   {
-    setMeasure (values, units, frame);
+    init(frame);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
   
   /*!
     \param quantity -- 
@@ -86,8 +134,11 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &frame)
     : HDF5Quantity(quantity)
   {
-    setFrame (frame);
+    init(frame);
   }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Measure
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
@@ -104,11 +155,6 @@ namespace DAL { // Namespace DAL -- begin
   //  Destruction
   //
   // ============================================================================
-  
-  HDF5Measure::~HDF5Measure ()
-  {
-    destroy();
-  }
   
   void HDF5Measure::destroy ()
   {;}
@@ -194,6 +240,16 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5Measure::summary (std::ostream &os)
   {
     os << "[HDF5Measure] Summary of internal parameters." << std::endl;
+    os << "-- Numerical value      = " << itsValue       << std::endl;
+    os << "-- Physical units       = " << itsUnits       << std::endl;
+    os << "-- Name base            = " << itsName        << std::endl;
+    os << "-- Value suffix         = " << itsValueSuffix << std::endl;
+    os << "-- Unit suffix          = " << itsUnitSuffix  << std::endl;
+    os << "-- Frame suffix         = " << itsFrameSuffix << std::endl;
+    os << "-- Separation token     = " << itsSeparator   << std::endl;
+    os << "-- Attribute name value = " << nameValue()    << std::endl;
+    os << "-- Attribute name units = " << nameUnits()    << std::endl;
+    os << "-- Attribute name frame = " << nameFrame()    << std::endl;
   }
   
   // ============================================================================
@@ -202,14 +258,44 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  
+  /*!
+    \param frame  -- Name of the reference frame.
+    \param suffix -- Suffix appended to the attribute storing the frame.
+  */
+  void HDF5Measure::init (std::string const &frame,
+			  std::string const &suffix)
+  {
+    itsFrame       = frame;
+    itsFrameSuffix = suffix;
+  }
 
-  // ============================================================================
-  //
-  //  Static methods
-  //
-  // ============================================================================
+  //_____________________________________________________________________________
+  //                                                                    nameFrame
   
+  std::string HDF5Measure::nameFrame ()
+  {
+    std::string name = itsName + itsSeparator + itsFrameSuffix;
+
+    return name;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                        write
+  
+  bool HDF5Measure::write (hid_t const &location)
+  {
+    bool status = location;
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         read
+  
+  bool HDF5Measure::read (hid_t const &location)
+  {
+    bool status = location;
+    return status;
+  }
   
 
 } // Namespace DAL -- end
