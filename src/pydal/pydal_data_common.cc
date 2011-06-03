@@ -325,5 +325,15 @@ void export_HDF5Quantity ()
 	  "Get the suffix appended to the attribute storing the units(s).")
     .def( "setUnitsSuffix", &HDF5Quantity::setUnitsSuffix,
 	  "Get the suffix appended to the attribute storing the units(s).")
+    .def( "separator", &HDF5Quantity::separator,
+	  "Get the separator inserted betwen the base and the suffix of the name.")
+    .def( "setSeparator", &HDF5Quantity::setSeparator,
+	  "Set the separator inserted betwen the base and the suffix of the name.")
+    .def( "value", &HDF5Quantity::value,
+	  "Get the numerical value(s).")
+    .def( "setValue", &HDF5Quantity::setValue,
+	  "Set the name of the class.")
+    .def( "units", &HDF5Quantity::units,
+	  "Get the physical unit(s) associated with the value(s).")
     ;  
 }
