@@ -164,6 +164,63 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                                test_parameters
+
+/*!
+  \brief Test methods for accessing internal parameters
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_parameters ()
+{
+  cout << "\n[tHDF5Quantity::test_parameters]" << endl;
+
+  int nofFailedTests = 0;
+  
+  HDF5Quantity q;
+  q.summary();
+
+  cout << "\n[1] Set base of the attribute name ..." << endl;
+  {
+    q.setName ("Position");
+    q.summary();
+  }
+
+  cout << "\n[2] Set the separator between the sub-strings ..." << endl;
+  {
+    q.setSeparator (".");
+    q.summary();
+  }
+  
+  cout << "\n[3] Set the suffix for the attribute storing the value ..." << endl;
+  {
+    q.setValueSuffix ("Value");
+    q.summary();
+  }
+  
+  cout << "\n[4] Set the suffix for the attribute storing the units ..." << endl;
+  {
+    q.setUnitsSuffix ("Units");
+    q.summary();
+  }
+  
+  cout << "\n[5] Set the value of the quantity ..." << endl;
+  {
+    std::vector<double> value (3);
+    //
+    value[0] =  0.0;
+    value[1] = 90.0;
+    value[2] =  0.5;
+    //
+    q.setValue(value);
+    q.summary();
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                        test_io
 
 /*!
@@ -232,6 +289,9 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+
+  // Test methods for accessing internal parameters
+  nofFailedTests += test_parameters ();
 
   // Test writing/reading attributes storing quantity components
   nofFailedTests += test_io (filename);
