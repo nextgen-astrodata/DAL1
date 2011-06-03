@@ -222,16 +222,10 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
 
     //! Get the name for the attribute storing the value of the quantity
-    std::string nameValue () {
-      std::string name = itsName + itsSeparator + itsValueSuffix;
-      return name;
-    }
+    std::string nameValue ();
     
     //! Get the name for the attribute storing the units of the quantity
-    std::string nameUnits () {
-      std::string name = itsName + itsSeparator + itsUnitSuffix;  
-      return name;
-    }
+    std::string nameUnits ();
     
     //! Write quantity to HDF5 file/group identified by \c location
     virtual bool write (hid_t const &location);

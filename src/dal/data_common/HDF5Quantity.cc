@@ -309,8 +309,50 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                                    nameValue
+  
+  std::string HDF5Quantity::nameValue ()
+  {
+    std::string name = itsName;
+
+    if (!itsSeparator.empty()) {
+      name += itsSeparator;
+    }
+
+    if (!itsValueSuffix.empty()) {
+      name += itsValueSuffix;
+    }
+
+    return name;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                    nameUnits
+
+  std::string HDF5Quantity::nameUnits ()
+  {
+    std::string name = itsName;
+
+    if (!itsSeparator.empty()) {
+      name += itsSeparator;
+    }
+
+    if (!itsUnitSuffix.empty()) {
+      name += itsUnitSuffix;
+    }
+
+    return name;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                        write
   
+  /*!
+    \param location -- Identifier of the HDF5 object, to which the attributes 
+           storing the quantity are being written.
+    \return status  -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool HDF5Quantity::write (hid_t const &location)
   {
     bool status = true;
@@ -335,9 +377,30 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         read
   
+  /*!
+    \param location -- Identifier of the HDF5 object, from which the attributes 
+           storing the quantity are being read.
+    \return status  -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool HDF5Quantity::read (hid_t const &location)
   {
-    bool status = location;
+    bool status = true;
+
+    if ( H5Iis_valid(location) ) {
+
+      // Get the names of the attributes ...
+      std::string attributeValue = nameValue();
+      std::string attributeUnits = nameUnits();
+      // ... and write them
+      status *= HDF5Attribute::read (location, attributeValue, itsValue);
+      status *= HDF5Attribute::read (location, attributeUnits, itsUnits);
+
+    } else {
+      std::cerr << "[HDF5Quantity::write] Invalid location ID!" << std::endl;
+      return false;
+    }
+
     return status;
   }
   
