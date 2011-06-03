@@ -53,20 +53,71 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
     
-    The attrinute name of the components is constructed as follows:
+    The attribute name of the components is constructed as follows:
 
     \verbatim
     <name><separator><valueSuffix>
     <name><separator><unitSuffix>
     \endverbatim
 
-    Example: An storing an instance of a \e Time by default would be -- using
-    <tt>name=TIME</tt>:
-    - <tt>TIME_VALUE</tt>
-    - <tt>TIME_UNITS</tt>
+    Depending on the values of the individual parameters, the resulting 
+    attribute names will be as follows:
+    
+    <center>
+    <table>
+      <tr>
+        <td class="indexkey">Name</td>
+        <td class="indexkey">ValueSuffix</td>
+        <td class="indexkey">UnitSuffix</td>
+        <td class="indexkey">Separator</td>
+        <td class="indexkey">Attribute value</td>
+        <td class="indexkey">Attribute units</td>
+      </tr>
+      <tr>
+        <td>TIME</td>
+        <td>VALUE</td>
+        <td>UNITS</td>
+        <td>_</td>
+        <td>TIME_VALUE</td>
+        <td>TIME_UNITS</td>
+      </tr>
+      <tr>
+        <td>TIME</td>
+        <td></td>
+        <td>UNITS</td>
+        <td>_</td>
+        <td>TIME</td>
+        <td>TIME_UNITS</td>
+      </tr>
+      <tr>
+        <td>Time</td>
+        <td>Value</td>
+        <td>Units</td>
+        <td>.</td>
+        <td>Time.Value</td>
+        <td>Time.Units</td>
+      </tr>
+      <tr>
+        <td>Time</td>
+        <td></td>
+        <td>Units</td>
+        <td>.</td>
+        <td>Time</td>
+        <td>Time.Units</td>
+      </tr>
+      <tr>
+        <td>Time</td>
+        <td>Value</td>
+        <td>Units</td>
+        <td></td>
+        <td>TimeValue</td>
+        <td>TimeUnits</td>
+      </tr>
+    </table>
+    </center>
     
     <h3>Example(s)</h3>
-    
+
   */  
   class HDF5Quantity {
 

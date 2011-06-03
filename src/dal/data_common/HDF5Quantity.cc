@@ -315,11 +315,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string name = itsName;
 
-    if (!itsSeparator.empty()) {
-      name += itsSeparator;
-    }
-
     if (!itsValueSuffix.empty()) {
+      name += itsSeparator;
       name += itsValueSuffix;
     }
 
@@ -333,11 +330,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string name = itsName;
 
-    if (!itsSeparator.empty()) {
-      name += itsSeparator;
-    }
-
     if (!itsUnitSuffix.empty()) {
+      name += itsSeparator;
       name += itsUnitSuffix;
     }
 
