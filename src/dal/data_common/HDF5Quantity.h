@@ -183,6 +183,9 @@ namespace DAL { // Namespace DAL -- begin
       return itsValue;
     }
     
+    //! Set the numerical value(s)
+    bool setValue (std::vector<double> const &value);
+    
     //! Get the physical unit(s) associated with the value(s)
     inline std::vector<std::string> units () const {
       return itsUnits;

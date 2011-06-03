@@ -184,6 +184,30 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  /*!
+    \param value   -- Numerical value.
+    \return status -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool HDF5Quantity::setValue (std::vector<double> const &value)
+  {
+    bool status = true;
+
+    if ( value.size() == itsValue.size() ) {
+      itsValue = value;
+    } else if ( value.size() == itsUnits.size() ) {
+      itsValue.resize(itsUnits.size());
+      itsValue = value;
+    } else if ( itsValue.size()*itsUnits.size() == 0 ) {
+      itsValue.resize(value.size());
+      itsValue = value;
+    } else {
+      status = false;
+    }
+
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                                  setQuantity
   
@@ -289,7 +313,22 @@ namespace DAL { // Namespace DAL -- begin
   
   bool HDF5Quantity::write (hid_t const &location)
   {
-    bool status = location;
+    bool status = true;
+
+    if ( H5Iis_valid(location) ) {
+
+      // Get the names of the attributes ...
+      std::string attributeValue = nameValue();
+      std::string attributeUnits = nameUnits();
+      // ... and write them
+      status *= HDF5Attribute::write (location, attributeValue, itsValue);
+      status *= HDF5Attribute::write (location, attributeUnits, itsUnits);
+
+    } else {
+      std::cerr << "[HDF5Quantity::write] Invalid location ID!" << std::endl;
+      return false;
+    }
+
     return status;
   }
   

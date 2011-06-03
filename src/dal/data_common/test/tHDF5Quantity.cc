@@ -164,6 +164,59 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                                        test_io
+
+/*!
+  \brief Test writing/reading attributes storing quantity components
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_io (std::string const &filename)
+{
+  cout << "\n[tHDF5Quantity::test_io]" << endl;
+
+  int nofFailedTests = 0;
+  hid_t fileID       = H5Fcreate (filename.c_str(),
+				  H5F_ACC_TRUNC,
+				  H5P_DEFAULT,
+				  H5P_DEFAULT);
+  
+  HDF5Quantity q ("Position","Value","Units",".");
+  
+  /*________________________________________________________
+    Set numerical value and units of the quantity
+  */
+  {
+    unsigned int nelem (3);
+    std::vector<double> value (nelem);
+    std::vector<std::string> units (nelem);
+    //
+    value[0] = 0;
+    value[1] = 90;
+    value[2] = 1;
+    units[0] = "deg";
+    units[1] = "deg";
+    units[2] = "m";
+    //
+    q.setQuantity (value,units);
+    //
+    q.summary();
+  }
+  
+  /*________________________________________________________
+    Write attributes to file
+  */
+  {
+    q.write (fileID);
+  }
+  
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -174,10 +227,14 @@ int test_constructors ()
 */
 int main ()
 {
-  int nofFailedTests (0);
+  int nofFailedTests   = 0;
+  std::string filename = "tHDF5Quantity.h5";
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+
+  // Test writing/reading attributes storing quantity components
+  nofFailedTests += test_io (filename);
 
   return nofFailedTests;
 }
