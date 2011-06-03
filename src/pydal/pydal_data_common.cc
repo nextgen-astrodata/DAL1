@@ -34,6 +34,7 @@
 
 using DAL::CommonAttributes;
 using DAL::Filename;
+using DAL::HDF5Quantity;
 using DAL::SAS_Settings;
 using DAL::Timestamp;
 
@@ -202,14 +203,14 @@ void export_Filename ()
     ;
 }
 
-  //_____________________________________________________________________________
-  //                                                                    Timestamp
-  
+//_____________________________________________________________________________
+//                                                                    Timestamp
+
 void export_Timestamp () 
 {
   //__________________________________________________________________
   // Enumeration: Month of the year
-
+  
   bpl::enum_<Timestamp::Month>("Month")
     .value("Jan",Timestamp::Jan)
     .value("Feb",Timestamp::Feb)
@@ -224,7 +225,7 @@ void export_Timestamp ()
     .value("Nov",Timestamp::Nov)
     .value("Dec",Timestamp::Dec)
     ;
-
+  
   void (Timestamp::*setMonth1)(int const &)   = &Timestamp::setMonth;
   void (Timestamp::*setMonth2)(Timestamp::Month const &) = &Timestamp::setMonth;
   
@@ -272,8 +273,8 @@ void export_Timestamp ()
     ;
 }
 
-  //_____________________________________________________________________________
-  //                                                                 SAS_Settings
+//_____________________________________________________________________________
+//                                                                 SAS_Settings
 
 void export_SAS_Settings () 
 {
@@ -291,5 +292,38 @@ void export_SAS_Settings ()
 	  "Get the values for the FilterSelection field in SAS.")
     .def( "haveFilterSelection", &SAS_Settings::haveFilterSelection,
 	  "Is name a valid value for the AntennaSet field in SAS?")
+    ;  
+}
+
+//_____________________________________________________________________________
+//                                                                 HDF5Quantity
+
+/*!
+  \todo Complete implementation.
+*/
+void export_HDF5Quantity () 
+{
+  bpl::class_<HDF5Quantity>("HDF5Quantity")
+    .def( bpl::init<>())
+    .def( bpl::init<string>())
+    .def( bpl::init<string,string,string,string>())
+    .def( bpl::init<string,double,string>())
+    .def( bpl::init<string,std::vector<double>,string>())
+    .def( bpl::init<string,std::vector<double>,std::vector<string> >())
+    .def( bpl::init<HDF5Quantity>())
+    .def( "className", &HDF5Quantity::className,
+	  "Get the name of the class.")
+    .def( "name", &HDF5Quantity::name,
+	  "Get the name of the quantity used a base for the attributes.")
+    .def( "setName", &HDF5Quantity::setName,
+	  "Set the name of the quantity used a base for the attributes.")
+    .def( "valueSuffix", &HDF5Quantity::valueSuffix,
+	  "Get the suffix appended to the attribute storing the value(s).")
+    .def( "setValueSuffix", &HDF5Quantity::setValueSuffix,
+	  "Get the suffix appended to the attribute storing the value(s).")
+    .def( "unitsSuffix", &HDF5Quantity::unitsSuffix,
+	  "Get the suffix appended to the attribute storing the units(s).")
+    .def( "setUnitsSuffix", &HDF5Quantity::setUnitsSuffix,
+	  "Get the suffix appended to the attribute storing the units(s).")
     ;  
 }

@@ -208,7 +208,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     //! Get the suffix appended to the attribute storing the unit(s) 
-    inline std::string unitSuffix () const {
+    inline std::string unitsSuffix () const {
       return itsUnitSuffix;
     }
     

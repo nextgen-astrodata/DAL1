@@ -87,17 +87,20 @@ void export_Coordinate ();
 
 #include <data_common/CommonAttributes.h>
 #include <data_common/Filename.h>
-#include <data_common/Timestamp.h>
+#include <data_common/HDF5Quantity.h>
 #include <data_common/SAS_Settings.h>
+#include <data_common/Timestamp.h>
 
-//! Bindings for DAL::Filename
-void export_Filename ();
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
-//! Bindings for DAL::Timestamp
-void export_Timestamp ();
+//! Bindings for DAL::Filename
+void export_Filename ();
+//! Bindings for DAL::HDF5Quantity
+void export_HDF5Quantity ();
 //! Bindings for DAL::SAS_Settings
 void export_SAS_Settings ();
+//! Bindings for DAL::Timestamp
+void export_Timestamp ();
 
 // === data_hl ==================================================================
 

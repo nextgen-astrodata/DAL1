@@ -82,10 +82,11 @@ BOOST_PYTHON_MODULE(pydal)
   //
   // ============================================================================
   
-  export_Filename ();
   export_CommonAttributes ();
-  export_Timestamp ();
+  export_Filename ();
+  export_HDF5Quantity ();
   export_SAS_Settings ();
+  export_Timestamp ();
   
   // ============================================================================
   //

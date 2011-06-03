@@ -274,7 +274,12 @@ namespace DAL { // Namespace DAL -- begin
   
   std::string HDF5Measure::nameFrame ()
   {
-    std::string name = itsName + itsSeparator + itsFrameSuffix;
+    std::string name = itsName;
+
+    if (!itsFrameSuffix.empty()) {
+      name += itsSeparator;
+      name += itsFrameSuffix;
+    }
 
     return name;
   }
@@ -282,20 +287,59 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                        write
   
+  /*!
+    \param location -- Identifier of the HDF5 object, to which the attributes 
+           storing the measure are being written.
+    \return status  -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool HDF5Measure::write (hid_t const &location)
   {
-    bool status = location;
+    bool status = true;
+
+    if ( H5Iis_valid(location) ) {
+
+      // Get the names of the attributes ...
+      std::string attributeFrame = nameFrame();
+      // ... and write them
+      status *= HDF5Quantity::write  (location);
+      status *= HDF5Attribute::write (location, attributeFrame, itsFrameSuffix);
+
+    } else {
+      std::cerr << "[HDF5Measure::write] Invalid location ID!" << std::endl;
+      return false;
+    }
+
     return status;
   }
   
   //_____________________________________________________________________________
   //                                                                         read
   
+  /*!
+    \todo Implement method 
+    \param location -- Identifier of the HDF5 object, from which the attributes 
+           storing the measure are being read.
+    \return status  -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool HDF5Measure::read (hid_t const &location)
   {
-    bool status = location;
+    bool status = true;
+
+    if ( H5Iis_valid(location) ) {
+
+      // Get the names of the attributes ...
+      std::string attributeFrame = nameFrame();
+      // ... and read them
+      
+    } else {
+      std::cerr << "[HDF5Measure::write] Invalid location ID!" << std::endl;
+      return false;
+    }
+
     return status;
   }
   
-
+  
 } // Namespace DAL -- end
