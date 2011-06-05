@@ -184,6 +184,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                     setValue
+  
   /*!
     \param value   -- Numerical value.
     \return status -- Status of the operation; returns \e false in case an
@@ -201,6 +204,33 @@ namespace DAL { // Namespace DAL -- begin
     } else if ( itsValue.size()*itsUnits.size() == 0 ) {
       itsValue.resize(value.size());
       itsValue = value;
+    } else {
+      status = false;
+    }
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     setUnits
+  
+  /*!
+    \param value   -- Physical unit(s) associated with the value(s).
+    \return status -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool HDF5Quantity::setUnits (std::vector<std::string> const &units)
+  {
+    bool status = true;
+
+    if ( units.size() == itsUnits.size() ) {
+      itsUnits = units;
+    } else if ( units.size() == itsValue.size() ) {
+      itsUnits.resize(itsValue.size());
+      itsUnits = units;
+    } else if ( itsUnits.size()*itsValue.size() == 0 ) {
+      itsUnits.resize(units.size());
+      itsUnits = units;
     } else {
       status = false;
     }

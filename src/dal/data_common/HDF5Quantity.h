@@ -242,6 +242,9 @@ namespace DAL { // Namespace DAL -- begin
       return itsUnits;
     }
     
+    //! Set the physical unit(s) associated with the value(s)
+    bool setUnits (std::vector<std::string> const &units);
+    
     //! Set quantity composed of single value and unit
     bool setQuantity (double const &value,
 		      std::string const &unit);

@@ -303,6 +303,11 @@ void export_SAS_Settings ()
 */
 void export_HDF5Quantity () 
 {
+  void (HDF5Quantity::*summary1)() 
+    = &HDF5Quantity::summary;
+  void (HDF5Quantity::*summary2)(std::ostream &) 
+    = &HDF5Quantity::summary;
+  
   bpl::class_<HDF5Quantity>("HDF5Quantity")
     .def( bpl::init<>())
     .def( bpl::init<string>())
@@ -335,5 +340,14 @@ void export_HDF5Quantity ()
 	  "Set the name of the class.")
     .def( "units", &HDF5Quantity::units,
 	  "Get the physical unit(s) associated with the value(s).")
+    .def( "setUnits", &HDF5Quantity::setUnits,
+	  "Set the physical unit(s) associated with the value(s).")
+    /* Public methods */
+    .def("summary", summary1)
+    .def("summary", summary2)
+    .def( "nameValue", &HDF5Quantity::nameValue,
+	  "Get the name for the attribute storing the value of the quantity.")
+    .def( "nameUnits", &HDF5Quantity::nameUnits,
+	  "Get the name for the attribute storing the units of the quantity.")
     ;  
 }
