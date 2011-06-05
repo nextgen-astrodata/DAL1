@@ -305,8 +305,37 @@ namespace DAL { // Namespace DAL -- begin
 	else {
 	  status = false;
 	}
-
+	
 	return status;
+      }
+
+    /*!
+      \brief Read attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      static bool read (hid_t const &location,
+			std::string const &name,
+			T &data)
+      {
+	std::vector<T> buffer;
+	
+	read (location, name, buffer);
+
+	if (buffer.empty()) {
+	  return false;
+	} else if (buffer.size() > 1) {
+	  data = buffer[0];
+	  return false;
+	} else {
+	  data = buffer[0];
+	  return true;
+	}
       }
     
     /*!
@@ -548,7 +577,7 @@ namespace DAL { // Namespace DAL -- begin
     void destroy(void);
     
   }; // Class HDF5Attribute -- end
-  
+
 } // Namespace DAL -- end
 
 #endif /* HDF5ATTRIBUTE_H */

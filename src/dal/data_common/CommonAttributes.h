@@ -29,8 +29,9 @@
 #include <vector>
 
 // DAL header files
-#include <data_common/Filename.h>
 #include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <data_common/Filename.h>
 
 namespace DAL { // Namespace DAL -- begin
   

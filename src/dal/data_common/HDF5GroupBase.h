@@ -331,9 +331,9 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual retrieval */
-	    return DAL::h5get_attribute(location_p,
-					name,
-					val);
+	    return HDF5Attribute::read (location_p,
+					 name,
+					 val);
 	  } else {
 	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
@@ -366,7 +366,7 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual retrieval */
-	    return DAL::h5get_attribute(location_p,
+	    return HDF5Attribute::read(location_p,
 					name,
 					val);
 	  } else {
@@ -402,7 +402,7 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual retrieval */
-	    return DAL::h5get_attribute(location_p,
+	    return HDF5Attribute::read (location_p,
 					name,
 					val);
 	  } else {

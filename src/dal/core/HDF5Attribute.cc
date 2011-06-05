@@ -409,7 +409,7 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
-    
+
   //_____________________________________________________________________________
   //                                                                  write<char>
   

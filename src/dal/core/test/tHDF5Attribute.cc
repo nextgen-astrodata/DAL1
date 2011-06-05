@@ -452,7 +452,47 @@ int test_static_read (hid_t const &location)
     Test 2: Retrieve previously set attributes.
   */
 
-  cout << "\n[2] Testing read(hid_t,string,vector<T>) ..." << endl;
+  cout << "\n[2] Testing read(hid_t,string,T) ..." << endl;
+  try {
+    short valShort;
+    unsigned short valUshort;
+    int valInt;
+    unsigned int valUint;
+    long valLong;
+    unsigned long valUlong;
+    float valFloat;
+    double valDouble;
+    std::string valString;
+
+    HDF5Attribute::read (location, "h5a_short",   valShort);
+    HDF5Attribute::read (location, "h5a_ushort",  valUshort);
+    HDF5Attribute::read (location, "h5a_int",     valInt);
+    HDF5Attribute::read (location, "h5a_uint",    valUint);
+    HDF5Attribute::read (location, "h5a_long",    valLong);
+    HDF5Attribute::read (location, "h5a_ulong",   valUlong);
+    HDF5Attribute::read (location, "h5a_float",   valFloat);
+    HDF5Attribute::read (location, "h5a_double",  valDouble);
+    HDF5Attribute::read (location, "h5a_string",  valString);
+
+    std::cout << "-- h5a_short     = " << valShort  << endl;
+    std::cout << "-- h5a_ushort    = " << valUshort << endl;
+    std::cout << "-- h5a_int       = " << valInt    << endl;
+    std::cout << "-- h5a_uint      = " << valUint   << endl;
+    std::cout << "-- h5a_long      = " << valLong   << endl;
+    std::cout << "-- h5a_ulong     = " << valUlong  << endl;
+    std::cout << "-- h5a_float     = " << valFloat  << endl;
+    std::cout << "-- h5a_double    = " << valDouble << endl;
+    std::cout << "-- h5a_string    = " << valString << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  /*__________________________________________________________________
+    Test 3: Retrieve previously set attributes.
+  */
+
+  cout << "\n[3] Testing read(hid_t,string,vector<T>) ..." << endl;
   try {
     std::vector<short> valShort;
     std::vector<unsigned short> valUshort;

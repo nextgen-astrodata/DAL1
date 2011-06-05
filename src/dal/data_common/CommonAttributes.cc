@@ -402,55 +402,55 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                       h5read
   
   /*!
-    \param groupID -- Identifier to the HDF5 group from which to read the
+    \param location -- Identifier to the HDF5 group from which to read the
            attributes
   */
-  bool CommonAttributes::h5read (hid_t const &groupID)
+  bool CommonAttributes::h5read (hid_t const &location)
   {
     bool status (true);
 
-    DAL::h5get_attribute( groupID, "GROUPTYPE",             itsGroupType );
-    DAL::h5get_attribute( groupID, "FILENAME",              itsFilename );
-    DAL::h5get_attribute( groupID, "FILETYPE",              itsFiletype );
-    DAL::h5get_attribute( groupID, "FILEDATE",              itsFiledate );
-    DAL::h5get_attribute( groupID, "TELESCOPE",             itsTelescope );
-    DAL::h5get_attribute( groupID, "OBSERVER",              itsObserver );
+    HDF5Attribute::read (location, "GROUPTYPE",      itsGroupType );
+    HDF5Attribute::read (location, "FILENAME",       itsFilename );
+    HDF5Attribute::read (location, "FILETYPE",       itsFiletype );
+    HDF5Attribute::read (location, "FILEDATE",       itsFiledate );
+    HDF5Attribute::read (location, "TELESCOPE",      itsTelescope );
+    HDF5Attribute::read (location, "OBSERVER",       itsObserver );
     /*________________________________________________________________
       Common LOFAR attributes for description of project 
     */
-    DAL::h5get_attribute( groupID, "PROJECT_ID",      itsProjectID );
-    DAL::h5get_attribute( groupID, "PROJECT_TITLE",   itsProjectTitle );
-    DAL::h5get_attribute( groupID, "PROJECT_PI",      itsProjectPI );
-    DAL::h5get_attribute( groupID, "PROJECT_CO_I",    itsProjectCoI );
-    DAL::h5get_attribute( groupID, "PROJECT_CONTACT", itsProjectContact );
+    HDF5Attribute::read (location, "PROJECT_ID",      itsProjectID );
+    HDF5Attribute::read (location, "PROJECT_TITLE",   itsProjectTitle );
+    HDF5Attribute::read (location, "PROJECT_PI",      itsProjectPI );
+    HDF5Attribute::read (location, "PROJECT_CO_I",    itsProjectCoI );
+    HDF5Attribute::read (location, "PROJECT_CONTACT", itsProjectContact );
     /*________________________________________________________________
       Common LOFAR attributes for description of observation
     */
-    DAL::h5get_attribute(groupID, "OBSERVATION_ID",               itsObservationID);
-    DAL::h5get_attribute(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
-    DAL::h5get_attribute(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
-    DAL::h5get_attribute(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
-    DAL::h5get_attribute(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
-    DAL::h5get_attribute(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
-    DAL::h5get_attribute(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
-    DAL::h5get_attribute(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
-    DAL::h5get_attribute(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
-    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
-    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
-    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
-    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
-    DAL::h5get_attribute(groupID, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
+    HDF5Attribute::read (location, "OBSERVATION_ID",               itsObservationID);
+    HDF5Attribute::read (location, "OBSERVATION_START_MJD",        itsStartMJD);
+    HDF5Attribute::read (location, "OBSERVATION_START_TAI",        itsStartTAI);
+    HDF5Attribute::read (location, "OBSERVATION_START_UTC",        itsStartUTC);
+    HDF5Attribute::read (location, "OBSERVATION_END_MJD",          itsEndMJD);
+    HDF5Attribute::read (location, "OBSERVATION_END_TAI",          itsEndMJD);
+    HDF5Attribute::read (location, "OBSERVATION_END_UTC",          itsEndMJD);
+    HDF5Attribute::read (location, "OBSERVATION_NOF_STATIONS",     itsNofStations);
+    HDF5Attribute::read (location, "OBSERVATION_STATIONS_LIST",    itsStationsList);
+    HDF5Attribute::read (location, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
+    HDF5Attribute::read (location, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
+    HDF5Attribute::read (location, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
+    HDF5Attribute::read (location, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    HDF5Attribute::read (location, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
     /*________________________________________________________________
      */
-    DAL::h5get_attribute( groupID, "ANTENNA_SET",           itsAntennaSet );
-    DAL::h5get_attribute( groupID, "FILTER_SELECTION",      itsFilterSelection );
-    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY",       itsClockFrequency );
-    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY_UNIT",  itsClockFrequencyUnit );
-    DAL::h5get_attribute( groupID, "TARGET",                itsTarget );
-    DAL::h5get_attribute( groupID, "SYSTEM_VERSION",        itsSystemVersion );
-    DAL::h5get_attribute( groupID, "PIPELINE_NAME",         itsPipelineName );
-    DAL::h5get_attribute( groupID, "PIPELINE_VERSION",      itsPipelineVersion );
-    DAL::h5get_attribute( groupID, "NOTES",                 itsNotes );
+    HDF5Attribute::read (location, "ANTENNA_SET",           itsAntennaSet );
+    HDF5Attribute::read (location, "FILTER_SELECTION",      itsFilterSelection );
+    HDF5Attribute::read (location, "CLOCK_FREQUENCY",       itsClockFrequency );
+    HDF5Attribute::read (location, "CLOCK_FREQUENCY_UNIT",  itsClockFrequencyUnit );
+    HDF5Attribute::read (location, "TARGET",                itsTarget );
+    HDF5Attribute::read (location, "SYSTEM_VERSION",        itsSystemVersion );
+    HDF5Attribute::read (location, "PIPELINE_NAME",         itsPipelineName );
+    HDF5Attribute::read (location, "PIPELINE_VERSION",      itsPipelineVersion );
+    HDF5Attribute::read (location, "NOTES",                 itsNotes );
 
     return status;
   }
@@ -458,11 +458,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       h5read
   
-  bool CommonAttributes::h5read (hid_t const &locationID,
+  bool CommonAttributes::h5read (hid_t const &location,
 				 std::string const &name)
   {
     bool status   = true;
-    hid_t groupID = H5Gopen (locationID, name.c_str(), H5P_DEFAULT);
+    hid_t groupID = H5Gopen (location, name.c_str(), H5P_DEFAULT);
     
     if (groupID) {
       status = h5read (groupID);
@@ -475,12 +475,12 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     H5Gclose (groupID);
-
+    
     return status;
   }
-
+  
 #endif
-
+  
   //_____________________________________________________________________________
   //                                                                getAttributes
 
