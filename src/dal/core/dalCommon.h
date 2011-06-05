@@ -65,7 +65,6 @@ using std::endl;
 
   \test tdalCommon.cc
   \test tdalCommon_operators.cc
-  \test tdalCommon_tbb.cc
 
   <h3>Prerequisite</h3>
 
