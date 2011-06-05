@@ -253,7 +253,7 @@ namespace DAL {
 
     if (group_p->getName() != "UNDEFINED")
       {
-        if ( DAL::FAIL == h5get_attribute( group_p->getId(), "RA", ra ) )
+        if ( DAL::FAIL == HDF5Attribute::read (group_p->getId(), "RA", ra ) )
           {
             std::cerr << "-- Error extracting attribute RA" << endl;
           }
@@ -272,7 +272,7 @@ namespace DAL {
 
     if (group_p->getName() != "UNDEFINED")
       {
-        if ( DAL::FAIL == h5get_attribute( group_p->getId(), "DEC", dec ) )
+        if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(), "DEC", dec ) )
           {
             std::cerr << "-- Error extracting attribute DEC" << endl;
           }
@@ -306,16 +306,16 @@ namespace DAL {
     int nofSubbands = -1;
     if (group_p->getName() != "UNDEFINED")
       {
-        if ( DAL::FAIL == h5get_attribute( group_p->getId(),
-                                           "NUMBER_OF_SUBBANDS",
-                                           nofSubbands) )
+        if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(),
+					       "NUMBER_OF_SUBBANDS",
+					       nofSubbands) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_SUBBANDS" << endl;
           }
       }
     return nofSubbands;
   }
-
+  
   // ============================================================================
   //
   //  Methods for access of metadata/attributes

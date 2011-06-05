@@ -138,180 +138,6 @@ int test_iterators ()
 }
 
 //_______________________________________________________________________________
-//                                                           test_hdf5_attributes
-
-/*!
-  \brief Test of the routines providing access to HDF5 attributes
-  
-  Except atomic attributes -- single <tt>int</tt>, <tt>double</tt>, etc. -- the
-  following 1-dimensional arrays should be supported:
-  - c-array
-  - std::vector<T>
-  - std::set<T>
-  - casa::Vector<T>
-  
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function
-*/
-int test_hdf5_attributes ()
-{
-  cout << "\n[tdalCommon::test_hdf5_attributes]\n" << endl;
-
-  int nofFailedTests (0);
-  std::string filename ("tdalCommon.h5");
-  uint nelem (3);
-  hid_t fileID (0);
-
-  //__________________________________________________________________
-
-  cout << "[1] Creating HDF5 file for testing ..." << endl;
-  try {
-    fileID = H5Fcreate (filename.c_str(),
-			H5F_ACC_TRUNC,
-			H5P_DEFAULT,
-			H5P_DEFAULT);
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    return 1;
-  }
-  
-  //__________________________________________________________________
-  // Test reading attributes consisting of a single value
-
-  cout << "[6] Read attributes of single value ..." << endl;
-  try {
-    bool data_bool;
-    int data_int;
-    uint data_uint;
-    short data_short;
-    long data_long;
-    float data_float;
-    double data_double;
-    std::string data_string;
-    //
-    DAL::h5get_attribute (fileID, "BOOL", data_bool);
-    DAL::h5get_attribute (fileID, "INT", data_int);
-    DAL::h5get_attribute (fileID, "UINT", data_uint);
-    DAL::h5get_attribute (fileID, "SHORT", data_short);
-    DAL::h5get_attribute (fileID, "LONG", data_long);
-    DAL::h5get_attribute (fileID, "FLOAT", data_float);
-    DAL::h5get_attribute (fileID, "DOUBLE", data_double);
-    DAL::h5get_attribute (fileID, "STRING", data_string);
-    //
-    cout << "-- BOOL   = " << data_bool   << endl;
-    cout << "-- INT    = " << data_int    << endl;
-    cout << "-- UINT   = " << data_uint   << endl;
-    cout << "-- SHORT  = " << data_short  << endl;
-    cout << "-- LONG   = " << data_long   << endl;
-    cout << "-- FLOAT  = " << data_float  << endl;
-    cout << "-- DOUBLE = " << data_double << endl;
-    cout << "-- STRING = " << data_string << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  //__________________________________________________________________
-  // Test reading attributes into std::vector<T>
-
-  cout << "[7] Read attributes of type std::vector<T> ..." << endl;
-  try {
-    std::vector<bool> data_bool(nelem);
-    std::vector<int> data_int(nelem);
-    std::vector<uint> data_uint(nelem);
-    std::vector<short> data_short(nelem);
-    std::vector<long> data_long(nelem);
-    std::vector<float> data_float(nelem);
-    std::vector<double> data_double(nelem);
-    std::vector<std::string> data_string(nelem);
-    //
-    DAL::h5get_attribute (fileID, "ARRAY_BOOL",   data_bool);
-    DAL::h5get_attribute (fileID, "ARRAY_INT",    data_int);
-    DAL::h5get_attribute (fileID, "ARRAY_UINT",   data_uint);
-    DAL::h5get_attribute (fileID, "ARRAY_SHORT",  data_short);
-    DAL::h5get_attribute (fileID, "ARRAY_LONG",   data_long);
-    DAL::h5get_attribute (fileID, "ARRAY_FLOAT",  data_float);
-    DAL::h5get_attribute (fileID, "ARRAY_DOUBLE", data_double);
-    DAL::h5get_attribute (fileID, "ARRAY_STRING", data_string);
-    //
-    cout << "-- ARRAY_BOOL   = " << data_bool   << endl;
-    cout << "-- ARRAY_INT    = " << data_int    << endl;
-    cout << "-- ARRAY_UINT   = " << data_uint   << endl;
-    cout << "-- ARRAY_SHORT  = " << data_short  << endl;
-    cout << "-- ARRAY_LONG   = " << data_long   << endl;
-    cout << "-- ARRAY_FLOAT  = " << data_float  << endl;
-    cout << "-- ARRAY_DOUBLE = " << data_double << endl;
-    cout << "-- ARRAY_STRING = " << data_string << endl;
-    //
-    DAL::h5get_attribute (fileID, "VECTOR_BOOL",   data_bool);
-    DAL::h5get_attribute (fileID, "VECTOR_INT",    data_int);
-    DAL::h5get_attribute (fileID, "VECTOR_UINT",   data_uint);
-    DAL::h5get_attribute (fileID, "VECTOR_SHORT",  data_short);
-    DAL::h5get_attribute (fileID, "VECTOR_LONG",   data_long);
-    DAL::h5get_attribute (fileID, "VECTOR_FLOAT",  data_float);
-    DAL::h5get_attribute (fileID, "VECTOR_DOUBLE", data_double);
-    DAL::h5get_attribute (fileID, "VECTOR_STRING", data_string);
-    //
-    cout << "-- VECTOR_BOOL   = " << data_bool   << endl;
-    cout << "-- VECTOR_INT    = " << data_int    << endl;
-    cout << "-- VECTOR_UINT   = " << data_uint   << endl;
-    cout << "-- VECTOR_SHORT  = " << data_short  << endl;
-    cout << "-- VECTOR_LONG   = " << data_long   << endl;
-    cout << "-- VECTOR_FLOAT  = " << data_float  << endl;
-    cout << "-- VECTOR_DOUBLE = " << data_double << endl;
-    cout << "-- VECTOR_STRING = " << data_string << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //__________________________________________________________________
-  // Test repeated read access to attributes
-  
-  cout << "[8] Test repeated read access to attributes ..." << endl;
-  try {
-    uint nofLoops (500);
-    int data_int (0);
-    std::string data_string;
-    std::vector<int> vec_int;
-    std::vector<std::string> vec_string;
-    //
-    cout << "-- INT ...           " << std::flush;
-    for (uint n(0); n<nofLoops; n++) {
-      DAL::h5get_attribute (fileID, "INT", data_int);
-    }
-    cout << nofLoops << " reads finished." << endl;
-    //
-    cout << "-- STRING ...        " << std::flush;
-    for (uint n(0); n<nofLoops; n++) {
-      DAL::h5get_attribute (fileID, "STRING", data_string);
-    }
-    cout << nofLoops << " reads finished." << endl;
-    //
-    cout << "-- VECTOR_INT    ... " << std::flush;
-    for (uint n(0); n<nofLoops; n++) {
-      DAL::h5get_attribute (fileID, "VECTOR_INT", vec_int);
-    }
-    cout << nofLoops << " reads finished." << endl;
-    //
-    cout << "-- VECTOR_STRING ... " << std::flush;
-    for (uint n(0); n<nofLoops; n++) {
-      DAL::h5get_attribute (fileID, "VECTOR_STRING", vec_string);
-    }
-    cout << nofLoops << " reads finished." << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
 //                                                                test_beamformed
 
 /*!
@@ -356,7 +182,7 @@ int test_beamformed (std::string const &infile)
     int nofStations;
     //
     DAL::h5get_name (name,fileID);
-    DAL::h5get_attribute (fileID,"NUMBER_OF_STATIONS",nofStations);
+    DAL::HDF5Attribute::read (fileID,"NUMBER_OF_STATIONS",nofStations);
     //
     cout << "-- FILENAME ......... = " << filename     << endl;
     cout << "-- TELESCOPE ........ = " << telescope    << endl;
@@ -389,8 +215,6 @@ int main ()
   
   // Test usage of iterators on STL containers
   nofFailedTests += test_iterators ();
-  // Test access to HDF5 attributes
-  nofFailedTests += test_hdf5_attributes ();
   
   return nofFailedTests;
 }

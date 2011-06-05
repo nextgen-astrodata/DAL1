@@ -307,15 +307,15 @@ namespace DAL { // Namespace DAL -- begin
       unsigned int ncoords;
       unsigned int naxes;
 
-      status *= h5get_attribute (location, "GROUPTYPE",          itsGroupType);
-      status *= h5get_attribute (location, "REF_LOCATION_VALUE", itsRefLocationValue);
-      status *= h5get_attribute (location, "REF_LOCATION_UNIT",  itsRefLocationUnits);
-      status *= h5get_attribute (location, "REF_LOCATION_FRAME", itsRefLocationFrame);
-      status *= h5get_attribute (location, "REF_TIME_VALUE",     itsRefTimeValue);
-      status *= h5get_attribute (location, "REF_TIME_UNIT",      itsRefTimeUnits);
-      status *= h5get_attribute (location, "REF_TIME_FRAME",     itsRefTimeFrame);
-      status *= h5get_attribute (location, "NOF_COORDINATES",    ncoords);
-      status *= h5get_attribute (location, "NOF_AXES",           naxes);
+      status *= HDF5Attribute::write (location, "GROUPTYPE",          itsGroupType);
+      status *= HDF5Attribute::write (location, "REF_LOCATION_VALUE", itsRefLocationValue);
+      status *= HDF5Attribute::write (location, "REF_LOCATION_UNIT",  itsRefLocationUnits);
+      status *= HDF5Attribute::write (location, "REF_LOCATION_FRAME", itsRefLocationFrame);
+      status *= HDF5Attribute::write (location, "REF_TIME_VALUE",     itsRefTimeValue);
+      status *= HDF5Attribute::write (location, "REF_TIME_UNIT",      itsRefTimeUnits);
+      status *= HDF5Attribute::write (location, "REF_TIME_FRAME",     itsRefTimeFrame);
+      status *= HDF5Attribute::write (location, "NOF_COORDINATES",    ncoords);
+      status *= HDF5Attribute::write (location, "NOF_AXES",           naxes);
     } else {
       std::cerr << "[CoordinatesGroup::h5read] Unable to find attribute GROUPTYPE!"
 		<< std::endl;

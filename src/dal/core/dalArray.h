@@ -112,7 +112,7 @@ namespace DAL {
       bool getAttribute (std::string attrname,
 			 T &value )
       {
-        return h5get_attribute( itsDatasetID, attrname, value );
+        return HDF5Attribute::write (itsDatasetID, attrname, value );
       }
     
     /*!

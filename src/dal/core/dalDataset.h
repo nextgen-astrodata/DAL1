@@ -178,7 +178,7 @@ namespace DAL {
       bool getAttribute (std::string attrname, T &value )
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  return h5get_attribute (h5fh_p, attrname, value );
+	  return HDF5Attribute::read (h5fh_p, attrname, value );
 	} else {
 	  return false;
 	}

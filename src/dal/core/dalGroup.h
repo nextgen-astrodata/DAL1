@@ -144,7 +144,7 @@ namespace DAL {
       bool getAttribute( std::string attrname, T &value )
       {
 	if (H5Iis_valid(itsGroupID)) {
-	  return h5get_attribute( itsGroupID, attrname, value );
+	  return HDF5Attribute::read (itsGroupID, attrname, value );
 	} else {
 	  return false;
 	}

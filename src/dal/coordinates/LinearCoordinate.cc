@@ -256,14 +256,14 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> pc;
 
     /* Read the attributes from the HDF5 file */
-    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
-    DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
-    DAL::h5get_attribute( groupID, "AXIS_NAMES",       axis_names );
-    DAL::h5get_attribute( groupID, "AXIS_UNITS",       axis_units );
-    DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refvalue );
-    DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refpixel );
-    DAL::h5get_attribute( groupID, "INCREMENT",        increment );
-    DAL::h5get_attribute( groupID, "PC",               pc );
+    HDF5Attribute::read (groupID, "COORDINATE_TYPE",  coordinate_type );
+    HDF5Attribute::read (groupID, "NOF_AXES",         nof_axes );
+    HDF5Attribute::read (groupID, "AXIS_NAMES",       axis_names );
+    HDF5Attribute::read (groupID, "AXIS_UNITS",       axis_units );
+    HDF5Attribute::read (groupID, "REFERENCE_VALUE",  refvalue );
+    HDF5Attribute::read (groupID, "REFERENCE_PIXEL",  refpixel );
+    HDF5Attribute::read (groupID, "INCREMENT",        increment );
+    HDF5Attribute::read (groupID, "PC",               pc );
 
     /* Store the retrieved values */
     if (Coordinate::getType(coordinate_type) == Coordinate::LINEAR) {
