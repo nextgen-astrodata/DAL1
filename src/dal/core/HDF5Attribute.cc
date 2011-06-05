@@ -325,7 +325,93 @@ namespace DAL { // Namespace DAL -- begin
   /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
-  //                                                                  write(char)
+  //                                                                 read<string>
+
+  template <>
+  bool HDF5Attribute::read (hid_t const &location,
+			    std::string const &name,
+			    std::vector<std::string> &data)
+  {
+    bool status  = true;
+    herr_t h5err = 0;
+    
+    /*____________________________________________________________
+      Basic checks for reference location and attribute name.
+    */
+    
+    if (H5Iis_valid(location)) {
+      h5err = H5Aexists (location,
+			 name.c_str());
+    } else {
+      std::cerr << "[HDF5Attribute::read]"
+		<< " No valid HDF5 object found at reference location!"
+		<< std::endl;
+      return false;
+    }
+    
+    /*____________________________________________________________
+      If attribute has been found at reference location, open it.
+      If opening has been successful, extract datatype and
+      dataspace.
+    */
+    
+    if (h5err>0) {
+      hid_t attribute = H5Aopen (location,
+				 name.c_str(),
+				 H5P_DEFAULT);
+      
+      if (H5Iis_valid(attribute)) {
+	
+	std::vector<hsize_t> dims;
+	std::vector<hsize_t> dimsMax;
+	
+	h5err           = HDF5Dataspace::shape (attribute,dims,dimsMax);
+	hid_t datatype  = H5Aget_type (attribute);
+	hid_t dataspace = H5Aget_space(attribute);
+	
+	if (dims.size()>0) {
+	  
+	  hid_t memtype  = H5Tcopy (H5T_C_S1);
+	  /* Adjust the size of the buffer array */
+	  char **buffer = (char **) malloc (dims[0] * sizeof (char *));
+	  h5err = H5Tset_size (memtype, H5T_VARIABLE);
+	  /* Read the attribute into the buffer */
+	  h5err = H5Aread (attribute, memtype, buffer);
+	  
+	  /* Copy attribute data from buffer to returned array */
+	  data.resize(dims[0]);
+	  
+	  for (hsize_t n=0; n<dims[0]; ++n) {
+	    data[n] = buffer[n];
+	  }
+	  
+	  /* Release allocated memory */
+	  h5err = H5Dvlen_reclaim (memtype, dataspace, H5P_DEFAULT, buffer);
+	  free (buffer);
+	  
+	} else {
+	  return false;
+	}
+	
+	/* Release HDF5 object identifiers */
+	if (H5Iis_valid(datatype))  { H5Tclose (datatype);  };
+	if (H5Iis_valid(dataspace)) { H5Sclose (dataspace); };
+	if (H5Iis_valid(attribute)) { H5Aclose (attribute); };
+      } else {
+	std::cerr << "[HDF5Attribute::read]"
+		  << " Failed to open attribute " << name << std::endl;
+	status = false;
+      }
+    }   //  END -- (h5err>0)
+    else {
+      status = false;
+    }
+    
+    return status;
+  }
+    
+  //_____________________________________________________________________________
+  //                                                                  write<char>
   
   //! Set attribute of type (char)
   template <>
@@ -342,7 +428,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                   write(int)
+  //                                                                   write<int>
   
   //! Set attribute of type (int)
   template <>

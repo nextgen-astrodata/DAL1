@@ -21,7 +21,6 @@
 #include <sstream>
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
-#include <core/HDF5Dataspace.h>
 
 // Namespace usage
 using std::cerr;
@@ -142,16 +141,15 @@ bool readAttribute (hid_t const &location,
     
     std::vector<hsize_t> dims;
     std::vector<hsize_t> dimsMax;
-    char **buffer;
     herr_t h5err    = DAL::HDF5Dataspace::shape (attribute,dims,dimsMax);
     hid_t datatype  = H5Aget_type (attribute);
     hid_t dataspace = H5Aget_space(attribute);
-    hid_t memtype   = H5Tcopy (H5T_C_S1);
 
     if (dims.size()>0) {
 
+      hid_t memtype  = H5Tcopy (H5T_C_S1);
       /* Adjust the size of the buffer array */
-      buffer = (char **) malloc (dims[0] * sizeof (char *));
+      char **buffer = (char **) malloc (dims[0] * sizeof (char *));
       h5err = H5Tset_size (memtype, H5T_VARIABLE);
       /* Read the attribute into the buffer */
       h5err = H5Aread (attribute, memtype, buffer);
@@ -476,9 +474,7 @@ int test_static_read (hid_t const &location)
     HDF5Attribute::read (location, "h5a_ulong",   valUlong);
     HDF5Attribute::read (location, "h5a_float",   valFloat);
     HDF5Attribute::read (location, "h5a_double",  valDouble);
-    // HDF5Attribute::read (location, "h5a_string",  valString);
-
-    readAttribute (location, "h5a_string",  valString);
+    HDF5Attribute::read (location, "h5a_string",  valString);
 
     std::cout << "-- h5a_short         = " << show(valShort)  << endl;
     std::cout << "-- h5a_ushort        = " << show(valUshort) << endl;
@@ -500,8 +496,7 @@ int test_static_read (hid_t const &location)
     HDF5Attribute::read (location, "h5a_vector_ulong",   valUlong);
     HDF5Attribute::read (location, "h5a_vector_float",   valFloat);
     HDF5Attribute::read (location, "h5a_vector_double",  valDouble);
-    // HDF5Attribute::read (location, "h5a_vector_string",  valString);
-    readAttribute (location, "h5a_vector_string",  valString);
+    HDF5Attribute::read (location, "h5a_vector_string",  valString);
 
     std::cout << "-- h5a_vector_short  = " << show(valShort)  << endl;
     std::cout << "-- h5a_vector_ushort = " << show(valUshort) << endl;
@@ -521,6 +516,7 @@ int test_static_read (hid_t const &location)
     HDF5Attribute::read (location, "h5a_array_long",   valLong);
     HDF5Attribute::read (location, "h5a_array_float",  valFloat);
     HDF5Attribute::read (location, "h5a_array_double", valDouble);
+    HDF5Attribute::read (location, "h5a_array_string", valString);
 
     std::cout << "-- h5a_array_int     = " << show(valInt)    << endl;
     std::cout << "-- h5a_array_uint    = " << show(valUint)   << endl;
@@ -528,6 +524,7 @@ int test_static_read (hid_t const &location)
     std::cout << "-- h5a_array_long    = " << show(valLong)   << endl;
     std::cout << "-- h5a_array_float   = " << show(valFloat)  << endl;
     std::cout << "-- h5a_array_double  = " << show(valDouble) << endl;
+    std::cout << "-- h5a_array_string  = " << show(valString) << endl;
 
   } catch (std::string message) {
     std::cerr << message << endl;
