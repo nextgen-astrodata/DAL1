@@ -219,52 +219,62 @@ namespace DAL {
 			  std::string const &name,
 			  IO_Mode const &flags)
   {
-    bool status  = true;
-    htri_t h5err = 0;
+    bool status        = true;
+    bool datasetExists = false;
+
+    /*________________________________________________________________
+      Check if 'location' points to a valid HDF5 object containing a
+      dataset of the given 'name'.
+     */
+
+    if ( H5Iis_valid(location) ) {
+      if ( H5Lexists (location, name.c_str(), H5P_DEFAULT) ) {
+	H5O_info_t info;
+	H5Oget_info_by_name (location, name.c_str(), &info, H5P_DEFAULT);
+	/* Check if 'name' points to a group object */
+	if ( info.type == H5O_TYPE_DATASET ) {
+	  datasetExists = true;
+	} else {
+	  datasetExists = false;
+	}
+      }
+    } else {
+      std::cerr << "[HDF5Dataset::open] Invalid location ID!" << std::endl;
+      return false;
+    }
     
     /*________________________________________________________________
       Try opening existing dataset
     */
-
-    if (H5Iis_valid(location)) {
-      /* Check if link for dataset exists */
-      h5err = H5Lexists (location,
-			 name.c_str(),
-			 H5P_DEFAULT);
-      if (h5err>0) {
-	/* Open existing dataset */
-	itsLocation = H5Dopen (location,
-			      name.c_str(),
-			      H5P_DEFAULT);
-	/* Check if opening of the dataset was successful */
-	if (H5Iis_valid(itsLocation)) {
-	  // Assign internal parameters
-	  itsName      = name;
-	  itsDataspace = H5Dget_space (itsLocation);
-	  itsDatatype  = H5Dget_type (itsLocation);
-	  // Get the shape of the dataset array
-	  HDF5Dataspace::shape (itsLocation, itsShape);
-	  // Retrieve the size of chunks for the raw data
-	  status = getChunksize ();
-	} else {
-	  std::cerr << "[HDF5Dataset::open] Error opening dataset "
-		    << name << std::endl;
-	  status = false;
-	}
-      }   //   END -- H5Lexists(location,name)
-      else {
-	std::cerr << "[HDF5Dataset::open]"
-		  << " Object " << name << " not found at provided location!"
-		  << std::endl;
-	return false;
+    
+    if (datasetExists) {
+      /* Open existing dataset */
+      itsLocation = H5Dopen (location,
+			     name.c_str(),
+			     H5P_DEFAULT);
+      /* Check if opening of the dataset was successful */
+      if (H5Iis_valid(itsLocation)) {
+	// Assign internal parameters
+	itsName      = name;
+	itsDataspace = H5Dget_space (itsLocation);
+	itsDatatype  = H5Dget_type (itsLocation);
+	// Get the shape of the dataset array
+	HDF5Dataspace::shape (itsLocation, itsShape);
+	// Retrieve the size of chunks for the raw data
+	status = getChunksize ();
+      } else {
+	std::cerr << "[HDF5Dataset::open] Error opening dataset "
+		  << name << std::endl;
+	status = false;
       }
-    } else {
+    }   //   END -- H5Lexists(location,name)
+    else {
       std::cerr << "[HDF5Dataset::open]"
-		<< " Identifier does not point to valid object!"
+		<< " Object " << name << " not found at provided location!"
 		<< std::endl;
       return false;
     }
-
+    
     //______________________________________________________
     // Try creating dataset, if not yet existing
     
