@@ -28,7 +28,6 @@
 
 // DAL header files
 #include <core/HDF5Dataset.h>
-#include <core/IO_Mode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -38,7 +37,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_common
     
-    \brief Common interface for datasets using HDF5 for underlying storage
+    \brief Abstract base class for HDF5 datasets within a LOFAR data product
     
     \author Lars B&auml;hren
 
@@ -80,17 +79,27 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor to open existing dataset
     HDF5DatasetBase (hid_t const &location,
 		     std::string const &name,
-		     IO_Mode const &flags=IO_Mode());
+		     IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Argumented constructor to open existing dataset
     HDF5DatasetBase (hid_t const &location,
-		     unsigned int const &index);
+		     unsigned int const &index,
+		     IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Argumented constructor to create new dataset
     HDF5DatasetBase (hid_t const &location,
 		     std::string const &name,
 		     std::vector< hsize_t > const &shape,
-		     hid_t const &datatype=H5T_NATIVE_DOUBLE);
+		     hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		     IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
+    
+    //! Argumented constructor to create new dataset
+    HDF5DatasetBase (hid_t const &location,
+		     std::string const &name,
+		     std::vector<hsize_t> const &shape,
+		     std::vector<hsize_t> const &chunksize,
+		     hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		     IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Copy constructor
     HDF5DatasetBase (HDF5DatasetBase const &other);
@@ -151,10 +160,17 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
 
     //! Open Dataset
-    bool open (const hid_t &location,
-	       const std::string &name,
-	       const IO_Mode &flags=IO_Mode());
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
+    //! Open/Create a dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       std::vector<hsize_t> const &shape,
+	       hid_t const &datatype=H5T_NATIVE_DOUBLE,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
+
     // === Static methods =======================================================
     
     //! Convert dataset index to name of the HDF5 dataset

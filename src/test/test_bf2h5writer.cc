@@ -144,7 +144,7 @@ int main()
   const unsigned nofSamples  = SAMPLES;
   const unsigned nofChannels = SUBBANDS * CHANNELS;
 
-
+  std::cout << "-- Creating Stokes::I dataset 0 ..." << std::endl;
   rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
 			       0,                 // ID of beam group
 			       0,                 // ID of Stokes dataset
@@ -152,6 +152,7 @@ int main()
 			       SUBBANDS,
 			       CHANNELS,
 			       DAL::Stokes::I);
+  std::cout << "-- Creating Stokes::Q dataset 1 ..." << std::endl;
   rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
 			       0,                 // ID of beam group
 			       1,                 // ID of Stokes dataset
@@ -160,8 +161,6 @@ int main()
 			       CHANNELS,
 			       DAL::Stokes::Q);
   
-  return 0;
-
   {
     hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;

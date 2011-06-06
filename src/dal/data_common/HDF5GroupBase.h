@@ -102,9 +102,9 @@ namespace DAL { // Namespace DAL -- begin
       parameters can be utilized: when opening a file (e.g. with BF_Dataset)
       the <tt>location</tt> will not be evaluated.
       \code
-  bool BF_PrimaryPointing::open (hid_t const &location,
-				 std::string const &name,
-				 bool const &create)
+      bool BF_PrimaryPointing::open (hid_t const &location,
+                                     std::string const &name,
+				     bool const &create)
   {
     bool status (true);
     
@@ -272,7 +272,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
 
     //! Verify the ID so it can be passed into an H5I C function.
     bool hasValidID ();

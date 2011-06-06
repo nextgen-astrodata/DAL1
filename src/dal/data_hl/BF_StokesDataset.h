@@ -198,19 +198,22 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor, opening an existing Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      std::string const &name);
+		      std::string const &name,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::Open));
 
     //! Argumented constructor, opening an existing Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      unsigned int const &index);
-
+		      unsigned int const &index,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      unsigned int const &index,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
@@ -219,7 +222,8 @@ namespace DAL { // Namespace DAL -- begin
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
@@ -227,19 +231,22 @@ namespace DAL { // Namespace DAL -- begin
 		      unsigned int const &nofSamples,
 		      std::vector<unsigned int> const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      unsigned int const &index,
 		      std::vector<hsize_t> const &shape,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::vector<hsize_t> const &shape,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I);
+		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Copy constructor
     BF_StokesDataset (BF_StokesDataset const &other);
@@ -317,28 +324,29 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open an existing Stokes dataset
     bool open (hid_t const &location,
-	       std::string const &name);
+	       std::string const &name,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Create a new Stokes dataset
-    bool create (hid_t const &location,
-		 DAL::Stokes::Component const &component,
-		 unsigned int const &nofSamples,
-		 unsigned int const &nofSubbands,
-		 unsigned int const &nofChannels,
-		 IO_Mode::Flags const &flags=IO_Mode::CreateNew);
+    bool open (hid_t const &location,
+	       DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       unsigned int const &nofSubbands,
+	       unsigned int const &nofChannels,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Create a new Stokes dataset
-    bool create (hid_t const &location,
-		 DAL::Stokes::Component const &component,
-		 unsigned int const &nofSamples,
-		 std::vector<unsigned int> const &nofChannels,
-		 IO_Mode::Flags const &flags=IO_Mode::CreateNew);
+    bool open (hid_t const &location,
+	       DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       std::vector<unsigned int> const &nofChannels,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     // === Static methods =======================================================
     
     //! Convert dataset index to name of the HDF5 dataset
     static std::string getName (unsigned int const &index);
-
+    
   private:
     
     //! Set up the list of attributes attached to the structure
@@ -359,27 +367,30 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
 		      DAL::Stokes::Component const &component,
-		      unsigned int const &nofChannels) {
-      return create (location, component, 1, nofChannels);
+		      unsigned int const &nofChannels,
+		      IO_Mode const &flags) {
+      return open (location, component, 1, nofChannels, flags);
     }
     //! Initialize the internal parameters 
-    inline bool create (hid_t const &location,
+    inline bool open (hid_t const &location,
 		      DAL::Stokes::Component const &component,
 		      unsigned int const &nofSubbands,
-		      unsigned int const &nofChannels) {
-      return create (location, component, 1, nofSubbands, nofChannels);
+		      unsigned int const &nofChannels,
+		      IO_Mode const &flags) {
+      return open (location, component, 1, nofSubbands, nofChannels, flags);
     }
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
 		      DAL::Stokes::Component const &component,
-		      std::vector<unsigned int> const &nofChannels) {
+		      std::vector<unsigned int> const &nofChannels,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::Open)) {
       if (nofChannels.size()>1) {
-	return create (location, component, nofChannels[0], 1, nofChannels[1]);
+	return open (location, component, nofChannels[0], 1, nofChannels[1], flags);
       } else {
 	return false;
       }
     }
-
+    
     //! Unconditional deletion 
     void destroy(void);
     

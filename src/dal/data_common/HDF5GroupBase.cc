@@ -209,7 +209,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                   objectType
   
   /*!
-    \return type     -- The type identifier of the object.
+    \return type -- The type identifier of the object.
   */
   H5I_type_t HDF5GroupBase::objectType ()
   {
@@ -220,8 +220,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                   objectType
   
   /*!
-    \param object_id -- Identifier for the object for which to check the type.
-    \return type     -- The type identifier of the object.
+    \param location -- Identifier for the object for which to check the type.
+    \return type    -- The type identifier of the object.
   */
   H5I_type_t HDF5GroupBase::objectType (hid_t const &location)
   {
@@ -313,8 +313,8 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   /*!
-    \retval groupID
-    \param location
+    \retval groupID     -- 
+    \param location     -- 
     \param name         -- Name of the group to be opened/created.
     \param flags        -- I/O mode flags.
     \return groupCreate -- Was \c H5Gcreate used in order to create the group
@@ -325,7 +325,7 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &name,
 			    IO_Mode const &flags)
   {
-    bool groupExists    = false;
+    bool groupExists = false;
     bool groupCreate = false;
     
     /*______________________________________________________

@@ -229,7 +229,7 @@ int test_HDF5Dataset (hid_t const &fileID)
     DAL::HDF5Dataset dataset;
 
     name   = "Dataset.006";
-    status = dataset.create (fileID, name, shape);
+    status = dataset.open (fileID, name, shape);
 
     if (status) {
       cout << "--> [OK] Successfully opened dataset " << name << endl;
@@ -255,7 +255,7 @@ int test_HDF5Dataset (hid_t const &fileID)
     DAL::HDF5Dataset dataset;
 
     name   = "Dataset.007";
-    status = dataset.create (fileID, name, shape, chunk);
+    status = dataset.open (fileID, name, shape, chunk);
 
     if (status) {
       cout << "--> [OK] uccessfully opened dataset " << name << endl;

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "BF_StokesDataset.h"
+#include <data_hl/BF_StokesDataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -45,10 +45,11 @@ namespace DAL { // Namespace DAL -- begin
     \param name      -- Name of the dataset.
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      std::string const &name)
+				      std::string const &name,
+				      IO_Mode const &flags)
   {
     init();
-    open (location, name);
+    open (location, name, flags);
   }
 
   //_____________________________________________________________________________
@@ -60,17 +61,13 @@ namespace DAL { // Namespace DAL -- begin
     \param index    -- Indentifier for the Stokes dataset.
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      unsigned int const &index)
+				      unsigned int const &index,
+				      IO_Mode const &flags)
   {
     init();
     std::string name = getName (index);
 
-    std::cout << "BF_StokesDataset::BF_StokesDataset (hid_t,uint)" << std::endl;
-    std::cout << "-- location = " << location << std::endl;
-    std::cout << "-- index    = " << index    << std::endl;
-    std::cout << "-- name     = " << name     << std::endl;
-
-    open (location, name);
+    open (location, name, flags);
   }
   
   //_____________________________________________________________________________
@@ -90,18 +87,17 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
-				      hid_t const &datatype)
+				      hid_t const &datatype,
+				      IO_Mode const &flags)
   {
     itsName     = getName(index);
     itsDatatype = datatype;
 
-    std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,Stokes::Component,hid_t]"
-	      << std::endl;
-
     open (location,
 	  component,
 	  nofSubbands,
-	  nofChannels);
+	  nofChannels,
+	  flags);
   }
   
   //_____________________________________________________________________________
@@ -123,18 +119,20 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
-				      hid_t const &datatype)
+				      hid_t const &datatype,
+				      IO_Mode const &flags)
   {
     itsName     = getName(index);
     itsDatatype = datatype;
 
-    create (location,
-	    component,
-	    nofSamples,
-	    nofSubbands,
-	    nofChannels);
+    open (location,
+	  component,
+	  nofSamples,
+	  nofSubbands,
+	  nofChannels,
+	  flags);
   }
-
+  
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -152,17 +150,19 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofSamples,
 				      std::vector<unsigned int> const &nofChannels,
 				      DAL::Stokes::Component const &component,
-				      hid_t const &datatype)
+				      hid_t const &datatype,
+				      IO_Mode const &flags)
   {
     itsName     = getName(index);
     itsDatatype = datatype;
 
-    create (location,
-	    component,
-	    nofSamples,
-	    nofChannels);
+    open (location,
+	  component,
+	  nofSamples,
+	  nofChannels,
+	  flags);
   }
-
+  
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -178,17 +178,19 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &index,
 				      std::vector<hsize_t> const &shape,
 				      DAL::Stokes::Component const &component,
-				      hid_t const &datatype)
+				      hid_t const &datatype,
+				      IO_Mode const &flags)
   {
     itsName     = getName(index);
     itsDatatype = datatype;
 
     std::vector<unsigned int> nofChannels (1, shape[1]);
 
-    create (location,      // HDF5 object ID
-	    component,     // Component name
-	    shape[0],      // nof. samples
-	    nofChannels);  // nof. channels
+    open (location,
+	  component,
+	  shape[0],
+	  nofChannels,
+	  flags);
   }
   
   //_____________________________________________________________________________
@@ -374,9 +376,10 @@ namespace DAL { // Namespace DAL -- begin
             an error was encountered.
   */
   bool BF_StokesDataset::open (hid_t const &location,
-			       std::string const &name)
+			       std::string const &name,
+			       IO_Mode const &flags)
   {
-    bool status = HDF5DatasetBase::open (location, name, IO_Mode::Open);
+    bool status = HDF5DatasetBase::open (location, name, flags);
 
     if (status) {
       init ();
@@ -403,16 +406,16 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::create (hid_t const &location,
-				 DAL::Stokes::Component const &component,
-				 unsigned int const &nofSamples,
-				 unsigned int const &nofSubbands,
-				 unsigned int const &nofChannels,
-				 IO_Mode::Flags const &flags)
+  bool BF_StokesDataset::open (hid_t const &location,
+			       DAL::Stokes::Component const &component,
+			       unsigned int const &nofSamples,
+			       unsigned int const &nofSubbands,
+			       unsigned int const &nofChannels,
+			       IO_Mode const &flags)
   {
     if (nofSubbands>0) {
       std::vector<unsigned int> tmp (nofSubbands,nofChannels);
-      return create (location, component, nofSamples, tmp, flags);
+      return open (location, component, nofSamples, tmp, flags);
     } else {
       return false;
     }
@@ -431,13 +434,13 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::create (hid_t const &location,
-				 DAL::Stokes::Component const &component,
-				 unsigned int const &nofSamples,
-				 std::vector<unsigned int> const &nofChannels,
-				 IO_Mode::Flags const &flags)
+  bool BF_StokesDataset::open (hid_t const &location,
+			       DAL::Stokes::Component const &component,
+			       unsigned int const &nofSamples,
+			       std::vector<unsigned int> const &nofChannels,
+			       IO_Mode const &flags)
   {
-    bool status = flags;
+    bool status = true;
     std::vector<hsize_t> shape (2,1);
 
     /*________________________________________________________________
@@ -472,10 +475,11 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /* Open/create dataset */
-    status = HDF5DatasetBase::create (location,
-				      itsName,
-				      shape,
-				      itsDatatype);
+    status = HDF5DatasetBase::open (location,
+				    itsName,
+				    shape,
+				    itsDatatype,
+				    flags);
     
     /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(itsLocation)) {
