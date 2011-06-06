@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/Enumerations.h>
 #include <data_hl/TBB_StationGroup.h>
 
 using std::cout;
@@ -403,9 +402,9 @@ namespace DAL {  // Namespace DAL -- begin
   casa::MPosition TBB_StationGroup::station_position ()
   {
     return DAL::h5get_position (location_p,
-                                DAL::STATION_POSITION_VALUE,
-                                DAL::STATION_POSITION_UNIT,
-                                DAL::STATION_POSITION_FRAME);
+                                "STATION_POSITION_VALUE",
+                                "STATION_POSITION_UNIT",
+                                "STATION_POSITION_FRAME");
   }
 #endif
 
@@ -788,9 +787,9 @@ namespace DAL {  // Namespace DAL -- begin
   casa::MDirection TBB_StationGroup::beam_direction ()
   {
     return DAL::h5get_direction (location_p,
-                                 DAL::BEAM_DIRECTION_VALUE,
-                                 DAL::BEAM_DIRECTION_UNIT,
-                                 DAL::BEAM_DIRECTION_FRAME);
+                                 "BEAM_DIRECTION_VALUE",
+                                 "BEAM_DIRECTION_UNIT",
+                                 "BEAM_DIRECTION_FRAME");
   }
 
   //_____________________________________________________________________________

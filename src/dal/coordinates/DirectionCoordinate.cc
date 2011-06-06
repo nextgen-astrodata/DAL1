@@ -242,19 +242,19 @@ namespace DAL {   // Namespace DAL -- begin
     double latpole;
 
     /* Read the attributes from the HDF5 file */
-    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
-    DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
-    DAL::h5get_attribute( groupID, "AXIS_NAMES",       axis_names );
-    DAL::h5get_attribute( groupID, "AXIS_UNITS",       axis_units );
-    DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refvalue );
-    DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refpixel );
-    DAL::h5get_attribute( groupID, "INCREMENT",        increment );
-    DAL::h5get_attribute( groupID, "PC",               pc );
-    DAL::h5get_attribute( groupID, "SYSTEM",           refname );
-    DAL::h5get_attribute( groupID, "PROJECTION",       projection );
-    DAL::h5get_attribute( groupID, "PROJECTION_PARAM", param );
-    DAL::h5get_attribute( groupID, "LONGPOLE",         longpole );
-    DAL::h5get_attribute( groupID, "LATPOLE",          latpole );
+    HDF5Attribute::read (groupID, "COORDINATE_TYPE",  coordinate_type );
+    HDF5Attribute::read (groupID, "NOF_AXES",         nof_axes );
+    HDF5Attribute::read (groupID, "AXIS_NAMES",       axis_names );
+    HDF5Attribute::read (groupID, "AXIS_UNITS",       axis_units );
+    HDF5Attribute::read (groupID, "REFERENCE_VALUE",  refvalue );
+    HDF5Attribute::read (groupID, "REFERENCE_PIXEL",  refpixel );
+    HDF5Attribute::read (groupID, "INCREMENT",        increment );
+    HDF5Attribute::read (groupID, "PC",               pc );
+    HDF5Attribute::read (groupID, "SYSTEM",           refname );
+    HDF5Attribute::read (groupID, "PROJECTION",       projection );
+    HDF5Attribute::read (groupID, "PROJECTION_PARAM", param );
+    HDF5Attribute::read (groupID, "LONGPOLE",         longpole );
+    HDF5Attribute::read (groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
     if (DAL::Coordinate::getType(coordinate_type) == Coordinate::DIRECTION)

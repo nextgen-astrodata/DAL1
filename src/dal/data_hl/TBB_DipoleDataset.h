@@ -33,7 +33,6 @@
 #include <measures/Measures/MPosition.h>
 #endif
 
-#include <core/Enumerations.h>
 #include <data_common/HDF5GroupBase.h>
 
 namespace DAL {  // Namespace DAL -- begin

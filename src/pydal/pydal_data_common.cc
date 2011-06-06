@@ -34,6 +34,8 @@
 
 using DAL::CommonAttributes;
 using DAL::Filename;
+using DAL::HDF5Measure;
+using DAL::HDF5Quantity;
 using DAL::SAS_Settings;
 using DAL::Timestamp;
 
@@ -140,28 +142,28 @@ void export_Filename ()
 {
   /* Enumeration: File type */
   bpl::enum_<Filename::Type>("Type")
-    .value("uv",Filename::uv)
-    .value("sky",Filename::sky)
-    .value("rm",Filename::rm)
-    .value("nfi",Filename::nfi)
-    .value("dynspec",Filename::dynspec)
-    .value("bf",Filename::bf)
-    .value("tbb",Filename::tbb)
+    .value("uv",      Filename::uv)
+    .value("sky",     Filename::sky)
+    .value("rm",      Filename::rm)
+    .value("nfi",     Filename::nfi)
+    .value("dynspec", Filename::dynspec)
+    .value("bf",      Filename::bf)
+    .value("tbb",     Filename::tbb)
     ;
   
   /* Enumeration: File extension */
   bpl::enum_<Filename::Extension>("Extension")
-    .value("MS",Filename::MS)
-    .value("h5",Filename::h5)
-    .value("fits",Filename::fits)
-    .value("log",Filename::log)
-    .value("parset",Filename::parset)
-    .value("lsm",Filename::lsm)
-    .value("IM",Filename::IM)
-    .value("PD",Filename::PD)
-    .value("vds",Filename::vds)
-    .value("gds",Filename::gds)
-    .value("conf",Filename::conf)
+    .value("MS",     Filename::MS)
+    .value("h5",     Filename::h5)
+    .value("fits",   Filename::fits)
+    .value("log",    Filename::log)
+    .value("parset", Filename::parset)
+    .value("lsm",    Filename::lsm)
+    .value("IM",     Filename::IM)
+    .value("PD",     Filename::PD)
+    .value("vds",    Filename::vds)
+    .value("gds",    Filename::gds)
+    .value("conf",   Filename::conf)
     ;
 
   void (Filename::*summary1)() 
@@ -202,14 +204,14 @@ void export_Filename ()
     ;
 }
 
-  //_____________________________________________________________________________
-  //                                                                    Timestamp
-  
+//_____________________________________________________________________________
+//                                                                    Timestamp
+
 void export_Timestamp () 
 {
   //__________________________________________________________________
   // Enumeration: Month of the year
-
+  
   bpl::enum_<Timestamp::Month>("Month")
     .value("Jan",Timestamp::Jan)
     .value("Feb",Timestamp::Feb)
@@ -224,7 +226,7 @@ void export_Timestamp ()
     .value("Nov",Timestamp::Nov)
     .value("Dec",Timestamp::Dec)
     ;
-
+  
   void (Timestamp::*setMonth1)(int const &)   = &Timestamp::setMonth;
   void (Timestamp::*setMonth2)(Timestamp::Month const &) = &Timestamp::setMonth;
   
@@ -272,8 +274,8 @@ void export_Timestamp ()
     ;
 }
 
-  //_____________________________________________________________________________
-  //                                                                 SAS_Settings
+//_____________________________________________________________________________
+//                                                                 SAS_Settings
 
 void export_SAS_Settings () 
 {
@@ -291,5 +293,101 @@ void export_SAS_Settings ()
 	  "Get the values for the FilterSelection field in SAS.")
     .def( "haveFilterSelection", &SAS_Settings::haveFilterSelection,
 	  "Is name a valid value for the AntennaSet field in SAS?")
+    ;  
+}
+
+//_____________________________________________________________________________
+//                                                                 HDF5Quantity
+
+/*!
+  \todo Finish implementation.
+*/
+void export_HDF5Quantity () 
+{
+  void (HDF5Quantity::*summary1)() 
+    = &HDF5Quantity::summary;
+  void (HDF5Quantity::*summary2)(std::ostream &) 
+    = &HDF5Quantity::summary;
+  
+  bpl::class_<HDF5Quantity>("HDF5Quantity")
+    .def( bpl::init<>())
+    .def( bpl::init<string>())
+    .def( bpl::init<string,string,string,string>())
+    .def( bpl::init<string,double,string>())
+    .def( bpl::init<string,vector<double>,string>())
+    .def( bpl::init<string,vector<double>,vector<string> >())
+    .def( bpl::init<HDF5Quantity>())
+    .def( "className", &HDF5Quantity::className,
+	  "Get the name of the class.")
+    .def( "name", &HDF5Quantity::name,
+	  "Get the name of the quantity used a base for the attributes.")
+    .def( "setName", &HDF5Quantity::setName,
+	  "Set the name of the quantity used a base for the attributes.")
+    .def( "valueSuffix", &HDF5Quantity::valueSuffix,
+	  "Get the suffix appended to the attribute storing the value(s).")
+    .def( "setValueSuffix", &HDF5Quantity::setValueSuffix,
+	  "Get the suffix appended to the attribute storing the value(s).")
+    .def( "unitsSuffix", &HDF5Quantity::unitsSuffix,
+	  "Get the suffix appended to the attribute storing the units(s).")
+    .def( "setUnitsSuffix", &HDF5Quantity::setUnitsSuffix,
+	  "Get the suffix appended to the attribute storing the units(s).")
+    .def( "separator", &HDF5Quantity::separator,
+	  "Get the separator inserted betwen the base and the suffix of the name.")
+    .def( "setSeparator", &HDF5Quantity::setSeparator,
+	  "Set the separator inserted betwen the base and the suffix of the name.")
+    .def( "value", &HDF5Quantity::value,
+	  "Get the numerical value(s).")
+    .def( "setValue", &HDF5Quantity::setValue,
+	  "Set the name of the class.")
+    .def( "units", &HDF5Quantity::units,
+	  "Get the physical unit(s) associated with the value(s).")
+    .def( "setUnits", &HDF5Quantity::setUnits,
+	  "Set the physical unit(s) associated with the value(s).")
+    /* Public methods */
+    .def("summary", summary1)
+    .def("summary", summary2)
+    .def( "nameValue", &HDF5Quantity::nameValue,
+	  "Get the name for the attribute storing the value of the quantity.")
+    .def( "nameUnits", &HDF5Quantity::nameUnits,
+	  "Get the name for the attribute storing the units of the quantity.")
+    ;  
+}
+
+//_____________________________________________________________________________
+//                                                                  HDF5Measure
+
+/*!
+  \todo Finish implementation.
+*/
+void export_HDF5Measure () 
+{
+  void (HDF5Measure::*summary1)() 
+    = &HDF5Measure::summary;
+  void (HDF5Measure::*summary2)(std::ostream &) 
+    = &HDF5Measure::summary;
+
+  bpl::class_<HDF5Measure>("HDF5Measure")
+    .def( bpl::init<>())
+    .def( bpl::init<string>())
+    .def( bpl::init<string,string,string,string,string>())
+    .def( bpl::init<string,double,string,string>())
+    .def( bpl::init<string,vector<double>,string,string>())
+    .def( bpl::init<string,vector<double>,vector<string>,string>())
+    .def( bpl::init<HDF5Quantity,string>())
+    .def( bpl::init<HDF5Measure>())
+    /* Parameter access */
+    .def( "frame", &HDF5Measure::frame,
+	  "Get the name of the reference frame.")
+    .def( "setFrame", &HDF5Measure::setFrame,
+	  "Set the name of the reference frame.")
+    .def( "frameSuffix", &HDF5Measure::frameSuffix,
+	  "Get the suffix appended to the attribute storing the frame.")
+    .def( "setFrameSuffix", &HDF5Measure::setFrameSuffix,
+	  "Set the suffix appended to the attribute storing the frame.")
+    /* Public methods */
+    .def( "className", &HDF5Measure::className,
+	  "Get the name of the class.")
+    .def("summary", summary1)
+    .def("summary", summary2)
     ;  
 }

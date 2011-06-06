@@ -205,6 +205,10 @@ namespace DAL {  // Namespace DAL -- begin
     catch (std::string message) {
       std::cerr << "[LOPES_EventFile::channeldata] " << message << std::endl;
     }    
+#else
+      std::cerr << "[LOPES_EventFile::channeldata] "
+		<< " Unable to retrieve data - only defined for CASA array classes!"
+		<< std::endl;
 #endif
 
     return data;
@@ -213,20 +217,31 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         data
   
-  void LOPES_EventFile::data (short *data,
+  bool LOPES_EventFile::data (short *data,
 			      unsigned int const &channel)
   {
+    bool status = true;
 #ifdef DAL_WITH_CASACORE
     // Retrieve the data for the selected channel
     casa::Vector<short> channeldata = LOPES_EventFile::channeldata(channel);
     
     unsigned int nofSamples (channeldata.nelements());
     
-    for (unsigned int sample(0); sample<nofSamples; sample++)
-      {
-	data[sample] = channeldata(sample);
-      }
+    for (unsigned int sample(0); sample<nofSamples; sample++) {
+      data[sample] = channeldata(sample);
+    }
+#else
+    // Throw error message ...
+    std::cerr << "[LOPES_EventFile::channeldata] "
+	      << " Unable to retrieve data for channel " << channel
+	      << " - only defined for CASA array classes!"
+	      << std::endl;
+    // ... and set the data pointer to zero
+    data   = NULL;
+    status = false;
 #endif
+    
+    return status;
   }
   
   // ============================================================================

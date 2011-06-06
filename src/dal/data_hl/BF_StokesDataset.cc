@@ -345,15 +345,15 @@ namespace DAL { // Namespace DAL -- begin
       unsigned int nofSubbands;
       unsigned int nofChannels;
       
-      if ( h5get_attribute (itsLocation, "STOKES_COMPONENT", stokesComponent) ) {
+      if ( HDF5Attribute::read (itsLocation, "STOKES_COMPONENT", stokesComponent) ) {
 	itsStokesComponent.setType(stokesComponent);
       }
 
-      if ( h5get_attribute (itsLocation, "NOF_SUBBANDS", nofSubbands) ) {
+      if ( HDF5Attribute::read (itsLocation, "NOF_SUBBANDS", nofSubbands) ) {
 	/* Store the number of sub-bands */
 	itsNofChannels.resize(nofSubbands);
 	/* Reyrieve number of channels per sub-band */
-	if ( h5get_attribute (itsLocation, "NOF_CHANNELS", nofChannels) ) {
+	if ( HDF5Attribute::read (itsLocation, "NOF_CHANNELS", nofChannels) ) {
 	  itsNofChannels = std::vector<unsigned int>(nofSubbands,nofChannels);
 	}
       }

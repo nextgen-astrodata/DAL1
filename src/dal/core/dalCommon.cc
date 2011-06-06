@@ -507,214 +507,6 @@ namespace DAL {
     return 0;
   }
   
-  //_____________________________________________________________________________
-  // Get the value of an attribute attached to a group or dataset
-  
-  /*!
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-    \retval value       -- Value of the attribute
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  template <>
-  bool h5get_attribute (hid_t const &attribute_id,
-                        std::string &value)
-  {
-    bool status (true);
-    herr_t h5error (0);
-    hid_t datatype_id (0);
-    hid_t native_datatype_id (0);
-
-    if (H5Iis_valid(attribute_id)) {
-      datatype_id        = H5Aget_type (attribute_id);
-      native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    } else {
-      return false;
-    }
-
-    if (datatype_id > 0) {
-      
-      H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
-      
-      if (datatype_class_id == H5T_STRING) {
-	htri_t is_variable_string = H5Tis_variable_str(datatype_id);
-	
-	// Buffer to temporarily hold string while reading
-	char *buffer;
-	
-	// additional variables
-	hsize_t datatype_size         = H5Tget_size (datatype_id);
-	
-#ifdef DAL_DEBUGGING_MESSAGES
-	// output
-	std::cout << "[DAL::h5get_attribute]" << endl;
-	std::cout << "-- Attribute ID       = " << attribute_id  << endl;
-	std::cout << "-- Datatype ID        = " << datatype_id   << endl;
-	std::cout << "-- Datatype size      = " << datatype_size << endl;
-	std::cout << "-- Is variable length = " << is_variable_string << endl;
-#endif
-	
-	if (is_variable_string) {
-	  // read the contents of the attribute into the buffer
-	  h5error = H5Aread(attribute_id,
-			    native_datatype_id,
-			    &buffer);
-	  // copy retrieved value to return variable
-	  if (h5error == 0) {
-	    std::string tmp = buffer;
-	    value = tmp;
-	  }
-	}
-	else {
-    // Allocate memory for buffer
-    buffer = new char[datatype_size];
-	
-	  h5error = H5Aread(attribute_id,
-			    datatype_id,
-			    buffer);
-
-	  std::string tmp(buffer, datatype_size);
-    value = tmp;
-
-    // Free memory buffer
-    delete buffer;
-	}
-
-	// // release allocated memory
-	// if (data!=NULL) delete data;
-	
-      } // END -- (datatype_class_id == H5T_STRING)
-      
-    }
-    
-    /* release HDF5 handlers */
-    if (H5Iis_valid(native_datatype_id)) { H5Tclose (native_datatype_id); }
-    if (H5Iis_valid(datatype_id))        { H5Tclose (datatype_id);        }
-    // clean up the error message buffer
-    h5error = H5Eclear1();
-
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                              h5get_attribute
-  
-  /*!
-    As HDF5 does not have a datatype <tt>bool</tt>, we are using <tt>int</tt> 
-    for storage instead; as a consequence of this an explicit implentation is
-    required to deal with the backwards conversion when reading from a file.
-  */
-  template <>
-  bool h5get_attribute (hid_t const &attribute_id,
-			std::vector<bool> &value)
-  {
-    bool status              = true;
-    herr_t h5error           = 0;
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    std::vector<hsize_t> shape;
-    
-    status = HDF5Dataspace::shape (attribute_id,shape);
-    
-    if (shape.size() > 0) {
-      // Buffer for the underlying HDF5 library call
-      int *buffer = new int [shape[0]];
-      // read attribute value into buffer
-      h5error = H5Aread (attribute_id,
-			 native_datatype_id,
-			 buffer);
-      // copy retrieved data to returned vector
-      if (h5error == 0) {
-	// adjust size of vector returning the result
-	value.resize(shape[0]);
-	// copy the contents of the buffer
-	for (uint n(0); n<shape[0]; n++) {
-	  value[n] = bool(buffer[n]);
-	}
-      }
-      else {
-	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
-	status = false;
-      }
-      // release memory allocated for temporary buffer
-      delete [] buffer;
-      buffer = 0;
-    }
-    else {
-      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-	   << endl;
-      status = false;
-    }
-
-    /* release HDF5 handlers */
-    if (H5Iis_valid(datatype_id))        H5Tclose (datatype_id);
-    if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
-    
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                              h5get_attribute
-  
-  /*!
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-    \retval value       -- Value of the attribute
-    
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  template <>
-  bool h5get_attribute (hid_t const &attribute_id,
-                        std::vector<std::string> &value)
-  {
-    bool status (true);
-    herr_t h5error (0);
-    hid_t datatype_id;
-    hid_t native_datatype_id;
-    std::vector<hsize_t> shape;
-    char *buffer;
-    
-    if (H5Iis_valid(attribute_id)) {
-      datatype_id        = H5Aget_type (attribute_id);
-      native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-      status             = HDF5Dataspace::shape (attribute_id,shape);
-    } else {
-      return false;
-    }
-    
-    if (shape.size() > 0) {
-      // additional variables
-      hsize_t datatype_size = H5Tget_size (datatype_id);
-      buffer = new char[shape[0]*datatype_size];
-      
-      // Read the attribute data from the file
-      h5error = H5Aread(attribute_id,
-			native_datatype_id,
-			buffer);
-      
-      // Copy the retrieved data to the returned variable
-      if (h5error == 0) {
-	value.resize(shape[0]);
-	std::string str = std::string(buffer);
-	for (uint n(0); n<shape[0]; n++) {
-	  value[n] = str.substr(n*datatype_size, datatype_size);
-	}
-      }
-    }
-    else {
-      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-	   << endl;
-      status = false;
-    }
-    
-    /* release HDF5 handlers */
-    if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
-    if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
-    
-    return status;
-  }
-  
   // ============================================================================
   //
   // Access to HDF5 attributes through casacore (array) classes
@@ -783,65 +575,20 @@ namespace DAL {
     return status;
   }
 
-  //_____________________________________________________________________________
-  //                                                              h5get_attribute
-
-  template <>
-  bool h5get_attribute (hid_t const &attribute_id,
-                        casa::Vector<casa::String> &value)
-  {
-    bool status              = true;
-    herr_t h5error           = 0;
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    std::vector<hsize_t> shape;
-
-    status = HDF5Dataspace::shape (attribute_id,shape);
-    
-    if (shape.size() > 0) {
-      char * buffer[shape[0]];
-      // Read the attribute data from the file
-      h5error = H5Aread(attribute_id,
-			native_datatype_id,
-			&buffer);
-      // Copy the retrieved data to the returned variable
-      if (h5error == 0)
-	{
-	  value.resize(shape[0]);
-	  for (uint n(0); n<shape[0]; n++)
-	    {
-	      value(n) = buffer[n];
-	    }
-	}
-    }
-    else {
-      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-	   << endl;
-      status = false;
-    }
-    
-    /* release HDF5 handlers */
-    H5Tclose (datatype_id);
-    H5Tclose (native_datatype_id);
-    
-    return status;
-  }
-  
   // ------------------------------------------------------------- h5get_quantity
   
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
+    \param name        -- Name forming the base string of the attributes storing
+           the components of the quantity. Based on the \e name the attributes
+	   <tt><name>_VALUE</tt> and <tt><name>_UNIT</tt> are searched.
 
     \return quantity -- The physical quantity.
   */
   casa::Quantity h5get_quantity (hid_t const &location_id,
-				 Attributes const &value,
-				 Attributes const &unit)
+				 std::string const &value,
+				 std::string const &unit)
   {
     if (location_id > 0)
       {
@@ -849,13 +596,13 @@ namespace DAL {
         double qValue;
         std::string qUnit;
         // retrieve the value of the quantity
-        status *= h5get_attribute(location_id,
-                                  attribute_name(value),
-                                  qValue);
+        status *= HDF5Attribute::read (location_id,
+				       value,
+				       qValue);
         // retrieve the unit of the quantity
-        status *= h5get_attribute(location_id,
-                                  attribute_name(unit),
-                                  qUnit);
+        status *= HDF5Attribute::read (location_id,
+				       unit,
+				       qUnit);
         // put together the Quantity object
         if (status) {
 	  casa::Quantity val = casa::Quantity (qValue,
@@ -871,32 +618,10 @@ namespace DAL {
       return casa::Quantity();
     }
   }
-  
-  // ------------------------------------------------------------ h5get_direction
-  
-  /*!
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
 
-    \return direction -- The physical quantity.
-  */
-  casa::MDirection h5get_direction (hid_t const &location_id,
-				    Attributes const &value,
-				    Attributes const &unit,
-				    Attributes const &frame)
-  {
-    return h5get_direction (location_id,
-                            attribute_name(value),
-                            attribute_name(unit),
-                            attribute_name(frame));
-  }
-
+  //_____________________________________________________________________________
+  //                                                              h5get_direction
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
@@ -925,9 +650,9 @@ namespace DAL {
       //______________________________________________________________
       // Retrieve components from dataset to construct MDirection
       
-      if (!h5get_attribute(location_id,
-			   value,
-			   values))
+      if (!HDF5Attribute::read(location_id,
+			       value,
+			       values))
 	{
 	  cerr << "[h5get_direction]"
 	       << " Error retrieving the numerical values of the position"
@@ -935,9 +660,9 @@ namespace DAL {
 	  return dir;
 	}
       
-      if (!h5get_attribute(location_id,
-			   unit,
-			   units))
+      if (!HDF5Attribute::read(location_id,
+			       unit,
+			       units))
 	{
 	  cerr << "[h5get_direction]"
 	       << " Error retrieving the physical units of the position"
@@ -945,9 +670,9 @@ namespace DAL {
 	  return dir;
 	}
       
-      if (!h5get_attribute(location_id,
-			   frame,
-			   refcode))
+      if (!HDF5Attribute::read(location_id,
+			       frame,
+			       refcode))
 	{
 	  cerr << "[h5get_direction]"
 	       << " Error retrieving the frame of the position"
@@ -989,31 +714,9 @@ namespace DAL {
     
     return dir;
   }
-  
-  // ------------------------------------------------------------- h5get_position
-  
-  /*!
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
 
-    \return position -- The position as casa::Measure.
-  */
-  MPosition h5get_position (hid_t const &location_id,
-			    Attributes const &value,
-			    Attributes const &unit,
-			    Attributes const &frame)
-  {
-    return h5get_position (location_id,
-                           attribute_name(value),
-                           attribute_name(unit),
-                           attribute_name(frame));
-  }
+  //_____________________________________________________________________________
+  //                                                               h5get_position
   
   /*!
     \param location_id -- Identifier of the structure within the file, to which
@@ -1039,21 +742,21 @@ namespace DAL {
       std::vector<double> values;
       std::vector<std::string> units;
       std::string refcode;
-
+      
       // retrieve the numerical values of the position
-      status *= h5get_attribute(location_id,
-				value,
-				values);
-
+      status *= HDF5Attribute::read(location_id,
+				    value,
+				    values);
+      
       // retrieve the physical units of the position
-      status *= h5get_attribute(location_id,
-				unit,
-				units);
-
+      status *= HDF5Attribute::read(location_id,
+				    unit,
+				    units);
+      
       // retrieve the frame of the position
-      status *= h5get_attribute(location_id,
-				frame,
-				refcode);
+      status *= HDF5Attribute::read(location_id,
+				    frame,
+				    refcode);
       
       if (status) {
 	if (values.size() == 3 && units.size() == 3) {

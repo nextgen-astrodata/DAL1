@@ -211,7 +211,7 @@ namespace DAL {
     template<class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5get_attribute( tableID_p, attrname, value );
+        return HDF5Attribute::read (tableID_p, attrname, value );
       }
     
     bool setAttribute( std::string attrname, char const * data, int size=1 );

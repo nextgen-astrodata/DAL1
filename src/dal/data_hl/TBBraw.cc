@@ -506,20 +506,20 @@ namespace DAL {  // Namespace DAL -- begin
 						antenna_position_value );
     dipoleBuf[numDipole].array->setAttribute ("ANTENNA_POSITION_UNIT",
 						antenna_position_unit );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
+    dipoleBuf[numDipole].array->setAttribute( "ANTENNA_POSITION_FRAME",
 						std::vector<string>(1,"ITRF") );
     dipoleBuf[numDipole].array->setAttribute ("ANTENNA_ORIENTATION_VALUE",
 						antenna_position_value);
     dipoleBuf[numDipole].array->setAttribute ("ANTENNA_ORIENTATION_UNIT",
 						antenna_position_unit );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
+    dipoleBuf[numDipole].array->setAttribute( "ANTENNA_ORIENTATION_FRAME",
 						std::vector<string>(1,"ITRF") );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(FEED),
+    dipoleBuf[numDipole].array->setAttribute( "FEED",
 						std::vector<string>(1,"UNDEFINED") );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(NYQUIST_ZONE),
+    dipoleBuf[numDipole].array->setAttribute( "NYQUIST_ZONE",
         &nyquist_zone );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
-    dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
+    dipoleBuf[numDipole].array->setAttribute( "SAMPLE_FREQUENCY_VALUE", &sf, 1 );
+    dipoleBuf[numDipole].array->setAttribute( "SAMPLE_FREQUENCY_UNIT",
         std::vector<string>(1,"MHz") );
 #ifdef DAL_DEBUGGING_MESSAGES
     /* Feedback */
@@ -580,19 +580,19 @@ namespace DAL {  // Namespace DAL -- begin
 						  station_position_unit);
     stationBuf[stationIndex].group->setAttribute( "STATION_POSITION_FRAME",
 						  station_position_frame );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
+    stationBuf[stationIndex].group->setAttribute( "BEAM_DIRECTION_VALUE",
 						  beam_direction_value, 2 );
     stationBuf[stationIndex].group->setAttribute( "BEAM_DIRECTION_UNIT",
 						  beamDirectionUnit);
-    stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
+    stationBuf[stationIndex].group->setAttribute( "BEAM_DIRECTION_FRAME",
 						  beam_direction_frame );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_TYPE),
+    stationBuf[stationIndex].group->setAttribute( "TRIGGER_TYPE",
 						  triggerType );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_OFFSET),
+    stationBuf[stationIndex].group->setAttribute( "TRIGGER_OFFSET",
 						  triggerOffset );
     stationBuf[stationIndex].group->setAttribute( "TRIGGERED_ANTENNAS",
 						  triggeredAntennas);
-    stationBuf[stationIndex].group->setAttribute( attribute_name(OBSERVATION_MODE),
+    stationBuf[stationIndex].group->setAttribute( "OBSERVATION_MODE",
 						  observationMode );
     return stationIndex;
   };

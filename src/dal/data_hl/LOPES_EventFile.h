@@ -197,8 +197,7 @@ namespace DAL {  // Namespace DAL -- begin
       \return channeldata -- [sample,antenna] Data for the individual channels,
               i.e. dipoles
     */
-    inline casa::Matrix<short> channeldata ()
-    {
+    inline casa::Matrix<short> channeldata () {
       return channeldata_p;
     }
     
@@ -207,8 +206,7 @@ namespace DAL {  // Namespace DAL -- begin
       \param channel -- Channel/Antenna for which to return the data
       \return channeldata -- Data for the individual channels, i.e. dipoles
     */
-    inline casa::Vector<short> channeldata (unsigned int const &channel)
-    {
+    inline casa::Vector<short> channeldata (unsigned int const &channel) {
       return channeldata_p.column(channel);
     }
 #endif
@@ -242,13 +240,16 @@ namespace DAL {  // Namespace DAL -- begin
       
       \retval data   -- Pointer to the array of data for antenna <i>channel</i>
       \param channel -- Channel/Antenna for which to return the data
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered, which also includes the underlying retrieval
+	      mechanism not being defined due to missing casacore installation.
     */
-    void data (short *data,
+    bool data (short *data,
 	       unsigned int const &channel);
     
     // ---------------------------------------------------------------- Header data
     
-  /*!
+    /*!
     \brief Get the LOPES-Event version
     
     \return version -- The LOPES-Event version

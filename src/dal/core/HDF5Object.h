@@ -157,8 +157,6 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Example(s)</h3>
 
-    \todo Consider splitting off most of the static functions to a separate file
-    \e HDF5ObjectUtils.
   */  
   class HDF5Object {
 

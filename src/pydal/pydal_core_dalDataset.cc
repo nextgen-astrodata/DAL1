@@ -511,81 +511,66 @@ dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
   /*  getAttribute calls for all types, for single values */
   bpl::numeric::array dalDataset::getAttribute_float_boost ( std::string attrname )
   {
-  	 std::vector<float> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
-  	 
-//  	 float * values = NULL;
-
-
-//     std::vector<int> mydims;
-//     mydims.push_back( value.size() );
-//
-//     for (int idx=0; idx++; idx<value.size() )
-//        values
-//     
-//      bpl::numeric::array narray = num_util::makeNum( values, mydims );
-//      delete [] values;
-//      values = NULL;
-//      return narray;
-
+    std::vector<float> value;
+    HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
 
      bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<float*>(&value[0]), dims );
      return arr;
   }
   bpl::numeric::array dalDataset::getAttribute_double_boost ( std::string attrname )
   {
-  	 std::vector<double> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
-  	 
-     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<double*>(&value[0]), dims );
-     return arr;
+    std::vector<double> value;
+    HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
+    
+    bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<double*>(&value[0]), dims );
+    return arr;
   }
-  bpl::numeric::array dalDataset::getAttribute_long_boost ( std::string attrname )
-  {
-  	 std::vector<long> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
+bpl::numeric::array dalDataset::getAttribute_long_boost ( std::string attrname )
+{
+  std::vector<long> value;
+  HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
+  std::cerr << value << std::endl;
+  std::vector<int> dims;
+  dims.push_back( value.size() );
   	 
      bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<long*>(&value[0]), dims );
      return arr;
   }
   bpl::numeric::array dalDataset::getAttribute_short_boost ( std::string attrname )
   {
-  	 std::vector<short> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
-  	 
-     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<short*>(&value[0]), dims );
+    std::vector<short> value;
+    HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
+    
+    bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<short*>(&value[0]), dims );
      return arr;
   }
   bpl::numeric::array dalDataset::getAttribute_int_boost ( std::string attrname )
   {
-  	 std::vector<int> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
-  	 
-     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<int*>(&value[0]), dims );
+    std::vector<int> value;
+    HDF5Attribute::read ( h5fh_p, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
+    
+    bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<int*>(&value[0]), dims );
      return arr;
   }
   bpl::numeric::array dalDataset::getAttribute_uint_boost ( std::string attrname )
   {
-  	 std::vector<uint> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
+    std::vector<uint> value;
+    HDF5Attribute::read ( h5fh_p, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
   	 
      bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<uint*>(&value[0]), dims );
      return arr;
@@ -593,8 +578,8 @@ dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
   bpl::list dalDataset::getAttribute_string_boost ( std::string attrname )
   {
      bpl::list data;
-  	 std::vector<string> value;
-     h5get_attribute( h5fh_p, attrname.c_str(), value );
+     std::vector<string> value;
+     HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );

@@ -245,12 +245,12 @@ namespace DAL {  // Namespace DAL -- begin
     {
       std::string coordinateTypeName;
       
-      DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinateTypeName );
-      DAL::h5get_attribute( groupID, "NOF_AXES",         this->nofAxes_p );
-      DAL::h5get_attribute( groupID, "AXIS_NAMES",       this->axisNames_p );
-      DAL::h5get_attribute( groupID, "AXIS_UNITS",       this->axisUnits_p );
-      DAL::h5get_attribute( groupID, "PIXEL_VALUES",     this->itsPixelValues );
-      DAL::h5get_attribute( groupID, "WORLD_VALUES",     this->itsWorldValues );
+      HDF5Attribute::read (groupID, "COORDINATE_TYPE",  coordinateTypeName );
+      HDF5Attribute::read (groupID, "NOF_AXES",         this->nofAxes_p );
+      HDF5Attribute::read (groupID, "AXIS_NAMES",       this->axisNames_p );
+      HDF5Attribute::read (groupID, "AXIS_UNITS",       this->axisUnits_p );
+      HDF5Attribute::read (groupID, "PIXEL_VALUES",     this->itsPixelValues );
+      HDF5Attribute::read (groupID, "WORLD_VALUES",     this->itsWorldValues );
     }
     //___________________________________________________________________________
     //                                                                  read_hdf5

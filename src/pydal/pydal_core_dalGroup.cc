@@ -340,7 +340,7 @@ bool dalGroup::setAttribute_string_vector (std::string attrname, bpl::list data 
 bpl::numeric::array dalGroup::getAttribute_float_boost ( std::string attrname )
 {
   std::vector<float> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write (itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -366,7 +366,7 @@ bpl::numeric::array dalGroup::getAttribute_float_boost ( std::string attrname )
 bpl::numeric::array dalGroup::getAttribute_double_boost ( std::string attrname )
 {
   std::vector<double> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -377,7 +377,7 @@ bpl::numeric::array dalGroup::getAttribute_double_boost ( std::string attrname )
 bpl::numeric::array dalGroup::getAttribute_long_boost ( std::string attrname )
 {
   std::vector<long> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -388,7 +388,7 @@ bpl::numeric::array dalGroup::getAttribute_long_boost ( std::string attrname )
 bpl::numeric::array dalGroup::getAttribute_short_boost ( std::string attrname )
 {
   std::vector<short> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -399,7 +399,7 @@ bpl::numeric::array dalGroup::getAttribute_short_boost ( std::string attrname )
 bpl::numeric::array dalGroup::getAttribute_int_boost ( std::string attrname )
 {
   std::vector<int> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -410,7 +410,7 @@ bpl::numeric::array dalGroup::getAttribute_int_boost ( std::string attrname )
 bpl::numeric::array dalGroup::getAttribute_uint_boost ( std::string attrname )
 {
   std::vector<uint> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );
@@ -422,7 +422,7 @@ bpl::list dalGroup::getAttribute_string_boost ( std::string attrname )
 {
   bpl::list data;
   std::vector<std::string> value;
-  h5get_attribute( itsGroupID, attrname.c_str(), value );
+  HDF5Attribute::write( itsGroupID, attrname.c_str(), value );
   std::cerr << value << std::endl;
   std::vector<int> dims;
   dims.push_back( value.size() );

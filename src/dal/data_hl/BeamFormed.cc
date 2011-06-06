@@ -361,7 +361,7 @@ namespace DAL {
     hid_t location  = dataset_p->getId();
     
     if (H5Iis_valid(location)) {
-      if (h5get_attribute (location,name,val)) {
+      if (HDF5Attribute::read (location,name,val)) {
 	return val;
       } else {
 	std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -419,7 +419,7 @@ namespace DAL {
     std::string name ("NUMBER_OF_STATIONS");
     int val (-1);
     hid_t location = dataset_p->getId();
-    bool status    = h5get_attribute (location,name,val);
+    bool status    = HDF5Attribute::read (location,name,val);
     
     if (!status) {
       std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -591,7 +591,7 @@ namespace DAL {
     std::string name ("MAIN_BEAM_DIAM");
     int val (-1);
     hid_t location = dataset_p->getId();
-    bool status    = h5get_attribute (location,name,val);
+    bool status    = HDF5Attribute::read (location,name,val);
     
     if (!status) {
       std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -613,7 +613,7 @@ namespace DAL {
     std::string name ("CENTER_FREQUENCY");
     int val (-1);
     hid_t location = dataset_p->getId();
-    bool status    = h5get_attribute (location,name,val);
+    bool status    = HDF5Attribute::read (location,name,val);
     
     if (!status) {
       std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -636,7 +636,7 @@ namespace DAL {
     std::string name ("BANDWIDTH");
     int val (-1);
     hid_t location = dataset_p->getId();
-    bool status    = h5get_attribute (location,name,val);
+    bool status    = HDF5Attribute::read (location,name,val);
     
     if (!status) {
       std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -680,7 +680,7 @@ namespace DAL {
     std::string name ("BREAKS_IN_DATA");
     int val (-1);
     hid_t location = dataset_p->getId();
-    bool status    = h5get_attribute (location,name,val);
+    bool status    = HDF5Attribute::read (location,name,val);
     
     if (!status) {
       std::cerr << "[BeamFormed] Error extracting attribute " << name
@@ -849,7 +849,7 @@ namespace DAL {
   {
     std::vector<int> station_temperatures;
     try {
-      status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
+      status = HDF5Attribute::read( H5fileID_p, "TSYS", station_temperatures );
     }
     catch (std::string message) {
       cerr << message << endl;
