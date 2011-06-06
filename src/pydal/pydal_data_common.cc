@@ -300,7 +300,7 @@ void export_SAS_Settings ()
 //                                                                 HDF5Quantity
 
 /*!
-  \todo Complete implementation.
+  \todo Finish implementation.
 */
 void export_HDF5Quantity () 
 {
@@ -357,7 +357,7 @@ void export_HDF5Quantity ()
 //                                                                  HDF5Measure
 
 /*!
-  \todo Complete implementation.
+  \todo Finish implementation.
 */
 void export_HDF5Measure () 
 {
@@ -375,9 +375,18 @@ void export_HDF5Measure ()
     .def( bpl::init<string,vector<double>,vector<string>,string>())
     .def( bpl::init<HDF5Quantity,string>())
     .def( bpl::init<HDF5Measure>())
+    /* Parameter access */
+    .def( "frame", &HDF5Measure::frame,
+	  "Get the name of the reference frame.")
+    .def( "setFrame", &HDF5Measure::setFrame,
+	  "Set the name of the reference frame.")
+    .def( "frameSuffix", &HDF5Measure::frameSuffix,
+	  "Get the suffix appended to the attribute storing the frame.")
+    .def( "setFrameSuffix", &HDF5Measure::setFrameSuffix,
+	  "Set the suffix appended to the attribute storing the frame.")
+    /* Public methods */
     .def( "className", &HDF5Measure::className,
 	  "Get the name of the class.")
-    /* Public methods */
     .def("summary", summary1)
     .def("summary", summary2)
     ;  
