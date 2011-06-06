@@ -98,10 +98,10 @@ namespace DAL { // Namespace DAL -- begin
     std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,Stokes::Component,hid_t]"
 	      << std::endl;
 
-    create (location,
-	    component,
-	    nofSubbands,
-	    nofChannels);
+    open (location,
+	  component,
+	  nofSubbands,
+	  nofChannels);
   }
   
   //_____________________________________________________________________________
@@ -199,7 +199,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   BF_StokesDataset::BF_StokesDataset (BF_StokesDataset const &other)
-    : HDF5Dataset (other)
+    : HDF5DatasetBase (other)
   {
     *this = other;
 
@@ -376,7 +376,7 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_StokesDataset::open (hid_t const &location,
 			       std::string const &name)
   {
-    bool status = HDF5Dataset::open (location, name, IO_Mode::Open);
+    bool status = HDF5DatasetBase::open (location, name, IO_Mode::Open);
 
     if (status) {
       init ();
@@ -472,11 +472,11 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /* Open/create dataset */
-    status = HDF5Dataset::create (location,
-				  itsName,
-				  shape,
-				  itsDatatype);
-
+    status = HDF5DatasetBase::create (location,
+				      itsName,
+				      shape,
+				      itsDatatype);
+    
     /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(itsLocation)) {
       std::string grouptype       = "Data";

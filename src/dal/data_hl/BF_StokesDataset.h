@@ -26,9 +26,8 @@
 #include <sstream>
 #include <string>
 
-#include <core/HDF5Attribute.h>
 #include <coordinates/Stokes.h>
-#include <core/HDF5Dataset.h>
+#include <data_common/HDF5DatasetBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -181,7 +180,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_StokesDataset : public HDF5Dataset {
+  class BF_StokesDataset : public HDF5DatasetBase {
 
     //! Set of attributes attached to the dataset
     std::set<std::string> itsAttributes;

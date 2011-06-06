@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5Dataset.h"
+#include <core/HDF5Dataset.h>
 
 namespace DAL {
 
@@ -46,10 +46,11 @@ namespace DAL {
     \param name      -- Name of the dataset.
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
-			    std::string const &name)
+			    std::string const &name,
+			    IO_Mode const &flags)
   {
     init ();
-    open (location, name);
+    open (location, name, flags);
   }
   
   //_____________________________________________________________________________
@@ -65,15 +66,17 @@ namespace DAL {
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name,
 			    std::vector<hsize_t> const &shape,
-			    hid_t const &datatype)
+			    hid_t const &datatype,
+			    IO_Mode const &flags)
   {
     // initialize internal parameters
     init ();
     // Create the dataset
-    create (location,
-	    name,
-	    shape,
-	    datatype);
+    open (location,
+	  name,
+	  shape,
+	  datatype,
+	  flags);
   }
   
   //_____________________________________________________________________________
@@ -91,16 +94,18 @@ namespace DAL {
 			    std::string const &name,
 			    std::vector<hsize_t> const &shape,
 			    std::vector<hsize_t> const &chunksize,
-			    hid_t const &datatype)
+			    hid_t const &datatype,
+			    IO_Mode const &flags)
   {
     // initialize internal parameters
     init ();
     // create the dataset
-    create (location,
-	    name,
-	    shape,
-	    chunksize,
-	    datatype);
+    open (location,
+	  name,
+	  shape,
+	  chunksize,
+	  datatype,
+	  flags);
   }
   
   // ============================================================================
@@ -188,7 +193,7 @@ namespace DAL {
   void HDF5Dataset::init ()
   {
     itsName        = "Dataset";
-    itsLocation     = -1;
+    itsLocation    = -1;
     itsDataspace   = -1;
     itsDatatype    = -1;
     itsLayout      = H5D_COMPACT;
@@ -212,7 +217,7 @@ namespace DAL {
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
-			  IO_Mode::Flags const &flags)
+			  IO_Mode const &flags)
   {
     bool status  = true;
     htri_t h5err = 0;
@@ -268,29 +273,32 @@ namespace DAL {
     } else {
 
       /* If failed to open the group, check if we are supposed to create one */
-      switch (flags) {
-      case IO_Mode::Create:
-      case IO_Mode::Truncate:
-	status = create (location,
-			 itsName,
-			 itsShape,
-			 itsDatatype);
-	break;
-      default:
+      
+      if ( flags.flags() & DAL::IO_Mode::Create ) {
+	status = open (location,
+		       itsName,
+		       itsShape,
+		       itsDatatype);
+      } 
+      else if ( flags.flags() & DAL::IO_Mode::Truncate ) {
+	status = open (location,
+		       itsName,
+		       itsShape,
+		       itsDatatype);
+      } else {
 	std::cerr << "[HDF5Dataset::open] Failed to open dataset "
 		  << name
 		  << std::endl;
 	status = false;
-	break;
       }
-
+      
     }
     
     return status;
   }
   
   //_____________________________________________________________________________
-  //                                                                       create
+  //                                                                         open
   
   /*!
     \param location -- Identifier for the location at which the dataset is about
@@ -301,10 +309,11 @@ namespace DAL {
     \return status  -- Status of the operation; returns \c false in case an error
             was encountered.
   */
-  bool HDF5Dataset::create (hid_t const &location,
-			    std::string const &name,
-			    std::vector<hsize_t> const &shape,
-			    hid_t const &datatype)
+  bool HDF5Dataset::open (hid_t const &location,
+			  std::string const &name,
+			  std::vector<hsize_t> const &shape,
+			  hid_t const &datatype,
+			  IO_Mode const &flags)
   {
     std::vector<hsize_t> chunksize;
     
@@ -312,15 +321,16 @@ namespace DAL {
       chunksize = itsChunking;
     }
     
-    return create (location,
-		   name,
-		   shape,
-		   chunksize,
-		   datatype);
+    return open (location,
+		 name,
+		 shape,
+		 chunksize,
+		 datatype,
+		 flags);
   }
-    
+  
   //_____________________________________________________________________________
-  //                                                                       create
+  //                                                                       open
   
   /*!
     \param location  -- Identifier for the location at which the dataset is about
@@ -332,79 +342,196 @@ namespace DAL {
     \return status   -- Status of the operation; returns \c false in case an
             error was encountered.
   */
-  bool HDF5Dataset::create (hid_t const &location,
-			    std::string const &name,
-			    std::vector<hsize_t> const &shape,
-			    std::vector<hsize_t> const &chunksize,
-			    hid_t const &datatype)
+  bool HDF5Dataset::open (hid_t const &location,
+			  std::string const &name,
+			  std::vector<hsize_t> const &shape,
+			  std::vector<hsize_t> const &chunksize,
+			  hid_t const &datatype,
+			  IO_Mode const &flags)
   {
-    bool status (true);
-    
-    //____________________________________________
-    // Check input parameters
-    
-    if (shape.empty()) {
-      std::cerr << "[HDF5Dataset::create] Undefined dataset shape!" << std::endl;
-      return false;
-    } else {
-      itsName     = name;
-      itsDatatype = H5Tcopy (datatype);
-      
-      setShape (shape, chunksize);
-    }
-    
-    //____________________________________________
-    // Create Dataspace
-    
-    int rank = shape.size();
-    hsize_t dims [rank];
-    hsize_t maxdims [rank];
-    hsize_t chunkdims [rank];
-    hid_t creationProperties;
-    herr_t h5error;
+    bool status = status;
 
-    for (int n(0); n<rank; ++n) {
-      dims[n]      = itsShape[n];
-      maxdims[n]   = H5S_UNLIMITED;
-      chunkdims[n] = itsChunking[n];
-    }
+    status = open (itsLocation,
+		   location,
+		   name,
+		   shape,
+		   chunksize,
+		   datatype,
+		   flags);
 
-    // Set up the dataspace
-    itsDataspace = H5Screate_simple (rank, dims, maxdims);
-    if (!H5Iis_valid(itsDataspace)) {
-      std::cerr << "[HDF5Dataset::create] Failed to create dataspace!"
-		  << std::endl;
-      return false;
-    }
-    // Create the dataset creation property list
-    creationProperties  = H5Pcreate (H5P_DATASET_CREATE);
-    // Set the chunk size
-    h5error     = H5Pset_chunk (creationProperties, rank, chunkdims);
-    // Create the Dataset ...
-    itsLocation  = H5Dcreate (location,
-			      itsName.c_str(),
-			      itsDatatype,
-			      itsDataspace,
-			      H5P_DEFAULT,
-			      creationProperties,
-			      H5P_DEFAULT);
-    // ... and check it
-    if (!H5Iis_valid(itsLocation)) {
-      std::cerr << "[HDF5Dataset::create] Failed to create dataset!"
-		  << std::endl;
-      return false;
-    }
-    
-    // Release HDF5 object identifiers
-    if (H5Iis_valid(creationProperties)) {
-      H5Pclose (creationProperties);
+    if (H5Iis_valid(itsLocation)) {
+      status = true;
     } else {
       status = false;
     }
-    
+
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \retval datasetID -- 
+    \param location   -- 
+    \param name       -- Name of the dataset to be opened/created.
+    \param shape      -- Shape of the dataset.
+    \param chunksize  -- 
+    \param datatype   -- 
+    \param flags      -- I/O mode flags.
+    \return datasetCreate -- Was \c H5Gcreate used in order to create the dataset
+            from scratch?
+   */
+  bool HDF5Dataset::open (hid_t &datasetID,
+			  hid_t const &location,
+			  std::string const &name,
+			  std::vector<hsize_t> const &shape,
+			  std::vector<hsize_t> const &chunksize,
+			  hid_t const &datatype,
+			  IO_Mode const &flags)
+  {
+    bool datasetExists = false;
+    bool datasetCreate = false;
+    herr_t h5error     = 0;
+    
+    /*______________________________________________________
+      Check if the provided location identifier points to a
+      valid object; if this is not the case abort. If the
+      location ID is ok, check if the group already exists.
+    */
+    
+    if ( H5Iis_valid(location) ) {
+
+      if ( H5Lexists (location, name.c_str(), H5P_DEFAULT) ) {
+	
+	H5O_info_t info;
+	H5Oget_info_by_name (location, name.c_str(), &info, H5P_DEFAULT);
+	/* Check if 'name' points to a group object */
+	if ( info.type == H5O_TYPE_DATASET ) {
+	  datasetExists = true;
+	} else {
+	  datasetExists = false;
+	}
+	
+      }
+      
+    } else {
+      std::cerr << "[HDF5Dataset::open] Invalid location ID!" << std::endl;
+      datasetID = 0;
+      return false;
+    }
+
+    /*______________________________________________________
+      Handle the different cases of I/O mode flags; use
+      recursive call of this function to handle recursive
+      relation of flags.
+    */
+    
+    if ( flags.flags() & DAL::IO_Mode::OpenOrCreate ) {
+      if (datasetExists) {
+	return open (datasetID,
+		     location,
+		     name,
+		     shape,
+		     chunksize,
+		     datatype,
+		     IO_Mode(IO_Mode::Open));
+      } else {
+	return open (datasetID,
+		     location,
+		     name,
+		     shape,
+		     chunksize,
+		     datatype,
+		     IO_Mode(IO_Mode::Create));
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Create ) {
+      if (datasetExists) {
+	return open (datasetID,
+		     location,
+		     name,
+		     shape,
+		     chunksize,
+		     datatype,
+		     IO_Mode(IO_Mode::Truncate));
+      } else {
+	return open (datasetID,
+		     location,
+		     name,
+		     shape,
+		     chunksize,
+		     datatype,
+		     IO_Mode(IO_Mode::CreateNew));
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Open ) {
+      if (datasetExists) {
+	datasetID     = 0;
+	datasetCreate = false;
+	HDF5Dataset::open (location, name, flags);
+      } else {
+	datasetID     = 0;
+	datasetCreate = false;
+      }
+    }
+    else if ( flags.flags() & IO_Mode::CreateNew ) {
+      if (datasetExists) {
+	datasetID     = 0;
+	datasetCreate = false;
+      } else {
+	int rank = shape.size();
+	hsize_t dims [rank];
+	hsize_t maxdims [rank];
+	hsize_t chunkdims [rank];
+	/* Process and store input parameters */
+	itsName     = name;
+	itsDatatype = H5Tcopy (datatype);
+	setShape (shape, chunksize);
+	/* Dimension variables for dataset and dataspace */
+	for (int n(0); n<rank; ++n) {
+	  dims[n]      = itsShape[n];
+	  maxdims[n]   = H5S_UNLIMITED;
+	  chunkdims[n] = itsChunking[n];
+	}
+	// Set up the dataspace
+	itsDataspace = H5Screate_simple (rank, dims, maxdims);
+	// Create the dataset creation property list
+	hid_t creationProperties  = H5Pcreate (H5P_DATASET_CREATE);
+	// Set the chunk size
+	h5error = H5Pset_chunk (creationProperties, rank, chunkdims);
+	// Create the Dataset ...
+	datasetCreate = true;
+	datasetID     = H5Dcreate (location,
+				   itsName.c_str(),
+				   itsDatatype,
+				   itsDataspace,
+				   H5P_DEFAULT,
+				   creationProperties,
+				   H5P_DEFAULT);
+	/* Release no longer required IDs */
+	H5Pclose (creationProperties);
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Truncate ) {
+      // Delete the group ...
+      H5Ldelete (location,
+		 name.c_str(),
+		 H5P_DEFAULT);
+      // ... and create it once more from scratch
+      datasetCreate = open (datasetID,
+			    location,
+			    name,
+			    shape,
+			    chunksize,
+			    datatype,
+			    IO_Mode(IO_Mode::CreateNew));
+      datasetCreate = true;
+    }
+    
+    return datasetCreate;
+  }
+  
   //_____________________________________________________________________________
   //                                                                 getChunksize
 
@@ -763,5 +890,5 @@ namespace DAL {
       return HADDR_UNDEF;
     }
   }
-  
+
 } // end namespace DAL
