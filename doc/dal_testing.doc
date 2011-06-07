@@ -12,9 +12,17 @@
   make Experimental
   \endverbatim
 
-  from within the build directory. The collected results will be published at 
-
-  http://svn.astron.nl/CDash/index.php?project=DAL
+  from within the \c build directory. Once experimental build has finished
+  the results will be send to the Dashboard server at <a href="http://svn.astron.nl/CDash/index.php?project=DAL">svn.astron.nl/CDash</a>
+  \verbatim
+  Submit files (using http)
+   Using HTTP submit method
+   Drop site:http://svn.astron.nl/CDash/submit.php?project=DAL
+   Uploaded: /Users/lars/CodeDevelopment/Projects/Work/DAL/build/Testing/20110607-0826/Build.xml
+   Uploaded: /Users/lars/CodeDevelopment/Projects/Work/DAL/build/Testing/20110607-0826/Configure.xml
+   Uploaded: /Users/lars/CodeDevelopment/Projects/Work/DAL/build/Testing/20110607-0826/Test.xml
+   Submission successful
+   \endverbatim
 
   \section data_testing_data Test data sets
 
