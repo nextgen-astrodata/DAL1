@@ -56,7 +56,6 @@ endforeach (_test)
 
 ## tHDF5Object ___________________________________
 
-add_test (tHDF5Object    tHDF5Object    )
 add_test (tHDF5Attribute tHDF5Attribute )
 add_test (tHDF5Dataset   tHDF5Dataset   )
 add_test (tHDF5Datatype  tHDF5Datatype  )
