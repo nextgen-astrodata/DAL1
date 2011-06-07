@@ -241,11 +241,17 @@ int test_open (hid_t const &fileID)
 
   /* array<2,T> */
   names.push_back ("Dataset_2D_int8");
+  names.push_back ("Dataset_2D_int8_chunk");
   names.push_back ("Dataset_2D_int16");
+  names.push_back ("Dataset_2D_int16_chunk");
   names.push_back ("Dataset_2D_int32");
+  names.push_back ("Dataset_2D_int32_chunk");
   names.push_back ("Dataset_2D_int64");
+  names.push_back ("Dataset_2D_int64_chunk");
   names.push_back ("Dataset_2D_float32");
+  names.push_back ("Dataset_2D_float32_chunk");
   names.push_back ("Dataset_2D_float64");
+  names.push_back ("Dataset_2D_float64_chunk");
   /* array<3,T> */
   names.push_back ("Dataset_3D_int8");
   names.push_back ("Dataset_3D_int16");
