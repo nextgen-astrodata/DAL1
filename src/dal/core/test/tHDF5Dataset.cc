@@ -212,18 +212,28 @@ bool set_attributes (DAL::HDF5Dataset &data,
   \verbatim
   h5example_dal.h5
   /
-  |-- Dataset_2D_int8              array<2,int8>
-  |-- Dataset_2D_int16             array<2,int16>
-  |-- Dataset_2D_int32             array<2,int32>
-  |-- Dataset_2D_int64             array<2,int64>
-  |-- Dataset_2D_float32           array<2,float32>
-  |-- Dataset_2D_float64           array<2,float64>
-  |-- Dataset_3D_int8
-  |-- Dataset_3D_int16
+  |-- Dataset_2D_int8                   array<2,int8>
+  |-- Dataset_2D_int8_chunk             array<2,int8>
+  |-- Dataset_2D_int16                  array<2,int16>
+  |-- Dataset_2D_int16_chunk            array<2,int16>
+  |-- Dataset_2D_int32                  array<2,int32>
+  |-- Dataset_2D_int32_chunk            array<2,int32>
+  |-- Dataset_2D_int64                  array<2,int64>
+  |-- Dataset_2D_int64_chunk            array<2,int64>
+  |-- Dataset_2D_float32                array<2,float32>
+  |-- Dataset_2D_float64                array<2,float64>
+  |-- Dataset_3D_int8                   array<3,int8>
+  |-- Dataset_3D_int8_chunk             array<3,int8>
+  |-- Dataset_3D_int16                  array<3,int16>
+  |-- Dataset_3D_int16_chunk            array<3,int16>
   |-- Dataset_3D_int32
+  |-- Dataset_3D_int32_chunk
   |-- Dataset_3D_int64
+  |-- Dataset_3D_int64_chunk
   |-- Dataset_3D_float32
-  `-- Dataset_3D_float64
+  |-- Dataset_3D_float32_chunk
+  |-- Dataset_3D_float64
+  `-- Dataset_3D_float64_chunk
   \endverbatim
 
   \param fileID          -- HDF5 object identifier for the file, to which the 
@@ -254,9 +264,13 @@ int test_open (hid_t const &fileID)
   names.push_back ("Dataset_2D_float64_chunk");
   /* array<3,T> */
   names.push_back ("Dataset_3D_int8");
+  names.push_back ("Dataset_3D_int8_chunk");
   names.push_back ("Dataset_3D_int16");
+  names.push_back ("Dataset_3D_int16_chunk");
   names.push_back ("Dataset_3D_int32");
+  names.push_back ("Dataset_3D_int32_chunk");
   names.push_back ("Dataset_3D_int64");
+  names.push_back ("Dataset_3D_int64_chunk");
   names.push_back ("Dataset_3D_float32");
   names.push_back ("Dataset_3D_float64");
 
