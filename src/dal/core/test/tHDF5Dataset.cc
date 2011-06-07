@@ -228,7 +228,7 @@ int test_constructors (hid_t const &fileID)
     are being initialized.
   */
 
-  cout << "[0] Testing HDF5Dataset() ..." << endl;
+  cout << "[1] Testing HDF5Dataset() ..." << endl;
   try {
     DAL::HDF5Dataset dataset;
     dataset.summary();
@@ -242,7 +242,7 @@ int test_constructors (hid_t const &fileID)
     as parameters for the creation of a new one are not available.
   */
 
-  cout << "[1] Testing HDF5Dataset(hid_t, string) ..." << endl;
+  cout << "[2] Testing HDF5Dataset(hid_t, string) ..." << endl;
   try {
     name = "Dataset.001";
     //
@@ -261,7 +261,7 @@ int test_constructors (hid_t const &fileID)
     adjusted automatically.
   */
 
-  cout << "[2] Testing HDF5Dataset(hid_t, string, vector<hsize_t>) ..." << endl;
+  cout << "[3] Testing HDF5Dataset(hid_t, string, vector<hsize_t>) ..." << endl;
   try {
     name = "Dataset.002";
     //

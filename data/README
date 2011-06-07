@@ -1,13 +1,13 @@
 
 Available dataset descriptions:
 
-  1. tHDF5Object.h5
-  2. h5ex_g_traverse.h5
+  1. h5example_dal.h5
+  2. h5example_g_traverse.h5
 
 _________________________________________________________________________________
->>> 1. tHDF5Object.h5
+>>> 1. h5example_dal.h5
 
-HDF5 "tHDF5Object.h5" {
+HDF5 "h5example_dal.h5" {
 GROUP "/" {
    ATTRIBUTE "ATTRIBUTE_SINGLE_BYTE" {
       DATATYPE  H5T_STD_I8LE
@@ -152,10 +152,10 @@ GROUP "/" {
 }
 
 _________________________________________________________________________________
->>> 2. h5ex_g_traverse.h5
+>>> 2. h5example_g_traverse.h5
 
 
-HDF5 "h5ex_g_traverse.h5" {
+HDF5 "h5example_g_traverse.h5" {
 GROUP "/" {
    GROUP "group1" {
       DATASET "dset1" {

@@ -3,6 +3,8 @@
 
   \page dal_testing Testing procedures
 
+  \section dal_testing_dashboard Test builds submitted to Dashboard
+
   If you want to submit test test results - from configuration, build and
   running the test programs - you can do so by executing
 
@@ -13,5 +15,39 @@
   from within the build directory. The collected results will be published at 
 
   http://svn.astron.nl/CDash/index.php?project=DAL
+
+  \section data_testing_data Test data sets
+
+  In addition to the data sets created as output by the various test programs,
+  there is also a small number of datasets available which can be used for
+  testing purposes. These datasets can be found in the \c data subdirectory:
+
+  \verbatim
+  DAL/data
+  ├── CMakeLists.txt
+  ├── README
+  ├── h5example_dal.h5
+  ├── h5example_g_traverse.h5
+  └── h5example_g_visit.h5
+  \endverbatim
+
+  Internal structure of \e h5example_dal.h5
+
+  \verbatim
+  h5example_dal.h5
+  /
+  |-- Dataset_2D_int8              array<2,int8>
+  |-- Dataset_2D_int16             array<2,int16>
+  |-- Dataset_2D_int32             array<2,int32>
+  |-- Dataset_2D_int64             array<2,int64>
+  |-- Dataset_2D_float32           array<2,float32>
+  |-- Dataset_2D_float64           array<2,float64>
+  |-- Dataset_3D_int8
+  |-- Dataset_3D_int16
+  |-- Dataset_3D_int32
+  |-- Dataset_3D_int64
+  |-- Dataset_3D_float32
+  `-- Dataset_3D_float64
+  \endverbatim
 
 */
