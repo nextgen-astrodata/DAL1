@@ -203,6 +203,76 @@ bool set_attributes (DAL::HDF5Dataset &data,
 // ==============================================================================
 
 //_______________________________________________________________________________
+//                                                                      test_open
+
+/*!
+  \brief Test opening and inspecting provided test data set (h5example_dal.h5)
+
+  The contents of the test HDF5 data set is organized as follows:
+  \verbatim
+  h5example_dal.h5
+  /
+  |-- Dataset_2D_int8              array<2,int8>
+  |-- Dataset_2D_int16             array<2,int16>
+  |-- Dataset_2D_int32             array<2,int32>
+  |-- Dataset_2D_int64             array<2,int64>
+  |-- Dataset_2D_float32           array<2,float32>
+  |-- Dataset_2D_float64           array<2,float64>
+  |-- Dataset_3D_int8
+  |-- Dataset_3D_int16
+  |-- Dataset_3D_int32
+  |-- Dataset_3D_int64
+  |-- Dataset_3D_float32
+  `-- Dataset_3D_float64
+  \endverbatim
+
+  \param fileID          -- HDF5 object identifier for the file, to which the 
+         dataset are attached.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
+*/
+int test_open (hid_t const &fileID)
+{
+  cout << "\n[tHDF5Datatset::test_open]\n" << endl;
+
+  int nofFailedTests = 0;
+  std::vector<std::string> names;
+  std::vector<std::string>::iterator it;
+
+  /* array<2,T> */
+  names.push_back ("Dataset_2D_int8");
+  names.push_back ("Dataset_2D_int16");
+  names.push_back ("Dataset_2D_int32");
+  names.push_back ("Dataset_2D_int64");
+  names.push_back ("Dataset_2D_float32");
+  names.push_back ("Dataset_2D_float64");
+  /* array<3,T> */
+  names.push_back ("Dataset_3D_int8");
+  names.push_back ("Dataset_3D_int16");
+  names.push_back ("Dataset_3D_int32");
+  names.push_back ("Dataset_3D_int64");
+  names.push_back ("Dataset_3D_float32");
+  names.push_back ("Dataset_3D_float64");
+
+  cout << "[1] Open datasets attached to the root group of the file ..." << endl;
+  try {
+    
+    for (it=names.begin(); it!=names.end(); ++it) {
+      // Open the dataset ...
+      DAL::HDF5Dataset dataset (fileID, *it);
+      // ... and show a summary of its properties
+      dataset.summary();
+    }
+
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
@@ -555,41 +625,6 @@ int test_create (hid_t const &fileID)
   
   H5Gclose (groupID);
   
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
-//                                                                      test_open
-
-/*!
-  \brief Test opening the datasets previously created by \c test_create
-
-  \param fileID          -- HDF5 object identifier for the file, to which the 
-         dataset are attached.
-  \return nofFailedTests -- The number of failed tests encountered within this
-          functions.
-*/
-int test_open (hid_t const &fileID)
-{
-  cout << "\n[tHDF5Datatset::test_open]\n" << endl;
-
-  int nofFailedTests (0);
-
-  cout << "[1] Open datasets attached to the root group of the file ..." << endl;
-  try {
-    /* Open the datasets ... */
-    DAL::HDF5Dataset Data1D (fileID, "Data1D");
-    DAL::HDF5Dataset Data2D (fileID, "Data2D");
-    DAL::HDF5Dataset Data3D (fileID, "Data3D");
-    /* ... and provide a summary of their properties */
-    Data1D.summary();
-    Data2D.summary();
-    Data3D.summary();
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    ++nofFailedTests;
-  }
-
   return nofFailedTests;
 }
 
@@ -1226,6 +1261,7 @@ int main (int argc,
           char *argv[])
 {
   int nofFailedTests   = 0;
+  hid_t fileID         = 0;
   bool haveDataset     = false;
   std::string filename = "tHDF5Dataset.h5";
 
@@ -1242,36 +1278,48 @@ int main (int argc,
   std::cout << "[tHDF5Dataset] Output HDF5 file = " << filename << std::endl;
 
   //________________________________________________________
-  // Create HDF5 file to work with
-  
-  hid_t fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
+  // Open/Create HDF5 file to work with
+
+  if (haveDataset) {
+    fileID = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  } else {
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+  }
   
   /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
-    
-    // Test the various constructors for an HDF5Dataset object
-    nofFailedTests += test_constructors (fileID);
-    
-    // Test constructors for a HDF5Dataset object
-    nofFailedTests += test_create (fileID);
-    
-    // Test opening the previously created datasets
-    nofFailedTests += test_open (fileID);
-    
-    // Test access R/W access to 1-dim data arrays
-    nofFailedTests += test_array1d (fileID);
-    
-    // Test access R/W access to 2-dim data arrays
-    nofFailedTests += test_array2d (fileID);
 
-    // // Test the effect of the various Hyperslab parameters
-    // nofFailedTests += test_hyperslab (fileID);
+    if (haveDataset) {
 
-    // // Test expansion of extendable datasets
-    // nofFailedTests += test_extension (fileID);
+      // Test opening provided test data set (h5example_dal.h5)
+      nofFailedTests += test_open (fileID);
+
+    } else {
+      
+      // Test the various constructors for an HDF5Dataset object
+      nofFailedTests += test_constructors (fileID);
+      
+      // Test constructors for a HDF5Dataset object
+      nofFailedTests += test_create (fileID);
+      
+      // Test access R/W access to 1-dim data arrays
+      nofFailedTests += test_array1d (fileID);
+      
+      // Test access R/W access to 2-dim data arrays
+      nofFailedTests += test_array2d (fileID);
+      
+      // // Test the effect of the various Hyperslab parameters
+      // nofFailedTests += test_hyperslab (fileID);
+      
+      // // Test expansion of extendable datasets
+      // nofFailedTests += test_extension (fileID);
+      
+    }
     
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;
@@ -1282,6 +1330,6 @@ int main (int argc,
   // close HDF5 file
   
   H5Fclose(fileID);
-
+  
   return nofFailedTests;
 }

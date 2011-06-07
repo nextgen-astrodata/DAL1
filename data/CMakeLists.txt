@@ -1,9 +1,9 @@
 
-file (GLOB dal_exampledata_hdf5 *.h5)
+file (GLOB dalExampledata *.h5)
 
-if (dal_exampledata_hdf5)
+if (dalExampledata)
   
-  foreach ( _dal_data ${dal_exampledata_hdf5} )
+  foreach ( _dal_data ${dalExampledata} )
 
     ## Get filename components
     get_filename_component (_dataset_filename  ${_dal_data} NAME)
@@ -29,17 +29,17 @@ if (dal_exampledata_hdf5)
     endif(${CMAKE_VERSION} VERSION_LESS 2.8.4)
 
     ## Set variable pointing to location of test data
-    find_file (TESTDATA_${_datasetVar} ${_dataset_filename}
+    find_file (${_datasetVar} ${_dataset_filename}
       PATHS ${CMAKE_CURRENT_BINARY_DIR}
       )
 
     ## Feedback
-    if (HAVE_${_dataset_name})
+    if (_datasetVar)
       message (STATUS "Checking for dataset ${_dataset_filename} - Success")
-    else (HAVE_${_dataset_name})
+    else (_datasetVar)
       message (STATUS "Checking for dataset ${_dataset_filename} - FAIL")
-    endif (HAVE_${_dataset_name})
+    endif (_datasetVar)
     
   endforeach (_dal_data)
   
-endif (dal_exampledata_hdf5)
+endif (dalExampledata)

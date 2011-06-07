@@ -41,13 +41,12 @@ foreach (_test
     tdalCommon
     tdalCommon_operators
     tdalConversions
+    tdalDataset
     tdalFileType
     tdalArray
-    tdalDataset
     tdalFilter
     tdalGroup
     tDatabase
-    tHDF5Dataset
     tHDF5Hyperslab
     tValMatrix
     test_std_cerr
@@ -57,16 +56,17 @@ endforeach (_test)
 
 ## tHDF5Object ___________________________________
 
+add_test (tHDF5Object    tHDF5Object    )
+add_test (tHDF5Attribute tHDF5Attribute )
+add_test (tHDF5Dataset   tHDF5Dataset   )
+add_test (tHDF5Datatype  tHDF5Datatype  )
+
 if (TESTDATA_H5EXAMPLE_DAL)
-  add_test (tHDF5Object    tHDF5Object    ${TESTDATA_H5EXAMPLE_DAL} )
-  add_test (tHDF5Attribute tHDF5Attribute ${TESTDATA_H5EXAMPLE_DAL} )
-  add_test (tHDF5Dataspace tHDF5Dataspace ${TESTDATA_H5EXAMPLE_DAL} )
-  add_test (tHDF5Datatype  tHDF5Datatype  ${TESTDATA_H5EXAMPLE_DAL} )
-else (TESTDATA_H5EXAMPLE_DAL)
-  add_test (tHDF5Object    tHDF5Object    )
-  add_test (tHDF5Attribute tHDF5Attribute )
-  add_test (tHDF5Dataspace tHDF5Dataspace )
-  add_test (tHDF5Datatype  tHDF5Datatype  )
+  add_test (tHDF5Object_h5example    tHDF5Object    ${TESTDATA_H5EXAMPLE_DAL} )
+  add_test (tHDF5Attribute_h5example tHDF5Attribute ${TESTDATA_H5EXAMPLE_DAL} )
+  add_test (tHDF5Dataset_h5example   tHDF5Dataset   ${TESTDATA_H5EXAMPLE_DAL} )
+  add_test (tHDF5Dataspace_h5example tHDF5Dataspace ${TESTDATA_H5EXAMPLE_DAL} )
+  add_test (tHDF5Datatype_h5example  tHDF5Datatype  ${TESTDATA_H5EXAMPLE_DAL} )
 endif (TESTDATA_H5EXAMPLE_DAL)
 
 if (H5LS_EXECUTABLE)
