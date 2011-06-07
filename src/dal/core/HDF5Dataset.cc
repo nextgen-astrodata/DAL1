@@ -820,7 +820,7 @@ namespace DAL {
   }
   
   template <> bool HDF5Dataset::writeData (uint const data[],
-					  HDF5Hyperslab &slab)
+					   HDF5Hyperslab &slab)
   {
     return writeData (data, slab, H5T_NATIVE_UINT);
   }
