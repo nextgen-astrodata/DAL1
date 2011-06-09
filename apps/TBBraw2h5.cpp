@@ -526,7 +526,7 @@ bool readStationsFromSockets (std::vector<int> ports,
   int amWaiting    = 0;
   unsigned char stationId;
   char * bufferPointer;
-  std::ostringstream outfile;
+
   
   while ((noRunning>0) || (inBufStorID != inBufProcessID) )  {
     if (inBufStorID == inBufProcessID)  {
@@ -573,6 +573,7 @@ bool readStationsFromSockets (std::vector<int> ports,
 	delete TBBfiles[stationId];
 	TBBfiles[stationId] = NULL;
       };
+      std::ostringstream outfile;
       outfile << outFileBase << "-" << int(stationId) << "-" << runnumbers[stationId] << ".h5";
       runnumbers[stationId]++;
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
