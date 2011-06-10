@@ -359,16 +359,14 @@ namespace DAL {
 			  hid_t const &datatype,
 			  IO_Mode const &flags)
   {
-    bool status = status;
-
-    status = open (itsLocation,
-		   location,
-		   name,
-		   shape,
-		   chunksize,
-		   datatype,
-		   flags);
-
+    bool status = open (itsLocation,
+			location,
+			name,
+			shape,
+			chunksize,
+			datatype,
+			flags);
+    
     if (H5Iis_valid(itsLocation)) {
       status = true;
     } else {

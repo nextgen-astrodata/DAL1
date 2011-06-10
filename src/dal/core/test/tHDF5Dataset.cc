@@ -194,7 +194,6 @@ int test_constructors (hid_t const &fileID)
   cout << "\n[tHDF5Dataset::test_constructors]" << endl;
   
   int nofFailedTests = 0;
-  bool status        = true;
   hsize_t sidelength = 1000;
 
   /*_______________________________________________________________________
@@ -302,216 +301,6 @@ int test_constructors (hid_t const &fileID)
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
-  /*_______________________________________________________________________
-    Use the simple version of the HDF5Dataset::open method to a) access a
-    non-existing and b) an existing dataset within the file.
-  */
-
-  cout << "\n[6] Testing HDF5Dataset::open(hid_t, string)" << endl;
-  try {
-    DAL::HDF5Dataset dataset;
-
-    // try to open non-existing dataset
-    std::string name = "Dataset_ND";
-
-    status = dataset.open (fileID, name);
-
-    if (status) {
-      cout << "--> [FAIL] Successfully opened dataset " << name << endl;
-      nofFailedTests++;
-    } else {
-      cout << "--> [OK] Faild to open dataset " << name << " - expected." << endl;
-      dataset.summary();
-    }
-    
-    // try to open existing dataset
-    name  = "Dataset";
-    status = dataset.open (fileID, name);
-    
-    if (status) {
-      cout << "--> [OK] Successfully opened dataset " << name << endl;
-      dataset.summary();
-    } else {
-      cout << "--> [FAIL] Faild to open dataset " << name << endl;
-      nofFailedTests++;
-    }
-    
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  /*_______________________________________________________________________
-    Explicitely specify chunking dimensions for dataset.
-  */
-
-  cout << "[7] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>, vector<hsize_t>)" << endl;
-  try {
-    std::string name ("Dataset_3D_double_chunk");
-    int rank (3);
-    std::vector<hsize_t> shape (rank, sidelength);
-    std::vector<hsize_t> chunk (rank, 1000);
-    DAL::HDF5Dataset dataset;
-
-    status = dataset.open (fileID, name, shape, chunk);
-
-    if (status) {
-      cout << "--> [OK] uccessfully opened dataset " << name << endl;
-      dataset.summary();
-    } else {
-      cout << "--> [FAIL] Failed to open dataset " << name << endl;
-      nofFailedTests++;
-    }
-
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
-//                                                                    test_create
-
-/*!
-  \brief Test the creation of a Dataset object within a file
-
-  \param fileID          -- HDF5 object identifier for the file, to which the 
-         dataset are to be attached.
-  \return nofFailedTests -- The number of failed tests encountered within this
-          functions.
-*/
-int test_create (hid_t const &fileID)
-{
-  cout << "\n[tHDF5Datatset::test_create]\n" << endl;
-
-  int nofFailedTests = 0;
-  std::string name;
-  std::string groupname ("DATASETS");
-
-  //________________________________________________________
-  // Create the file to work with
-
-  hid_t groupID = H5Gcreate (fileID,
-			     groupname.c_str(),
-			     H5P_DEFAULT,
-			     H5P_DEFAULT,
-			     H5P_DEFAULT);
-
-  /*__________________________________________________________________
-    Test 1: Create 1-dim dataset at the root-level of the file and
-            within the group "DATASETS"
-  */
-  
-  cout << "[1] Creating 1D dataset ..." << endl;
-  try {
-    std::vector<hsize_t> shape (1);
-    
-    name     = "Data1D";
-    shape[0] = 1024;
-    
-    /* Create HDF5 Dataset at the root level of the file */
-    cout << "--> creating dataset at root level of file ..." << endl;
-    HDF5Dataset dataset (fileID,
-			 name,
-			 shape);
-    /* Add attributes */
-    set_attributes (dataset, shape);
-    /* Summary */
-    dataset.summary();
-    
-    /* Create HDF5 dataset within group */
-    cout << "--> creating dataset within group ..." << endl;
-    HDF5Dataset datasetGroup (groupID,
-			      name,
-			      shape);
-    /* Add attributes */
-    set_attributes (datasetGroup, shape);
-    /* Summary */
-    datasetGroup.summary();
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    ++nofFailedTests;
-  }
-  
-  /*__________________________________________________________________
-    Test 2: Create 2-dim dataset at the root-level of the file and
-            within the group "DATASETS"
-  */
-  
-  cout << "[2] Creating 2D dataset ..." << endl;
-  try {
-    std::vector<hsize_t> shape (2);
-    
-    name     = "Data2D";
-    shape[0] = 1024;
-    shape[1] = 4;
-    
-    /* Create HDF5 Dataset at the root level of the file */
-    DAL::HDF5Dataset dataset (fileID,
-			      name,
-			      shape);
-    /* Add attributes */
-    set_attributes (dataset, shape);
-    /* Summary */
-    dataset.summary();
-
-    /* Create HDF5 dataset within group */
-    cout << "--> creating dataset within group ..." << endl;
-    DAL::HDF5Dataset datasetGroup (groupID,
-				   name,
-				   shape);
-    /* Add attributes */
-    set_attributes (datasetGroup, shape);
-    /* Summary */
-    datasetGroup.summary();
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    ++nofFailedTests;
-  }
-  
-  /*__________________________________________________________________
-    Test 3: Create 3-dim dataset at the root-level of the file
-  */
-  
-  cout << "[3] Creating 3D dataset ..." << endl;
-  try {
-    std::vector<hsize_t> shape (3);
-    
-    name     = "Data3D";
-    shape[0] = 1024;
-    shape[1] = 1024;
-    shape[2] = 3;
-    
-    /* Create HDF5 Dataset at the root level of the file */
-    DAL::HDF5Dataset dataset (fileID,
-			      name,
-			      shape);
-    /* Add attributes */
-    set_attributes (dataset, shape);
-    /* Summary */
-    dataset.summary();
-
-    /* Create HDF5 dataset within group */
-    cout << "--> creating dataset within group ..." << endl;
-    DAL::HDF5Dataset datasetGroup (groupID,
-				   name,
-				   shape);
-    /* Add attributes */
-    set_attributes (datasetGroup, shape);
-    /* Summary */
-    datasetGroup.summary();
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    ++nofFailedTests;
-  }
-
-  //________________________________________________________
-  // Close group
-  
-  H5Gclose (groupID);
   
   return nofFailedTests;
 }
@@ -1191,19 +980,12 @@ int main (int argc,
       
       // Test the various constructors for an HDF5Dataset object
       nofFailedTests += test_constructors (fileID);
-      
-      // Test constructors for a HDF5Dataset object
-      nofFailedTests += test_create (fileID);
-      
       // Test access R/W access to 1-dim data arrays
       nofFailedTests += test_array1d (fileID);
-      
       // Test access R/W access to 2-dim data arrays
       nofFailedTests += test_array2d (fileID);
-      
       // // Test the effect of the various Hyperslab parameters
       // nofFailedTests += test_hyperslab (fileID);
-      
       // // Test expansion of extendable datasets
       // nofFailedTests += test_extension (fileID);
       
