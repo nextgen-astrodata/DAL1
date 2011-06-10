@@ -254,7 +254,11 @@ int test_attributes (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
-  int nofFailedTests      = 0;
+  int nofFailedTests       = 0;
+  unsigned int index       = 0;     /* Index number of the Stokes dataset   */
+  unsigned int nofSamples  = 1000;  /* nof. samples along the time axis     */
+  unsigned int nofSubbands = 36;    /* nof. frequency sub-bands             */
+  unsigned int nofChannels = 128;   /* nof. frequency channels per sub-band */
 
   /*__________________________________________________________________
     Create HDF5 group within which the datasets will be created and
@@ -266,12 +270,6 @@ int test_attributes (hid_t const &fileID)
 			     H5P_DEFAULT,
 			     H5P_DEFAULT,
 			     H5P_DEFAULT);
-
-
-  unsigned int index       = 0;     /* Index number of the Stokes dataset   */
-  unsigned int nofSamples  = 1000;  /* nof. samples along the time axis     */
-  unsigned int nofSubbands = 36;    /* nof. frequency sub-bands             */
-  unsigned int nofChannels = 128;   /* nof. frequency channels per sub-band */
 
   BF_StokesDataset stokes (groupID,
 			   index,
@@ -360,45 +358,60 @@ int test_data (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_data]\n" << endl;
 
-  int nofFailedTests (0);
-
-  //________________________________________________________
-  // Create new dataset to work with
-
-  cout << "--> Create new dataset to work with ..." << endl;
-
-  unsigned int index = 0;
-  std::vector<hsize_t> shape (2);
+  int nofFailedTests         = 0;
+  unsigned int index         = 0;     /* Index number of the Stokes dataset   */
+  unsigned int nofSamples    = 1000;  /* nof. samples along the time axis     */
+  unsigned int nofSubbands   = 36;    /* nof. frequency sub-bands             */
+  unsigned int nofChannels   = 128;   /* nof. frequency channels per sub-band */
+  int nofSteps               = 0;
+  unsigned int nofDatapoints = 0;
   std::vector<int> start (2,0);
   std::vector<int> stride;
   std::vector<int> count;
   std::vector<int> block (2,0);
-  int nofSteps;
-  unsigned int nofDatapoints;
+  std::vector<hsize_t> shape;
 
-  shape[0] = 100;
-  shape[1] = 2048;
+  /*__________________________________________________________________
+    Create HDF5 group within which the datasets will be created and
+    the dataset itself.
+  */
+
+  hid_t groupID = H5Gcreate (fileID,
+			     "test_data",
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
+
 
   //________________________________________________________
   // Test 1
 
   cout << "[1] Test writing single rows to dataset ..." << endl;
   try {
-    index         = 101;
+    BF_StokesDataset stokes (groupID,
+			     1,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::I);
+    
+    shape         = stokes.shape();
     nofSteps      = shape[0];
+    start[0]      = 0;
+    start[1]      = 0;
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
+    count.clear();
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Shape        = " << shape    << endl;
-    cout << "-- nof. steps   = " << nofSteps << endl;
-    cout << "-- block        = " << block    << endl;
-
-    BF_StokesDataset stokes (fileID,
-			     index,
-			     shape,
-			     DAL::Stokes::U);
+    cout << "-- Shape           = " << shape    << endl;
+    cout << "-- start           = " << start    << endl;
+    cout << "-- stride          = " << stride   << endl;
+    cout << "-- count           = " << count    << endl;
+    cout << "-- block           = " << block    << endl;
+    cout << "-- nof. steps      = " << nofSteps << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
     
     for (int step(0); step<nofSteps; ++step) {
       // set position marker
@@ -422,22 +435,30 @@ int test_data (hid_t const &fileID)
 
   cout << "[2] Test writing multiple rows to dataset ..." << endl;
   try {
-    index         = 102;
-    nofSteps      = 20;
+    BF_StokesDataset stokes (groupID,
+			     2,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::I);
+    
+    shape         = stokes.shape();
+    nofSteps      = shape[0]/10;
+    start[0]      = 0;
     start[1]      = 0;
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
+    count.clear();
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Shape        = " << shape    << endl;
-    cout << "-- nof. steps   = " << nofSteps << endl;
-    cout << "-- block        = " << block    << endl;
-
-    BF_StokesDataset stokes (fileID,
-			     index,
-			     shape,
-			     DAL::Stokes::U);
+    cout << "-- Shape           = " << shape    << endl;
+    cout << "-- start           = " << start    << endl;
+    cout << "-- stride          = " << stride   << endl;
+    cout << "-- count           = " << count    << endl;
+    cout << "-- block           = " << block    << endl;
+    cout << "-- nof. steps      = " << nofSteps << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
     
     for (int step(0); step<nofSteps; ++step) {
       // set position marker
@@ -446,14 +467,10 @@ int test_data (hid_t const &fileID)
       for (unsigned int n(0); n<nofDatapoints; ++n) {
 	data[n] = step;
       }
-      // feedback
-      cout << "-> writing datablock " << step << "/" << nofSteps
-	   << " starting from " << start
-	   << " ..." << endl;
       // write data to dataset
       stokes.writeData (data, start, block);
     }
-
+    
     delete [] data;
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -465,22 +482,29 @@ int test_data (hid_t const &fileID)
 
   cout << "[3] Test writing single columns to dataset ..." << endl;
   try {
-    index         = 103;
+    BF_StokesDataset stokes (groupID,
+			     3,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::I);
+    
+    shape         = stokes.shape();
     nofSteps      = shape[1];
     start[0]      = 0;
+    start[1]      = 0;
     block[0]      = shape[0];
     block[1]      = shape[1]/nofSteps;
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Shape        = " << shape    << endl;
-    cout << "-- nof. steps   = " << nofSteps << endl;
-    cout << "-- block        = " << block    << endl;
-
-    BF_StokesDataset stokes (fileID,
-			     index,
-			     shape,
-			     DAL::Stokes::U);
+    cout << "-- Shape           = " << shape    << endl;
+    cout << "-- start           = " << start    << endl;
+    cout << "-- stride          = " << stride   << endl;
+    cout << "-- count           = " << count    << endl;
+    cout << "-- block           = " << block    << endl;
+    cout << "-- nof. steps      = " << nofSteps << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
     
     for (int step(0); step<nofSteps; ++step) {
       // set position marker
@@ -492,7 +516,7 @@ int test_data (hid_t const &fileID)
       // write data to dataset
       stokes.writeData (data, start, block);
     }
-    
+
     delete [] data;
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -504,22 +528,29 @@ int test_data (hid_t const &fileID)
 
   cout << "[4] Test writing multiple columns to dataset ..." << endl;
   try {
-    index         = 104;
-    nofSteps      = 16;
+    BF_StokesDataset stokes (groupID,
+			     4,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::I);
+    
+    shape         = stokes.shape();
+    nofSteps      = shape[1]/10;
     start[0]      = 0;
+    start[1]      = 0;
     block[0]      = shape[0];
     block[1]      = shape[1]/nofSteps;
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Shape        = " << shape    << endl;
-    cout << "-- nof. steps   = " << nofSteps << endl;
-    cout << "-- block        = " << block    << endl;
-
-    BF_StokesDataset stokes (fileID,
-			     index,
-			     shape,
-			     DAL::Stokes::U);
+    cout << "-- Shape           = " << shape    << endl;
+    cout << "-- start           = " << start    << endl;
+    cout << "-- stride          = " << stride   << endl;
+    cout << "-- count           = " << count    << endl;
+    cout << "-- block           = " << block    << endl;
+    cout << "-- nof. steps      = " << nofSteps << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
     
     for (int step(0); step<nofSteps; ++step) {
       // set position marker
@@ -528,19 +559,17 @@ int test_data (hid_t const &fileID)
       for (unsigned int n(0); n<nofDatapoints; ++n) {
 	data[n] = step;
       }
-      // feedback
-      cout << "-> writing datablock " << step << "/" << nofSteps
-	   << " starting from " << start
-	   << " ..." << endl;
       // write data to dataset
       stokes.writeData (data, start, block);
     }
-    
+
     delete [] data;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  return nofFailedTests;
 
   //________________________________________________________
   // Test 5
@@ -586,6 +615,9 @@ int test_data (hid_t const &fileID)
     nofFailedTests++;
   }
 
+  /* Release HDF5 group handler */ 
+  H5Gclose (groupID);
+
   return nofFailedTests;
 }
 
@@ -619,7 +651,7 @@ int main ()
     // // Test access to the attributes
     nofFailedTests += test_attributes (fileID);
     // Test read/write access to the data
-    // nofFailedTests += test_data (fileID);
+    nofFailedTests += test_data (fileID);
 
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;
