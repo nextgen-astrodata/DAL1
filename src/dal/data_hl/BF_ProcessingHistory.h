@@ -98,13 +98,18 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
+    // === Static methods =======================================================
+    
+    //! Get the name of the HDF5 group.
+    static std::string getName ();
+    
   private:
 
     //! Initialize internal paramaters to default values

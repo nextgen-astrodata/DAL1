@@ -46,8 +46,10 @@ namespace DAL { // Namespace DAL -- begin
   SysLog::SysLog (hid_t const &location,
 		  IO_Mode const &flags)
   {
+    std::string name = getName();
+
     open (location,
-	  "SysLog",
+	  name,
 	  flags);
   }
   
@@ -83,6 +85,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[SysLog] Summary of internal parameters." << std::endl;
     os << "-- Location ID = " << location_p << std::endl;
+    os << "-- Group name  = " << getName()  << std::endl;
   }
   
   // ============================================================================
@@ -159,9 +162,9 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string string_group ("SysLog");
+	  std::string groupName = "SysLog";
 	  // write the attributes
-	  HDF5Attribute::write (location_p, "GROUPTYPE", string_group);
+	  HDF5Attribute::write (location_p, "GROUPTYPE", groupName);
 	} else {
 	  std::cerr << "[SysLog::open] Failed to create group "
 		    << name

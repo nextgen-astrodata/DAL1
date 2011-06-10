@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the name of the group
     static std::string getName () {
-      return "SysLog";
+      return "SYS_LOG";
     }
 
   protected:
