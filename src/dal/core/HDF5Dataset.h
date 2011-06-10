@@ -400,24 +400,16 @@ namespace DAL {
 
     template <class T>
     inline bool readAttribute (std::string const &name,
-                              T *data,
-                              unsigned int const &size)
+                              T &data)
     {
-      return HDF5Attribute::read (itsLocation, name, data, size);
+      return HDF5Attribute::read (itsLocation, name, data);
     }
     
     template <class T>
     inline bool readAttribute (std::string const &name,
                               std::vector<T> &data)
     {
-      return HDF5Attribute::read (itsLocation, name, &data[0], data.size());
-    }
-    
-    template <class T>
-    inline bool readAttribute (std::string const &name,
-                              T &data)
-    {
-      return HDF5Attribute::read (itsLocation, name, &data, 1);
+      return HDF5Attribute::read (itsLocation, name, data);
     }
     
     // === Read the data ========================================================
