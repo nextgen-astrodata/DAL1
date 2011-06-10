@@ -74,7 +74,8 @@ namespace DAL { // Namespace DAL -- begin
 
     The datatype of the elements stored within the dataset depends on the Stokes
     component to be recorded:
-    
+
+    <center>
     <table>
       <tr>
         <td class="indexkey">Description</td>
@@ -105,6 +106,7 @@ namespace DAL { // Namespace DAL -- begin
 	<td>H5T_NATIVE_FLOAT</td>
       </tr>
     </table>
+    </center>
 
     The shape of the dataset is determined by
     - the number of time bins (\c NOF_SAMPLES),
@@ -114,6 +116,7 @@ namespace DAL { // Namespace DAL -- begin
     Mapping of input variables onto internal parameters describing organization
     and shape of the dataset:
 
+    <center>
     <table>
       <tr>
         <td class="indexkey">nofSamples</td>
@@ -176,6 +179,7 @@ namespace DAL { // Namespace DAL -- begin
         <td>shape</td>
       </tr>
     </table>
+    </center>
     
     <h3>Example(s)</h3>
     

@@ -41,6 +41,8 @@ using DAL::BF_StokesDataset;
   The generated HDF5 file will have the following structure:
   \verbatim
   tBF_StokesDataset.h5
+  |-- test_constructors                 Group
+  |-- test_attributes                   Group
   \endverbatim
 */
 
@@ -71,6 +73,16 @@ int test_constructors (hid_t const &fileID)
   shape[0] = nofSamples;
   shape[1] = nofSubbands*nofChannels;
   
+  /*__________________________________________________________________
+    Create HDF5 group within which the datasets will be created
+  */
+
+  hid_t groupID = H5Gcreate (fileID,
+			     "test_constructors",
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
+  
   /*_______________________________________________________________________
     Test 1: Default constructor (no dataset created)
   */
@@ -93,7 +105,7 @@ int test_constructors (hid_t const &fileID)
   try {
     index       = 0;
     nameDataset = BF_StokesDataset::getName(index);
-    BF_StokesDataset stokes (fileID, nameDataset);
+    BF_StokesDataset stokes (groupID, nameDataset);
     stokes.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -107,7 +119,7 @@ int test_constructors (hid_t const &fileID)
   cout << "\n[3] Testing BF_StokesDataset(hid_t, uint) ..." << endl;
   try {
     index       = 0;
-    BF_StokesDataset stokes (fileID, index);
+    BF_StokesDataset stokes (groupID, index);
     stokes.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -123,7 +135,7 @@ int test_constructors (hid_t const &fileID)
 	    << endl;
   try {
     index = 4;
-    BF_StokesDataset stokes (fileID, index, shape);
+    BF_StokesDataset stokes (groupID, index, shape);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -139,7 +151,7 @@ int test_constructors (hid_t const &fileID)
 	    << endl;
   try {
     index = 5;
-    BF_StokesDataset stokes (fileID,
+    BF_StokesDataset stokes (groupID,
 			     index,
 			     shape,
 			     DAL::Stokes::Q);
@@ -159,7 +171,7 @@ int test_constructors (hid_t const &fileID)
   cout << "\n[6] Testing BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component) ..." << endl;
   try {
     index = 6;
-    BF_StokesDataset stokes (fileID,
+    BF_StokesDataset stokes (groupID,
 			     index,
 			     nofSamples,
 			     nofSubbands,
@@ -190,7 +202,7 @@ int test_constructors (hid_t const &fileID)
     }
 
     /* Create object */
-    BF_StokesDataset stokes (fileID,
+    BF_StokesDataset stokes (groupID,
 			     index,
 			     nofSamples,
 			     channels,
@@ -208,15 +220,21 @@ int test_constructors (hid_t const &fileID)
 
   cout << "[8] Testing BF_StokesDataset(BF_StokesDataset) ..." << endl;
   try {
-    index = 3;
-    // Create the first of the two objects ...
-    BF_StokesDataset stokes (fileID, index);
-    // ... and provide a summary
-    stokes.summary(); 
+    index = 8;
+    // Create original object ...
+    BF_StokesDataset stokesOrig (groupID, index, shape);
+    stokesOrig.summary();
+    // ... and create a new one as copy
+    BF_StokesDataset stokesCopy (stokesOrig);
+    stokesCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  /* Release handler for HDF5 group */
+
+  H5Gclose (groupID);
   
   return nofFailedTests;
 }
@@ -237,30 +255,50 @@ int test_attributes (hid_t const &fileID)
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
   int nofFailedTests      = 0;
-  std::string nameDataset = "Stokes005";
-
-  /* Open dataset to work with */
-  BF_StokesDataset stokes (fileID, nameDataset);
-  stokes.summary();
-
-  /* Variable for reading in attributes */
-  std::vector<int> nofSubbands;
-  std::vector<int> nofChannels;
-  std::string groupType;
-  std::string dataType;
-  std::string stokesComponent;
 
   /*__________________________________________________________________
-    Test 1: Read in the attribute values
+    Create HDF5 group within which the datasets will be created and
+    the dataset itself.
+  */
+
+  hid_t groupID = H5Gcreate (fileID,
+			     "test_attributes",
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
+
+
+  unsigned int index       = 0;     /* Index number of the Stokes dataset   */
+  unsigned int nofSamples  = 1000;  /* nof. samples along the time axis     */
+  unsigned int nofSubbands = 36;    /* nof. frequency sub-bands             */
+  unsigned int nofChannels = 128;   /* nof. frequency channels per sub-band */
+
+  BF_StokesDataset stokes (groupID,
+			   index,
+			   nofSamples,
+			   nofSubbands,
+			   nofChannels,
+			   DAL::Stokes::I);
+  
+  /*__________________________________________________________________
+    Test 1: Read in the attribute values using the single value
+            interface; for array-array type attributes this will return
+	    the first array element only.
   */
   
   cout << "[1] Testing getAttribute(string, T) ..." << endl;
   try {
-    // stokes.getAttribute ("GROUPTYPE",        groupType);
-    // stokes.getAttribute ("DATATYPE",         dataType);
-    // stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
-    // stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
-    // stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
+    int nofSubbands;
+    int nofChannels;
+    std::string groupType;
+    std::string dataType;
+    std::string stokesComponent;
+    
+    stokes.readAttribute ("GROUPTYPE",        groupType);
+    stokes.readAttribute ("DATATYPE",         dataType);
+    stokes.readAttribute ("NOF_CHANNELS",     nofChannels);
+    stokes.readAttribute ("NOF_SUBBANDS",     nofSubbands);
+    stokes.readAttribute ("STOKES_COMPONENT", stokesComponent);
     
     cout << "-- GROUPTYPE        = " << groupType       << endl;
     cout << "-- DATATYPE         = " << dataType        << endl;
@@ -271,6 +309,38 @@ int test_attributes (hid_t const &fileID)
     std::cerr << message << endl;
     ++nofFailedTests;
   }
+
+  /*__________________________________________________________________
+    Test 2: Read in the attributes attached to the Stokes datasets,
+            using the std::vector<T> interface.
+  */
+  
+  cout << "[2] Testing getAttribute(string, vector<T>) ..." << endl;
+  try {
+    std::vector<int> nofSubbands;
+    std::vector<int> nofChannels;
+    std::vector<std::string> groupType;
+    std::vector<std::string> dataType;
+    std::vector<std::string> stokesComponent;
+    
+    stokes.readAttribute ("GROUPTYPE",        groupType);
+    stokes.readAttribute ("DATATYPE",         dataType);
+    stokes.readAttribute ("NOF_CHANNELS",     nofChannels);
+    stokes.readAttribute ("NOF_SUBBANDS",     nofSubbands);
+    stokes.readAttribute ("STOKES_COMPONENT", stokesComponent);
+    
+    cout << "-- GROUPTYPE        = " << groupType       << endl;
+    cout << "-- DATATYPE         = " << dataType        << endl;
+    cout << "-- NOF_CHANNELS     = " << nofChannels     << endl;
+    cout << "-- NOF_SUBBANDS     = " << nofSubbands     << endl;
+    cout << "-- STOKES_COMPONENT = " << stokesComponent << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  /* Release HDF5 group handler */ 
+  H5Gclose (groupID);
 
   return nofFailedTests;
 }
