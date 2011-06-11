@@ -441,7 +441,7 @@ namespace DAL { // Namespace DAL -- begin
 			       IO_Mode const &flags)
   {
     bool status = true;
-    std::vector<hsize_t> shape (2,1);
+    std::vector<hsize_t> shape (2,0);
 
     /*________________________________________________________________
       Set up attributes attached to the dataset
