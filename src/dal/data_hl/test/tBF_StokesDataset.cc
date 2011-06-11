@@ -359,12 +359,11 @@ int test_data (hid_t const &fileID)
   cout << "\n[tBF_StokesDataset::test_data]\n" << endl;
 
   int nofFailedTests         = 0;
-  unsigned int index         = 0;     /* Index number of the Stokes dataset   */
   unsigned int nofSamples    = 1000;  /* nof. samples along the time axis     */
-  unsigned int nofSubbands   = 36;    /* nof. frequency sub-bands             */
+  unsigned int nofSubbands   = 32;    /* nof. frequency sub-bands             */
   unsigned int nofChannels   = 128;   /* nof. frequency channels per sub-band */
-  int nofSteps               = 0;
   unsigned int nofDatapoints = 0;
+  int nofSteps               = 0;
   std::vector<int> start (2,0);
   std::vector<int> stride;
   std::vector<int> count;
@@ -569,46 +568,58 @@ int test_data (hid_t const &fileID)
     nofFailedTests++;
   }
 
-  return nofFailedTests;
-
   //________________________________________________________
   // Test 5
 
-  cout << "[5] Test extending the number of rows in the dataset ..." << endl;
+  cout << "[5] Testing writing 2D patches ..." << endl;
   try {
-    index         = 105;
-    nofSteps      = 16;
+    nofSamples = 1024;
+
+    BF_StokesDataset stokes (groupID,
+			     5,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::I);
+    
+    shape         = stokes.shape();
+    nofSteps      = 128;
     start[0]      = 0;
-    block[0]      = shape[0];
+    start[1]      = 0;
+    block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1]/nofSteps;
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
-    nofSteps     *= 2;
+    int step      = 0;
 
-    cout << "-- Shape        = " << shape    << endl;
-    cout << "-- nof. steps   = " << nofSteps << endl;
-    cout << "-- block        = " << block    << endl;
-
-    BF_StokesDataset stokes (fileID,
-			     index,
-			     shape,
-			     DAL::Stokes::U);
+    cout << "-- Shape           = " << shape    << endl;
+    cout << "-- start           = " << start    << endl;
+    cout << "-- stride          = " << stride   << endl;
+    cout << "-- count           = " << count    << endl;
+    cout << "-- block           = " << block    << endl;
+    cout << "-- nof. steps      = " << nofSteps << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
     
-    for (int step(0); step<nofSteps; ++step) {
-      // set position marker
-      start[1] = step*block[1];
-      // update data array values
-      for (unsigned int n(0); n<nofDatapoints; ++n) {
-	data[n] = step;
+    // Increment counter
+    for (int stepx=0; stepx<nofSteps; ++stepx) {
+      // Adjust starting point
+      start[0] = stepx*block[0];
+      // Increment counter
+      for (int stepy=0; stepy<nofSteps; ++stepy) {
+	// Adjust starting point
+	start[1] = stepy*block[1];
+	// Update data array values
+	for (unsigned int n(0); n<nofDatapoints; ++n) {
+	  data[n] = step;
+	}
+	// write data to dataset
+	stokes.writeData (data, start, block);
+	// Increment step counter
+	++ step;
       }
-      // feedback
-      cout << "-> writing datablock " << step << "/" << nofSteps
-	   << " starting from " << start
-	   << " ..." << endl;
-      // write data to dataset
-      stokes.writeData (data, start, block);
     }
-    
+
+    /* Release allocated memory */
     delete [] data;
   } catch (std::string message) {
     std::cerr << message << endl;
