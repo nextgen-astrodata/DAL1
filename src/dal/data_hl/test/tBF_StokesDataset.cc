@@ -344,6 +344,48 @@ int test_attributes (hid_t const &fileID)
 }
 
 //_______________________________________________________________________________
+//                                                                test_parameters
+
+/*!
+  \brief Test access to the internal parameters
+
+  \param fileID -- Object identifier for the HDF5 file to work with
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_parameters (hid_t const &fileID)
+{
+  cout << "\n[tBF_StokesDataset::test_parameters]\n" << endl;
+
+  int nofFailedTests = 0;
+  unsigned int index = 0;
+  hid_t groupID      = H5Gopen (fileID,
+				"test_attributes",
+				H5P_DEFAULT);
+  /* Open Stokes dataset to work with  */
+  BF_StokesDataset stokes (groupID,
+			   index);
+
+  cout << "-- name          = " << stokes.name()          << endl;
+  cout << "-- shape         = " << stokes.shape()         << endl;
+  cout << "-- chunking      = " << stokes.chunking()      << endl;
+  cout << "-- rank          = " << stokes.rank()          << endl;
+  cout << "-- nofAxes       = " << stokes.nofAxes()       << endl;
+  cout << "-- nofDatapoints = " << stokes.nofDatapoints() << endl;
+  cout << "-- objectID      = " << stokes.objectID()      << endl;
+  cout << "-- dataspaceID   = " << stokes.dataspaceID()   << endl;
+  cout << "-- datatypeID    = " << stokes.datatypeID()    << endl;
+  cout << "-- offset        = " << stokes.offset()        << endl;
+
+  /* Release HDF5 group handler */ 
+  H5Gclose (groupID);
+
+  return nofFailedTests;
+}
+
+
+//_______________________________________________________________________________
 //                                                                      test_data
 
 /*!
@@ -644,6 +686,7 @@ int test_data (hid_t const &fileID)
 int main ()
 {
   int nofFailedTests   = 0;
+  bool testData        = true;
   std::string filename = "tBF_StokesDataset.h5";
 
   //________________________________________________________
@@ -661,9 +704,14 @@ int main ()
     nofFailedTests += test_constructors (fileID);
     // // Test access to the attributes
     nofFailedTests += test_attributes (fileID);
-    // Test read/write access to the data
-    nofFailedTests += test_data (fileID);
+    // // Test access to internal parameters
+    nofFailedTests += test_parameters (fileID);
 
+    if (testData) {
+      // Test read/write access to the data
+      nofFailedTests += test_data (fileID);
+    }
+    
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;
     return -1;

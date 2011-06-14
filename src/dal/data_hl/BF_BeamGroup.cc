@@ -110,9 +110,11 @@ namespace DAL { // Namespace DAL -- begin
     coord = itsCoordinates.begin();
 
     os << "[BF_BeamGroup] Summary of internal parameters." << std::endl;
-    os << "-- Location ID   = " << location_p << std::endl;
-    os << "-- Group name    = " << HDF5Object::name(location_p) << std::endl;
-    os << "-- nof. datasets = " << itsStokesDatasets.size()     << std::endl;
+    os << "-- Location ID     = " << location_p                   << std::endl;
+    os << "-- Group name      = " << HDF5Object::name(location_p) << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size()          << std::endl;
+    os << "-- Attributes      = " << attributes_p                 << std::endl;
+    os << "-- nof. datasets   = " << itsStokesDatasets.size()     << std::endl;
     
   }
   

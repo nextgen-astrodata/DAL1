@@ -104,6 +104,9 @@ namespace DAL { // Namespace DAL -- begin
 			 unsigned int const &index,
 			 IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
+    //! Copy constructor
+    BF_SubArrayPointing (BF_SubArrayPointing const &other);
+    
     // === Destruction ==========================================================
     
     //! Default destructor

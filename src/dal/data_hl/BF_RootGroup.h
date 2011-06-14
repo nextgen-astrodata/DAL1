@@ -271,12 +271,16 @@ namespace DAL { // Namespace DAL -- begin
       return itsSubarrayPointings.size();
     }
     
-    //! Get a primary pointing direction group
-    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
-
     //! Get the SysLog group
     SysLog sysLog ();
     
+    //! Get a primary pointing direction group
+    BF_SubArrayPointing getSubArrayPointing (unsigned int const &pointingID);
+
+    //! Get a beam group
+    BF_BeamGroup getBeamGroup (unsigned int const &pointingID,
+			       unsigned int const &beamID);
+
   protected:
     
     //! Open the structures embedded within the current one

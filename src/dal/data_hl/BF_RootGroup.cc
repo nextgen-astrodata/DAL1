@@ -440,24 +440,23 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                              primaryPointing
+  //                                                          getSubArrayPointing
   
   /*!
     \param pointingID -- Identifier for the primary pointing direction.
   */
-  BF_SubArrayPointing BF_RootGroup::primaryPointing (unsigned int const &pointingID)
+  BF_SubArrayPointing BF_RootGroup::getSubArrayPointing (unsigned int const &pointingID)
   {
-    BF_SubArrayPointing pointing;      
-      
+    BF_SubArrayPointing pointing;
+
     if (H5Iis_valid(location_p)) {
-      std::string name;
+      std::string name = BF_SubArrayPointing::getName (pointingID);
       std::map<std::string,BF_SubArrayPointing>::iterator it;
       
-      name = BF_SubArrayPointing::getName (pointingID);
       it   = itsSubarrayPointings.find(name);
 
       if (it != itsSubarrayPointings.end()) {
-	pointing = it->second;
+	return it->second;
       } else {
 	std::cerr << "[BF_RootGroup::primaryPointing] No such group "
 		  << "\"" << name << "\""
@@ -472,6 +471,16 @@ namespace DAL { // Namespace DAL -- begin
     return pointing;
   }
 
+  //_____________________________________________________________________________
+  //                                                                 getBeamGroup
+  
+  BF_BeamGroup BF_RootGroup::getBeamGroup (unsigned int const &pointingID,
+					   unsigned int const &beamID)
+  {
+    BF_SubArrayPointing pointing = getSubArrayPointing(pointingID);
+    return pointing.getBeamGroup(beamID);
+  }
+  
   //_____________________________________________________________________________
   //                                                            openStokesDataset
   
