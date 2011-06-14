@@ -331,7 +331,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Unconditional copying
     void copy (HDF5Object const &other);
-    
+
     //! Unconditional deletion 
     void destroy(void);
     
@@ -340,4 +340,3 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* HDF5OBJECT_H */
-

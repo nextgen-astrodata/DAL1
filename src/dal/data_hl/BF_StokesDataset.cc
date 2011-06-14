@@ -337,7 +337,7 @@ namespace DAL { // Namespace DAL -- begin
   /*
     Initialization of object's internal parameters to default values.
   */
-  void BF_StokesDataset::init ()
+  bool BF_StokesDataset::init ()
   {
     itsNofChannels.clear();
     
@@ -346,24 +346,27 @@ namespace DAL { // Namespace DAL -- begin
     
     /* Assign Stokes component parameter based on STOKES_COMPONENT attribute. */
     if (H5Iis_valid(itsLocation)) {
+
       std::string stokesComponent;
-      unsigned int nofSubbands;
-      unsigned int nofChannels;
-      
+      std::vector<unsigned int> channels;
+
+      // Get the Stokes component
       if ( HDF5Attribute::read (itsLocation, "STOKES_COMPONENT", stokesComponent) ) {
 	itsStokesComponent.setType(stokesComponent);
       }
 
-      if ( HDF5Attribute::read (itsLocation, "NOF_SUBBANDS", nofSubbands) ) {
-	/* Store the number of sub-bands */
-	itsNofChannels.resize(nofSubbands);
-	/* Reyrieve number of channels per sub-band */
-	if ( HDF5Attribute::read (itsLocation, "NOF_CHANNELS", nofChannels) ) {
-	  itsNofChannels = std::vector<unsigned int>(nofSubbands,nofChannels);
-	}
+      // Get number of channels and number of sub-bands
+      if ( HDF5Attribute::read (itsLocation, "NOF_CHANNELS", channels) ) {
+	itsNofChannels = channels;
       }
-      
+
+    } else {
+      std::cerr << "[BF_StokesDataset::init] Invalid object handler!"
+		<< std::endl;
+      return false;
     }
+
+    return true;
   }
   
   //_____________________________________________________________________________
@@ -425,7 +428,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                       create
+  //                                                                         open
 
   /*!
     \param location    -- Identifier for the location at which the dataset is about
@@ -493,7 +496,7 @@ namespace DAL { // Namespace DAL -- begin
       unsigned int subbands              = channels.size();
       
 #ifdef DAL_DEBUGGING_MESSAGES
-      std::cout << "[BF_StokesDataset::init]"                  << std::endl;
+      std::cout << "[BF_StokesDataset::open]"                  << std::endl;
       std::cout << "-- GROUPTYPE        = " << grouptype       << std::endl;
       std::cout << "-- DATATYPE         = " << datatype        << std::endl;
       std::cout << "-- STOKES_COMPONENT = " << stokesComponent << std::endl;

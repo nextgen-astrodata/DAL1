@@ -366,7 +366,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Initialize the object's internal parameters
-    void init ();
+    bool init ();
     
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
