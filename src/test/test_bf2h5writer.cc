@@ -117,52 +117,90 @@ int main()
   
   std::cout << "-- Creating new file " << filename.filename() << endl;
 
-  DAL::BF_RootGroup rootGroup (attributes,
-			       DAL::IO_Mode(DAL::IO_Mode::Create));
-
+  DAL::BF_RootGroup bfRoot (attributes,
+			    DAL::IO_Mode(DAL::IO_Mode::Create));
+  
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.
   */
-
+  
   for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
     std::cout << "-- Pointing " <<  numPointing << ": [";
     for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
       // progress message
       std::cout << " " << numBeam;
       // recursively open beam group
-      rootGroup.openBeam ( numPointing, numBeam );
+      bfRoot.openBeam ( numPointing, numBeam );
     }
     std::cout << " ]" << std::endl;
   }
-
+  
   std::cout << "--> Finished opening sub-groups." << std::endl;
   
   /*__________________________________________________________________
-    Create Stokes dataset for Stokes::I data.
+    Create Stokes datasets
   */
-
+  
   const unsigned nofSamples  = SAMPLES;
   const unsigned nofChannels = SUBBANDS * CHANNELS;
-
+  
   std::cout << "-- Creating Stokes::I dataset 0 ..." << std::endl;
-  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
-			       0,                 // ID of beam group
-			       0,                 // ID of Stokes dataset
-			       nofSamples,
-			       SUBBANDS,
-			       CHANNELS,
-			       DAL::Stokes::I);
+  bfRoot.openStokesDataset (0,                 // ID of sub-array pointing
+			    0,                 // ID of beam group
+			    0,                 // ID of Stokes dataset
+			    nofSamples,
+			    SUBBANDS,
+			    CHANNELS,
+			    DAL::Stokes::I);
   std::cout << "-- Creating Stokes::Q dataset 1 ..." << std::endl;
-  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
-			       0,                 // ID of beam group
-			       1,                 // ID of Stokes dataset
-			       nofSamples,
-			       SUBBANDS,
-			       CHANNELS,
-			       DAL::Stokes::Q);
+  bfRoot.openStokesDataset (0,                 // ID of sub-array pointing
+			    0,                 // ID of beam group
+			    1,                 // ID of Stokes dataset
+			    nofSamples,
+			    SUBBANDS,
+			    CHANNELS,
+			    DAL::Stokes::Q);
+  
+  /*__________________________________________________________________
+    Retrieve objects embedded in the HDF5 file hierarchy
+  */
+
+  /* Variant 1: recursive retrieval of embedded objects. */
+
+  {
+    std::cout << "-- BF_RootGroup::getSubArrayPointing() ..." << std::endl;
+    
+    DAL::BF_SubArrayPointing bfSubArray = bfRoot.getSubArrayPointing (0);
+    bfSubArray.summary();
+    
+    std::cout << "-- BF_SubArrayPointing::getBeamGroup() ..." << std::endl;
+
+    DAL::BF_BeamGroup bfBeam = bfSubArray.getBeamGroup (0);
+    bfBeam.summary();
+
+    std::cout << "-- BF_BeamGroup::getStokesDataset() ..." << std::endl;
+
+    DAL::BF_StokesDataset bfStokes = bfBeam.getStokesDataset (0);
+    bfStokes.summary();
+  }
+
+  /* Variant 2: direct retrieval across herarchical levels. */
   
   {
-    hid_t fileID = rootGroup.locationID();
+    std::cout << "-- BF_RootGroup::getBeamGroup() ..." << std::endl;
+    
+    DAL::BF_BeamGroup bfBeam = bfRoot.getBeamGroup (0,0);
+    bfBeam.summary();
+  }
+  
+  /*__________________________________________________________________
+    Write data to Stokes dataset
+  */
+
+  return 0;
+
+  {
+    hid_t fileID = bfRoot.locationID();
     cout << "Creating stokes set 0" << endl;
     DAL::BF_StokesDataset stokesDataset(fileID,
 					0,
