@@ -415,6 +415,20 @@ namespace DAL {
       return HDF5Attribute::read (itsLocation, name, data);
     }
     
+    template <class T>
+      inline bool writeAttribute (std::string const &name,
+				  T const &data)
+      {
+	return HDF5Attribute::write (itsLocation, name, data);
+      }
+    
+    template <class T>
+      inline bool writeAttribute (std::string const &name,
+				  std::vector<T> const &data)
+      {
+	return HDF5Attribute::write (itsLocation, name, data);
+      }
+    
     // === Read the data ========================================================
     
     /*!
