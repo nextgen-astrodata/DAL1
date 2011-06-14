@@ -207,6 +207,9 @@ namespace DAL { // Namespace DAL -- begin
 
     itsNofChannels.clear();
     itsNofChannels = other.itsNofChannels;
+
+    itsAttributes.clear();
+    itsAttributes = other.itsAttributes;
   }
   
   // ============================================================================
