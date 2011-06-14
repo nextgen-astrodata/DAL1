@@ -275,7 +275,8 @@ int test_constructors (hid_t const &fileID)
   }
 
   /*_______________________________________________________________________
-    Create new dataset, explicitely specifying the chunking dimensions.
+    Test 5: Create new dataset, explicitely specifying the chunking
+            dimensions.
   */
 
   cout << "\n[5] Testing HDF5Dataset(hid_t, string, vector<hsize_t>, vector<hsize_t>) ..."
@@ -302,6 +303,55 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
   
+  /*_______________________________________________________________________
+    Test 6: Re-open the previously created datasets
+  */
+  
+  cout << "\n[6] Testing HDF5Dataset(hid_t, string) ..."
+       << endl;
+  try {
+    unsigned int rank (2);
+    std::map<std::string,hid_t> types = datasetNames (rank);
+    std::map<std::string,hid_t>::iterator it;
+
+    for (it=types.begin(); it!=types.end(); ++it) {
+      // create dataset
+      DAL::HDF5Dataset dataset (fileID,
+				it->first);
+      // show summary of dataset properties
+      dataset.summary();
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Test 7: Testing copy constructor
+  */
+  
+  cout << "\n[7] Testing HDF5Dataset(HDF5Dataset) ..." << endl;
+  try {
+    unsigned int rank (2);
+    std::map<std::string,hid_t> types = datasetNames (rank);
+    std::map<std::string,hid_t>::iterator it;
+
+    for (it=types.begin(); it!=types.end(); ++it) {
+      // Create/Open original dataset
+      cout << "--> Original dataset object:" << endl;
+      DAL::HDF5Dataset dataset (fileID,
+				it->first);
+      dataset.summary();
+      // Create new dataset as copy of the first one
+      cout << "--> Copied dataset object:" << endl;
+      DAL::HDF5Dataset datasetCopy (dataset);
+      datasetCopy.summary();
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 

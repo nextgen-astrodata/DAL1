@@ -108,6 +108,19 @@ namespace DAL {
 	  flags);
   }
   
+  //_____________________________________________________________________________
+  //                                                                  HDF5Dataset
+
+  /*!
+    \param other -- Another HDF5Dataset object from which to create this new
+           one.
+  */
+  HDF5Dataset::HDF5Dataset (HDF5Dataset const &other)
+    : HDF5Object (other)
+  {
+    copy (other);
+  }
+
   // ============================================================================
   //
   //  Destruction
@@ -202,6 +215,27 @@ namespace DAL {
     itsHyperslab.clear();
   }
 
+  //_____________________________________________________________________________
+  //                                                                         copy
+
+  /*!
+    \param other -- Another HDF5Dataset object from which to make the copy.
+  */
+  void HDF5Dataset::copy (HDF5Dataset const &other)
+  {
+    itsShape.clear();
+    itsChunking.clear();
+    itsHyperslab.clear();
+
+    itsName        = other.itsName;
+    itsDataspace   = other.itsDataspace;
+    itsDatatype    = other.itsDatatype;
+    itsLayout      = other.itsLayout;
+    itsShape       = other.itsShape;
+    itsChunking    = other.itsChunking;
+    itsHyperslab   = other.itsHyperslab;
+  }
+  
   //_____________________________________________________________________________
   //                                                                         open
 

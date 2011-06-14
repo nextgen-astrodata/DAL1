@@ -294,6 +294,9 @@ namespace DAL {
 		 hid_t const &datatype=H5T_NATIVE_DOUBLE,
 		 IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
+    //! Copy constructor
+    HDF5Dataset (HDF5Dataset const &other);
+    
     // === Destruction ==========================================================
     
     // Destructor
@@ -570,6 +573,8 @@ namespace DAL {
     
     //! Initialize the internal parameters
     void init ();
+    //! Unconditional copying
+    void copy (HDF5Dataset const &other);
     //! Set the size of chunks for the raw data of a chunked layout dataset. 
     bool setShape (std::vector<hsize_t> const &shape,
 		   std::vector<hsize_t> const &chunksize);
