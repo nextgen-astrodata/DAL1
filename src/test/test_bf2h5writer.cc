@@ -212,7 +212,6 @@ int main()
       
       std::cout << "-- Writing data for timestep " << t << std::endl;
       std::cout << "--> start /block = " << start << " / " << block << std::endl;
-      std::cout << "--> nof. datapoints = " << nofDatapoints << std::endl;
       
       /* Update the data array written to file */
       for (unsigned s = 0; s < SUBBANDS; s++) {
@@ -221,6 +220,7 @@ int main()
      	}
       }
       
+      // Write the data to the dataset
       stokesDataset.writeData( samples.origin(), start, block );
       
     } // END for (unsigned int t=0; t<10; ++t)
