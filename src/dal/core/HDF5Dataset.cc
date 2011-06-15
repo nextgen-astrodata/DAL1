@@ -515,7 +515,7 @@ namespace DAL {
 	// Set up the dataspace
 	itsDataspace = H5Screate_simple (rank, dims, maxdims);
 	// Create the dataset creation property list
-	hid_t creationProperties  = H5Pcreate (H5P_DATASET_CREATE);
+	hid_t creationProperties = H5Pcreate (H5P_DATASET_CREATE);
 	// Set the chunk size
 	h5error = H5Pset_chunk (creationProperties, rank, chunkdims);
 	// Create the Dataset ...

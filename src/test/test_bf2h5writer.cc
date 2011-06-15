@@ -196,34 +196,35 @@ int main()
     boost::multi_array<float,3> samples(extents[1][SUBBANDS][CHANNELS]);
     
     std::vector<int> start (2,0);
-    std::vector<int> stride;
     std::vector<int> count;
     std::vector<int> block (2,0);
     unsigned int nofDatapoints (0);
 
     /* Iterate through the various time steps */
-    for (unsigned int t=0; t<10; ++t) {
+    for (unsigned int t=0; t<SAMPLES/4; ++t) {
 
+      /* Update hyperslab parameters */
+      start[0]      = t;
+      start[1]      = 0;
+      block[0]      = 1;
+      block[1]      = int(SUBBANDS)*int(CHANNELS);
+      nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      
+      std::cout << "-- Writing data for timestep " << t << std::endl;
+      std::cout << "--> start /block = " << start << " / " << block << std::endl;
+      std::cout << "--> nof. datapoints = " << nofDatapoints << std::endl;
+      
       /* Update the data array written to file */
       for (unsigned s = 0; s < SUBBANDS; s++) {
       	for (unsigned c = 0; c < CHANNELS; c++) {
       	  samples[0][s][c] = 1e06*(t+1) + 1e03*s + c;
-      	}
+     	}
       }
       
-      /* Update hyperslab parameters */
-      start[0] = t;
-      start[1] = 0;
-      block[0] = int(SAMPLES);
-      block[1] = int(SUBBANDS)*int(CHANNELS);
-      
-      nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
-      
-      std::cout << "-- Writing data for timestep " << t << std::endl;
       stokesDataset.writeData( samples.origin(), start, block );
       
-    }
-    
+    } // END for (unsigned int t=0; t<10; ++t)
+
   }
   
   return 0;
