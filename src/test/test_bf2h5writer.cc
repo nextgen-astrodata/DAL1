@@ -47,9 +47,9 @@
 #include <lofar_config.h>
 #endif
 
-#define SAMPLES         1008
-#define CHANNELS        64
-#define SUBBANDS        60
+#define SAMPLES   1008
+#define CHANNELS  64
+#define SUBBANDS  60
 
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
@@ -59,7 +59,6 @@
 #include <boost/multi_array.hpp>
 
 using namespace std;
-using namespace boost;
 using boost::format;
 
 //_______________________________________________________________________________
@@ -158,23 +157,12 @@ int main()
 			    SUBBANDS,
 			    CHANNELS,
 			    DAL::Stokes::Q);
-  
-  /*__________________________________________________________________
-    Inspection of the previously created hierarchical structure.
-  */
-
-  std::cout << "\n[5] Inspection of hierarchical structure ..." << std::endl;
-
-  {
-    DAL::BF_SubArrayPointing bfSubArray = bfRoot.getSubArrayPointing (0);
-    bfSubArray.summary();
-  }
 
   /*__________________________________________________________________
     Write data to Stokes dataset
   */
 
-  std::cout << "\n[6] Write data to Stokes dataset ..." << std::endl;
+  std::cout << "\n[5] Write data to Stokes dataset ..." << std::endl;
 
   {
     unsigned int stokesID   = 0;
@@ -193,7 +181,7 @@ int main()
 	 << " x " << SUBBANDS
 	 << " x " << CHANNELS << " ]" << endl;
     
-    boost::multi_array<float,3> samples(extents[1][SUBBANDS][CHANNELS]);
+    boost::multi_array<float,3> samples(boost::extents[1][SUBBANDS][CHANNELS]);
     
     std::vector<int> start (2,0);
     std::vector<int> count;
@@ -210,8 +198,9 @@ int main()
       block[1]      = int(SUBBANDS)*int(CHANNELS);
       nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
       
-      std::cout << "-- Writing data for timestep " << t << std::endl;
-      std::cout << "--> start /block = " << start << " / " << block << std::endl;
+      std::cout << "-- Writing data for timestep " << t 
+		<< " : start /block = " << start << " / " << block
+		<< std::endl;
       
       /* Update the data array written to file */
       for (unsigned s = 0; s < SUBBANDS; s++) {
