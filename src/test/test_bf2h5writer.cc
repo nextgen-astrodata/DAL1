@@ -200,9 +200,10 @@ int main()
     std::vector<int> count;
     std::vector<int> block (2,0);
     unsigned int nofDatapoints (0);
-    
+
+    /* Iterate through the various time steps */
     for (unsigned int t=0; t<10; ++t) {
-      
+
       /* Update the data array written to file */
       for (unsigned s = 0; s < SUBBANDS; s++) {
       	for (unsigned c = 0; c < CHANNELS; c++) {

@@ -42,8 +42,9 @@ namespace DAL { // Namespace DAL -- begin
   HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
 				    std::string const &name,
 				    IO_Mode const &flags)
+    : HDF5Dataset (location, name, flags)
   {
-    open (location, name, flags);
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -54,8 +55,9 @@ namespace DAL { // Namespace DAL -- begin
 				    std::vector<hsize_t> const &shape,
 				    hid_t const &datatype,
 				    IO_Mode const &flags)
+    : HDF5Dataset (location, name, shape, datatype,flags)
   {
-    open (location, name, shape, datatype,flags);
+    init ();
   }
   
   //_____________________________________________________________________________

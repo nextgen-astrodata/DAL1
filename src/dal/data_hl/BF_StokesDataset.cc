@@ -47,9 +47,9 @@ namespace DAL { // Namespace DAL -- begin
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name,
 				      IO_Mode const &flags)
+    : HDF5DatasetBase (location, name, flags)
   {
     init();
-    open (location, name, flags);
   }
 
   //_____________________________________________________________________________

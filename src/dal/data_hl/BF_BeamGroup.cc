@@ -418,7 +418,7 @@ namespace DAL { // Namespace DAL -- begin
       it = itsStokesDatasets.find(name);
 
       if (it != itsStokesDatasets.end()) {
-	return it->second;
+	return BF_StokesDataset(it->second);
       } else {
 	std::cerr << "[BF_BeamGroup::getStokesDataset] No such dataset "
 		  << "\"" << name << "\""
