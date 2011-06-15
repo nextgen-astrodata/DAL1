@@ -359,19 +359,17 @@ namespace DAL { // Namespace DAL -- begin
       if ( HDF5Attribute::read (itsLocation, "NOF_CHANNELS", channels) ) {
 	itsNofChannels = channels;
       }
-
+      
     } else {
-      std::cerr << "[BF_StokesDataset::init] Invalid object handler!"
-		<< std::endl;
       return false;
     }
-
+    
     return true;
   }
   
   //_____________________________________________________________________________
   //                                                                         open
-
+  
   /*!
     \param location -- Identifier of the location to which the to be opened
            structure is attached.

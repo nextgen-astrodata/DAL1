@@ -333,9 +333,9 @@ int test_constructors (hid_t const &fileID)
   cout << "\n[7] Testing HDF5Dataset(HDF5Dataset) ..." << endl;
   try {
     unsigned int rank (2);
+    std::vector<hsize_t> shape (rank);
     std::map<std::string,hid_t> types = datasetNames (rank);
     std::map<std::string,hid_t>::iterator it;
-    std::vector<hsize_t> shape;
 
     for (it=types.begin(); it!=types.end(); ++it) {
       // Create/Open original dataset
@@ -347,9 +347,12 @@ int test_constructors (hid_t const &fileID)
       cout << "--> Copied dataset object:" << endl;
       DAL::HDF5Dataset datasetCopy (dataset);
       datasetCopy.summary();
-      // Write attribute storing shape of dataset
+      // Retrieve some of the basic dataset parameters ...
       shape = datasetCopy.shape();
-      dataset.writeAttribute("SHAPE",shape);
+      rank  = datasetCopy.rank();
+      // ... and store them as attributes.
+      dataset.writeAttribute("Rank",  rank);
+      dataset.writeAttribute("Shape", shape);
     }
   } catch (std::string message) {
     std::cerr << message << endl;

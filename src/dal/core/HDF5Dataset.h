@@ -589,6 +589,8 @@ namespace DAL {
     void init ();
     //! Unconditional copying
     void copy (HDF5Dataset const &other);
+    //! Read in the attributes from the dataset
+    bool readParameters ();
     //! Set the size of chunks for the raw data of a chunked layout dataset. 
     bool setShape (std::vector<hsize_t> const &shape,
 		   std::vector<hsize_t> const &chunksize);

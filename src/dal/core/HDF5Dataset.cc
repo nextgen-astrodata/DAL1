@@ -216,27 +216,6 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                         copy
-
-  /*!
-    \param other -- Another HDF5Dataset object from which to make the copy.
-  */
-  void HDF5Dataset::copy (HDF5Dataset const &other)
-  {
-    itsShape.clear();
-    itsChunking.clear();
-    itsHyperslab.clear();
-
-    itsName        = other.itsName;
-    itsDataspace   = other.itsDataspace;
-    itsDatatype    = other.itsDatatype;
-    itsLayout      = other.itsLayout;
-    itsShape       = other.itsShape;
-    itsChunking    = other.itsChunking;
-    itsHyperslab   = other.itsHyperslab;
-  }
-  
-  //_____________________________________________________________________________
   //                                                                         open
 
   /*!
@@ -259,8 +238,8 @@ namespace DAL {
     /*________________________________________________________________
       Check if 'location' points to a valid HDF5 object containing a
       dataset of the given 'name'.
-     */
-
+    */
+    
     if ( H5Iis_valid(location) ) {
       if ( H5Lexists (location, name.c_str(), H5P_DEFAULT) ) {
 	H5O_info_t info;
@@ -281,19 +260,16 @@ namespace DAL {
       Try opening existing dataset
     */
     
-    if (datasetExists) {
+    if ( datasetExists ) {
       /* Open existing dataset */
       itsLocation = H5Dopen (location,
 			     name.c_str(),
 			     H5P_DEFAULT);
       /* Check if opening of the dataset was successful */
-      if (H5Iis_valid(itsLocation)) {
+      if ( H5Iis_valid(itsLocation) ) {
 	// Assign internal parameters
 	itsName      = name;
-	itsDataspace = H5Dget_space (itsLocation);
-	itsDatatype  = H5Dget_type (itsLocation);
-	// Get the shape of the dataset array
-	HDF5Dataspace::shape (itsLocation, itsShape);
+	readParameters ();
 	// Retrieve the size of chunks for the raw data
 	status = getChunksize ();
       } else {
@@ -312,7 +288,7 @@ namespace DAL {
     //______________________________________________________
     // Try creating dataset, if not yet existing
     
-    if (H5Iis_valid(itsLocation)) {
+    if ( H5Iis_valid(itsLocation)) {
       status = true;
     } else {
 
@@ -933,4 +909,69 @@ namespace DAL {
     }
   }
 
+  // ============================================================================
+  //
+  //  Private functions
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         copy
+
+  /*!
+    \param other -- Another HDF5Dataset object from which to make the copy.
+  */
+  void HDF5Dataset::copy (HDF5Dataset const &other)
+  {
+    itsShape.clear();
+    itsChunking.clear();
+    itsHyperslab.clear();
+
+    itsName        = other.itsName;
+    itsDataspace   = other.itsDataspace;
+    itsDatatype    = other.itsDatatype;
+    itsLayout      = other.itsLayout;
+    itsShape       = other.itsShape;
+    itsChunking    = other.itsChunking;
+    itsHyperslab   = other.itsHyperslab;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
+  bool HDF5Dataset::readParameters ()
+  {
+    bool status = true;
+
+    if ( H5Iis_valid(itsLocation) ) {
+
+      /*____________________________________________________
+	Retrieve the dataset parameters
+      */
+
+      itsDataspace = H5Dget_space (itsLocation);
+      itsDatatype  = H5Dget_type (itsLocation);
+      HDF5Dataspace::shape (itsLocation, itsShape);
+
+      /*____________________________________________________
+	Check the extracted parameters
+      */
+
+      if (!H5Iis_valid(itsDataspace)) {
+	std::cerr << "[HDF5Dataset::readParameters] Invalid dataspace ID!"
+		  << std::endl;
+	status = false;
+      }
+
+      if (!H5Iis_valid(itsDatatype)) {
+	std::cerr << "[HDF5Dataset::readParameters] Invalid datatype ID!"
+		  << std::endl;
+	status = false;
+      }
+
+    }
+    
+    return status;
+  }
+  
 } // end namespace DAL
