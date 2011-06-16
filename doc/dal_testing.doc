@@ -32,11 +32,11 @@
 
   \verbatim
   DAL/data
-  ├── CMakeLists.txt
-  ├── README
-  ├── h5example_dal.h5
-  ├── h5example_g_traverse.h5
-  └── h5example_g_visit.h5
+  |-- CMakeLists.txt
+  |-- README
+  |-- h5example_dal.h5
+  |-- h5example_g_traverse.h5
+  `-- h5example_g_visit.h5
   \endverbatim
 
   Internal structure of \e h5example_dal.h5
