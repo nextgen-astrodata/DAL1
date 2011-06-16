@@ -34,6 +34,9 @@
 #include <iostream>
 #include <core/Database.h>
 
+using std::cout;
+using std::endl;
+
 //_______________________________________________________________________________
 //                                                              test_constructors
 
@@ -53,26 +56,37 @@ int test_constructors (std::string const &server="pc-swinbank",
 		       std::string const &passwd="cs1",
 		       std::string const &database="pipeline")
 {
-  std::cout << "\n[tDatabase::test_constructors]\n" << std::endl;
+  cout << "\n[tDatabase::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Default constructor..." << std::endl;
+  cout << "[1] Testing Database() ..." << endl;
   try {
     DAL::Database db;
     db.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     ++nofFailedTests;
   }
   
-  std::cout << "[2] Argumented constructor..." << std::endl;
+  cout << "[2] Testing Database(string,string,string,string) ..." << endl;
   try {
     // Create object
     DAL::Database db (server, name, passwd, database);
     db.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[3] Testing Database(string,string,string,string,uint) ..." << endl;
+  try {
+    unsigned int port = 100;
+    // Create object
+    DAL::Database db (server, name, passwd, database,port);
+    db.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
     ++nofFailedTests;
   }
   

@@ -43,17 +43,17 @@ namespace DAL {
     std::string itsUserName;
     //! The user password
     std::string itsPassword;
-    //! The port number to which to connect (if required)
-    std::string itsPortNumber;
     //! The name of the database to work with
     std::string itsDatabaseName;
+    //! The port number to which to connect (if required)
+    unsigned int itsPortNumber;
     
 #ifdef DAL_WITH_MYSQL
     //! Connector to the database
     MYSQL *itsDatabaseConnector;
     //! Result from database query
     MYSQL_RES *res;
-    MYSQL_ROW row;
+    MYSQL_ROW itsDatabaseRow;
 #endif
     
   public:
@@ -63,46 +63,54 @@ namespace DAL {
     // Default constructor
     Database ();
     
-    // Constructor
-    Database( std::string const& server,
-	      std::string const& username,
-	      std::string const& password,
-	      std::string const& database );
-
+    // Argumented constructor
+    Database (std::string const &server,
+	      std::string const &username,
+	      std::string const &password,
+	      std::string const &database,
+	      unsigned int const &port=0);
+    
     //! Destructor
     ~Database();
-
+    
     // === Parameter access =====================================================
-
+    
     //! The name of the server to connect to
     inline std::string serverName () const {
       return itsServerName;
     }
-
+    
     //! The user name
     inline std::string userName () const {
       return itsUserName;
     }
-
+    
     //! The user password
     inline std::string password () const {
       return itsPassword;
     }
-
-    //! The port number to which to connect (if required)
-    inline std::string portNumber () const {
-      return itsPortNumber;
-    }
-
+    
     //! The name of the database to work with
     inline std::string database () const {
       return itsDatabaseName;
     }
 
+    //! The port number to which to connect (if required)
+    inline unsigned int portNumber () const {
+      return itsPortNumber;
+    }
+    
     // === Public methods =======================================================
+
+    //! Connect to the database
+    bool connect (std::string const &server,
+		  std::string const &username,
+		  std::string const &password,
+		  std::string const &database,
+		  unsigned int const &port=0);
     
     //! Query the database
-    bool query(std::string const & querystr);
+    bool query (std::string const &querystr);
     
     //! Provide a summary of the internal status
     inline void summary () {
