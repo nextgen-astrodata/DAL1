@@ -164,7 +164,7 @@ namespace DAL {
     \brief Query the database.
     \param querystr Query string to send to database.
   */
-  bool Database::query (std::string const & querystr)
+  bool Database::query (std::string const &querystr)
   {
     bool status = true;
 
@@ -173,7 +173,7 @@ namespace DAL {
     /* send SQL query */
     if (mysql_query(itsDatabaseConnector, querystr.c_str())) {
       fprintf(stderr, "%s\n", mysql_error(itsDatabaseConnector));
-      return DAL::FAIL;
+      status = false;
     }
     
     res = mysql_use_result(itsDatabaseConnector);
@@ -187,6 +187,10 @@ namespace DAL {
     
     mysql_free_result(res);
 #else
+    std::cerr << "[Database::query] Unable to perform query '"
+	      << querystr
+	      << "' - no connection to database!"
+	      << std::endl;
     status = false;
 #endif
 
