@@ -25,12 +25,12 @@
 #include <string>
 #include <vector>
 
-#include "dalCommon.h"
-#include "HDF5Attribute.h"
-#include "HDF5Hyperslab.h"
-#include "IO_Mode.h"
+#include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <core/HDF5Object.h>
+#include <core/HDF5Hyperslab.h>
 
-#define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
+#define H5S_CHUNKSIZE_MAX ((uint32_t)(-1))  /* (4GB - 1) */
 
 namespace DAL {
   
@@ -276,20 +276,26 @@ namespace DAL {
     
     //! Argumented constructor to open existing dataset
     HDF5Dataset (hid_t const &location,
-		 std::string const &name);
+		 std::string const &name,
+		 IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
 		 std::string const &name,
 		 std::vector<hsize_t> const &shape,
-		 hid_t const &datatype=H5T_NATIVE_DOUBLE);
+		 hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		 IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
 		 std::string const &name,
 		 std::vector<hsize_t> const &shape,
 		 std::vector<hsize_t> const &chunksize,
-		 hid_t const &datatype=H5T_NATIVE_DOUBLE);
+		 hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		 IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
+    
+    //! Copy constructor
+    HDF5Dataset (HDF5Dataset const &other);
     
     // === Destruction ==========================================================
     
@@ -343,23 +349,33 @@ namespace DAL {
 
     // === Public Methods =======================================================
     
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);
+
     //! Open the dataset
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       IO_Mode::Flags const &flags=IO_Mode::Open);
+		       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
-    //! Create the dataset
-    virtual bool create (hid_t const &location,
-			 std::string const &name,
-			 std::vector<hsize_t> const &shape,
-			 std::vector<hsize_t> const &chunksize,
-			 hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    //! Open/Create a dataset
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       std::vector<hsize_t> const &shape,
+		       hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
-    //! Create the dataset
-    virtual bool create (hid_t const &location,
-			 std::string const &name,
-			 std::vector<hsize_t> const &shape,
-			 hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    //! Open/Create a dataset
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       std::vector<hsize_t> const &shape,
+		       std::vector<hsize_t> const &chunksize,
+		       hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Get the Hyperslabs for the dataspace attached to the dataset
     inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
@@ -387,25 +403,31 @@ namespace DAL {
 
     template <class T>
     inline bool readAttribute (std::string const &name,
-                              T *data,
-                              unsigned int const &size)
+                              T &data)
     {
-      return HDF5Attribute::read (itsLocation, name, data, size);
+      return HDF5Attribute::read (itsLocation, name, data);
     }
     
     template <class T>
     inline bool readAttribute (std::string const &name,
                               std::vector<T> &data)
     {
-      return HDF5Attribute::read (itsLocation, name, &data[0], data.size());
+      return HDF5Attribute::read (itsLocation, name, data);
     }
     
     template <class T>
-    inline bool readAttribute (std::string const &name,
-                              T &data)
-    {
-      return HDF5Attribute::read (itsLocation, name, &data, 1);
-    }
+      inline bool writeAttribute (std::string const &name,
+				  T const &data)
+      {
+	return HDF5Attribute::write (itsLocation, name, data);
+      }
+    
+    template <class T>
+      inline bool writeAttribute (std::string const &name,
+				  std::vector<T> const &data)
+      {
+	return HDF5Attribute::write (itsLocation, name, data);
+      }
     
     // === Read the data ========================================================
     
@@ -560,21 +582,15 @@ namespace DAL {
     
     //! Returns the address in the file of the dataset \c location.
     static haddr_t offset (hid_t const &location);
-    
-    // === Summary ==============================================================
-    
-    //! Provide a summary of the internal status
-    inline void summary () {
-      summary (std::cout);
-    }
-    
-    //! Provide a summary of the internal status
-    void summary (std::ostream &os);
 
   private:
     
     //! Initialize the internal parameters
     void init ();
+    //! Unconditional copying
+    void copy (HDF5Dataset const &other);
+    //! Read in the attributes from the dataset
+    bool readParameters ();
     //! Set the size of chunks for the raw data of a chunked layout dataset. 
     bool setShape (std::vector<hsize_t> const &shape,
 		   std::vector<hsize_t> const &chunksize);
@@ -585,7 +601,14 @@ namespace DAL {
     //! Select a hyperslab for the dataspace attached to the dataset
     bool setHyperslab (HDF5Hyperslab &slab,
 		       bool const &resizeDataset);
-    
+    //! Open/Create a dataset
+    bool open (hid_t &datasetID,
+	       hid_t const &location,
+	       std::string const &name,
+	       std::vector<hsize_t> const &shape,
+	       std::vector<hsize_t> const &chunksize,
+	       hid_t const &datatype=H5T_NATIVE_DOUBLE,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     /*!
       \brief Read the data
       \param data     -- Array with the data to be written.

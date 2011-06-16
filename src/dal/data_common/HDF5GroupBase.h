@@ -102,9 +102,9 @@ namespace DAL { // Namespace DAL -- begin
       parameters can be utilized: when opening a file (e.g. with BF_Dataset)
       the <tt>location</tt> will not be evaluated.
       \code
-  bool BF_PrimaryPointing::open (hid_t const &location,
-				 std::string const &name,
-				 bool const &create)
+      bool BF_PrimaryPointing::open (hid_t const &location,
+                                     std::string const &name,
+				     bool const &create)
   {
     bool status (true);
     
@@ -272,20 +272,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
 
     //! Verify the ID so it can be passed into an H5I C function.
     bool hasValidID ();
 
-    //! Verify a given ID is a valid id so it can be passed into an H5I C function.
-    static bool hasValidID (hid_t const &object_id);
-    
     //! Get the type (File, Group, Dataset, etc.) of the object
     H5I_type_t objectType ();
 
-    //! Get the type (File, Group, Dataset, etc.) of an object
-    static H5I_type_t objectType (hid_t const &object_id);
-    
     //! Get the name of the object
     std::string objectName ();
     
@@ -479,6 +473,12 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Static methods =======================================================
 
+    //! Verify a given ID is a valid id so it can be passed into an H5I C function.
+    static bool hasValidID (hid_t const &location);
+    
+    //! Get the type (File, Group, Dataset, etc.) of an object
+    static H5I_type_t objectType (hid_t const &location);
+    
     //! Open a group inside the structure
     static bool open (hid_t &groupID,
 		      hid_t const &location,

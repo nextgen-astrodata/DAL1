@@ -193,9 +193,12 @@ namespace DAL { // Namespace DAL -- begin
     return hasValidID (location_p);
   }
   
-  bool HDF5GroupBase::hasValidID (hid_t const &object_id)
+  //_____________________________________________________________________________
+  //                                                                   hasValidID
+
+  bool HDF5GroupBase::hasValidID (hid_t const &location)
   {
-    H5I_type_t id_type = H5Iget_type(object_id);
+    H5I_type_t id_type = H5Iget_type(location);
     if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
       return false;
     else
@@ -205,20 +208,28 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   objectType
   
+  /*!
+    \return type -- The type identifier of the object.
+  */
   H5I_type_t HDF5GroupBase::objectType ()
   {
     return objectType(location_p);
   }
 
+  //_____________________________________________________________________________
+  //                                                                   objectType
+  
   /*!
-    \param object_id -- Identifier for the object for which to check the type.
-    \return type     -- The type identifier of the object.
+    \param location -- Identifier for the object for which to check the type.
+    \return type    -- The type identifier of the object.
   */
-  H5I_type_t HDF5GroupBase::objectType (hid_t const &object_id)
+  H5I_type_t HDF5GroupBase::objectType (hid_t const &location)
   {
-    if (H5Iis_valid(object_id)) {
-      return H5Iget_type (object_id);
+    if (H5Iis_valid(location)) {
+      return H5Iget_type (location);
     } else {
+      std::cerr << "[HDF5GroupBase::objectType] Invalid object identifier!"
+		<< std::endl;
       return H5I_BADID;
     }
   }
@@ -302,8 +313,8 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   /*!
-    \retval groupID
-    \param location
+    \retval groupID     -- 
+    \param location     -- 
     \param name         -- Name of the group to be opened/created.
     \param flags        -- I/O mode flags.
     \return groupCreate -- Was \c H5Gcreate used in order to create the group
@@ -314,7 +325,7 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &name,
 			    IO_Mode const &flags)
   {
-    bool groupExists    = false;
+    bool groupExists = false;
     bool groupCreate = false;
     
     /*______________________________________________________

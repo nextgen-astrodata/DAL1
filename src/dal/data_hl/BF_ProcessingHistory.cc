@@ -42,7 +42,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_ProcessingHistory::BF_ProcessingHistory (hid_t const &location,
 					      IO_Mode const &flags)
   {
-    std::string name ("ProcessingHistory");
+    std::string name = getName();
     
     open (location,
 	  name,
@@ -73,7 +73,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Parameters
+  //  Parameter access
   //
   // ============================================================================
   
@@ -87,12 +87,13 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[BF_ProcessingHistory] Summary of internal parameters." << std::endl;
     os << "-- Location ID = " << location_p   << std::endl;
+    os << "-- Group name  = " << getName()    << std::endl;
     os << "-- Attributes  = " << attributes() << std::endl;
   }
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods 
   //
   // ============================================================================
   
@@ -163,9 +164,9 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string string_group ("ProcessHist");
+	  std::string groupName = getName();
 	  // write the attributes
-	  HDF5Attribute::write (location_p, "GROUPTYPE",  string_group);
+	  HDF5Attribute::write (location_p, "GROUPTYPE",  groupName);
 	  HDF5Attribute::write (location_p, "PARSET_OBS", false);
 	  HDF5Attribute::write (location_p, "LOG_PRESTO", false);
 	  HDF5Attribute::write (location_p, "PARFILE",    false);
@@ -184,6 +185,20 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return status;
+  }
+
+  // ============================================================================
+  //
+  //  Static methods 
+  //
+  // ============================================================================
+
+  /*!
+    \return name -- Name of the processing history group.
+  */
+  std::string BF_ProcessingHistory::getName ()
+  {
+    return "PROCESS_HISTORY";
   }
   
 } // Namespace DAL -- end

@@ -59,6 +59,18 @@ namespace DAL { // Namespace DAL -- begin
     open (location,getName(index),flags);
   }
   
+  //_____________________________________________________________________________
+  //                                                          BF_SubArrayPointing
+  
+  BF_SubArrayPointing::BF_SubArrayPointing (BF_SubArrayPointing const &other)
+    : HDF5GroupBase (other)
+  {
+    if (!other.itsBeams.empty()) {
+      itsBeams.clear();
+      itsBeams = other.itsBeams;
+    }
+  }
+  
   // ============================================================================
   //
   //  Destruction
@@ -92,9 +104,10 @@ namespace DAL { // Namespace DAL -- begin
   void BF_SubArrayPointing::summary (std::ostream &os)
   {
     os << "[BF_SubArrayPointing] Summary of internal parameters." << std::endl;
-    os << "-- Location ID     = " << location_p          << std::endl;
-    os << "-- nof. attributes = " << attributes_p.size() << std::endl;
-    os << "-- Attributes      = " << attributes_p        << std::endl;
+    os << "-- Location ID     = " << location_p                   << std::endl;
+    os << "-- Group name      = " << HDF5Object::name(location_p) << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size()          << std::endl;
+    os << "-- Attributes      = " << attributes_p                 << std::endl;
   }
 
   // ============================================================================
@@ -276,16 +289,26 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_BeamGroup BF_SubArrayPointing::getBeamGroup (unsigned int const &beamID)
   {
-    std::string name = BF_BeamGroup::getName (beamID);
-    std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
-    
-    if (it==itsBeams.end()) {
-      std::cerr << "[BF_SubArrayPointing::getBeamGroup]"
-		<< " Unable to find Beam group " << name << std::endl;
-      return BF_BeamGroup();
-    } else {
-      return it->second;
+    BF_BeamGroup beam;
+
+    if (H5Iis_valid(location_p)) {
+      std::string name = BF_BeamGroup::getName (beamID);
+      std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
+
+      if (it != itsBeams.end()) {
+	return it->second;
+      } else {
+	std::cerr << "[BF_SubArrayPointing::getBeamGroup] No such group "
+		  << "\"" << name << "\""
+		  << std::endl;
+      }
     }
+    else {
+      std::cerr << "[BF_SubArrayPointing::getBeamGroup] Not connected to file!"
+		<< std::endl;
+    }
+    
+    return beam;
   }
   
   //_____________________________________________________________________________

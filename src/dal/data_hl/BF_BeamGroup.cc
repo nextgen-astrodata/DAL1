@@ -110,9 +110,11 @@ namespace DAL { // Namespace DAL -- begin
     coord = itsCoordinates.begin();
 
     os << "[BF_BeamGroup] Summary of internal parameters." << std::endl;
-    os << "-- Location ID   = " << location_p << std::endl;
-    os << "-- Group name    = " << HDF5Object::name(location_p) << std::endl;
-    os << "-- nof. datasets = " << itsStokesDatasets.size()     << std::endl;
+    os << "-- Location ID     = " << location_p                   << std::endl;
+    os << "-- Group name      = " << HDF5Object::name(location_p) << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size()          << std::endl;
+    os << "-- Attributes      = " << attributes_p                 << std::endl;
+    os << "-- nof. datasets   = " << itsStokesDatasets.size()     << std::endl;
     
   }
   
@@ -407,18 +409,28 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_StokesDataset BF_BeamGroup::getStokesDataset (unsigned int const &stokesID)
   {
-    /* Convert ID to name */
-    std::string name = BF_StokesDataset::getName (stokesID);
-    /* Search for requested dataset */
-    std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
-    
-    if (it==itsStokesDatasets.end()) {
-      std::cerr << "[BF_BeamGroup::getStokesDataset]"
-		<< " Unable to find Stokes dataset " << name << std::endl;
-      return BF_StokesDataset();
-    } else {
-      return it->second;
+    BF_StokesDataset stokes;
+
+    if (H5Iis_valid(location_p)) {
+      std::string name = BF_StokesDataset::getName (stokesID);
+      std::map<std::string,BF_StokesDataset>::iterator it;
+      
+      it = itsStokesDatasets.find(name);
+
+      if (it != itsStokesDatasets.end()) {
+	return BF_StokesDataset(it->second);
+      } else {
+	std::cerr << "[BF_BeamGroup::getStokesDataset] No such dataset "
+		  << "\"" << name << "\""
+		  << std::endl;
+      }
     }
+    else {
+      std::cerr << "[BF_BeamGroup::getStokesDataset] Not connected to file!"
+		<< std::endl;
+    }
+    
+    return stokes;
   }
 
   //_____________________________________________________________________________

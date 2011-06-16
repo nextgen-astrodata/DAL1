@@ -197,7 +197,7 @@ int test_methods ()
 
   cout << "[2] Extract SubArrayPointing group from BF dataset ..." << endl;
   try {
-    DAL::BF_SubArrayPointing pointing = dataset.primaryPointing (0);
+    DAL::BF_SubArrayPointing pointing = dataset.getSubArrayPointing (0);
     //
     std::string groupType;
     pointing.getAttribute("GROUPTYPE",groupType);

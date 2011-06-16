@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5DatasetBase.h"
+#include <data_common/HDF5DatasetBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,7 +32,6 @@ namespace DAL { // Namespace DAL -- begin
   //                                                              HDF5DatasetBase
   
   HDF5DatasetBase::HDF5DatasetBase ()
-    : HDF5Dataset()
   {
     init ();
   }
@@ -43,10 +42,9 @@ namespace DAL { // Namespace DAL -- begin
   HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
 				    std::string const &name,
 				    IO_Mode const &flags)
-    : HDF5Dataset()
+    : HDF5Dataset (location, name, flags)
   {
-    init (flags);
-    open (location, name, flags);
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -54,10 +52,12 @@ namespace DAL { // Namespace DAL -- begin
   
   HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
 				    std::string const &name,
-				    std::vector< hsize_t > const &shape,
-				    hid_t const &datatype)
-    : HDF5Dataset(location,name, shape, datatype)
+				    std::vector<hsize_t> const &shape,
+				    hid_t const &datatype,
+				    IO_Mode const &flags)
+    : HDF5Dataset (location, name, shape, datatype,flags)
   {
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -111,13 +111,17 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
+  /*!
+    \param other -- Another HDF5DatasetBase object from which to make a copy.
+  */
   void HDF5DatasetBase::copy (HDF5DatasetBase const &other)
   {
-    if (H5Iis_valid(other.itsLocation)) {
-      itsLocation = -1;
-    }
-}
-
+    itsFlags      = other.itsFlags;
+    itsAttributes = other.itsAttributes;
+    itsGroupType  = other.itsGroupType;
+    itsWCSinfo    = other.itsWCSinfo;
+  }
+  
   // ============================================================================
   //
   //  Parameter access
@@ -153,9 +157,9 @@ namespace DAL { // Namespace DAL -- begin
     \param flags  -- I/O mode flags, defining whether the dataset is opened as
            read-only or read-write.
   */
-  bool HDF5DatasetBase::open (const hid_t &location,
-			      const std::string &name,
-			      const IO_Mode &flags)
+  bool HDF5DatasetBase::open (hid_t const &location,
+			      std::string const &name,
+			      IO_Mode const &flags)
   {
     /* Check the provided object identifier */
     if (H5Iis_valid(location)) {
@@ -182,6 +186,33 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return true;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location -- 
+    \param name     -- 
+    \param shape    -- 
+    \param datatype -- 
+    \param flags    -- I/O mode flags.
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool HDF5DatasetBase::open (hid_t const &location,
+			      std::string const &name,
+			      std::vector<hsize_t> const &shape,
+			      hid_t const &datatype,
+			      IO_Mode const &flags)
+  {
+    bool status = HDF5Dataset::open (location,
+				     name,
+				     shape,
+				     datatype,
+				     flags);
+    
+    return status;
   }
   
   // ============================================================================

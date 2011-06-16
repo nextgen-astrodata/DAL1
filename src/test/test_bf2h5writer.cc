@@ -47,10 +47,9 @@
 #include <lofar_config.h>
 #endif
 
-#define SAMPLES         1008
-#define CHANNELS        64
-#define SUBBANDS        60
-#define BLOCKS          10
+#define SAMPLES   1008
+#define CHANNELS  64
+#define SUBBANDS  60
 
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
@@ -60,7 +59,6 @@
 #include <boost/multi_array.hpp>
 
 using namespace std;
-using namespace boost;
 using boost::format;
 
 //_______________________________________________________________________________
@@ -86,8 +84,10 @@ DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 
 int main()
 {
-  const unsigned nofPointings = 5;
-  const unsigned nofBeams     = 10;
+  unsigned int nofPointings = 5;
+  unsigned int nofBeams     = 10;
+  unsigned int subArrayID   = 0;
+  unsigned int beamID       = 0;
   
   /*__________________________________________________________________
     Create DAL::Filename object for generation of proper filename,
@@ -105,7 +105,7 @@ int main()
     root group of the newly created file.
   */
 
-  std::cout << "-- Setting up LOFAR Common Attributes ..." << std::endl;
+  std::cout << "\n[1] Setting up LOFAR Common Attributes ..." << std::endl;
 
   DAL::CommonAttributes attributes = commonAttributes (filename);
 
@@ -115,95 +115,106 @@ int main()
     created structure elements will remain in place.
   */
   
-  std::cout << "-- Creating new file " << filename.filename() << endl;
+  std::cout << "\n[2] Creating new file " << filename.filename() << endl;
 
-  DAL::BF_RootGroup rootGroup (attributes,
-			       DAL::IO_Mode(DAL::IO_Mode::Create));
-
+  DAL::BF_RootGroup bfRoot (attributes,
+			    DAL::IO_Mode(DAL::IO_Mode::Create));
+  
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.
   */
+  
+  std::cout << "\n[3] Creating sub-array groups and beam groups ..." << endl;
 
-  for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
-    std::cout << "-- Pointing " <<  numPointing << ": [";
-    for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
-      // progress message
-      std::cout << " " << numBeam;
+  for (unsigned int numPointing=0; numPointing<nofPointings; ++numPointing) {
+    for (unsigned int numBeam=0; numBeam<nofBeams; ++numBeam) {
+      // status message
+      std::cout << "-- Creating Sub-Array / Beam [ " 
+		<< numPointing << " , " << numBeam << " ]"
+		<< std::endl;
       // recursively open beam group
-      rootGroup.openBeam ( numPointing, numBeam );
+      bfRoot.openBeam ( numPointing, numBeam );
     }
-    std::cout << " ]" << std::endl;
   }
-
-  std::cout << "--> Finished opening sub-groups." << std::endl;
   
   /*__________________________________________________________________
-    Create Stokes dataset for Stokes::I data.
+    Create Stokes datasets
+  */
+  
+  std::cout << "\n[4] Creating Stokes datasets ..." << endl;
+
+  bfRoot.openStokesDataset (subArrayID,        // ID of sub-array pointing
+			    beamID,            // ID of beam group
+			    0,                 // ID of Stokes dataset
+			    SAMPLES,
+			    SUBBANDS,
+			    CHANNELS,
+			    DAL::Stokes::I);
+  bfRoot.openStokesDataset (subArrayID,        // ID of sub-array pointing
+			    beamID,            // ID of beam group
+			    1,                 // ID of Stokes dataset
+			    SAMPLES,
+			    SUBBANDS,
+			    CHANNELS,
+			    DAL::Stokes::Q);
+
+  /*__________________________________________________________________
+    Write data to Stokes dataset
   */
 
-  const unsigned nofSamples  = SAMPLES;
-  const unsigned nofChannels = SUBBANDS * CHANNELS;
-
-
-  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
-			       0,                 // ID of beam group
-			       0,                 // ID of Stokes dataset
-			       nofSamples,
-			       SUBBANDS,
-			       CHANNELS,
-			       DAL::Stokes::I);
-  rootGroup.openStokesDataset (0,                 // ID of sub-array pointing
-			       0,                 // ID of beam group
-			       1,                 // ID of Stokes dataset
-			       nofSamples,
-			       SUBBANDS,
-			       CHANNELS,
-			       DAL::Stokes::Q);
-  
-  return 0;
+  std::cout << "\n[5] Write data to Stokes dataset ..." << std::endl;
 
   {
-    hid_t fileID = rootGroup.locationID();
-    cout << "Creating stokes set 0" << endl;
-    DAL::BF_StokesDataset stokesDataset(fileID,
-					0,
-					nofSamples,
-					SUBBANDS,
-					CHANNELS,
-					DAL::Stokes::I );
-    
-    cout << "Creating sample multiarray of " << (SAMPLES|2) << " x " << SUBBANDS << " x " << CHANNELS << endl;
-    typedef multi_array<float,3> array;
-    
-    array samples(extents[SAMPLES|2][SUBBANDS][CHANNELS]);
-    
-    for (unsigned t = 0; t < SAMPLES; t++)
-      for (unsigned s = 0; s < SUBBANDS; s++)
-        for (unsigned c = 0; c < CHANNELS; c++)
-          samples[t][s][c] = t * s * c;
-    
-    cout << "Creating hyperslab of " << nofSamples << " x " << nofChannels << endl;
-    
-    vector<int> start(2), stride(2), count(2), block(2);
-    
-    start[0] = 0;
-    stride[0] = samples.strides()[0]; // the sample dimension could be |2
-    count[0] = nofSamples;
-    block[0] = 1;
-    
-    start[1] = 0;
-    stride[1] = 1;
-    count[1] = nofChannels;
-    block[1] = 1;
-    
-    DAL::HDF5Hyperslab hyperslab ( start, stride, count, block );
-    hyperslab.summary( cout );
-    
-    for (unsigned i = 0; i < BLOCKS; i++ ) {
-      cout << "Writing data block " << i << endl;
-      stokesDataset.writeData( samples.origin(), hyperslab );
-    }
-  }
+    unsigned int stokesID   = 0;
+    hid_t fileID            = bfRoot.locationID();
+    std::string name = DAL::BF_SubArrayPointing::getName(subArrayID)
+      + "/" + DAL::BF_BeamGroup::getName(beamID) 
+      + "/" + DAL::BF_StokesDataset::getName(stokesID);
 
+    std::cout << "-- Opening Stokes dataset " << name << std::endl;
+    
+    DAL::BF_StokesDataset stokesDataset(fileID,
+					name);
+    stokesDataset.summary();
+    
+    cout << "-- Creating sample multiarray of [ 1" 
+	 << " x " << SUBBANDS
+	 << " x " << CHANNELS << " ]" << endl;
+    
+    boost::multi_array<float,3> samples(boost::extents[1][SUBBANDS][CHANNELS]);
+    
+    std::vector<int> start (2,0);
+    std::vector<int> count;
+    std::vector<int> block (2,0);
+    unsigned int nofDatapoints (0);
+
+    /* Iterate through the various time steps */
+    for (unsigned int t=0; t<SAMPLES/4; ++t) {
+
+      /* Update hyperslab parameters */
+      start[0]      = t;
+      start[1]      = 0;
+      block[0]      = 1;
+      block[1]      = int(SUBBANDS)*int(CHANNELS);
+      nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      
+      std::cout << "-- Writing data for timestep " << t 
+		<< " : start /block = " << start << " / " << block
+		<< std::endl;
+      
+      /* Update the data array written to file */
+      for (unsigned s = 0; s < SUBBANDS; s++) {
+      	for (unsigned c = 0; c < CHANNELS; c++) {
+      	  samples[0][s][c] = 1e06*(t+1) + 1e03*s + c;
+     	}
+      }
+      
+      // Write the data to the dataset
+      stokesDataset.writeData( samples.origin(), start, block );
+      
+    } // END for (unsigned int t=0; t<10; ++t)
+
+  }
+  
   return 0;
 }
