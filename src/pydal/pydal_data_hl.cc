@@ -92,16 +92,25 @@ void export_BF_RootGroup ()
       .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
       "Get the common attributes of the class." )      
       ;
-      /*
-      // Data access methods 
+      
+      // Data access methods       
+      bool ( BF_RootGroup::*open)(hid_t const &,
+                string const &,
+                DAL::IO_Mode const &) = &BF_RootGroup::open;
+
+      bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
+                DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
+
       bool ( BF_RootGroup::*openBeam)(hid_t const &,
                const string &,
-               bool const &) = &BF_RootGroup::openBeam;
+               DAL::IO_Mode const &) = &BF_RootGroup::open;
       
-      bool ( BF_RootGroup::*openStokesDataset)(hid_t const &,
-               uint const &,
-               bool const &) = &BF_RootGroup::openStokesDataset);
-      */
+      bool ( BF_RootGroup::*openStokesDataset)(unsigned const &,
+               unsigned int const &,
+               unsigned int const &,
+               DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
+
+      ;
 }
 
 
