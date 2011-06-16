@@ -44,13 +44,24 @@ using DAL::BF_RootGroup;
 //_______________________________________________________________________________
 //                                                              test_constructors
 
-DAL::Filename getFilename ()
-{
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
+/*!
+  \brief Get DAL::Filename object
 
+  \param obsID          -- Unique identifier for the observation.
+  \param optDescription	-- Optional descriptors.
+  \param filetype       -- Marker for the contents of the file.
+  \param extension      -- Extension of the file.
+*/
+DAL::Filename getFilename (std::string const &obsID="123456789",
+			   std::string const &optDescription="test",
+			   Filename::Type const &filetype=Filename::bf,
+			   Filename::Extension const &extension=Filename::h5)
+{
+  Filename file (obsID,
+		 optDescription,
+		 filetype,
+		 extension);
+  
   return file;
 }
 
