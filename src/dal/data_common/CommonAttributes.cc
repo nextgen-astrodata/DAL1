@@ -131,6 +131,10 @@ namespace DAL { // Namespace DAL -- begin
   
   void CommonAttributes::copy (CommonAttributes const &other)
   {
+    itsAttributes.clear();
+    itsStationsList.clear();
+
+    itsAttributes          = other.itsAttributes;
     itsGroupType           = other.itsGroupType;
     itsFilename            = other.itsFilename;
     itsFiletype            = other.itsFiletype;
@@ -204,16 +208,19 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void CommonAttributes::summary (std::ostream &os)
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
     
-    os << "-- GROUPTYPE                       = " << itsGroupType       << std::endl;
-    os << "-- FILENAME                        = " << itsFilename        << std::endl;
-    os << "-- FILETYPE                        = " << itsFiletype        << std::endl;
-    os << "-- FILEDATE                        = " << itsFiledate        << std::endl;
-    os << "-- TELESCOPE                       = " << itsTelescope       << std::endl;
-    os << "-- OBSERVER                        = " << itsObserver        << std::endl;
+    os << "-- GROUPTYPE                       = " << groupType()        << std::endl;
+    os << "-- FILENAME                        = " << filename()         << std::endl;
+    os << "-- FILETYPE                        = " << filetype()         << std::endl;
+    os << "-- FILEDATE                        = " << filedate()         << std::endl;
+    os << "-- TELESCOPE                       = " << telescope()        << std::endl;
+    os << "-- OBSERVER                        = " << observer()         << std::endl;
     /*________________________________________________________________
       Common LOFAR attributes for description of project 
     */

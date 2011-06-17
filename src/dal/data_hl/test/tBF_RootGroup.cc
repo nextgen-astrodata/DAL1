@@ -34,7 +34,7 @@ using DAL::BF_RootGroup;
   \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the BF_RootGroup class
+  \brief A collection of test routines for the DAL::BF_RootGroup class
  
   \author Lars B&auml;hren
  
@@ -65,6 +65,34 @@ DAL::Filename getFilename (std::string const &obsID="123456789",
   return file;
 }
 
+/*!
+  \brief Show selected attributes attached to the root group of the BF file.
+  \param location -- HDF5 object handle.
+ */
+bool show_attributes (hid_t const &location)
+{
+  bool status = true;
+  std::string grouptype;
+  std::string filename;
+  std::string filetype;
+  std::string telescope;
+  std::string observer;
+
+  status *= DAL::HDF5Attribute::read (location, "GROUPTYPE", grouptype );
+  status *= DAL::HDF5Attribute::read (location, "FILENAME",  filename  );
+  status *= DAL::HDF5Attribute::read (location, "FILETYPE",  filetype  );
+  status *= DAL::HDF5Attribute::read (location, "TELESCOPE", telescope );
+  status *= DAL::HDF5Attribute::read (location, "OBSERVER",  observer  );
+  
+  std::cout << "-- GROUPTYPE = " << grouptype << std::endl;
+  std::cout << "-- FILENAME  = " << filename  << std::endl;
+  std::cout << "-- FILETYPE  = " << filetype  << std::endl;
+  std::cout << "-- TELESCOPE = " << telescope << std::endl;
+  std::cout << "-- OBSERVER  = " << observer  << std::endl;
+
+  return status;
+}
+
 //_______________________________________________________________________________
 //                                                              test_constructors
 
@@ -78,22 +106,34 @@ int test_constructors ()
 {
   cout << "\n[tBF_RootGroup::test_constructors]\n" << endl;
 
-  int nofFailedTests (0);
-  Filename file = getFilename();
+  int nofFailedTests = 0;
+  DAL::Filename file = getFilename();
 
-  cout << "-- Filename = " << file.filename() << endl;
+  /*________________________________________________________
+    Test 1 : Testing construction with DAL::Filename object.
+  */
   
-  cout << "[1] Testing construction with Filename ..." << endl;
+  cout << "[1] Testing BF_RootGroup(Filename) ..." << endl;
   try {
+    // Create new file
     DAL::BF_RootGroup bf (file);
-    //
     bf.summary();
+    // Display selected attributes
+    show_attributes (bf.locationID());
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
   }
+
+  return 0;
   
-  cout << "[2] Testing construction with CommonAttributes ..." << endl;
+  /*________________________________________________________
+    Test 2 : Testing construction with DAL::CommonAttributes
+             object, from which then the proper file name
+	     is being extracted.
+  */
+  
+  cout << "[2] Testing BF_RootGroup(CommonAttributes) ..." << endl;
   try {
     CommonAttributes commonAttr;
     commonAttr.setFilename (file);
@@ -106,7 +146,12 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing construction with filename ..." << endl;
+  /*________________________________________________________
+    Test 3 : Testing construction with simple filename
+             string; opens existing file.
+  */
+  
+  cout << "[3] Testing BF_RootGroup(string) ..." << endl;
   try {
     std::string filename = file.filename();
     //
@@ -140,12 +185,12 @@ int test_subGroups ()
   
   cout << "[1] Open SubArrayPointing groups ..." << endl;
   try {
-    dataset.openSubArrayPointing(0,true);
-    dataset.openSubArrayPointing(1,true);
-    dataset.openSubArrayPointing(2,true);
-    dataset.openSubArrayPointing(3,true);
+    dataset.openSubArrayPointing(0);
+    dataset.openSubArrayPointing(1);
+    dataset.openSubArrayPointing(2);
+    dataset.openSubArrayPointing(3);
     //
-    dataset.openSubArrayPointing(0,true);
+    dataset.openSubArrayPointing(0);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -187,8 +232,8 @@ int test_methods ()
 {
   cout << "\n[tBF_RootGroup::test_methods]\n" << endl;
 
-  int nofFailedTests (0);
-  Filename file (getFilename());
+  int nofFailedTests = 0;
+  Filename file      = getFilename();
   BF_RootGroup dataset (file);
 
   cout << "[1] Extract SysLog from BF dataset ..." << endl;
@@ -249,10 +294,10 @@ int main (int argc,
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test working with the embedded groups
-  nofFailedTests += test_subGroups ();
-  // Test the various methods 
-  nofFailedTests += test_methods ();
+  // // Test working with the embedded groups
+  // nofFailedTests += test_subGroups ();
+  // // Test the various methods 
+  // nofFailedTests += test_methods ();
 
   return nofFailedTests;
 }

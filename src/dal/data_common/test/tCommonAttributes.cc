@@ -53,6 +53,10 @@ int test_constructors ()
 
   int nofFailedTests (0);
   DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
+
+  /*________________________________________________________
+    Test 1 : Testing default constructor
+  */
   
   cout << "[1] Testing CommonAttributes() ..." << endl;
   try {
@@ -64,6 +68,11 @@ int test_constructors ()
     nofFailedTests++;
   }
   
+  /*________________________________________________________
+    Test 2 : Testing argumented constructor, taking
+             DAL::Filename object as input
+  */
+  
   cout << "[2] Testing CommonAttributes(Filename) ..." << endl;
   try {
     CommonAttributes attributes (filename);
@@ -73,6 +82,11 @@ int test_constructors ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
+  
+  /*________________________________________________________
+    Test 3 : Testing argumented constructor, taking
+             DAL::Filename object and filedate as input.
+  */
   
   cout << "[3] Testing CommonAttributes(Filename,string) ..." << endl;
   try {
@@ -86,11 +100,14 @@ int test_constructors ()
     nofFailedTests++;
   }
   
+  /*________________________________________________________
+    Test 4 : Testing argumented constructor.
+  */
+  
   cout << "[4] Testing copy constructor ..." << endl;
   try {
     std::string filedate ("2009-10-10T00:00:00.0");
-    CommonAttributes attributes (filename,
-				 filedate);
+    CommonAttributes attributes (filename);
     attributes.summary();
     //
     CommonAttributes attributesCopy (attributes);
@@ -264,10 +281,10 @@ int main (int argc, char *argv[])
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
   
-  if (H5Iis_valid(fileID)) {
-    // Test access to the individual attributes
-    nofFailedTests += test_methods (fileID);
-  }
+  // if (H5Iis_valid(fileID)) {
+  //   // Test access to the individual attributes
+  //   nofFailedTests += test_methods (fileID);
+  // }
   
   //________________________________________________________
   // Release HDF5 objects
