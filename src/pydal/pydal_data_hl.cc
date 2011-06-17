@@ -97,7 +97,7 @@ void export_BF_RootGroup ()
       ;
       
    // Data access methods       
-`   bool ( BF_RootGroup::*open)(hid_t const &,
+   bool ( BF_RootGroup::*open)(hid_t const &,
             string const &,
             DAL::IO_Mode const &) = &BF_RootGroup::open;
 
@@ -134,7 +134,7 @@ void export_BF_RootGroup ()
             unsigned int const &nofSubbands,
             unsigned int const &nofChannels,
             DAL::Stokes::Component const &component,
-            hid_t const &datatype=H5T_NATIVE_FLOAT,
+            hid_t const &datatype,
             DAL::IO_Mode const &flags);
 
    bool ( BF_RootGroup::*openStokesDataset)(unsigned int const &pointingID,
@@ -142,8 +142,8 @@ void export_BF_RootGroup ()
             unsigned int const &stokesID,
             unsigned int const &nofSamples,
             std::vector<unsigned int> const &nofChannels,
-            DAL::Stokes::Component const &component=DAL::Stokes::I,
-            hid_t const &datatype=H5T_NATIVE_FLOAT,
+            DAL::Stokes::Component const &component,
+            hid_t const &datatype,
             DAL::IO_Mode const &flags);
 
    BF_BeamGroup ( BF_RootGroup::*getBeamGroup)(unsigned int const &pointingID,
