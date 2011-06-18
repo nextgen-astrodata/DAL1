@@ -57,61 +57,23 @@ else (LATEX_EXECUTABLE)
 
 endif (LATEX_EXECUTABLE)
 
-## === Developer documentation ==================================================
+## ==============================================================================
+##
+## Individual pieces of documentation:
+##
+##  build
+##  `-- doc
+##      |-- developer              Developer Guide
+##      |   |-- html
+##      |   `-- latex
+##      `-- user                   User Manual
+##          |-- html
+##          `-- latex
+##
+## ==============================================================================
 
 add_subdirectory (developer)
-
-## ==============================================================================
-##
-##  Doxygen documentation for source code (HTML only)
-##
-## ==============================================================================
-
-if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
-
-  set_doxygen_variables (${CMAKE_CURRENT_BINARY_DIR})
-
-  set (targetID                 "Manual")
-  set (targetName               "doc${targetID}")
-  set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
-  set (targetOutput             "${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf")
-  
-  if (NOT EXISTS ${DOXYGEN_OUTPUT_DIRECTORY})
-    file (MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY})
-  endif (NOT EXISTS ${DOXYGEN_OUTPUT_DIRECTORY})
-  
-  ## Generate Doxygen configuration time
-  configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile${targetID}.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
-    )
-
-  ## Define custom command to 
-  add_custom_command (
-    OUTPUT ${targetOutput}
-    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
-    WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
-    )
-
-  ## Define target to build the documentation
-  add_custom_target (${targetName}
-    DEPENDS ${targetOutput}
-    COMMAND ${PDFLATEX_EXECUTABLE} refman
-    COMMAND ${PDFLATEX_EXECUTABLE} refman
-    COMMAND ${PDFLATEX_EXECUTABLE} refman
-    WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
-    )
-  
-  ## Installation instructions
-#  install(
-#    FILES ${targetOutput}
-#    DESTINATION ${DAL_INSTALL_DOCDIR}
-#    COMPONENT ${targetOutput}
-#    RENAME UserManual-${DAL_VERSION}.pdf
-#    )
-  
-endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
+add_subdirectory (user)
 
 ## ==============================================================================
 ##

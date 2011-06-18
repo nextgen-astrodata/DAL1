@@ -1,11 +1,11 @@
 
 ## ==============================================================================
 ##
-##  Developer documentation
+##  User Manual
 ##
 ##  build
 ##  `-- doc
-##      `-- developer
+##      `-- user
 ##          |-- html
 ##          `-- latex
 ##
@@ -21,18 +21,29 @@ configure_file (
   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   )
 
+find_file (UserLatexHeader LatexHeader.tex)
+
 ##__________________________________________________________  
 ## Run Doxygen to generate documentation from sources
 
-add_custom_target (DocumentationDeveloper
+add_custom_target (DocumentationUser
   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-  WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
 set_property (DIRECTORY
   APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
-  ${DOXYGEN_HTML_OUTPUT}
+  ${CMAKE_CURRENT_BINARY_DIR}/html
   )
+
+if (LATEX_EXECUTABLE)
+  add_custom_command(
+    TARGET DocumentationUser
+    POST_BUILD
+    COMMAND ${CMAKE_MAKE_PROGRAM}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/latex
+    )
+endif (LATEX_EXECUTABLE)
 
 ## Installation instructions
 #  install(
