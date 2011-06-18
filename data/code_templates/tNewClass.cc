@@ -21,14 +21,15 @@
 #include <<newModule>/<newClass>.h>
 
 // Namespace usage
-using DAL::<newClass>;
+using <namespace>::<newClass>;
 
 /*!
   \file t<newClass>.cc
 
+  \ingroup <namespace>
   \ingroup <newModule>
 
-  \brief A collection of test routines for the <newClass> class
+  \brief A collection of test routines for the <namespace>::<newClass> class
  
   \author <author>
  

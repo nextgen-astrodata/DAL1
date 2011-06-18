@@ -1,0 +1,104 @@
+#!/bin/bash
+
+## ==============================================================================
+##
+##  Function definitions
+##
+## ==============================================================================
+
+##____________________________________________________________________
+##                                                          get_modules
+
+get_modules ()
+{
+    varModules="";
+    FILES=`ls $1`;
+    
+    for FILE in $FILES
+    {
+	if [[ -d $1/$FILE ]] ; then
+	    varModules="$varModules $FILE";
+	fi
+    }
+
+    echo $varModules;
+}
+
+##____________________________________________________________________
+##                                                        process_file
+
+process_files ()
+{
+    FILES=`ls NewClass.h NewClass.cc tNewClass.cc`
+    varAuthor=$(finger $(whoami)| grep Name | sed s/": "/":"/g | tr \':\' \'\\n\' | grep -v Name | grep -v Login)
+    varDate=`date +"%Y-%m-%d"`
+    varYear=`date +"%Y"`
+    varIncludeguard=`echo ${varClassname} | tr "a-z" "A-Z"`
+    varNamespace="DAL"
+
+    if [[ -z $1 ]] ; then 
+	varDestination=`pwd`
+    else 
+	varDestination=$1
+    fi
+
+    ## Generate new source files from templates
+
+    echo ""
+    echo "[newclass] Generating new source files from templates..."
+    
+    for FILE in $FILES
+    {
+	varOutfile=`echo $FILE | sed s/"NewClass"/"$varClassname"/`
+
+	echo " $FILE -> $varOutfile"
+
+	cat $FILE | sed s/"<newClass>"/$varClassname/g \
+	    | sed s/"<NEWCLASS>"/$varIncludeguard/g \
+	    | sed s/"<newModule>"/$varModule/g \
+	    | sed s/"<namespace>"/$varNamespace/g \
+	    | sed s/"<author>"/"$varAuthor"/ \
+	    | sed s/"<date>"/"$varDate"/ \
+	    | sed s/"<year>"/"$varYear  "/ > $varOutfile
+    }
+    
+}
+
+## ==============================================================================
+##
+##  Main script routines
+##
+## ==============================================================================
+
+##__________________________________________________________
+## Get/Set target directory for the new source files
+
+if [[ -z $1 ]] ; then
+    echo "[newclass] No target directory given!"
+    exit
+else 
+    varTargetdir=$1
+fi
+
+##__________________________________________________________
+## Set the name of the new class
+
+echo ""
+echo " Name of the new class?"
+echo ""
+read varClassname
+
+##__________________________________________________________
+## Set the name of the module into which the class is placed
+
+echo ""
+echo " Name of the module into which to place the new class?"
+echo ""
+echo " [ `get_modules $varTargetdir` ]"
+echo ""
+read varModule
+
+##__________________________________________________________
+## Generate source files from templates
+
+process_files $1

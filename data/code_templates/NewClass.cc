@@ -20,7 +20,7 @@
 
 #include "<newClass>.h"
 
-namespace DAL { // Namespace DAL -- begin
+namespace <namespace> { // Namespace <namespace> -- begin
   
   // ============================================================================
   //
@@ -114,4 +114,4 @@ namespace DAL { // Namespace DAL -- begin
   
   
 
-} // Namespace DAL -- end
+} // Namespace <namespace> -- end

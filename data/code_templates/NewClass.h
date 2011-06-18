@@ -25,14 +25,15 @@
 #include <iostream>
 #include <string>
 
-namespace DAL { // Namespace DAL -- begin
+namespace <namespace> { // Namespace <namespace> -- begin
   
   /*!
     \class <newClass>
     
+    \ingroup <namespace>
     \ingroup <newModule>
     
-    \brief Brief description for class <newClass>
+    \brief Brief description for class <namespace>::<newClass>
     
     \author <author>
 
@@ -109,7 +110,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class <newClass> -- end
   
-} // Namespace DAL -- end
+} // Namespace <namespace> -- end
 
 #endif /* <NEWCLASS>_H */
   
