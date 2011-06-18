@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -58,11 +55,11 @@ namespace DAL {  // Namespace DAL -- begin
     \endverbatim
     where the name is composed of the following elements:
     <ul>
-      <li>\b lofar – identifies the telescope
-      <li>\b ObsID – unique identifier of the observation
-      <li>\b Date – most likely file creation date, but this also might be the
-      pipeline processing date → start of the observation, yyyymmdd
-      <li>\b processing – optional identifier to e.g mark splitting of an image
+      <li>\b lofar -- identifies the telescope
+      <li>\b ObsID -- unique identifier of the observation
+      <li>\b Date -- most likely file creation date, but this also might be the
+      pipeline processing date, i.e. start of the observation, yyyymmdd
+      <li>\b processing -- optional identifier to e.g mark splitting of an image
       into sub-bands
       <li>\b Type – descriptor for the file type
       <ul>

@@ -87,7 +87,7 @@ namespace DAL { // Namespace DAL -- begin
           |-- position        vector<double> = [double,double,double]
           `-- frame           string         = string
       \endverbatim
-    <ul>
+    </ul>
     
     <h3>Example(s)</h3>
     
