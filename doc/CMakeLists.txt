@@ -74,23 +74,3 @@ endif (LATEX_EXECUTABLE)
 
 add_subdirectory (developer)
 add_subdirectory (user)
-
-## ==============================================================================
-##
-##  Collective target to build documentation
-##
-## ==============================================================================
-
-if (TARGET docManual)
-  add_custom_target (Documentation
-    COMMAND make docManual
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/docManual/refman.pdf
-    ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
-    )
-else ()
-  add_custom_target (Documentation
-    DEPENDS
-    ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
-    )
-endif ()

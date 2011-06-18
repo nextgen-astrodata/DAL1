@@ -12,6 +12,15 @@
 ## ==============================================================================
 
 ##__________________________________________________________  
+## Find custom headers and footers
+
+find_file (UserLatexHeader LatexHeader.tex)
+
+if (NOT UserLatexHeader)
+  set (UserLatexHeader "")
+endif (NOT UserLatexHeader)
+
+##__________________________________________________________  
 ## Generate Doxygen configuration file
 
 set_doxygen_variables (${CMAKE_CURRENT_BINARY_DIR})
@@ -21,13 +30,12 @@ configure_file (
   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   )
 
-find_file (UserLatexHeader LatexHeader.tex)
-
 ##__________________________________________________________  
 ## Run Doxygen to generate documentation from sources
 
 add_custom_target (DocumentationUser
   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
