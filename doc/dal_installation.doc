@@ -33,7 +33,9 @@
   |-- cmake
   |-- data                     ..   Reference data sets used for rest programs.
   |-- doc                      ..   Documentation.
-  |    `-- figures
+  |    |-- developer
+  |    |-- figures
+  |    `-- user
   `-- src
         |-- apps               ..   Application programs build on top of the library.
         |-- dal
