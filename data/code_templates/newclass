@@ -6,6 +6,10 @@
 ##
 ## ==============================================================================
 
+varDate=`date +"%Y-%m-%d"`
+varYear=`date +"%Y"`
+varNamespace="DAL"
+
 ##____________________________________________________________________
 ##                                                          get_modules
 
@@ -31,10 +35,7 @@ process_files ()
 {
     FILES=`ls NewClass.h NewClass.cc tNewClass.cc`
     varAuthor=$(finger $(whoami)| grep Name | sed s/": "/":"/g | tr \':\' \'\\n\' | grep -v Name | grep -v Login)
-    varDate=`date +"%Y-%m-%d"`
-    varYear=`date +"%Y"`
     varIncludeguard=`echo ${varClassname} | tr "a-z" "A-Z"`
-    varNamespace="DAL"
 
     if [[ -z $1 ]] ; then 
 	varDestination=`pwd`
