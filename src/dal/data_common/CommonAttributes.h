@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -180,6 +180,13 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     CommonAttributes (Filename const &filename,
 		      std::string const &filedate);
+    
+    //! Argumented constructor
+    CommonAttributes (std::string const &projectID,
+		      std::string const &projectTitle,
+		      std::string const &projectPI,
+		      std::string const &projectCoI,
+		      std::string const &projectContact);
     
 #ifdef DAL_WITH_HDF5
     //! Argumented constructor
@@ -587,8 +594,8 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
 
-    //! Set up the list of attributes attached to the structure
-    void setAttributes ();
+    //! Initialize internal parameters/data
+    void init ();
     //! Unconditional copying
     void copy (CommonAttributes const &other);
     //! Unconditional deletion 

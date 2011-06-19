@@ -101,10 +101,35 @@ int test_constructors ()
   }
   
   /*________________________________________________________
-    Test 4 : Testing argumented constructor.
+    Test 4 : Testing argumented constructor, taking basic
+             project attributes as input
   */
   
-  cout << "[4] Testing copy constructor ..." << endl;
+  cout << "[4] Testing CommonAttributes(Filename,string) ..." << endl;
+  try {
+    std::string projectID      = "DAL";
+    std::string projectTitle   = "Data Access Library";
+    std::string projectPI      = "Lars Baehren";
+    std::string projectCoI     = "Sven Duscha";
+    std::string projectContact = "dal@lofar.org";
+    //
+    CommonAttributes attributes (projectID,
+				 projectTitle,
+				 projectPI,
+				 projectCoI,
+				 projectContact);
+    //
+    attributes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 5 : Testing argumented constructor.
+  */
+  
+  cout << "[5] Testing copy constructor ..." << endl;
   try {
     std::string filedate ("2009-10-10T00:00:00.0");
     CommonAttributes attributes (filename);

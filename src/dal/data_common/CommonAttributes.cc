@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "CommonAttributes.h"
+#include <data_common/CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -39,7 +39,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   CommonAttributes::CommonAttributes ()
   {
-    setAttributes ();
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -50,9 +50,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   CommonAttributes::CommonAttributes (DAL::Filename const &filename)
   {
-    // Initialize parameters to default values
-    setAttributes ();
-    // Set provided parameter values
+    init ();
     setFilename (filename);
   }
 
@@ -66,9 +64,7 @@ namespace DAL { // Namespace DAL -- begin
   CommonAttributes::CommonAttributes (DAL::Filename const &filename,
 				      std::string const &filedate)
   {
-    // Initialize parameters to default values
-    setAttributes ();
-    // Set provided parameter values
+    init ();
     setFilename (filename);
     setFiledate (filedate);
   }
@@ -76,11 +72,28 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             CommonAttributes
   
+  CommonAttributes::CommonAttributes (std::string const &projectID,
+				      std::string const &projectTitle,
+				      std::string const &projectPI,
+				      std::string const &projectCoI,
+				      std::string const &projectContact)
+  {
+    init ();
+    setProjectID (projectID);
+    setProjectTitle (projectTitle);
+    setProjectPI (projectPI);
+    setProjectCoI (projectCoI);
+    setProjectContact (projectContact);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+  
 #ifdef DAL_WITH_HDF5    
   CommonAttributes::CommonAttributes (hid_t const &locationID)
   {
     // Initialize parameters to default values
-    setAttributes ();
+    init ();
     // Read the attribute values from the file
     h5read (locationID);
   }
@@ -132,9 +145,10 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributes::copy (CommonAttributes const &other)
   {
     itsAttributes.clear();
-    itsStationsList.clear();
-
-    itsAttributes          = other.itsAttributes;
+    if (!other.itsAttributes.empty()) {
+      itsAttributes = other.itsAttributes;
+    }
+    
     itsGroupType           = other.itsGroupType;
     itsFilename            = other.itsFilename;
     itsFiletype            = other.itsFiletype;
@@ -146,8 +160,7 @@ namespace DAL { // Namespace DAL -- begin
     itsProjectPI           = other.itsProjectPI;
     itsProjectCoI          = other.itsProjectCoI;
     itsProjectContact      = other.itsProjectContact;
-    /*________________________________________________________________
-    */
+    /* Common LOFAR attributes for description of observation */
     itsObservationID   = other.itsObservationID;
     itsStartMJD        = other.itsStartMJD;
     itsStartTAI        = other.itsStartTAI;
@@ -155,12 +168,20 @@ namespace DAL { // Namespace DAL -- begin
     itsEndMJD          = other.itsEndMJD;
     itsEndTAI          = other.itsEndTAI;
     itsEndUTC          = other.itsEndUTC;
-    itsNofStations     = other.itsNofStations;
-    itsStationsList    = other.itsStationsList;
-    itsFrequencyMin    = other.itsFrequencyMin;
-    itsFrequencyMax    = other.itsFrequencyMax;
-    itsFrequencyCenter = other.itsFrequencyCenter;
-    itsFrequencyUnit   = other.itsFrequencyUnit;
+    
+    itsStationsList.clear();
+    if (other.itsStationsList.empty()) {
+      itsNofStations  = 0;
+    } else {
+      itsStationsList = other.itsStationsList;
+      itsNofStations  = other.itsNofStations;
+    } 
+    
+    itsFrequencyMin     = other.itsFrequencyMin;
+    itsFrequencyMax     = other.itsFrequencyMax;
+    itsFrequencyCenter  = other.itsFrequencyCenter;
+    itsFrequencyUnit    = other.itsFrequencyUnit;
+    itsNofBitsPerSample = other.itsNofBitsPerSample;
     /*________________________________________________________________
     */
     itsObserver            = other.itsObserver;
@@ -266,9 +287,9 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                setAttributes
+  //                                                                         init
   
-  void CommonAttributes::setAttributes ()
+  void CommonAttributes::init ()
   {
     /* Set up the list of attributes */
     itsAttributes.clear();
@@ -331,14 +352,14 @@ namespace DAL { // Namespace DAL -- begin
     itsEndUTC              = undefined;
     itsNofStations         = 0;
     itsStationsList        = std::vector<std::string> (1,undefined);
-    itsFrequencyMin        = 0.0;
-    itsFrequencyMax        = 0.0;
-    itsFrequencyCenter     = 0.0;
+    itsFrequencyMin        = 0;
+    itsFrequencyMax        = 0;
+    itsFrequencyCenter     = 0;
     itsFrequencyUnit       = "Hz";
     itsNofBitsPerSample    = 0;
     itsAntennaSet          = undefined;
     itsFilterSelection     = undefined;
-    itsClockFrequency      = 0.0;
+    itsClockFrequency      = 0;
     itsClockFrequencyUnit  = undefined;
     itsTarget              = undefined;
     itsSystemVersion       = undefined;
