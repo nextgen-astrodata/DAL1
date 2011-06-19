@@ -5,25 +5,91 @@
 
   \section dal_xml_attributes Description of attributes
 
+  At this point in time, the following two schema are suggested:
+
+  <ol>
+    <li>Flat storage of attribute properties:
+    \verbatim
+    <attribute name="..." type="..." rank="..." shape="..." value="..." desc="..." />
+    \endverbatim
+    <li>Hierarchical storage of attribute properties (this might be better
+    matching the actual hierarchical structure within the file):
+    \verbatim
+    <attribute>
+      <name></name>
+      <type></type>
+      <rank></rank>
+      <shape></shape>
+      <value></value>
+      <desc></desc>
+    </attribute>
+    \endverbatim
+  </ol>
+
+  For the first number of common attributes (DAL::CommonAttributes) attached to
+  the root group of a file this becomes:
+
   \verbatim
-  <attribute name="..." type="..." size="..." value="..." desc="..." />
+  <attribute name="GROUPTYPE"       type="string" rank="1" shape="1" value="Root"  desc="LOFAR group type"/>
+  <attribute name="FILENAME"        type="string" rank="1" shape="1" value=""      desc="File name"/>
+  <attribute name="FILEDATE"        type="string" rank="1" shape="1" value=""      desc="File creation date"/>
+  <attribute name="FILETYPE"        type="string" rank="1" shape="1" value=""      desc="File type"/>
+  <attribute name="TELESCOPE"       type="string" rank="1" shape="1" value="LOFAR" desc="Telescope name"/>
+  <attribute name="OBSERVER"        type="string" rank="1" shape="1" value=""      desc="Name(s) of the observer(s)"/>
+  <attribute name="PROJECT_ID"      type="string" rank="1" shape="1" value=""      desc="Unique identifier for the project"/>
+  <attribute name="PROJECT_TITLE"   type="string" rank="1" shape="1" value=""      desc="Title of the project"/>
+  <attribute name="PROJECT_PI"      type="string" rank="1" shape="1" value=""      desc="Name of the project's principal investigator"/>
+  <attribute name="PROJECT_CO_I"    type="string" rank="1" shape="1" value=""      desc="Name(s) of the Co-investgator(s)"/>
+  <attribute name="PROJECT_CONTACT" type="string" rank="1" shape="1" value=""      desc="Contact details for the project"/>
   \endverbatim
 
-  For the first number of common attributes attached to the root group of a file
-  this becomes:
+  As another example consider the attributes attached to a Stokes dataset
+  (DAL::BF_StokesDataset):
+
 
   \verbatim
-  <attribute name="GROUPTYPE"       type="string" size="1" value="Root"  desc="LOFAR group type"/>
-  <attribute name="FILENAME"        type="string" size="1" value=""      desc="File name"/>
-  <attribute name="FILEDATE"        type="string" size="1" value=""      desc="File creation date"/>
-  <attribute name="FILETYPE"        type="string" size="1" value=""      desc="File type"/>
-  <attribute name="TELESCOPE"       type="string" size="1" value="LOFAR" desc="Telescope name"/>
-  <attribute name="OBSERVER"        type="string" size="1" value=""      desc="Name(s) of the observer(s)"/>
-  <attribute name="PROJECT_ID"      type="string" size="1" value=""      desc="Unique identifier for the project"/>
-  <attribute name="PROJECT_TITLE"   type="string" size="1" value=""      desc="Title of the project"/>
-  <attribute name="PROJECT_PI"      type="string" size="1" value=""      desc="Name of the project's principal investigator"/>
-  <attribute name="PROJECT_CO_I"    type="string" size="1" value=""      desc="Name(s) of the Co-investgator(s)"/>
-  <attribute name="PROJECT_CONTACT" type="string" size="1" value=""      desc="Contact details for the project"/>
+  <dataset>
+    <attribute>
+      <name>GROUPTYPE</name>
+      <type>string</type>
+      <rank>1</rank>
+      <shape>1</shape>
+      <value>Data</value>
+      <desc>LOFAR group type.</desc>
+    </attribute>
+    <attribute>
+      <name>DATATYPE</name>
+      <type>string</type>
+      <rank>1</rank>
+      <shape>1</shape>
+      <value></value>
+      <desc></desc>
+    </attribute>
+    <attribute>
+      <name>STOKES_COMPONENT</name>
+      <type>string</type>
+      <rank>1</rank>
+      <shape>1</shape>
+      <value></value>
+      <desc></desc>
+    </attribute>
+    <attribute>
+      <name>NOF_SAMPLES</name>
+      <type>int</type>
+      <rank>1</rank>
+      <shape>1</shape>
+      <value></value>
+      <desc></desc>
+    </attribute>
+    <attribute>
+      <name>NOF_SUBBANDS</name>
+      <type>int</type>
+      <rank>1</rank>
+      <shape></shape>
+      <value></value>
+      <desc></desc>
+    </attribute>
+  </dataset>
   \endverbatim
 
   \section dal_xml_groups Description of groups
