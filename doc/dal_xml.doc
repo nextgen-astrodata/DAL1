@@ -1,0 +1,33 @@
+
+/*!
+
+  \page dal_xml XML schema for description of data products
+
+  \section dal_xml_groups Description of groups
+
+  Not available yet.
+
+  \section dal_xml_attributes Description of attributes
+
+  \verbatim
+  <attribute name="..." type="..." size="..." value="..." desc="..." />
+  \endverbatim
+
+  For the first number of common attributes attached to the root group of a file
+  this becomes:
+
+  \verbatim
+  <attribute name="GROUPTYPE"       type="string" size="1" value="Root"  desc="LOFAR group type"/>
+  <attribute name="FILENAME"        type="string" size="1" value=""      desc="File name"/>
+  <attribute name="FILEDATE"        type="string" size="1" value=""      desc="File creation date"/>
+  <attribute name="FILETYPE"        type="string" size="1" value=""      desc="File type"/>
+  <attribute name="TELESCOPE"       type="string" size="1" value="LOFAR" desc="Telescope name"/>
+  <attribute name="OBSERVER"        type="string" size="1" value=""      desc="Name(s) of the observer(s)"/>
+  <attribute name="PROJECT_ID"      type="string" size="1" value=""      desc="Unique identifier for the project"/>
+  <attribute name="PROJECT_TITLE"   type="string" size="1" value=""      desc="Title of the project"/>
+  <attribute name="PROJECT_PI"      type="string" size="1" value=""      desc="Name of the project's principal investigator"/>
+  <attribute name="PROJECT_CO_I"    type="string" size="1" value=""      desc="Name(s) of the Co-investgator(s)"/>
+  <attribute name="PROJECT_CONTACT" type="string" size="1" value=""      desc="Contact details for the project"/>
+  \endverbatim
+
+*/
