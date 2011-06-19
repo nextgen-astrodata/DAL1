@@ -3,10 +3,6 @@
 
   \page dal_xml XML schema for description of data products
 
-  \section dal_xml_groups Description of groups
-
-  Not available yet.
-
   \section dal_xml_attributes Description of attributes
 
   \verbatim
@@ -29,5 +25,13 @@
   <attribute name="PROJECT_CO_I"    type="string" size="1" value=""      desc="Name(s) of the Co-investgator(s)"/>
   <attribute name="PROJECT_CONTACT" type="string" size="1" value=""      desc="Contact details for the project"/>
   \endverbatim
+
+  \section dal_xml_groups Description of groups
+
+  Not available yet.
+
+  \section dal_xml_datasets Description of datasets
+
+  Not available yet.
 
 */
