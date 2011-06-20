@@ -32,7 +32,7 @@ namespace <namespace> { // Namespace <namespace> -- begin
   {;}
   
   /*!
-    \param other -- Another HDF5Property object from which to create this new
+    \param other -- Another <newClass> object from which to create this new
            one.
   */
   <newClass>::<newClass> (<newClass> const &other)
@@ -78,6 +78,9 @@ namespace <namespace> { // Namespace <namespace> -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
+  /*!
+    \param other -- Another <newClass> object from which to make a copy.
+  */
   void <newClass>::copy (<newClass> const &other)
   {;}
 
