@@ -24,6 +24,10 @@
    Submission successful
    \endverbatim
 
+   A typical page on the testing dashboard will look something like this:
+
+   \image html Dashboard.png
+
   \section data_testing_data Test data sets
 
   In addition to the data sets created as output by the various test programs,
