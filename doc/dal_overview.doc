@@ -19,6 +19,8 @@
       <li>\subpage dal_coding_cpp
       <li>\subpage dal_coding_python
       <li>\subpage dal_devel_bf
+      <li>\subpage dal_data_formats
+      <li>\subpage dal_xml
     </ul>
     <li>\ref DAL
     <ul>
@@ -30,7 +32,6 @@
       <li>\ref dal_apps [\c apps]
     </ul>
     <li>\subpage dal_testing
-    <li>\subpage dal_data_formats
   </ul>		 
 
   \section dal_intro Introduction
