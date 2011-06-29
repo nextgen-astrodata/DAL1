@@ -187,7 +187,7 @@ namespace DAL { // Namespace DAL -- begin
     static std::map<Stokes::Component,std::string> componentsMap ();
     //! Get list of component types
     static std::vector<Stokes::Component> componentsType ();
-    //! Get list of component names
+    //! Get list of component names 
     static std::vector<std::string> componentsName ();
 
   private:
