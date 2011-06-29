@@ -122,4 +122,11 @@ void export_TBB_DipoleDataset();
 //! Bindings for DAL::LOPES_EventFile
 void export_LOPES_EventFile();
 
+// === bf ======================================================================
+
+//! Bindings for DAL::BF_BeamGroup
+void export_BF_BeamGroup();
+//! Bindings for DAL:BF_RootGroup
+void export_BF_RootGroup();
+
 #endif

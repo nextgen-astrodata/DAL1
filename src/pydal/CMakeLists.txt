@@ -11,6 +11,7 @@
 set (pydal_sources
   num_util.cc
   pydal.cc
+  pydal_bf.cc
   pydal_conversions.cc
   pydal_coordinates.cc
   pydal_core.cc

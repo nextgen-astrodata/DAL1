@@ -70,6 +70,7 @@ void export_BF_RootGroup ()
 {
    bpl::class_<BF_RootGroup>("BF_RootGroup", bpl::init<const string>())
       // Argumented constructor 
+//      .def( bpl::init<const string>())
       .def( bpl::init<DAL::Filename, bool>())
       .def( bpl::init<string const &>())
       .def( bpl::init<string &>())

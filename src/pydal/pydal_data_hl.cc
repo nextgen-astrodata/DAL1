@@ -35,6 +35,7 @@
 #include <data_hl/BeamGroup.h>
 #include <data_hl/BF_BeamGroup.h>
 #include <data_hl/BF_RootGroup.h>
+#include <data_hl/SysLog.h>
 #include <data_common/CommonAttributes.h>
 #include <data_hl/TBB_Timeseries.h>
 #include <data_hl/TBB_StationGroup.h>
@@ -50,6 +51,7 @@ using DAL::TBB_Timeseries;
 using DAL::TBB_DipoleDataset;
 using DAL::TBB_StationGroup;
 
+/*
 // ==============================================================================
 //
 //                                                                   BF_BeamGroup
@@ -59,10 +61,10 @@ using DAL::TBB_StationGroup;
 void export_BF_BeamGroup ()
 {
   bpl::class_<BF_BeamGroup>("BF_BeamGroup")
-    /* Construction */
+    // Construction
     .def( bpl::init<>())
     .def( bpl::init<hid_t,string>())
-    /* Access to internal parameters */
+    // Access to internal parameters
     .def( "locationID", &BF_BeamGroup::locationID,
 	  "Get the object identifier for the data file." )
     .def( "className", &BF_BeamGroup::className,
@@ -135,7 +137,7 @@ void export_BF_RootGroup ()
             unsigned int const &nofChannels,
             DAL::Stokes::Component const &component,
             hid_t const &datatype,
-            DAL::IO_Mode const &flags);
+            DAL::IO_Mode const &flags) = &BF_RootGroup::openStokesDataset;
 
    bool ( BF_RootGroup::*openStokesDataset)(unsigned int const &pointingID,
             unsigned int const &beamID,
@@ -144,12 +146,15 @@ void export_BF_RootGroup ()
             std::vector<unsigned int> const &nofChannels,
             DAL::Stokes::Component const &component,
             hid_t const &datatype,
-            DAL::IO_Mode const &flags);
+            DAL::IO_Mode const &flags) = &BF_RootGroup::openStokesDataset;
+
+   // Get the syslog object
+   DAL::SysLog (BF_RootGroup::*sysLog)(void) ;
 
    BF_BeamGroup ( BF_RootGroup::*getBeamGroup)(unsigned int const &pointingID,
-			       unsigned int const &beamID);
+			       unsigned int const &beamID) = &BF_RootGroup::getBeamGroup;
 }
-
+*/
 
 // ==============================================================================
 //
