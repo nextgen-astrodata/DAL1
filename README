@@ -6,7 +6,8 @@ CONTENTS:
   3. Organization of the source code
   4. External dependencies
   5. Configuration, build and installation
-  6. Further reading
+  6. Contributing changes
+  7. Further reading
 
 _________________________________________________________________________________
 >>> 1. Introduction
@@ -173,7 +174,27 @@ For further details and additional configuration options, consult the Doxygen-ba
 documentation.
 
 _________________________________________________________________________________
->>> 6. Further reading
+>>> 6. Contributing changes
+
+Direct write access to the project's code respository is limited to a small core
+team, responsible for the guiding the development of the DAL. If you are in more
+than simply using the DAL, but actively contributing to it development, the 
+advised work-flow is as follows:
+
+  1. Create your own fork from the master repository of the project.
+
+  2. Work on push changes you are working on - be it bug fixes or feature
+     enhancements - back to your fork.
+
+  3. When ready to have your changes integrated into the project's development
+     master branch, issue a pull request. This will give the core team a chance 
+     to have a look at your contribution, before merging it into the master
+     branch. If everything is just fine, the pull request will be requested right
+     away, otherwise a short conversation might be necessary of how to go about
+     the integration of your code contribution.
+
+_________________________________________________________________________________
+>>> 7. Further reading
 
 Further detailed information regarding
 
