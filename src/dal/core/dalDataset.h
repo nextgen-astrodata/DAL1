@@ -184,12 +184,20 @@ namespace DAL {
 	}
       }
     
+    template <class T>
+      bool setAttribute (std::string const &name,
+			 T const *data,
+			 unsigned int const &size=1)
+      {
+	return HDF5Attribute::write (h5fh_p,
+				     name,
+				     data,
+				     size);
+      }
+    
+    
     //! Define a char attribute.
     bool setAttribute (std::string attrname, const char * data, int size=1 );
-    //! Define a short attribute.
-    bool setAttribute (std::string attrname, const short * data, int size=1 );
-    //! Define an integer attribute.
-    bool setAttribute (std::string attrname, const int * data, int size=1 );
 #ifndef WORDSIZE_IS_64
     //! Define an integer attribute.
     bool setAttribute (std::string attrname, const int64_t * data, int size=1 );
@@ -197,12 +205,6 @@ namespace DAL {
     //! Define a long attribute.
     bool setAttribute (std::string attrname, const long * data, int size=1 );
 #endif
-    //! Define an unsigned integer attribute.
-    bool setAttribute (std::string attrname, const uint * data, int size=1 );
-    //! Define a floating point attribute.
-    bool setAttribute (std::string attrname, const float * data, int size=1 );
-    //! Define a double precision floating point attribute.
-    bool setAttribute (std::string attrname, const double * data, int size=1 );
     //! Define a string attribute.
     bool setAttribute (std::string attrname, std::string data );
     //! Define a string attribute.

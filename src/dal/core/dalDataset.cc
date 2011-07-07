@@ -511,48 +511,6 @@ namespace DAL {
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute (std::string attrname,
-                                 const short * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_SHORT);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const int * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_INT);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
 #ifndef WORDSIZE_IS_64
   bool dalDataset::setAttribute( std::string attrname,
                                  const int64_t * data,
@@ -583,69 +541,6 @@ namespace DAL {
 					size);
   }
 #endif
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const uint * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_UINT);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const float * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_FLOAT);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname -- The name of the attribute you want to create.
-    \param data     -- The value of the attribute you want to create.
-    \param size     -- Optional parameter specifying the array size of the
-           attribute. Default is scalar.
-    \return bool    -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const double * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_DOUBLE);
-  }
 
   //_____________________________________________________________________________
   //                                                                 setAttribute
