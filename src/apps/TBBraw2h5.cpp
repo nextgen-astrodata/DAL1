@@ -42,6 +42,14 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/detail/cmdline.hpp>
 namespace bpo = boost::program_options;
+//includes for setting the IO-priority
+#include <sys/types.h>
+#include <sys/syscall.h> /* For SYS_xxx definitions */
+//#include <sys/capability.h>
+#if defined linux
+#include <linux/version.h>
+#endif
+
 
 /*!
   \file TBBraw2h5.cpp
@@ -141,6 +149,9 @@ namespace bpo = boost::program_options;
 
 */
 
+
+
+
 //Global variables
 //! (pointer to) the TBBraw object we are writing to.
 DAL::TBBraw *tbb;
@@ -169,6 +180,59 @@ int noFramesDropped;
 int noRunning;
 //!mutex for writing into the buffer
 boost::mutex writeMutex;
+
+// ############################################ begin of IO-Priority setting stuff
+#define IOPRIO_BITS (16)
+#define IOPRIO_CLASS_SHIFT (13)
+#define IOPRIO_PRIO_MASK ((1UL << IOPRIO_CLASS_SHIFT) - 1)
+#define IOPRIO_PRIO_CLASS(mask) ((mask) >> IOPRIO_CLASS_SHIFT)
+#define IOPRIO_PRIO_DATA(mask) ((mask) & IOPRIO_PRIO_MASK)
+#define IOPRIO_PRIO_VALUE(class, data) (((class) << IOPRIO_CLASS_SHIFT) | data)
+
+enum {
+  IOPRIO_WHO_PROCESS = 1,
+  IOPRIO_WHO_PGRP,
+  IOPRIO_WHO_USER,
+};
+enum {
+  IOPRIO_CLASS_NONE,
+  IOPRIO_CLASS_RT,
+  IOPRIO_CLASS_BE,
+  IOPRIO_CLASS_IDLE,
+};
+
+int ioprio_set(int which, int who, int ioprio) {
+#if defined linux
+  return syscall(SYS_ioprio_set, which, who, ioprio);
+#endif
+}
+int ioprio_get(int which, int who) {
+#if defined linux
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,13))
+  return syscall(SYS_ioprio_get, which, who);
+#endif
+#endif
+}
+
+int increase_io_priority(bool verbose) {
+  int ret;
+  if (verbose) {
+    std:: cout << "TBBraw2h5::increase_io_priority: PID: "<< getpid() 
+	       << " old IO Prio: " << ioprio_get(IOPRIO_WHO_PROCESS, getpid()) << std::endl;
+  };
+  // attempting to set RT priority
+  ret = ioprio_set(IOPRIO_WHO_PROCESS, getpid(), IOPRIO_PRIO_VALUE(IOPRIO_CLASS_RT, 5));
+  if (ret != 0) {
+    perror("ioprio_set");
+  };
+  if (verbose) {
+    std::cout << "TBBraw2h5::increase_io_priority: PID "<< getpid() 
+	      << " new IO Prio: " << ioprio_get(IOPRIO_WHO_PROCESS, getpid()) << std::endl;
+  };
+  return ret;
+}
+// ############################################ end of IO-Priority setting stuff
+
 
 // -----------------------------------------------------------------
 /*!
@@ -532,17 +596,17 @@ bool readStationsFromSockets (std::vector<int> ports,
   int amWaiting    = 0;
   unsigned char stationId;
   char * bufferPointer;
-  std::ostringstream outfile;
   
   while ((noRunning>0) || (inBufStorID != inBufProcessID) )  {
     if (inBufStorID == inBufProcessID)  {
       if (verbose && ((amWaiting%100)==1) ) {
 	std::cout << "[TBBraw2h5::readStationsFromSockets]"
 		  << " Status report: Buffer is empty! waiting." << std::endl;
-	std::cout << "-- inBufStorID       = " << inBufStorID    << std::endl;
-	std::cout << "-- inBufProcessID    = " << inBufProcessID << std::endl;
-	std::cout << "-- noRunning         = " << noRunning      << std::endl;
-	std::cout << "-- Wait interval [s] = " << amWaiting*0.10 << std::endl;
+	// Do not split this up into several lines, as it makes the logfile hard to read!
+	std::cout << "  Status: inBufStorID:" << inBufStorID 
+		  << " inBufProcessID: " << inBufProcessID
+		  << " noRunning: " << noRunning 
+		  << " waiting for: " << amWaiting*0.10 << " sec." << std::endl;
       };
       amWaiting++;
       usleep(100000);
@@ -579,6 +643,8 @@ bool readStationsFromSockets (std::vector<int> ports,
 	delete TBBfiles[stationId];
 	TBBfiles[stationId] = NULL;
       };
+      //"outfile" needs to be empty when it is used. creating it here is an easy way to do so.
+      std::ostringstream outfile; 
       outfile << outFileBase << "-" << int(stationId) << "-" << runnumbers[stationId] << ".h5";
       runnumbers[stationId]++;
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
@@ -676,6 +742,7 @@ int main(int argc, char *argv[])
   bool keepRunning      = false;
   bool waitForAll       = false;
   bool multipeStations  = false;
+  bool raiseIOprio      = false;
   int runNumber         = 0;
 
   input_buffer_size = 50000;
@@ -706,6 +773,7 @@ int main(int argc, char *argv[])
     ("keepRunning,K", "Keep running, i.e. process more than one event by restarting the procedure.")
     ("waitForAll,W", "Wait until (some) data was received on all ports.")
     ("multipeStations,M", "Process data from multiple stations into seperate files. (implies -K)")
+    ("raiseIOprio", "Raise IO priority to \"real time\" (if possible).")
     ("verbose,V", "Verbose mode on")
     ;
   
@@ -739,6 +807,11 @@ int main(int argc, char *argv[])
       keepRunning=true;
     }
 
+  if (vm.count("raiseIOprio"))
+    {
+      raiseIOprio=true;
+    }
+  
   if (vm.count("infile"))
     {
       infile     = vm["infile"].as<std::string>();
@@ -824,10 +897,11 @@ int main(int argc, char *argv[])
   if (verboseMode)
     {
       std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
-      std::cout << "-- Socket mode  = " << socketmode          << std::endl;
-      std::cout << "-- Output file  = " << outfile             << std::endl;
-      std::cout << "-- CRC checking = " << doCheckCRC          << std::endl;
-      std::cout << "-- Fix Times    = " << fixTransientTimes   << std::endl;
+      std::cout << "-- Socket mode    = " << socketmode          << std::endl;
+      std::cout << "-- Output file    = " << outfile             << std::endl;
+      std::cout << "-- CRC checking   = " << doCheckCRC          << std::endl;
+      std::cout << "-- Fix Times      = " << fixTransientTimes   << std::endl;
+      std::cout << "-- Raise Priority = " << raiseIOprio         << std::endl;
       if (socketmode) {
 	std::cout << "-- IP address      = " << ip             << std::endl;
 	//	std::cout << "-- Port number     = " << port           << std::endl;
@@ -843,6 +917,12 @@ int main(int argc, char *argv[])
       }
     }
   
+
+  // -----------------------------------------------------------------
+  // try to raise the IO priority if requested
+  if (raiseIOprio) {
+    increase_io_priority(verboseMode);
+  };
   
   // -----------------------------------------------------------------
   // Process data from multiple stations
