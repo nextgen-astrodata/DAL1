@@ -1,0 +1,30 @@
+/*!
+  \page dal_devel_contributing Contributing changes
+
+  Direct write access to the project's code respository is limited to a small core
+  team, responsible for the guiding the development of the DAL. If you are in more
+  than simply using the DAL, but actively contributing to it development, the 
+  advised work-flow is as follows:
+
+  <ol>
+    <li>Create your own fork from the master repository of the project.
+
+    <li>Work on push changes you are working on - be it bug fixes or feature 
+    enhancements - back to your fork.
+
+    <li>When ready to have your changes integrated into the project's development
+     master branch, issue a pull request. This will give the core team a chance 
+     to have a look at your contribution, before merging it into the master
+     branch. If everything is just fine, the pull request will be requested right
+     away, otherwise a short conversation might be necessary of how to go about
+     the integration of your code contribution.
+  </ol>
+
+  Suggested reading:
+
+  <ul>
+    <li>http://help.github.com/fork-a-repo (Forking a repository on Github)
+    <li>http://help.github.com/send-pull-requests (sending pull requests on Github)
+  </ul>
+
+*/
