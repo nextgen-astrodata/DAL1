@@ -69,10 +69,10 @@ namespace DAL {
     // === Methods ==============================================================
 
     //! Restrict the opening of a table to particular columns.
-    bool set (std::string const &selection);
+    bool set (std::string const &columns);
 
     //! Restrict the opening of a table to particular columns.
-    bool set (std::vector<std::string> const &selection);
+    bool set (std::vector<std::string> const &columns);
 
     //! Restrict the opening of a table to particular columns and conditions.
     void set (std::string const &columns,

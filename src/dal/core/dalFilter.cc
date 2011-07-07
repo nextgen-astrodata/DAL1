@@ -139,14 +139,14 @@ namespace DAL {
             was encountered, e.g. because the operation is not supported for the
 	    file type.
   */
-  bool dalFilter::set (std::string const &cols)
+  bool dalFilter::set (std::string const &columns)
   {
     bool status         = true;
     std::string message = "[dalFilter::set]";
     
     switch (itsFiletype.type()) {
     case dalFileType::MSCASA:
-      itsFilterString = "Select " + cols + " from $1";
+      itsFilterString = "Select " + columns + " from $1";
       filterIsSet_p   = true;
       break;
     default:

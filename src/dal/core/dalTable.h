@@ -221,6 +221,7 @@ namespace DAL {
     bool setAttribute( std::string attrname, long const * data, int size=1 );
     bool setAttribute( std::string attrname, float const * data, int size=1 );
     bool setAttribute( std::string attrname, double const * data, int size=1 );
+
     bool setAttribute( std::string attrname, std::string data );
     bool setAttribute( std::string attrname, std::string const * data, int size=1 );
     //! Find an attribute associated with the table

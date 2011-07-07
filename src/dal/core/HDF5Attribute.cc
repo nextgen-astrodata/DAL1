@@ -736,6 +736,8 @@ namespace DAL { // Namespace DAL -- begin
     return write (location, name, buffer, 1);
   }
 
+  /// @endcond
+
   //_____________________________________________________________________________
   //                                                          write(vector<bool>)
   
