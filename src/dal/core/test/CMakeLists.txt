@@ -48,7 +48,6 @@ foreach (_test
     tdalGroup
     tDatabase
     tHDF5Hyperslab
-    tValMatrix
     test_std_cerr
     )
   add_test (${_test} ${_test})
