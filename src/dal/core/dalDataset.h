@@ -237,14 +237,14 @@ namespace DAL {
     //! Set table filter.
     void setFilter (std::string columns, std::string conditions );
     //! Open a table (that's not in a group) by name.
-    dalTable * openTable (std::string tablename );
+    dalTable * openTable (std::string const &tablename);
     //! Open a table within a group
     dalTable * openTable (std::string const &tablename,
 			  std::string const &groupname );
     //! Opens an array at the higest level of a dataset
-    dalArray * openArray (std::string arrayname );
+    dalArray * openArray (std::string const &array);
     //! Open an array in a group.
-    dalArray * openArray (std::string arrayname, std::string groupname );
+    dalArray * openArray (std::string const &array, std::string const &group);
     //! Get a list of groups in the dataset.
     std::vector<std::string> getGroupNames();
     dalGroup * openGroup (std::string groupname );
@@ -336,19 +336,8 @@ namespace DAL {
     bpl::numeric::array ria_boost (std::string arrayname);
     bpl::numeric::array rfa_boost (std::string arrayname);
     
-    //! Create a new table
-    dalTable * ct1_boost (std::string tablename );
-    //! Create a new table
-    dalTable * ct2_boost (std::string tablename, std::string groupname );
-    //! Open a table
-    dalTable * ot1_boost (std::string tablename );
-    //! Open a table
-    dalTable * ot2_boost (std::string tablename, std::string groupname );
-    
     bpl::list listTables_boost();
     
-    dalArray * open_array_boost( std::string arrayname );
-
     bool setAttribute_char (std::string attrname, char data);
     bool setAttribute_short (std::string attrname, short data);
     bool setAttribute_int (std::string attrname, int data);

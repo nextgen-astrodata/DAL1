@@ -42,62 +42,6 @@ using DAL::dalArray;
 // ==============================================================================
 
 //_______________________________________________________________________________
-//                                                                      ct1_boost
-
-/*!
-  \param a -- The name of the table to be created
-*/
-dalTable * dalDataset::ct1_boost (std::string a)
-{
-  dalTable * ret;
-  ret = dalDataset::createTable(a);
-  return ret;
-}
-
-//_____________________________________________________________________________
-//                                                                    ct2_boost
-
-/*!
-  \param a -- The name of the group within which the new table is created.
-  \param b -- The name of the table to be created
-*/
-dalTable * dalDataset::ct2_boost (std::string a,
-				  std::string b)
-{
-  dalTable * ret;
-  ret = dalDataset::createTable(a,b);
-  return ret;
-}
-
-//_____________________________________________________________________________
-//                                                                    ot1_boost
-
-/*!
-  \param a -- The name of the table to be opened
-*/
-dalTable * dalDataset::ot1_boost (std::string a)
-{
-  dalTable * ret;
-  ret = openTable(a);
-  return ret;
-}
-
-//_______________________________________________________________________________
-//                                                                      ot2_boost
-
-/*
-  \param a -- The name of the group within which the table resides.
-  \param b -- The name of the table to be opened.
-*/
-dalTable * dalDataset::ot2_boost (std::string a,
-				  std::string b)
-{
-  dalTable * ret;
-  ret = openTable(a,b);
-  return ret;
-}
-
-//_______________________________________________________________________________
 //                                                                     cia_boost1
 
 dalArray * dalDataset::cia_boost1 (std::string arrayname,
@@ -361,13 +305,6 @@ dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
   }
 
   
-  dalArray * dalDataset::open_array_boost( std::string arrayname )
-  {
-    dalArray * ret;
-    ret = openArray( arrayname );
-    return ret;
-  }
-
   /*  setAttribute calls for all types, for single and vector values */
   bool dalDataset::setAttribute_char (std::string attrname, char data )
   {
@@ -590,6 +527,18 @@ void export_dalDataset ()
     = &dalDataset::setFilter;
   void (dalDataset::*setFilter2)(std::string,std::string) 
     = &dalDataset::setFilter;
+  dalTable * (dalDataset::*createTable1)(std::string) 
+    = &dalDataset::createTable;
+  dalTable * (dalDataset::*createTable2)(std::string,std::string) 
+    = &dalDataset::createTable;
+  dalTable * (dalDataset::*openTable1)(std::string const &) 
+    = &dalDataset::openTable;
+  dalTable * (dalDataset::*openTable2)(std::string const &,std::string const &) 
+    = &dalDataset::openTable;
+  dalArray * (dalDataset::*openArray1)(std::string const &) 
+    = &dalDataset::openArray;
+  dalArray * (dalDataset::*openArray2)(std::string const &,std::string const &) 
+    = &dalDataset::openArray;
   
   //________________________________________________________
   // Bindings for class and its methods
@@ -649,11 +598,11 @@ void export_dalDataset ()
 	  "Closes a dataset." )
     .def( "getType", &dalDataset::getType,
 	  "Get the file type of dataset." )
-    .def( "createTable", &dalDataset::ct1_boost,
+    .def( "createTable", createTable1,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  ( bpl::arg("table_name") ),
 	  "Create a new table in the dataset." )
-    .def( "createTable", &dalDataset::ct2_boost,
+    .def( "createTable", createTable2,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  ( bpl::arg("table_name"), bpl::arg("group_name") ),
 	  "Create a new table in the dataset." )
@@ -661,16 +610,19 @@ void export_dalDataset ()
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  ( bpl::arg("group_name") ),
 	  "Create a new group in the dataset." )
-    .def( "openTable", &dalDataset::ot1_boost,
+    .def( "openTable", openTable1,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Open a table in the dataset.")
-    .def( "openTable", &dalDataset::ot2_boost,
+    .def( "openTable", openTable2,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Open a table in the dataset.")
     .def( "openGroup", &dalDataset::openGroup,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Open a group in the dataset.")
-    .def( "openArray", &dalDataset::open_array_boost,
+    .def( "openArray", openArray1,
+	  bpl::return_value_policy<bpl::manage_new_object>(),
+	  "Open an array in the dataset.")
+    .def( "openArray", openArray2,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Open an array in the dataset.")
     .def( "createIntArray", &dalDataset::cia_boost1,

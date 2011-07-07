@@ -1017,7 +1017,7 @@ namespace DAL {
     \param tablename The name of the table you want to open
     \return dalTable * A pointer to a table object.
   */
-  dalTable * dalDataset::openTable( std::string tablename )
+  dalTable * dalDataset::openTable (std::string const &tablename)
   {
     if ( type == MSCASATYPE )
       {
@@ -1097,7 +1097,7 @@ namespace DAL {
     \param arrayname The name of the array to open.
     \return dalArray * A pointer to a array object.
    */
-  dalArray * dalDataset::openArray (std::string arrayname)
+  dalArray * dalDataset::openArray (std::string const &arrayname)
   {
     if ( type == MSCASATYPE )
       {
@@ -1127,8 +1127,8 @@ namespace DAL {
     \param groupname The name of the group containing the array.
     \return dalArray * A pointer to a array object.
    */
-  dalArray * dalDataset::openArray (std::string arrayname,
-				    std::string groupname)
+  dalArray * dalDataset::openArray (std::string const &arrayname,
+				    std::string const &groupname)
   {
     if ( type == MSCASATYPE ) {
       std::cerr << "dalDataset::openArray MSCASA Type not yet supported.\n";
