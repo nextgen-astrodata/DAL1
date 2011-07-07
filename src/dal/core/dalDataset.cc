@@ -1,7 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2006                                                    *
+ *   Copyright (C) 2006-2011                                               *
  *   Joseph Masters (jmasters@science.uva.nl)                              *
- *   :ars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -188,12 +188,12 @@ namespace DAL {
   
   void dalDataset::init()
   {
-    itsFilePointer     = NULL;
-    type        = "UNDEFINED";
-    name        = "UNDEFINED";
-    overwrite_p = false;
-    filter      = dalFilter();
-    h5fh_p      = 0;
+    itsFilePointer = NULL;
+    type           = "UNDEFINED";
+    name           = "UNDEFINED";
+    overwrite_p    = false;
+    filter         = dalFilter();
+    h5fh_p         = 0;
 
 #ifdef DAL_WITH_CASA
     ms        = NULL;

@@ -348,21 +348,6 @@ dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
    * wrappers for setFilter
    ******************************************************/
 
-  // -------------------------------------------------------- setFilter_boost1
-
-  void dalDataset::setFilter_boost1 (std::string columns )
-  {
-    setFilter( columns );
-  }
-
-  // -------------------------------------------------------- setFilter_boost2
-
-  void dalDataset::setFilter_boost2 (std::string columns,
-				     std::string conditions)
-  {
-    setFilter( columns, conditions );
-  }
-
   // -------------------------------------------------------- listTables_boost
 
   bpl::list dalDataset::listTables_boost()
@@ -598,6 +583,17 @@ bpl::numeric::array dalDataset::getAttribute_long_boost ( std::string attrname )
 
 void export_dalDataset ()
 {
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (dalDataset::*setFilter1)(std::string) 
+    = &dalDataset::setFilter;
+  void (dalDataset::*setFilter2)(std::string,std::string) 
+    = &dalDataset::setFilter;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+
   bpl::class_<dalDataset>("dalDataset")
     .def( bpl::init<char*, string>() )
     .def( "setAttribute_char", &dalDataset::setAttribute_char,
@@ -702,10 +698,10 @@ void export_dalDataset ()
     .def( "createArray", &dalDataset::createArray,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Create an array from a dalData object" )
-    .def( "setFilter", &dalDataset::setFilter_boost1,
+    .def( "setFilter", setFilter1,
 	  ( bpl::arg("columns") ),
 	  "Set a filter on the dataset (casa only)." )
-    .def( "setFilter", &dalDataset::setFilter_boost2,
+    .def( "setFilter", setFilter2,
 	  ( bpl::arg("columns"), bpl::arg("conditons") ),
 	  "Set a filter on the dataset (casa only)." )
     .def( "listTables", &dalDataset::listTables_boost,

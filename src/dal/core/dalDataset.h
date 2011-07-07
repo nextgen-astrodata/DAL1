@@ -344,10 +344,6 @@ namespace DAL {
     dalTable * ot1_boost (std::string tablename );
     //! Open a table
     dalTable * ot2_boost (std::string tablename, std::string groupname );
-    //! Set a table filter
-    void setFilter_boost1 (std::string);
-    //! Set a table filter
-    void setFilter_boost2 (std::string,std::string);
     
     bpl::list listTables_boost();
     
