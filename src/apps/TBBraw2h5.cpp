@@ -181,7 +181,9 @@ int noRunning;
 //!mutex for writing into the buffer
 boost::mutex writeMutex;
 
-// ############################################ begin of IO-Priority setting stuff
+//_______________________________________________________________________________
+// Handling of IO-Priority settings
+
 #define IOPRIO_BITS (16)
 #define IOPRIO_CLASS_SHIFT (13)
 #define IOPRIO_PRIO_MASK ((1UL << IOPRIO_CLASS_SHIFT) - 1)
@@ -201,16 +203,16 @@ enum {
   IOPRIO_CLASS_IDLE,
 };
 
-int ioprio_set(int which, int who, int ioprio) {
 #if defined linux
+
+int ioprio_set (int which, int who, int ioprio) {
   return syscall(SYS_ioprio_set, which, who, ioprio);
-#endif
 }
 int ioprio_get(int which, int who) {
-#if defined linux
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,13))
   return syscall(SYS_ioprio_get, which, who);
-#endif
+#else
+  return 0;
 #endif
 }
 
@@ -231,10 +233,12 @@ int increase_io_priority(bool verbose) {
   };
   return ret;
 }
-// ############################################ end of IO-Priority setting stuff
 
+#endif
 
-// -----------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                             socketReaderThread
+
 /*!
   \brief Thread that creates and then reads from a socket into the buffer
 
@@ -921,7 +925,12 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // try to raise the IO priority if requested
   if (raiseIOprio) {
+#if defined linux
     increase_io_priority(verboseMode);
+#else
+    std::cerr << "[TBBraw2h5] Warning: option 'raiseIOprio' only supported on Linux!"
+	      << std::endl;
+#endif
   };
   
   // -----------------------------------------------------------------
