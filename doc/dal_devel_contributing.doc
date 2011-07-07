@@ -7,7 +7,16 @@
   advised work-flow is as follows:
 
   <ol>
-    <li>Create your own fork from the master repository of the project.
+    <li>Get an account on <a href="https://github.com">Github</a>.
+
+    <li>Create your own fork from the master repository of the project. For
+    this go the <a href="https://github.com/lbaehren/DAL">DAL repository
+    page</a> - in the top-left corner of the page you will find a button with
+    label \b Fork:
+
+    \image html Github_for_request.png
+
+    Clicking on it will create a new repository, which now hosts your fork of the code.
 
     <li>Work on push changes you are working on - be it bug fixes or feature 
     enhancements - back to your fork.
