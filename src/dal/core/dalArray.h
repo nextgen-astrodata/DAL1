@@ -184,8 +184,6 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    void sai_boost( std::string attrname, int data );
-    void saf_boost( std::string attrname, float data );
     void extend_boost( bpl::list pydims );
     
     dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);

@@ -682,16 +682,12 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                               createIntArray
 
-  /****************************************************************
-   *  Create an Integer array of N dimensions
-   *
-   *****************************************************************/
   /*!
     \param arrayname The name of the array you want to create.
     \param dims A vector containing the dimensions of the array.
     \param data An array of integer values.
-          \param cdims A vector a chunk dimensions (necessary for extending an
-                 hdf5 dataset).
+    \param cdims A vector a chunk dimensions (necessary for extending an
+           hdf5 dataset).
     \return dalArray * pointer to an array object.
   */
   dalArray * dalDataset::createIntArray (std::string arrayname,
