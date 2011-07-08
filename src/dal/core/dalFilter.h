@@ -43,7 +43,7 @@ namespace DAL {
     //! File type: CASA_MS, HDF5, FITS, etc.
     dalFileType itsFiletype;
     //! Book-keeping whether a filter is set or not.
-    bool filterIsSet_p;
+    bool itsFilterIsSet;
     
   public:
 
@@ -91,7 +91,7 @@ namespace DAL {
 
     //! Check to see if the filter is defined.
     inline bool isSet () const {
-      return filterIsSet_p;
+      return itsFilterIsSet;
     }
 
     //! Retrieve the filter string.

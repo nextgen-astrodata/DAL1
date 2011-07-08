@@ -129,7 +129,7 @@ int test_constructors ()
   try {
     dalFileType type_hdf5 (dalFileType::HDF5);
     dalFileType type_fits (dalFileType::FITS);
-    dalFileType type_mscasa (dalFileType::MSCASA);
+    dalFileType type_mscasa (dalFileType::CASA_MS);
     //
     type_hdf5.summary();
     type_fits.summary();
@@ -143,7 +143,7 @@ int test_constructors ()
   try {
     dalFileType type_hdf5 ("HDF5");
     dalFileType type_fits ("FITS");
-    dalFileType type_mscasa ("MSCASA");
+    dalFileType type_mscasa ("CASA_MS");
     //
     type_hdf5.summary();
     type_fits.summary();
@@ -182,7 +182,7 @@ int test_parameters ()
     type.setType (dalFileType::FITS);
     type.summary();
     
-    type.setType (dalFileType::MSCASA);
+    type.setType (dalFileType::CASA_MS);
     type.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -197,7 +197,7 @@ int test_parameters ()
     type.setType ("FITS");
     type.summary();
     
-    type.setType ("MSCASA");
+    type.setType ("CASA_MS");
     type.summary();
     
     type.setType ("MSTABLE");

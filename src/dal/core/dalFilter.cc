@@ -126,7 +126,7 @@ namespace DAL {
   {
     itsFilterString = "";
     itsFiletype     = dalFileType();
-    filterIsSet_p         = false;
+    itsFilterIsSet  = false;
   }
 
   //_____________________________________________________________________________
@@ -147,7 +147,7 @@ namespace DAL {
     switch (itsFiletype.type()) {
     case dalFileType::CASA_MS:
       itsFilterString = "Select " + columns + " from $1";
-      filterIsSet_p   = true;
+      itsFilterIsSet   = true;
       break;
     default:
       {
@@ -204,7 +204,7 @@ namespace DAL {
     case dalFileType::CASA_MS:
       break;
         itsFilterString = "Select " + cols + " from $1 where " + conditions;
-        filterIsSet_p         = true;
+        itsFilterIsSet  = true;
     default:
       {
       std::cerr << "Operation not yet supported for type: " 
@@ -244,7 +244,7 @@ namespace DAL {
     os << "[dalFilter] Summary of internal parameters."   << std::endl;
     os << "-- Filter string = " << itsFilterString         << std::endl;
     os << "-- File type     = " << itsFiletype.name()      << std::endl;
-    os << "-- Filter is set = " << filterIsSet_p          << std::endl;
+    os << "-- Filter is set = " << itsFilterIsSet          << std::endl;
   }
   
 } // DAL namespace
