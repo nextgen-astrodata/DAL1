@@ -132,7 +132,8 @@ namespace DAL {
 			      H5P_DEFAULT);
 
 	    if (!H5Iis_valid(h5fh_p)) {
-	      std::cerr << "ERROR: There was a problem opening the file '"
+	      std::cerr << "[dalDataset::dalDataset]"
+			<< " There was a problem opening the file '"
 			<< filename << "'.\n";
 	      exit(9);
 	    }
@@ -146,7 +147,8 @@ namespace DAL {
 #ifdef DAL_WITH_CFITSIO
       fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
       int status;
-      fits_create_file(&fptr, filename.c_str(), &status); /*create new file*/
+      /* Create new FITS file. */
+      fits_create_file(&fptr, filename.c_str(), &status);
 #else
       std::cerr << "ERROR: CFITSIO libraries not found.\n";
 #endif
@@ -431,9 +433,9 @@ namespace DAL {
 	      casa::SymLink link( msfile );
 	      casa::Path realFileName = link.followSymLink();
 	      ms        = new casa::MeasurementSet( realFileName.absoluteName() );
-	      itsFilePointer   = &ms;
-	      itsMSReader = new casa::MSReader( *ms );
-	      name      = filename;
+	      itsFilePointer = &ms;
+	      itsMSReader    = new casa::MSReader( *ms );
+	      name           = filename;
 	      return DAL::SUCCESS;
 	    }
 	  else // treat it as a regular file
@@ -593,7 +595,7 @@ namespace DAL {
     \param columns A string containing a comma-separated list of columns to
            include in a filtered dataset.
   */
-  void dalDataset::setFilter ( std::string columns )
+  void dalDataset::setFilter (std::string const &columns)
   {
     filter.setFiletype(itsFiletype);
     filter.set(columns);
@@ -608,8 +610,8 @@ namespace DAL {
     \param conditions A string describing restraints on which rows are
            included in an opened dataset.  For example: "time>100".
   */
-  void dalDataset::setFilter (std::string columns,
-			      std::string conditions)
+  void dalDataset::setFilter (std::string const &columns,
+			      std::string const &conditions)
   {
     filter.setFiletype(itsFiletype);
     filter.set(columns,conditions);
@@ -701,8 +703,11 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
-					      data, cdims );
+	  dalIntArray * la = new dalIntArray (h5fh_p,
+					      arrayname,
+					      dims,
+					      data,
+					      cdims);
 	  return la;
 	} else {
 	  std::cerr << "[dalDataset::createIntArray]"
@@ -1109,7 +1114,7 @@ namespace DAL {
     \param groupname The name of the group to open
     \return dalGroup * A pointer to a group object.
    */
-  dalGroup * dalDataset::openGroup( std::string groupname )
+  dalGroup * dalDataset::openGroup (std::string groupname )
   {
     switch (itsFiletype.type()) {
     case dalFileType::HDF5:

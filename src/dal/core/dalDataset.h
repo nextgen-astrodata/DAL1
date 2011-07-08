@@ -249,9 +249,10 @@ namespace DAL {
     dalTable * createTable (std::string tablename, std::string groupname );
     dalGroup * createGroup (const char * groupname );
     //! Set table filter.
-    void setFilter (std::string columns );
+    void setFilter (std::string const &columns);
     //! Set table filter.
-    void setFilter (std::string columns, std::string conditions );
+    void setFilter (std::string const &columns,
+		    std::string const &conditions);
     //! Open a table (that's not in a group) by name.
     dalTable * openTable (std::string const &tablename);
     //! Open a table within a group

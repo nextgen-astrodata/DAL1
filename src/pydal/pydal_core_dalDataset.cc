@@ -488,9 +488,10 @@ void export_dalDataset ()
   //________________________________________________________
   // Specialisation of overloaded methods
 
-  void (dalDataset::*setFilter1)(std::string) 
+  void (dalDataset::*setFilter1)(std::string const &) 
     = &dalDataset::setFilter;
-  void (dalDataset::*setFilter2)(std::string,std::string) 
+  void (dalDataset::*setFilter2)(std::string const &,
+				 std::string const &) 
     = &dalDataset::setFilter;
   dalTable * (dalDataset::*createTable1)(std::string) 
     = &dalDataset::createTable;
