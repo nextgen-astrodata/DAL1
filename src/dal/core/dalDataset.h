@@ -1,6 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
+ *   Copyright (C) 2006-2011                                               *
+ *   Joseph Masters (jmasters@science.uva.nl)                              *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,8 +22,8 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#include "dalGroup.h"
-#include "HDF5Object.h"
+#include <core/dalGroup.h>
+#include <core/HDF5Attribute.h>
 
 namespace DAL {
   
@@ -184,6 +185,28 @@ namespace DAL {
 	}
       }
     
+    /*!
+      \brief Write attribute value
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      bool setAttribute (std::string const &name,
+			 T const &data)
+      {
+	return HDF5Attribute::write (h5fh_p,
+				     name,
+				     data);
+      }
+    
+    /*!
+      \brief Write attribute value
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \param size    -- nof. element in the data array.
+      \return status -- Status of the operation
+    */
     template <class T>
       bool setAttribute (std::string const &name,
 			 T const *data,
@@ -195,20 +218,6 @@ namespace DAL {
 				     size);
       }
     
-    
-    //! Define a char attribute.
-    bool setAttribute (std::string attrname, const char * data, int size=1 );
-#ifndef WORDSIZE_IS_64
-    //! Define an integer attribute.
-    bool setAttribute (std::string attrname, const int64_t * data, int size=1 );
-#else
-    //! Define a long attribute.
-    bool setAttribute (std::string attrname, const long * data, int size=1 );
-#endif
-    //! Define a string attribute.
-    bool setAttribute (std::string attrname, std::string data );
-    //! Define a string attribute.
-    bool setAttribute (std::string attrname, const std::string * data, int size=1 );
     //! Define a string attribute.
     bool setAttribute_string (std::string attrname,
 			      std::vector<std::string> data );
@@ -340,18 +349,6 @@ namespace DAL {
     
     bpl::list listTables_boost();
     
-    bool setAttribute_char (std::string attrname, char data);
-    bool setAttribute_short (std::string attrname, short data);
-    bool setAttribute_int (std::string attrname, int data);
-    bool setAttribute_uint (std::string attrname, uint data);
-#ifndef WORDSIZE_IS_64
-    bool setAttribute_long (std::string attrname, int64_t data);
-#else
-    bool setAttribute_long (std::string attrname, long data);
-#endif
-    bool setAttribute_float (std::string attrname, float data);
-    bool setAttribute_double (std::string attrname, double data);
-    bool setAttribute_string_boost (std::string attrname, std::string data);
     bool setAttribute_char_vector (std::string attrname, bpl::list data);
     bool setAttribute_short_vector (std::string attrname, bpl::list data);
     bool setAttribute_int_vector (std::string attrname, bpl::list data);

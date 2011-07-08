@@ -96,7 +96,8 @@ dalArray * dalDataset::cia_boost2 (std::string arrayname,
   return array;
 }
 
-// ----------------------------------------------------- cia_boost_numarray1
+//_______________________________________________________________________________
+//                                                            cia_boost_numarray1
 
 dalArray * dalDataset::cia_boost_numarray1 (std::string arrayname,
 					    bpl::list pydims,
@@ -115,7 +116,8 @@ dalArray * dalDataset::cia_boost_numarray1 (std::string arrayname,
   return array;
 }
 
-// ----------------------------------------------- cia_boost_numarray2
+//_______________________________________________________________________________
+//                                                            cia_boost_numarray2
 
 dalArray * dalDataset::cia_boost_numarray2 (std::string arrayname,
 					    bpl::list pydims,
@@ -149,7 +151,8 @@ dalArray * dalDataset::cia_boost_numarray2 (std::string arrayname,
   return array;
 }
 
-// ---------------------------------------------------------- cfa_boost
+//_______________________________________________________________________________
+//                                                                      cfa_boost
 
 dalArray * dalDataset::cfa_boost (std::string arrayname,
 				  bpl::list pydims,
@@ -304,47 +307,9 @@ dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
     return lcllist;
   }
 
-  
-  /*  setAttribute calls for all types, for single and vector values */
-  bool dalDataset::setAttribute_char (std::string attrname, char data )
-  {
-    return setAttribute (attrname, &data );
-  }
-  bool dalDataset::setAttribute_short (std::string attrname, short data )
-  {
-    return setAttribute (attrname, &data );
-  }
-  bool dalDataset::setAttribute_int (std::string attrname, int data )
-  {
-    return setAttribute (attrname, &data );
-  }
-  bool dalDataset::setAttribute_uint (std::string attrname, uint data )
-  {
-    return setAttribute (attrname, &data );
-  }
-#ifndef WORDSIZE_IS_64
-  bool dalDataset::setAttribute_long (std::string attrname, int64_t data )
-  {
-    return setAttribute (attrname, &data );
-  }
-#else
-  bool dalDataset::setAttribute_long (std::string attrname, long data )
-  {
-    return setAttribute (attrname, &data );
-  }
-#endif
-  bool dalDataset::setAttribute_float (std::string attrname, float data )
-  {
-    return setAttribute (attrname, &data );
-  }
-  bool dalDataset::setAttribute_double (std::string attrname, double data )
-  {
-    return setAttribute (attrname, &data );
-  }
-  bool dalDataset::setAttribute_string_boost(std::string attrname, std::string data )
-  {
-    return setAttribute (attrname, &data );
-  }
+//_______________________________________________________________________________
+//                                                                   setAttribute
+
   bool dalDataset::setAttribute_char_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
@@ -533,11 +498,13 @@ void export_dalDataset ()
     = &dalDataset::createTable;
   dalTable * (dalDataset::*openTable1)(std::string const &) 
     = &dalDataset::openTable;
-  dalTable * (dalDataset::*openTable2)(std::string const &,std::string const &) 
+  dalTable * (dalDataset::*openTable2)(std::string const &,
+				       std::string const &) 
     = &dalDataset::openTable;
   dalArray * (dalDataset::*openArray1)(std::string const &) 
     = &dalDataset::openArray;
-  dalArray * (dalDataset::*openArray2)(std::string const &,std::string const &) 
+  dalArray * (dalDataset::*openArray2)(std::string const &,
+				       std::string const &)
     = &dalDataset::openArray;
   
   //________________________________________________________
@@ -545,36 +512,20 @@ void export_dalDataset ()
 
   bpl::class_<dalDataset>("dalDataset")
     .def( bpl::init<char*, string>() )
-    .def( "setAttribute_char", &dalDataset::setAttribute_char,
-	  "Set a character attribute" )
     .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
-    .def( "setAttribute_short", &dalDataset::setAttribute_short,
-	  "Set a short integer attribute" )
     .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,
 	  "Set an attribute from a list of shorts." )
-    .def( "setAttribute_int", &dalDataset::setAttribute_int,
-	  "Set a integer attribute" )
     .def( "setAttribute_int", &dalDataset::setAttribute_int_vector,
 	  "Set an attribute from a list of integers." )
-    .def( "setAttribute_uint", &dalDataset::setAttribute_uint,
-	  "Set a unsigned integer attribute" )
     .def( "setAttribute_uint", &dalDataset::setAttribute_uint_vector,
 	  "Set an attribute from a list of unsigned integers." )
-    .def( "setAttribute_long", &dalDataset::setAttribute_long,
-	  "Set a long integer attribute" )
     .def( "setAttribute_long", &dalDataset::setAttribute_long_vector,
 	  "Set an attribute from a list of longs." )
-    .def( "setAttribute_float", &dalDataset::setAttribute_float,
-	  "Set a floating point attribute" )
     .def( "setAttribute_float", &dalDataset::setAttribute_float_vector,
 	  "Set an attribute from a list of floats." )
-    .def( "setAttribute_double", &dalDataset::setAttribute_double,
-	  "Set a double precision floating point attribute" )
     .def( "setAttribute_double", &dalDataset::setAttribute_double_vector,
 	  "Set an attribute from a list of doubles." )
-    .def( "setAttribute_string", &dalDataset::setAttribute_string_boost,
-	  "Set a string attribute" )
     .def( "setAttribute_string", &dalDataset::setAttribute_string_vector,
 	  "Set a string attribute" )
     .def( "getAttribute_float", &dalDataset::getAttribute_float_boost,

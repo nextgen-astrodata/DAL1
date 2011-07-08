@@ -45,11 +45,11 @@ namespace DAL {
         delete dataset;
         dataset = new dalDataset( filename.c_str(), "HDF5" );
 	
-        dataset->setAttribute ("TELESCOPE",         telescope_p       );
-        dataset->setAttribute ("OBSERVER",          observer_p        );
-        dataset->setAttribute ("PROJECT",           itsProject        );
-        dataset->setAttribute ("OBSERVATION_ID",    observation_id_p  );
-        dataset->setAttribute ("OBSERVATION_MODE",  observationMode_p );
+        dataset->setAttribute ("TELESCOPE",        telescope_p       );
+        dataset->setAttribute ("OBSERVER",         observer_p        );
+        dataset->setAttribute ("PROJECT",          itsProject        );
+        dataset->setAttribute ("OBSERVATION_ID",   observation_id_p  );
+        dataset->setAttribute ("OBSERVATION_MODE", observationMode_p );
 	
       }
     else

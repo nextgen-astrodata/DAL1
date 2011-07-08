@@ -474,106 +474,6 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute (std::string attrname,
-                                 const char * data,
-                                 int size )
-  {
-    if (H5Iis_valid(h5fh_p)) {
-      return HDF5Attribute::write (h5fh_p,
-				   attrname,
-				   data,
-				   size);
-    }
-    else {
-      std::cout << "[dalDataset::setAttribute]"
-		<< " Unable to set attribute - invalid object identifier!"
-		<< std::endl;
-      return false;
-    }
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-#ifndef WORDSIZE_IS_64
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const int64_t * data,
-                                 int size )
-  {
-#ifdef HAVE_LONG_LONG
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_LLONG);
-#else
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size,
-					H5T_NATIVE_LONG);
-#endif
-  }
-#else
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const long * data,
-                                 int size )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data,
-					size);
-  }
-#endif
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname -- The name of the attribute you want to create.
-    \param data     -- The value of the attribute you want to create.
-    \return bool    -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 std::string data )
-  {
-    return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname -- The name of the attribute you want to create.
-    \param data     -- The value of the attribute you want to create.
-    \return bool    -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const std::string * data,
-                                 int size )
-  {
-    return HDF5Attribute::write ( h5fh_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
   //                                                          setAttribute_string
 
   /*!
@@ -589,16 +489,16 @@ namespace DAL {
                                         std::vector<std::string> data )
   {
     return HDF5Attribute::write (h5fh_p,
-					attrname,
-					data);
+				 attrname,
+				 data);
   }
-
+  
   //_____________________________________________________________________________
   //                                                                  createGroup
-
+  
   /*!
     \brief Create a new group.
-
+    
     \param groupname -- The name of the group to be created
     \return dalGroup -- Pointer to a dalGroup object
   */

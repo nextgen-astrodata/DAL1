@@ -322,11 +322,11 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
-  /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
   //                                                                 read<string>
-
+  
+  /// @cond TEMPLATE_SPECIALIZATIONS
   template <>
   bool HDF5Attribute::read (hid_t const &location,
 			    std::string const &name,
@@ -409,10 +409,12 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+  /// @endcond
 
   //_____________________________________________________________________________
   //                                                                  write<char>
   
+  /// @cond TEMPLATE_SPECIALIZATIONS
   //! Set attribute of type (char)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
@@ -426,11 +428,15 @@ namespace DAL { // Namespace DAL -- begin
 		  size,
 		  H5T_NATIVE_CHAR);
   }
+  /// @endcond
   
   //_____________________________________________________________________________
   //                                                                   write<int>
   
-  //! Set attribute of type (int)
+  /// \cond TEMPLATE_SPECIALIZATIONS
+  /*!
+    Set attribute of type (int)
+  */
   template <>
   bool HDF5Attribute::write (hid_t const &location,
 			     std::string const &name,
@@ -443,10 +449,12 @@ namespace DAL { // Namespace DAL -- begin
 		  size,
 		  H5T_NATIVE_INT);
   }
+  /// \endcond
   
   //_____________________________________________________________________________
   //                                                                  write(bool)
   
+  /// \cond TEMPLATE_SPECIALIZATIONS
   //! Set attribute of type (bool)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
@@ -460,10 +468,12 @@ namespace DAL { // Namespace DAL -- begin
 		  size,
 		  H5T_NATIVE_INT);
   }
+  /// \endcond
   
   //_____________________________________________________________________________
   //                                                          write(unsigned int)
   
+  /// @cond TEMPLATE_SPECIALIZATIONS
   //! Set attribute of type (unsigned int)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
@@ -735,8 +745,6 @@ namespace DAL { // Namespace DAL -- begin
     int buffer[] = {data};
     return write (location, name, buffer, 1);
   }
-
-  /// @endcond
 
   //_____________________________________________________________________________
   //                                                          write(vector<bool>)
