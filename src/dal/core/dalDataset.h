@@ -103,8 +103,8 @@ namespace DAL {
     
     //! File pointer (can be HDF5, FITS or CASA MS)
     void * itsFilePointer;
-    //! "HDF5", "MSCASA" or "FITS"; for example
-    std::string type;
+    //! File type: CASA_MS, HDF5, FITS, etc.
+    dalFileType itsFiletype;
     //! Dataset name
     std::string name;
     //! Overwrite existing file if one already exists
@@ -131,7 +131,12 @@ namespace DAL {
     dalDataset (std::string const &filename);
 
     //! Argumented constructor
-    dalDataset (const char * name,
+    dalDataset (std::string const &filename,
+		dalFileType const &filetype,
+		const bool &overwrite=false);
+
+    //! Argumented constructor
+    dalDataset (std::string const &filename,
 		std::string filetype,
 		const bool &overwrite=false);
 
@@ -147,7 +152,7 @@ namespace DAL {
       return h5fh_p;
     }
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
 
     //! Open the dataset
     bool open (const char * filename);
@@ -266,7 +271,7 @@ namespace DAL {
       \return type -- A string describing the file format ("HDF5", "MSCASA", etc.)
     */
     inline std::string getType() {
-      return type;
+      return itsFiletype.name();
     }
     /*!
       \brief Retrieve the name of the data set.
@@ -284,11 +289,11 @@ namespace DAL {
       return h5fh_p;
     }
     //! Read TBB data
-    void read_tbb(std::string id,
-		  int start,
-		  int length,
-		  short data_out[]);
-
+    void read_tbb (std::string id,
+		   int start,
+		   int length,
+		   short data_out[]);
+    
     // ==========================================================================
     //
     //  Private methods
@@ -300,9 +305,9 @@ namespace DAL {
     //! Initialize the object's internal parameters
     void init ();
     //! Initialize the object's internal parameters
-    void init (const char * filename,
-	       std::string filetype,
-	       const bool &overwrite);
+    void init (std::string const &filename,
+	       dalFileType const &filetype,
+	       const bool &overwrite=false);
     //! Unconditional deletion of internal parameters
     bool destroy ();
     //! Try to open HDF5 file

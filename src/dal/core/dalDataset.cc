@@ -53,6 +53,28 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                                   dalDataset
+
+  /*!
+    \param filename  -- The name of the dataset/file to open.
+    \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
+    \param overwrite -- Overwrite existing file if one already exists for name
+           \e filename. By default an already existing file is kept and only
+	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
+  */
+  dalDataset::dalDataset (std::string const &filename,
+			  dalFileType const &filetype,
+			  const bool &overwrite)
+  {
+    /* Initialize internal parameters ... */
+    init (name.c_str(),
+	  filetype,
+	  overwrite);
+    /* ... and try to open the file. */
+    open (filename.c_str());
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
   
   /*!
     \param filename  -- The name of the dataset/file to open.
@@ -61,7 +83,7 @@ namespace DAL {
            \e filename. By default an already existing file is kept and only
 	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
-  dalDataset::dalDataset( const char * filename,
+  dalDataset::dalDataset (std::string const &filename,
                           std::string filetype,
                           const bool &overwrite)
   {
@@ -77,7 +99,7 @@ namespace DAL {
        */
       if (overwrite_p) {
 	/* Directly try to create the dataset */
-	if ( ( h5fh_p = H5Fcreate( filename,
+	if ( ( h5fh_p = H5Fcreate( filename.c_str(),
 				   H5F_ACC_TRUNC,
 				   H5P_DEFAULT,
 				   H5P_DEFAULT ) ) < 0 )
@@ -88,11 +110,11 @@ namespace DAL {
       }  // END -- if (overwrite_p)
       else {
 	FILE * pFile;
-	pFile = fopen ( filename, "r" );
+	pFile = fopen ( filename.c_str(), "r" );
 	if ( pFile == NULL )  /* check to see if the file exists */
 	  {
 	    /* if not, create it */
-	    if ( ( h5fh_p = H5Fcreate( filename,
+	    if ( ( h5fh_p = H5Fcreate( filename.c_str(),
 				       H5F_ACC_TRUNC,
 				       H5P_DEFAULT,
 				       H5P_DEFAULT ) ) < 0 )
@@ -105,7 +127,9 @@ namespace DAL {
 	    
 	    /* if it does reopen it as an hdf5 file */
 	    
-	    h5fh_p = H5Fopen (filename, H5F_ACC_RDWR, H5P_DEFAULT );
+	    h5fh_p = H5Fopen (filename.c_str(),
+			      H5F_ACC_RDWR,
+			      H5P_DEFAULT);
 
 	    if (!H5Iis_valid(h5fh_p)) {
 	      std::cerr << "ERROR: There was a problem opening the file '"
@@ -118,20 +142,19 @@ namespace DAL {
 	itsFilePointer = &h5fh_p;
       }
     }
-    else if ( filetype == FITSTYPE )
-      {
+    else if ( filetype == FITSTYPE ) {
 #ifdef DAL_WITH_CFITSIO
-        fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
-        int status;
-        fits_create_file(&fptr, filename, &status); /*create new file*/
+      fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
+      int status;
+      fits_create_file(&fptr, filename.c_str(), &status); /*create new file*/
 #else
-        std::cerr << "ERROR: CFITSIO libraries not found.\n";
+      std::cerr << "ERROR: CFITSIO libraries not found.\n";
 #endif
-      }
+    }
     else if (filetype == MSCASATYPE) {
     }
     else {
-      std::cerr << "(dalDataset::dalDataset) Data format \'" << type
+      std::cerr << "(dalDataset::dalDataset) Data format \'" << itsFiletype.name()
 		<< "\' not supported for this operation." << endl;
     }
   }
@@ -189,14 +212,14 @@ namespace DAL {
   void dalDataset::init()
   {
     itsFilePointer = NULL;
-    type           = "UNDEFINED";
+    itsFiletype    = dalFileType();
     name           = "UNDEFINED";
     overwrite_p    = false;
     filter         = dalFilter();
     h5fh_p         = 0;
 
 #ifdef DAL_WITH_CASA
-    ms        = NULL;
+    ms          = NULL;
     itsMSReader = NULL;
 #endif
   }
@@ -211,18 +234,18 @@ namespace DAL {
            \e filename. By default an already existing file is kept and only
 	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
-  void dalDataset::init (const char * filename,
-			 std::string filetype,
+  void dalDataset::init (std::string const &filename,
+			 dalFileType const &filetype,
 			 const bool &overwrite)
   {
     /* Initialize internal data with default values */
     init ();
 
-    itsFilePointer     = NULL;
-    name        = stringify (filename);
-    type        = filetype;
-    overwrite_p = overwrite;
-    h5fh_p      = 0;
+    itsFilePointer = NULL;
+    name           = filename;
+    itsFiletype    = filetype;
+    overwrite_p    = overwrite;
+    h5fh_p         = 0;
   }
 
   //_____________________________________________________________________________
@@ -235,10 +258,10 @@ namespace DAL {
   {
     os << "[dalDataset] Summary of object properties" << std::endl;
 
-    os << "-- Dataset type     = " << getType()       << std::endl;
-    os << "-- Dataset name     = " << getName()       << std::endl;
-    os << "-- HDF5 file handle = " << getFileHandle() << std::endl;
-    os << "-- HDF5 group ID    = " << getId()         << std::endl;
+    os << "-- Dataset type     = " << itsFiletype.name() << std::endl;
+    os << "-- Dataset name     = " << getName()          << std::endl;
+    os << "-- HDF5 file handle = " << getFileHandle()    << std::endl;
+    os << "-- HDF5 group ID    = " << getId()            << std::endl;
 
     /* Further properties only can be requested if the object is connected
      * to a dataset.
@@ -381,7 +404,7 @@ namespace DAL {
     if ( DAL::SUCCESS == openFITS( filename ) ) {
       // store the type of the dataset
       lcltype = FITSTYPE;
-      type    = lcltype;
+      itsFiletype.setType (dalFileType::FITS);
       // report successful opening of file
       std::cerr << lcltype << " file opened, but other FITS operations are not "
 		<< "yet supported.  Sorry." << endl;
@@ -391,7 +414,7 @@ namespace DAL {
       {
         itsFilePointer = &h5fh_p;
         lcltype = H5TYPE;
-        type = lcltype;
+        itsFiletype.setType (dalFileType::HDF5);
         name = filename;
         return DAL::SUCCESS;
       }
@@ -400,7 +423,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
         try {
 	  lcltype = MSCASATYPE;
-	  type = lcltype;
+	  itsFiletype.setType (dalFileType::CASA_MS);
 	  casa::File msfile( filename );
 	  // first treat it as a symbolic link
 	  if ( msfile.isSymLink() )
@@ -504,16 +527,21 @@ namespace DAL {
   */
   dalGroup * dalDataset::createGroup( const char * gname )
   {
-    if ( type == H5TYPE ) {
-      dalGroup * lg = NULL;
-      lg = new dalGroup( gname, &h5fh_p );
-      return lg;
-    }
-    else {
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
+      {
+	dalGroup * lg = NULL;
+	lg = new dalGroup( gname, &h5fh_p );
+	return lg;
+      }
+      break;
+    default:
       std::cerr << "ERROR: Operation not supported for filetype ("
-		<< type << ").\n";
+		<< itsFiletype.name() << ").\n";
       return NULL;
-    }
+      break;
+    };
+    
   }
   
   //_____________________________________________________________________________
@@ -529,31 +557,35 @@ namespace DAL {
   std::vector<std::string> dalDataset::listTables()
   {
     std::vector<std::string> tabs;
-    if ( type == MSCASATYPE )
+
+    switch (itsFiletype.type()) {
+    case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
         ms_tables = itsMSReader->tables();
         unsigned int nelem (ms_tables.nelements());
-
+	
         // list the names of the tables
-        for (unsigned int table(0); table<nelem; table++)
-          {
-            tabs.push_back( ms_tables(table) );
-          }
+        for (unsigned int table(0); table<nelem; table++) {
+	  tabs.push_back( ms_tables(table) );
+	}
         return tabs;
 #else
         std::cerr << "CASA support not enabled." << endl;
         return tabs;
 #endif
       }
-    else
+      break;
+    default:
       {
         std::cerr << "This operation is not supported for filetype "
-                  << type << endl;
+                  << itsFiletype.name() << endl;
         return tabs;
       }
+    };
+    
   }
-
+  
   //_____________________________________________________________________________
   //                                                                    setFilter
   
@@ -563,7 +595,7 @@ namespace DAL {
   */
   void dalDataset::setFilter ( std::string columns )
   {
-    filter.setFiletype( type );
+    filter.setFiletype(itsFiletype);
     filter.set(columns);
   }
 
@@ -579,7 +611,7 @@ namespace DAL {
   void dalDataset::setFilter (std::string columns,
 			      std::string conditions)
   {
-    filter.setFiletype( type );
+    filter.setFiletype(itsFiletype);
     filter.set(columns,conditions);
   }
 
@@ -660,28 +692,36 @@ namespace DAL {
                  hdf5 dataset).
     \return dalArray * pointer to an array object.
   */
-  dalArray * dalDataset::createIntArray( std::string arrayname,
+  dalArray * dalDataset::createIntArray (std::string arrayname,
                                          std::vector<int> dims,
                                          int data[],
                                          std::vector<int> cdims )
   {
-    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
-      dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
-					  data, cdims );
-      return la;
-    }
-    else if ( type == FITSTYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
-        std::cerr <<
-	  "dalDataset::createIntArray FITS Type not yet supported.\n";
-        return NULL;
+	if (H5Iis_valid(h5fh_p)) {
+	  dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
+					      data, cdims );
+	  return la;
+	} else {
+	  std::cerr << "[dalDataset::createIntArray]"
+		    << " Invalid HDF5 object handler!"
+		    << std::endl;
+	  return NULL;
+	}
       }
-    else
+      break;
+    default:
       {
-        std::cerr << "(dalDataset::createIntArray) Data format \'" << type
-                  << "\' not supported.\n";
-        return NULL;
+	std::cerr << "[dalDataset::createIntArray]"
+		  << " File type " << itsFiletype.name() 
+		    << " not yet supported!"
+		    << std::endl;
+	  return NULL;
       }
+      break;
+    };  //  END switch()
   }
 
   //_____________________________________________________________________________
@@ -703,20 +743,34 @@ namespace DAL {
                                 float data[],
 				std::vector<int> cdims)
   {
-    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
-      dalFloatArray * la = new dalFloatArray (h5fh_p,
-					      arrayname,
-					      dims,
-					      data,
-					      cdims);
-      return la;
-    }
-    else
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
-        std::cerr << "(dalDataset::createFloatArray) Filetype \'" << type
-                  << "\' not yet supported.\n";
-        return NULL;
+	if (H5Iis_valid(h5fh_p)) {
+	  dalFloatArray * la = new dalFloatArray (h5fh_p,
+						  arrayname,
+						  dims,
+						  data,
+						  cdims);
+	  return la;
+	} else {
+	  std::cerr << "[dalDataset::createFloatArray]"
+		    << " Invalid HDF5 object handler!"
+		    << std::endl;
+	  return NULL;
+	}
       }
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::createFloatArray]"
+		  << " File type " << itsFiletype.name() 
+		    << " not yet supported!"
+		    << std::endl;
+	  return NULL;
+      }
+      break;
+    };  //  END switch()
   }
   
   //_____________________________________________________________________________
@@ -740,19 +794,34 @@ namespace DAL {
                                        std::complex<float> data[],
                                        std::vector<int> cdims )
   {
-    if (type == H5TYPE) {
-      dalComplexArray_float32 * la = new dalComplexArray_float32 (h5fh_p,
-								  arrayname,
-								  dims,
-								  data,
-								  cdims);
-      return la;
-    }
-    else {
-      std::cerr << "(dalDataset::createComplexArray) Filetype \'" << type
-		<< "\' not yet supported.\n";
-      return NULL;
-    }
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
+      {
+	if (H5Iis_valid(h5fh_p)) {
+	  dalComplexArray_float32 * la = new dalComplexArray_float32 (h5fh_p,
+								      arrayname,
+								      dims,
+								      data,
+								      cdims);
+	  return la;
+	} else {
+	  std::cerr << "[dalDataset::createComplexFloatArray]"
+		    << " Invalid HDF5 object handler!"
+		    << std::endl;
+	  return NULL;
+	}
+      }
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::createComplexFloatArray]"
+		  << " File type " << itsFiletype.name() 
+		    << " not yet supported!"
+		    << std::endl;
+	  return NULL;
+      }
+      break;
+    };  //  END switch()
   }
   
   //_____________________________________________________________________________
@@ -764,19 +833,33 @@ namespace DAL {
     \param tablename -- Name of the table to be created.
     \return dalTable -- Pointer to the created table object.
   */
-  dalTable * dalDataset::createTable( std::string tablename )
+  dalTable * dalDataset::createTable (std::string tablename)
   {
-    if (type == H5TYPE) {
-      dalTable * lt = new dalTable( H5TYPE );
-      lt->createTable( itsFilePointer, tablename, "/" );
-      return lt;
-    }
-    else {
-      std::cerr << "[dalDataset::createTable] Unsupported filetype "
-		<< type
-		<< std::endl;
-      return NULL;
-    }
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
+      {
+	if (H5Iis_valid(h5fh_p)) {
+	  dalTable * lt = new dalTable( H5TYPE );
+	  lt->createTable( itsFilePointer, tablename, "/" );
+	  return lt;
+	} else {
+	  std::cerr << "[dalDataset::createTable]"
+		    << " Invalid HDF5 object handler!"
+		    << std::endl;
+	  return NULL;
+	}
+      }
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::createTable]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	  return NULL;
+      }
+      break;
+    };  //  END switch()
   }
   
   //_____________________________________________________________________________
@@ -793,16 +876,31 @@ namespace DAL {
   dalTable * dalDataset::createTable( std::string tablename,
                                       std::string groupname )
   {
-    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
-      dalTable * lt = new dalTable( H5TYPE );
-      lt->createTable( itsFilePointer, tablename, groupname );
-      return lt;
-    }
-    else {
-      std::cerr << "(dalDataset::createTable) Filetype \'" << type
-		<< "\' not yet supported.\n";
-      return NULL;
-    }
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
+      {
+	if (H5Iis_valid(h5fh_p)) {
+	  dalTable * lt = new dalTable( H5TYPE );
+	  lt->createTable( itsFilePointer, tablename, groupname );
+	  return lt;
+	} else {
+	  std::cerr << "[dalDataset::createTable]"
+		    << " Invalid HDF5 object handler!"
+		    << std::endl;
+	  return NULL;
+	}
+      }
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::createTable]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	  return NULL;
+      }
+      break;
+    };  //  END switch()
   }
   
   //_____________________________________________________________________________
@@ -814,7 +912,8 @@ namespace DAL {
   */
   dalTable * dalDataset::openTable (std::string const &tablename)
   {
-    if ( type == MSCASATYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
         dalTable * lt = new dalTable( MSCASATYPE );
@@ -828,23 +927,24 @@ namespace DAL {
         return NULL;
 #endif
       }
-    else if ( type == H5TYPE )
+      break;
+    case dalFileType::HDF5:
       {
         dalTable * lt = new dalTable( H5TYPE );
         lt->openTable( itsFilePointer, tablename, "/" );
         return lt;
       }
-    else if ( type == FITSTYPE )
+      break;
+    default:
       {
-        std::cerr << "dalDataset::openTable FITS Type not yet supported.\n";
-        return NULL;
+	std::cerr << "[dalDataset::openTable]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	  return NULL;
       }
-    else
-      {
-        std::cerr << "openTable operation not supported for filetype "
-                  << type << endl;
-        return NULL;
-      }
+      break;
+    };
   }
 
   //_____________________________________________________________________________
@@ -855,34 +955,32 @@ namespace DAL {
     \param groupname The name of the group containing the table.
     \return dalTable * A pointer to a table object.
    */
-  dalTable * dalDataset::openTable( std::string const &tablename,
+  dalTable * dalDataset::openTable (std::string const &tablename,
                                     std::string const &groupname )
   {
-    if ( type == MSCASATYPE )
-      {
-        std::cerr << "dalDataset::openTable MSCASA Type not yet supported.\n";
-        return NULL;
-      }
-    else if ( type == H5TYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
         dalTable * lt = new dalTable( H5TYPE );
-        try
-          {
-            lt->openTable( itsFilePointer, tablename, '/' + groupname );
-          }
-        catch (std::string message)
-          {
-            std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
-          }
+        try {
+	  lt->openTable( itsFilePointer, tablename, '/' + groupname );
+	}
+        catch (std::string message) {
+	  std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
+	}
         return lt;
       }
-    else if ( type == FITSTYPE )
+      break;
+    default:
       {
-        std::cerr << "dalDataset::openTable FITS Type not yet supported.\n";
-        return NULL;
+	std::cerr << "[dalDataset::openTable]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	return NULL;
       }
-    else
-      return NULL;
+      break;
+    };
   }
 
   //_____________________________________________________________________________
@@ -894,24 +992,24 @@ namespace DAL {
    */
   dalArray * dalDataset::openArray (std::string const &arrayname)
   {
-    if ( type == MSCASATYPE )
-      {
-        std::cerr << "dalDataset::openArray MSCASA Type not yet supported.\n";
-        return NULL;
-      }
-    else if ( type == H5TYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
         dalArray * la = new dalArray;
         la->open( itsFilePointer, arrayname );
         return la;
       }
-    else if ( type == FITSTYPE )
+      break;
+    default:
       {
-        std::cerr << "dalDataset::openArray FITS Type not yet supported.\n";
-        return NULL;
+	std::cerr << "[dalDataset::openArray]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	return NULL;
       }
-    else
-      return NULL;
+      break;
+    };
   }
 
   //_____________________________________________________________________________
@@ -925,24 +1023,24 @@ namespace DAL {
   dalArray * dalDataset::openArray (std::string const &arrayname,
 				    std::string const &groupname)
   {
-    if ( type == MSCASATYPE ) {
-      std::cerr << "dalDataset::openArray MSCASA Type not yet supported.\n";
-      return NULL;
-    }
-    else if ( type == H5TYPE ) {
-      dalArray * test = new dalArray;
-      delete test;
-      dalArray * la = new dalArray;
-      la->open( itsFilePointer, '/' + groupname + '/' + arrayname );
-      return la;
-    }
-    else if ( type == FITSTYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
-        std::cerr << "dalDataset::openArray FITS Type not yet supported.\n";
-        return NULL;
+	dalArray * la = new dalArray;
+	la->open( itsFilePointer, '/' + groupname + '/' + arrayname );
+	return la;
       }
-    else
-      return NULL;
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::openArray]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	return NULL;
+      }
+      break;
+    };
   }
   
   //_____________________________________________________________________________
@@ -1013,24 +1111,29 @@ namespace DAL {
    */
   dalGroup * dalDataset::openGroup( std::string groupname )
   {
-    if ( type == H5TYPE )
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
       {
         dalGroup * group = new dalGroup;
         //cerr << "Trying to open group " << groupname << endl;
         int retval = group->open( itsFilePointer, groupname );
-        if ( retval < 0 )
+        if ( retval < 0 ) {
           return NULL;
-        else
+	} else {
           return group;
+	}
       }
-    else if ( type == FITSTYPE ) {
-      std::cerr << "dalDataset::openGroup FITS Type.\n";
-      return NULL;
-    }
-    else {
-      std::cerr << "dalDataset::openGroup type not supported.\n";
-      return NULL;
-    }
+      break;
+    default:
+      {
+	std::cerr << "[dalDataset::openArray]"
+		  << " File type " << itsFiletype.name() 
+		  << " not yet supported!"
+		  << std::endl;
+	return NULL;
+      }
+      break;
+    };
   }
   
   //_____________________________________________________________________________

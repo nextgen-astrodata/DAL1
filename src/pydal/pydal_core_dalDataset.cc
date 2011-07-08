@@ -511,7 +511,8 @@ void export_dalDataset ()
   // Bindings for class and its methods
 
   bpl::class_<dalDataset>("dalDataset")
-    .def( bpl::init<char*, string>() )
+    .def( bpl::init<string>() )
+    .def( bpl::init<string,string>() )
     .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,

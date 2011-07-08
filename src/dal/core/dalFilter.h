@@ -52,7 +52,7 @@ namespace DAL {
     //! Default constructor    
     dalFilter();
     //! Argumented constructor
-    dalFilter (DAL::dalFileType const &type,
+    dalFilter (dalFileType const &type,
 	       std::string columns);
     //! Argumented constructor
     dalFilter( std::string type,
