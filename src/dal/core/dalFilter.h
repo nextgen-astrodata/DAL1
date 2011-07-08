@@ -40,7 +40,7 @@ namespace DAL {
 
     //! Table filter std::string
     std::string itsFilterString;
-    //! File type: MSCASA, HDF5, FITS, etc.
+    //! File type: CASA_MS, HDF5, FITS, etc.
     dalFileType itsFiletype;
     //! Book-keeping whether a filter is set or not.
     bool filterIsSet_p;
@@ -86,7 +86,7 @@ namespace DAL {
     //! Declare the type of the file
     bool setFiletype (DAL::dalFileType const &type);
 
-    //! Declare the type of the file (i.e. "MSCASA", "HDF5", etc.)
+    //! Declare the type of the file (i.e. "CASA_MS", "HDF5", etc.)
     bool setFiletype (std::string const &type);
 
     //! Check to see if the filter is defined.

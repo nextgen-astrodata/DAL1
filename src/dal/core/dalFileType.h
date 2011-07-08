@@ -60,8 +60,6 @@ namespace DAL { // Namespace DAL -- begin
       //! FITS file -- low-level access handled through CFITSIO library
       FITS,
       //! CASA MeasurementSet -- low-level access handled through casacore library
-      MSCASA,
-      //! CASA MeasurementSet -- low-level access handled through casacore library
       CASA_MS,
       //! CASA PagedImage -- low-level access handled through casacore library
       CASA_IMAGE

@@ -40,7 +40,7 @@ namespace DAL {
   //                                                                    dalFilter
   
   /*!
-    \param type -- The type of file (i.e. HDF5, MSCASA).
+    \param type -- The type of file (i.e. HDF5, CASA_MS).
     \param columns A comma-separated list of the column names that you want to
            pass the filter (i.e. "TIME,DATA,ANTENNA").
    */
@@ -76,7 +76,7 @@ namespace DAL {
   //                                                                    dalFilter
   
   /*!
-    \param type -- The type of file (i.e. HDF5, MSCASA).
+    \param type -- The type of file (i.e. HDF5, CASA_MS).
     \param columns A comma-separated list of the column names that you want to
            pass the filter (i.e. "TIME,DATA,ANTENNA").
     \param conditions A list of the conditions you want to apply.
@@ -145,7 +145,7 @@ namespace DAL {
     std::string message = "[dalFilter::set]";
     
     switch (itsFiletype.type()) {
-    case dalFileType::MSCASA:
+    case dalFileType::CASA_MS:
       itsFilterString = "Select " + columns + " from $1";
       filterIsSet_p   = true;
       break;
@@ -201,7 +201,7 @@ namespace DAL {
 		       std::string const &conditions)
   {
     switch (itsFiletype.type()) {
-    case dalFileType::MSCASA:
+    case dalFileType::CASA_MS:
       break;
         itsFilterString = "Select " + cols + " from $1 where " + conditions;
         filterIsSet_p         = true;

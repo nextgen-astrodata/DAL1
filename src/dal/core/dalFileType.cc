@@ -195,7 +195,6 @@ namespace DAL { // Namespace DAL -- begin
   bool dalFileType::isCASA ()
   {
     switch (itsType) {
-    case dalFileType::MSCASA:
     case dalFileType::CASA_MS:
     case dalFileType::CASA_IMAGE:
       return true;
@@ -229,7 +228,6 @@ namespace DAL { // Namespace DAL -- begin
 
     result[HDF5]       = "HDF5";
     result[FITS]       = "FITS";
-    result[MSCASA]     = "MSCASA";
     result[CASA_MS]    = "CASA_MS";
     result[CASA_IMAGE] = "CASA_IMAGE";
     result[UNDEFINED]  = "UNDEFINED";
