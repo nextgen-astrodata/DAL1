@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2010-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -61,6 +61,7 @@ namespace DAL { // Namespace DAL -- begin
       FITS,
       //! CASA MeasurementSet -- low-level access handled through casacore library
       MSCASA,
+      //! CASA MeasurementSet -- low-level access handled through casacore library
       CASA_MS,
       //! CASA PagedImage -- low-level access handled through casacore library
       CASA_IMAGE
@@ -77,19 +78,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     dalFileType ();
-    
     //! Argumented constructor
     dalFileType (dalFileType::Type const &filetype);
-    
     //! Argumented constructor
     dalFileType (std::string const &filetypeName);
-    
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another dalFileType object from which to create this new
-             one.
-    */
+    //! Copy constructor
     dalFileType (dalFileType const &other);
     
     // === Destruction ==========================================================
@@ -99,11 +92,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another dalFileType object from which to make a copy.
-    */
+    //! Overloading of the copy operator
     dalFileType& operator= (dalFileType const &other); 
     
     // === Parameter access =====================================================
@@ -122,6 +111,15 @@ namespace DAL { // Namespace DAL -- begin
     //! Get file type as name
     std::string name ();
 
+    // === Public methods =======================================================
+
+    //! Is the file of type FITS?
+    bool isFITS ();
+    //! Is the file of type HDF5?
+    bool isHDF5 ();
+    //! Is the file of type CASA?
+    bool isCASA ();
+
     /*!
       \brief Get the name of the class
       
@@ -136,11 +134,7 @@ namespace DAL { // Namespace DAL -- begin
       summary (std::cout);
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
     // === Static methods =======================================================

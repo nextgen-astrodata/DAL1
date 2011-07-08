@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2010-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -86,6 +86,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
+  /*!
+    \param other -- Another dalFileType object from which to make a copy.
+  */
   dalFileType& dalFileType::operator= (dalFileType const &other)
   {
     if (this != &other) {
@@ -149,6 +152,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void dalFileType::summary (std::ostream &os)
   {
     os << "[dalFileType] Summary of internal parameters." << std::endl;
@@ -162,6 +168,44 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  bool dalFileType::isFITS ()
+  {
+    switch (itsType) {
+    case dalFileType::FITS:
+      return true;
+      break;
+    default:
+      return false;
+      break;
+    };
+  }
+
+  bool dalFileType::isHDF5 ()
+  {
+    switch (itsType) {
+    case dalFileType::HDF5:
+      return true;
+      break;
+    default:
+      return false;
+      break;
+    };
+  }
+  
+  bool dalFileType::isCASA ()
+  {
+    switch (itsType) {
+    case dalFileType::MSCASA:
+    case dalFileType::CASA_MS:
+    case dalFileType::CASA_IMAGE:
+      return true;
+      break;
+    default:
+      return false;
+      break;
+    };
+  }
+  
   //_____________________________________________________________________________
   //                                                                         name
   
