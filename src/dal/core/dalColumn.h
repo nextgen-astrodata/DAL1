@@ -47,12 +47,12 @@ namespace DAL {
     std::string filetype;      // "HDF5", "MSCASA" or "FITS"; for example
     std::string name;          // Column name
     std::string tablename;     // Table name
-    std::string itsDatatype;  // Column datatype
+    std::string itsDatatype;   // Column datatype
     int size;                  // Datatype size
     uint num_of_rows;          // Number of rows in the column
 
     //! HDF5 file object identifier
-    hid_t fileID_p;
+    hid_t itsFileID;
     //! HDF5 table object identifier
     hid_t tableID_p;
     //! HDF5 field count
@@ -86,10 +86,8 @@ namespace DAL {
     casa::ROScalarColumn<casa::String> * rosc_string;
     
     // ARRAYs
-    casa::Array<casa::Double> array_vals_dbl;
-    casa::Array<casa::Complex> array_vals_comp;
-    casa::Array<casa::Int> array_vals_int;
-    casa::Array<casa::String> array_vals_string;
+    casa::Array<casa::Complex> itsArrayComplex;
+    casa::Array<casa::String> itsArrayString;
     
     // VECTORs
     casa::Vector<casa::Double> scalar_vals_dbl;

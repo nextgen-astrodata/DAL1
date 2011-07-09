@@ -161,37 +161,37 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  case casa::TpInt:
 	    {
 	      roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
-	      array_vals_int = roac_int->getColumn();
+	      casa::Array<int> data = roac_int->getColumn();
 	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)array_vals_int.getStorage(deleteIt);
+	      data_object->data = (int *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpDouble:
 	    {
 	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
-	      array_vals_dbl = roac_dbl->getColumn();
+	      casa::Array<double> data = roac_dbl->getColumn();
 	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
+	      data_object->data = (double *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpComplex:
 	    {
 	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-	      array_vals_comp = roac_comp->getColumn();
+	      itsArrayComplex = roac_comp->getColumn();
 	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
 	      data_object->data =
-		(std::complex<float> *)array_vals_comp.getStorage(deleteIt);
+		(std::complex<float> *)itsArrayComplex.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
-	      array_vals_string = roac_string->getColumn();
+	      itsArrayString = roac_string->getColumn();
 	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data = (std::string *)array_vals_string.getStorage(deleteIt);
+	      data_object->data = (std::string *)itsArrayString.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;

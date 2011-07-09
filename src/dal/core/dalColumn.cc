@@ -66,7 +66,7 @@ namespace DAL {
                         std::string colname,
                         std::string coldatatype )
   {
-    fileID_p     = fileid;
+    itsFileID     = fileid;
     tableID_p    = tableid;
     filetype     = lcl_filetype;
     tablename    = lcl_tablename;
@@ -497,18 +497,18 @@ namespace DAL {
     case casa::TpInt:
       {
         roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
-        array_vals_int = roac_int->getColumn();
+	casa::Array<int> data = roac_int->getColumn();
         data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-        data_object->data = (int *)array_vals_int.getStorage(deleteIt);
+        data_object->data = (int *)data.getStorage(deleteIt);
         return data_object;
       }
       break;
     case casa::TpDouble:
       {
         roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
-        array_vals_dbl = roac_dbl->getColumn();
+        casa::Array<double> data = roac_dbl->getColumn();
         data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-        data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
+        data_object->data = (double *)data.getStorage(deleteIt);
         return data_object;
       }
       break;
@@ -525,19 +525,19 @@ namespace DAL {
             std::cerr << "ERROR: " << x.getMesg() << endl;
             return NULL;
           }
-        array_vals_comp = roac_comp->getColumn( );
+        itsArrayComplex = roac_comp->getColumn( );
         data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
         data_object->data =
-          (std::complex<float> *)array_vals_comp.getStorage(deleteIt);
+          (std::complex<float> *)itsArrayComplex.getStorage(deleteIt);
         return data_object;
       }
       break;
     case casa::TpString:
       {
         roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
-        array_vals_string = roac_string->getColumn();
+        itsArrayString = roac_string->getColumn();
         data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-        data_object->data = (std::string *)array_vals_string.getStorage(deleteIt);
+        data_object->data = (std::string *)itsArrayString.getStorage(deleteIt);
         return data_object;
       }
       break;
@@ -567,7 +567,7 @@ namespace DAL {
     bool column_in_table   = false;
     
     // retrieve the input fields needed for the append_records call
-    if ( H5TBget_table_info ( fileID_p, tablename.c_str(), &nofFields_p, &nofRecords_p )
+    if ( H5TBget_table_info ( itsFileID, tablename.c_str(), &nofFields_p, &nofRecords_p )
          < 0 )
       return NULL;
 
@@ -580,7 +580,7 @@ namespace DAL {
     for ( hsize_t ii = 0; ii < nofFields_p; ii++)
       field_names[ii] = (char*)malloc( sizeof(char) * MAX_COL_NAME_SIZE );
 
-    if ( H5TBget_field_info( fileID_p, tablename.c_str(), field_names,
+    if ( H5TBget_field_info( itsFileID, tablename.c_str(), field_names,
                              field_sizes, field_offsets, size_out ) < 0 ) {
       return NULL;
     }
@@ -625,11 +625,15 @@ namespace DAL {
 	  return NULL;
 	}
 	
-        if ( H5TBread_fields_name ( fileID_p, tablename.c_str(),
-                                    name.c_str(), start, length,
-                                    sizeof(DAL::Complex_Int16),
-                                    field_offsets, field_sizes,
-                                    data ) < 0 )
+        if ( H5TBread_fields_name (itsFileID,
+				   tablename.c_str(),
+				   name.c_str(),
+				   start,
+				   length,
+				   sizeof(DAL::Complex_Int16),
+				   field_offsets,
+				   field_sizes,
+				   data ) < 0 )
           {
             std::cerr << "ERROR: H5TBread_fields_name failed.\n";
             return NULL;
@@ -652,8 +656,14 @@ namespace DAL {
 	return NULL;
       }
       
-      if ( H5TBread_fields_name (fileID_p, tablename.c_str(), name.c_str(),
-				 start, length, sizeof(float), field_offsets, field_sizes,
+      if ( H5TBread_fields_name (itsFileID,
+				 tablename.c_str(),
+				 name.c_str(),
+				 start,
+				 length,
+				 sizeof(float),
+				 field_offsets,
+				 field_sizes,
 				 data ) < 0 )
 	{
 	  std::cerr << "ERROR: H5TBread_fields_name failed.\n";
