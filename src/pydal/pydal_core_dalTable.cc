@@ -40,17 +40,6 @@ using DAL::dalTable;
 // ==============================================================================
 
 //_____________________________________________________________________________
-//                                                                      ot_hdf5
-
-//! Wrapper for openTable (HDF5)
-void dalTable::ot_hdf5 (void * voidfile,
-			std::string tablename,
-			std::string groupname )
-{
-  openTable( voidfile, tablename, groupname );
-}
-
-//_____________________________________________________________________________
 //                                                             append_row_boost
 
 //! Wrapper for appendRow (hdf5)
@@ -166,7 +155,7 @@ PyObject* dalTable::readRows_boost (int start,
     size_t * size_out      = NULL;
     
     // retrieve the input fields needed for the append_records call
-    H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+    H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
     
     field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
     field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -175,19 +164,30 @@ PyObject* dalTable::readRows_boost (int start,
     for (unsigned int ii=0; ii<nfields; ii++) {
       itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
     }
-    
-    status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
-				 field_sizes, field_offsets, size_out );
-    
-    data_out = (char*) realloc ( data_out, (*size_out)*nrecs );
-    
-    status = H5TBread_records( fileID_p, name.c_str(), start, nrecs,
-			       size_out[0], field_offsets, field_sizes,
-			       data_out );
+
+    /* Retrieve information about table field */
+    status = H5TBget_field_info (itsFileID,
+				 name.c_str(),
+				 itsFieldNames,
+				 field_sizes,
+				 field_offsets,
+				 size_out);
+    /* Allocate memory to retrieve table entries */
+    data_out = (char*) realloc (data_out,
+				(*size_out)*nrecs);
+    /* Read record entries from the table */
+    status = H5TBread_records( itsFileID,
+			       name.c_str(),
+			       start,
+			       nrecs,
+			       size_out[0],
+			       field_offsets,
+			       field_sizes,
+			       data_out);
     
     for (int rec_idx=0; rec_idx<nrecs; rec_idx++) {
       for (unsigned int field_idx=0; field_idx<nfields; field_idx++) {
-	hid_t table_type_id = H5Dget_type( tableID_p );
+	hid_t table_type_id = H5Dget_type( itsTableID );
 	H5T_class_t field_type = H5Tget_member_class( table_type_id, field_idx );
 	
 	switch( field_type ) {
@@ -446,6 +446,17 @@ bpl::numeric::array dalTable::getAttribute_boost(std::string attrname)
 
 void export_dalTable ()
 {
+  //________________________________________________________
+  // Specialisation of overloaded methods
+  
+  void (dalTable::*openTableHDF5)(void * voidfile,
+				  std::string,
+				  std::string) 
+    = &dalTable::openTable;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+  
   bpl::class_<dalTable>("dalTable")
     .def( bpl::init<char*>())
     .def( "setAttribute_char", &dalTable::setAttribute_char,
@@ -480,7 +491,7 @@ void export_dalTable ()
 	  "Set a string attribute" )
     .def( "setAttribute_string", &dalTable::setAttribute_string_vector,
 	  "Set a string attribute" )
-    .def( "openTable", &dalTable::ot_hdf5,
+    .def( "openTable", openTableHDF5,
 	  "Open an hdf5 table object." )
     .def( "createTable", &dalTable::createTable,
 	  "Create a table object." )

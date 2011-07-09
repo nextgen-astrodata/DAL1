@@ -54,9 +54,9 @@ namespace DAL {
     void * file;  // can be HDF5File, FITS, MS
     
     //! HDF5 file_id
-    hid_t fileID_p;
+    hid_t itsFileID;
     //! HDF5 table id
-    hid_t tableID_p;
+    hid_t itsTableID;
     //! HDF5 field count
     hsize_t nfields;
     //! HDF5 record count
@@ -75,8 +75,8 @@ namespace DAL {
     
 #ifdef DAL_WITH_CASA
     casa::Table * itsCasaTable;
-    casa::Array<casa::Double> array_vals_dbl;
-    casa::Array<casa::Complex> array_vals_comp;
+    casa::Array<casa::Double> itsArrayDouble;
+    casa::Array<casa::Complex> itsArrayComplex;
     casa::ROTableColumn * itsCasaColumn;
 #endif
     
@@ -108,11 +108,11 @@ namespace DAL {
     
     //! Get the HDF5 file identifier
     inline hid_t fileID () const {
-      return fileID_p;
+      return itsFileID;
     }
     //! Get the HDF5 table object identifier
     inline hid_t tableID () const {
-      return tableID_p;
+      return itsTableID;
     }
     //! Get the number of fields within the table
     inline hsize_t nofFields () const {
@@ -131,9 +131,9 @@ namespace DAL {
     //! Provide a summary of the object's internal parameters and status
     void summary(std::ostream &os);
     //! Open the table.  Called from dalDataset, not from the user.
-    void openTable( void * voidfile,
+    void openTable (void * voidfile,
 		    std::string tablename,
-		    std::string groupname );
+		    std::string groupname);
     
 #ifdef DAL_WITH_CASA
     //! Open a CASA table, not in a MeasurementSet.
@@ -213,7 +213,7 @@ namespace DAL {
     template<class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return HDF5Attribute::read (tableID_p, attrname, value );
+        return HDF5Attribute::read (itsTableID, attrname, value );
       }
     
     /*!
@@ -228,7 +228,7 @@ namespace DAL {
 			 T const *data,
 			 unsigned int const &size=1)
       {
-	return HDF5Attribute::write (fileID_p,
+	return HDF5Attribute::write (itsFileID,
 				     name,
 				     data,
 				     size);
@@ -254,7 +254,6 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    void ot_hdf5( void * voidfile, std::string tablename, std::string groupname );
     bool append_row_boost( bpl::object data );
     bool append_rows_boost( bpl::object data, long nrows );
     void write_col_by_index_boost( bpl::numeric::array data, int index,

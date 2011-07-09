@@ -116,10 +116,10 @@ namespace DAL {
     /* If the table is working with HDF5 as back-end, provide a summary of the
      * identifiers and properties.
      */
-    if (type == H5TYPE && fileID_p > 0) {
-      os << "-- HDF5 file ID  = " << fileID_p  << std::endl;
-      os << "-- HDF5 table ID = " << tableID_p << std::endl;
-      os << "-- nof. fields   = " << nfields  << std::endl;
+    if (type == H5TYPE && itsFileID > 0) {
+      os << "-- HDF5 file ID  = " << itsFileID    << std::endl;
+      os << "-- HDF5 table ID = " << itsTableID   << std::endl;
+      os << "-- nof. fields   = " << nfields      << std::endl;
       os << "-- nof. records  = " << nofRecords_p << std::endl;
     }
     else {
@@ -202,8 +202,8 @@ namespace DAL {
     }
     else if ( type == H5TYPE ) {
       dalColumn * lclcol;
-      lclcol = new dalColumn (fileID_p,
-			      tableID_p,
+      lclcol = new dalColumn (itsFileID,
+			      itsTableID,
 			      H5TYPE,
 			      name,
 			      colname,
@@ -246,8 +246,12 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalColumn * lclcol;
-        lclcol = new dalColumn( fileID_p, tableID_p, H5TYPE, name, colname,
-                                dal_COMPLEX );
+        lclcol = new dalColumn (itsFileID,
+				itsTableID,
+				H5TYPE,
+				name,
+				colname,
+                                dal_COMPLEX);
 
         return lclcol;
       }
@@ -291,8 +295,12 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalColumn * lclcol;
-        lclcol = new dalColumn( fileID_p, tableID_p, H5TYPE, name, colname,
-                                dal_COMPLEX_SHORT );
+        lclcol = new dalColumn (itsFileID,
+				itsTableID,
+				H5TYPE,
+				name,
+				colname,
+                                dal_COMPLEX_SHORT);
         return lclcol;
 
       }
@@ -399,20 +407,20 @@ namespace DAL {
                 int polarization = 0;
                 casa::IPosition start (2,polarization,0)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
-                array_vals_comp = arcolumn.getColumn( slicer );
+                itsArrayComplex = arcolumn.getColumn( slicer );
 #ifdef DAL_DEBUGGING_MESSAGES
-                std::cerr << "number of dims: " << array_vals_comp.ndim() << endl;
-                std::cerr << "shape: " << array_vals_comp.shape() << endl;
-                std::cerr << "size: " << array_vals_comp.size() << endl;
+                std::cerr << "number of dims: " << itsArrayComplex.ndim() << endl;
+                std::cerr << "shape: " << itsArrayComplex.shape() << endl;
+                std::cerr << "size: " << itsArrayComplex.size() << endl;
 #endif
                 std::vector< std::complex< float > > valvec;
-                array_vals_comp.tovector( valvec );
+                itsArrayComplex.tovector( valvec );
 #ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << valvec[0] << valvec[1] << valvec[2] << endl;
                 std::cerr << "vector size: " << valvec.size() << endl;
                 std::cerr << "Polarization number: " << polarization << endl;
 #endif
-                return array_vals_comp.data();
+                return itsArrayComplex.data();
               }
               break;
               case casa::TpDComplex:
@@ -438,19 +446,19 @@ namespace DAL {
                 int cell = 0;
                 casa::IPosition start (1,cell)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
-                array_vals_dbl = arcolumn.getColumn( slicer );
+                itsArrayDouble = arcolumn.getColumn( slicer );
 #ifdef DAL_DEBUGGING_MESSAGES
-                std::cerr << "number of dims: " << array_vals_dbl.ndim() << endl;
-                std::cerr << "shape: " << array_vals_dbl.shape() << endl;
-                std::cerr << "size: " << array_vals_dbl.size() << endl;
+                std::cerr << "number of dims: " << itsArrayDouble.ndim() << endl;
+                std::cerr << "shape: " << itsArrayDouble.shape() << endl;
+                std::cerr << "size: " << itsArrayDouble.size() << endl;
 #endif
                 std::vector<double> valvec;
-                array_vals_dbl.tovector( valvec );
+                itsArrayDouble.tovector( valvec );
 #ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "vector size: " << valvec.size() << endl;
                 std::cerr << "Data from cell number: " << cell << endl;
 #endif
-                return array_vals_dbl.data();
+                return itsArrayDouble.data();
               }
               break;
               case casa::TpString:
@@ -691,9 +699,9 @@ namespace DAL {
       name = groupname + '/' + tablename;
       hid_t * lclfile = (hid_t*)voidfile; // H5File object
       file = lclfile;
-      fileID_p = *lclfile;  // get the file handle
+      itsFileID = *lclfile;  // get the file handle
       
-      tableID_p = H5Dopen ( fileID_p, name.c_str(), H5P_DEFAULT );
+      itsTableID = H5Dopen ( itsFileID, name.c_str(), H5P_DEFAULT );
     }
     else {
       std::cerr << "dalTable::openTable operation not supported for type "
@@ -715,7 +723,7 @@ namespace DAL {
       size_t * size_out = NULL;
       
       // retrieve the input fields needed for the append_records call
-      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+      H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
       
       field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
       field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -727,7 +735,7 @@ namespace DAL {
 	{
 	  itsFieldNames[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
 	}
-      status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
+      status = H5TBget_field_info( itsFileID, name.c_str(), itsFieldNames,
 				   field_sizes, field_offsets, size_out );
       
       for (unsigned int ii=0; ii<nfields; ii++)
@@ -778,7 +786,7 @@ namespace DAL {
         // cast the voidfile to an hdf5 file
         hid_t * lclfile = (hid_t*)voidfile; // H5File object
         file = lclfile;
-        fileID_p = *lclfile;  // get the file handle
+        itsFileID = *lclfile;  // get the file handle
 
         const char * lclfield_names[1]  = { "000dummy000" };
         size_t dst_offset[1] = { 0  };
@@ -801,13 +809,13 @@ namespace DAL {
 
         tablename = groupname + '/' + tablename;
 
-        status = H5TBmake_table( tablename.c_str(), fileID_p, tablename.c_str(),
+        status = H5TBmake_table( tablename.c_str(), itsFileID, tablename.c_str(),
                                  1, 1, dst_size, lclfield_names,
                                  dst_offset, field_type, chunk_size,
                                  fill, compress, data );
         delete [] fill;
         fill = NULL;
-        tableID_p = H5Dopen ( fileID_p, tablename.c_str(), H5P_DEFAULT );
+        itsTableID = H5Dopen ( itsFileID, tablename.c_str(), H5P_DEFAULT );
       }
     else
       {
@@ -841,7 +849,7 @@ namespace DAL {
 	 Returns a non-negative value if successful; otherwise returns
 	 a negative value. 
       */
-      h5err = H5TBget_table_info (fileID_p,
+      h5err = H5TBget_table_info (itsFileID,
 				  name.c_str(),
 				  &nfields,
 				  &nofRecords_p);
@@ -870,7 +878,7 @@ namespace DAL {
       Returns a non-negative value if successful; otherwise returns a
       negative value.
     */
-    h5err = H5TBget_field_info (fileID_p,
+    h5err = H5TBget_field_info (itsFileID,
 				name.c_str(),
 				itsFieldNames,
 				NULL,
@@ -930,7 +938,7 @@ namespace DAL {
     }
 
     // create the new column
-    status = H5TBinsert_field (fileID_p,
+    status = H5TBinsert_field (itsFileID,
 			       name.c_str(),
 			       colname.c_str(),
                                field_type,
@@ -1176,7 +1184,7 @@ namespace DAL {
   {
     if ( type == H5TYPE )
       {
-        status = H5TBget_table_info (fileID_p,
+        status = H5TBget_table_info (itsFileID,
 				     name.c_str(),
 				     &nfields,
 				     &nofRecords_p);
@@ -1195,7 +1203,7 @@ namespace DAL {
             itsFieldNames[ii] = (char *)malloc(MAX_COL_NAME_SIZE * sizeof(char));
           }
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames, NULL,
+        status = H5TBget_field_info( itsFileID, name.c_str(), itsFieldNames, NULL,
                                      NULL, NULL );
 
         bool columnpresent = false;
@@ -1203,10 +1211,10 @@ namespace DAL {
 	  
 	  if (0 == strcmp(colname.c_str(),itsFieldNames[ii])) {
 	    
-	    status = H5TBdelete_field( fileID_p, name.c_str(),
+	    status = H5TBdelete_field( itsFileID, name.c_str(),
 				       itsFieldNames[ii]);
 	    
-	    status = H5TBget_table_info ( fileID_p, name.c_str(),
+	    status = H5TBget_table_info ( itsFileID, name.c_str(),
 					  &nfields, &nofRecords_p );
 	    columnpresent = true;
 	    break;
@@ -1253,13 +1261,13 @@ namespace DAL {
         size_t * size_out = NULL;
 	
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+        H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
 	
         field_sizes   = new size_t[ nfields ];
         field_offsets = new size_t[ nfields ];
         size_out      = new size_t[ 1 ];
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), NULL, field_sizes,
+        status = H5TBget_field_info( itsFileID, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
         /*
          * Cleanup to make more efficient.  Check the last three fields for
@@ -1273,7 +1281,7 @@ namespace DAL {
 
         size_t col_offset[1] = { 0 };
         size_t col_size[1] = { field_sizes[index] };
-        status = H5TBwrite_fields_index(fileID_p, name.c_str(), num_fields,
+        status = H5TBwrite_fields_index(itsFileID, name.c_str(), num_fields,
                                         index_num, start, numrecords, *col_size,
                                         col_offset, col_size, data);
 
@@ -1312,27 +1320,27 @@ namespace DAL {
         size_t * size_out      = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+        H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
         size_out = (size_t*)malloc( sizeof(size_t) );
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), NULL, field_sizes,
+        status = H5TBget_field_info( itsFileID, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
 
         if ( firstrecord )
           {
             hsize_t start = 0;
             hsize_t numrows = 1;
-            status = H5TBwrite_records( fileID_p, name.c_str(), start,
+            status = H5TBwrite_records( itsFileID, name.c_str(), start,
                                         numrows, *size_out, field_offsets, field_sizes,
                                         data);
             firstrecord = false;
           }
         else
           {
-            status = H5TBappend_records ( fileID_p, name.c_str(), recs2write,
+            status = H5TBappend_records ( itsFileID, name.c_str(), recs2write,
                                           *size_out, field_offsets,
                                           field_sizes, data );
           }
@@ -1368,13 +1376,13 @@ namespace DAL {
         size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+        H5TBget_table_info( itsFileID, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
         field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
         size_out = (size_t*)malloc( sizeof(size_t) );
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), NULL, field_sizes,
+        status = H5TBget_field_info( itsFileID, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
 
         if ( firstrecord )
@@ -1382,18 +1390,18 @@ namespace DAL {
             hsize_t start = 0;
             if (row_count>1)
               {
-                status = H5TBappend_records ( fileID_p, name.c_str(),
+                status = H5TBappend_records ( itsFileID, name.c_str(),
                                               (hsize_t)row_count-1, *size_out,
                                               field_offsets, field_sizes, data);
               }
-            status = H5TBwrite_records( fileID_p, name.c_str(), start,
+            status = H5TBwrite_records( itsFileID, name.c_str(), start,
                                         (hsize_t)row_count, *size_out,
                                         field_offsets, field_sizes, data );
             firstrecord = false;
           }
         else
           {
-            status = H5TBappend_records ( fileID_p, name.c_str(),
+            status = H5TBappend_records ( itsFileID, name.c_str(),
                                           (hsize_t)row_count, *size_out,
                                           field_offsets, field_sizes, data);
           }
@@ -1420,7 +1428,7 @@ namespace DAL {
   bool dalTable::setAttribute( std::string attrname,
                                std::string data )
   {
-    return HDF5Attribute::write ( tableID_p, attrname, &data, 1 );
+    return HDF5Attribute::write ( itsTableID, attrname, &data, 1 );
   }
 
   //_____________________________________________________________________________
@@ -1437,7 +1445,7 @@ namespace DAL {
 			       std::string const * data,
                                int size )
   {
-    return HDF5Attribute::write ( tableID_p, attrname, data, size );
+    return HDF5Attribute::write ( itsTableID, attrname, data, size );
   }
   
   //_____________________________________________________________________________
@@ -1459,7 +1467,7 @@ namespace DAL {
       size_t * size_out = NULL;
       
       // retrieve the input fields needed for the append_records call
-      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+      H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
       
       field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
       field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -1471,7 +1479,7 @@ namespace DAL {
 	{
 	  itsFieldNames[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
 	}
-      status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
+      status = H5TBget_field_info( itsFileID, name.c_str(), itsFieldNames,
 				   field_sizes, field_offsets, size_out );
       
       for (unsigned int ii=0; ii<nfields; ii++)
@@ -1517,11 +1525,11 @@ namespace DAL {
   long dalTable::getNumberOfRows()
   {
     if ( type == H5TYPE ) {
-      if (fileID_p > 0) {
-	H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+      if (itsFileID > 0) {
+	H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
       }
-      else if (tableID_p > 0) {
-	H5TBget_table_info ( tableID_p, name.c_str(), &nfields, &nofRecords_p );
+      else if (itsTableID > 0) {
+	H5TBget_table_info ( itsTableID, name.c_str(), &nfields, &nofRecords_p );
       }
       return nofRecords_p;
     }
@@ -1556,7 +1564,7 @@ namespace DAL {
         size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+        H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -1567,7 +1575,7 @@ namespace DAL {
             itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
           }
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
+        status = H5TBget_field_info( itsFileID, name.c_str(), itsFieldNames,
                                      field_sizes, field_offsets, size_out );
 
         hsize_t start = nstart;
@@ -1575,7 +1583,7 @@ namespace DAL {
 
         if (buffersize > 0)
           size_out[0] = buffersize;
-        status = H5TBread_records( fileID_p, name.c_str(), start, nrecs,
+        status = H5TBread_records( itsFileID, name.c_str(), start, nrecs,
                                    size_out[0], field_offsets, field_sizes,
                                    data_out );
 
@@ -1615,7 +1623,7 @@ namespace DAL {
   {
     if ( type == H5TYPE )
       {
-        if ( H5Aexists( tableID_p, attrname.c_str() ) <= 0 )
+        if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 )
           {
             std::cerr << "Attribute " << attrname << " not found." << endl;
             return false;
@@ -1653,7 +1661,7 @@ namespace DAL {
         size_t type_size;
 
         // Check if attribute exists
-        if ( H5Aexists( tableID_p, attrname.c_str() ) <= 0 )
+        if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 )
           {
             return NULL;
           }
@@ -1661,16 +1669,16 @@ namespace DAL {
         std::string fullname = "/" + name;
 
         int rank;
-        H5LTget_attribute_ndims( fileID_p, fullname.c_str(),
+        H5LTget_attribute_ndims( itsFileID, fullname.c_str(),
                                  attrname.c_str(), &rank );
 
-        H5LTget_attribute_info( fileID_p, fullname.c_str(), attrname.c_str(),
+        H5LTget_attribute_info( itsFileID, fullname.c_str(), attrname.c_str(),
                                 &dims, &type_class, &type_size );
 
         if ( H5T_FLOAT == type_class )
           {
             void * data = NULL;
-            if ( 0 < H5LTget_attribute(fileID_p, fullname.c_str(),
+            if ( 0 < H5LTget_attribute(itsFileID, fullname.c_str(),
                                        attrname.c_str(),
                                        H5T_NATIVE_DOUBLE, data) )
               return NULL;
@@ -1680,7 +1688,7 @@ namespace DAL {
         else if ( H5T_INTEGER == type_class )
           {
             void * data = NULL;
-            if ( 0 < H5LTget_attribute(fileID_p, fullname.c_str(),
+            if ( 0 < H5LTget_attribute(itsFileID, fullname.c_str(),
                                        attrname.c_str(),
                                        H5T_NATIVE_INT, data) )
               return NULL;
@@ -1692,8 +1700,10 @@ namespace DAL {
             char* data = NULL;
             std::string fullname = "/" + name;
             data = (char *)malloc(rank * sizeof(char));
-            if ( 0 < H5LTget_attribute_string( fileID_p, fullname.c_str(),
-                                               attrname.c_str(),data) )
+            if ( 0 < H5LTget_attribute_string( itsFileID,
+					       fullname.c_str(),
+                                               attrname.c_str(),
+					       data))
               return NULL;
             else
               return data;
