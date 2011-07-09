@@ -64,9 +64,9 @@ namespace DAL {
     //! HDF5 return status
     herr_t status;
     //! HDF5 list of columns
-    char **field_names;
+    char **itsFieldNames;
     //! Table access filter
-    dalFilter * filter;
+    dalFilter * itsFilter;
     
     bool firstrecord;
     std::string name;  // table name
@@ -74,10 +74,10 @@ namespace DAL {
     std::vector<dalColumn> columns; // list of table columns
     
 #ifdef DAL_WITH_CASA
-    casa::Table * casaTable_p;
+    casa::Table * itsCasaTable;
     casa::Array<casa::Double> array_vals_dbl;
     casa::Array<casa::Complex> array_vals_comp;
-    casa::ROTableColumn * casa_column;
+    casa::ROTableColumn * itsCasaColumn;
 #endif
     
     //! Setup for adding another column to an HDF5 table
@@ -93,9 +93,11 @@ namespace DAL {
     // === Construction =========================================================
 
     //! Default table constructor
-    dalTable();
+    dalTable ();
     //! Table constructor for a specific file format.
-    dalTable( std::string filetype );
+    dalTable (std::string const &filetype);
+    //! Table constructor for a specific file format.
+    dalTable (dalFileType const &filetype);
     
     // === Destruction ==========================================================
 
@@ -214,13 +216,23 @@ namespace DAL {
         return HDF5Attribute::read (tableID_p, attrname, value );
       }
     
-    bool setAttribute( std::string attrname, char const * data, int size=1 );
-    bool setAttribute( std::string attrname, short const * data, int size=1 );
-    bool setAttribute( std::string attrname, int const * data, int size=1 );
-    bool setAttribute( std::string attrname, uint const * data, int size=1 );
-    bool setAttribute( std::string attrname, long const * data, int size=1 );
-    bool setAttribute( std::string attrname, float const * data, int size=1 );
-    bool setAttribute( std::string attrname, double const * data, int size=1 );
+    /*!
+      \brief Write attribute value
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \param size    -- nof. element in the data array.
+      \return status -- Status of the operation
+    */
+    template <class T>
+      bool setAttribute (std::string const &name,
+			 T const *data,
+			 unsigned int const &size=1)
+      {
+	return HDF5Attribute::write (fileID_p,
+				     name,
+				     data,
+				     size);
+      }
 
     bool setAttribute( std::string attrname, std::string data );
     bool setAttribute( std::string attrname, std::string const * data, int size=1 );

@@ -171,12 +171,12 @@ PyObject* dalTable::readRows_boost (int start,
     field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
     field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
     size_out = (size_t*)malloc( sizeof(size_t) );
-    field_names = (char**)malloc( nfields * sizeof(char*) );
+    itsFieldNames = (char**)malloc( nfields * sizeof(char*) );
     for (unsigned int ii=0; ii<nfields; ii++) {
-      field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
+      itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
     }
     
-    status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+    status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
 				 field_sizes, field_offsets, size_out );
     
     data_out = (char*) realloc ( data_out, (*size_out)*nrecs );
@@ -244,9 +244,9 @@ PyObject* dalTable::readRows_boost (int start,
     free(field_offsets);
     free(size_out);
     for (unsigned int ii=0; ii<nfields; ii++) {
-      free(field_names[ii]);
+      free(itsFieldNames[ii]);
     }
-    free(field_names);
+    free(itsFieldNames);
     if (status < 0) {
       std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
 		<< " Make sure the buffer is smaller than the size of the "

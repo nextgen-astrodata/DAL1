@@ -33,7 +33,7 @@ namespace DAL {
   
   dalTable::dalTable()
   {
-    filter = new dalFilter;
+    itsFilter = new dalFilter;
   }
   
   //_____________________________________________________________________________
@@ -43,9 +43,9 @@ namespace DAL {
     \param filetype -- The type of table you want to create (i.e. "HDF5",
            "MSCASA", etc.)
   */
-  dalTable::dalTable( std::string filetype )
+  dalTable::dalTable (std::string const &filetype)
   {
-    filter = new dalFilter;
+    itsFilter = new dalFilter;
 
     type = filetype;
     columns.clear();  // clear the columns vector
@@ -53,7 +53,7 @@ namespace DAL {
     
     if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
-      casaTable_p = new casa::Table;
+      itsCasaTable = new casa::Table;
 #else
       std::cerr << "CASA support not enabled." << std::endl;
 #endif
@@ -71,10 +71,10 @@ namespace DAL {
   
   dalTable::~dalTable()
   {
-    delete filter;
+    delete itsFilter;
     if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
-      delete casaTable_p;
+      delete itsCasaTable;
 #endif
     }
   }
@@ -141,7 +141,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
       // using the dalColumn class
       dalColumn * lclcol = NULL;
-      lclcol = new dalColumn( *casaTable_p, colname );
+      lclcol = new dalColumn( *itsCasaTable, colname );
       
 #ifdef DAL_DEBUGGING_MESSAGES
       lclcol->getType();
@@ -189,7 +189,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
       // using the dalColumn class
       dalColumn * lclcol = NULL;
-      lclcol = new dalColumn( *casaTable_p, colname );
+      lclcol = new dalColumn( *itsCasaTable, colname );
 #ifdef DAL_DEBUGGING_MESSAGES
       lclcol->getType();
       if ( lclcol->isScalar() )
@@ -232,7 +232,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
-        lclcol = new dalColumn( *casaTable_p, colname );
+        lclcol = new dalColumn( *itsCasaTable, colname );
 #ifdef DAL_DEBUGGING_MESSAGES
         lclcol->getType();
         if ( lclcol->isScalar() )
@@ -272,7 +272,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
-        lclcol = new dalColumn( *casaTable_p, colname );
+        lclcol = new dalColumn( *itsCasaTable, colname );
 #ifdef DAL_DEBUGGING_MESSAGES
         lclcol->getType();
         if ( lclcol->isScalar() )
@@ -316,9 +316,9 @@ namespace DAL {
   */
   void dalTable::setFilter( std::string columns )
   {
-    filter = new dalFilter;
-    filter->setFiletype( type );
-    filter->set(columns);
+    itsFilter = new dalFilter;
+    itsFilter->setFiletype( type );
+    itsFilter->set(columns);
   }
 
   //_____________________________________________________________________________
@@ -338,8 +338,8 @@ namespace DAL {
   void dalTable::setFilter (std::string columns,
 			    std::string conditions )
   {
-    filter->setFiletype( type );
-    filter->set(columns,conditions);
+    itsFilter->setFiletype( type );
+    itsFilter->set(columns,conditions);
   }
   
   // ---------------------------------------------------------- getColumnData
@@ -355,7 +355,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn lclcol;
-        lclcol = dalColumn( *casaTable_p, colname );
+        lclcol = dalColumn( *itsCasaTable, colname );
         lclcol.getType();
 #ifdef DAL_DEBUGGING_MESSAGES
         if ( lclcol.isScalar() )
@@ -364,10 +364,10 @@ namespace DAL {
           std::cerr << colname << " is ARRAY" << endl;
 #endif
         casa::uInt nrow;
-        nrow = casaTable_p->nrow();
+        nrow = itsCasaTable->nrow();
 
         // create a column object
-        casa::ROTableColumn column( *casaTable_p, colname );
+        casa::ROTableColumn column( *itsCasaTable, colname );
 
         // get the column descriptor
         casa::ColumnDesc col_desc = column.columnDesc();
@@ -395,7 +395,7 @@ namespace DAL {
                 std::cerr << "Data type is Complex." << endl;
 #endif
                 casa::ROArrayColumn<casa::Complex>
-                arcolumn( *casaTable_p, colname );
+                arcolumn( *itsCasaTable, colname );
                 int polarization = 0;
                 casa::IPosition start (2,polarization,0)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
@@ -434,7 +434,7 @@ namespace DAL {
               {
                 std::cerr << "Data type is Double." << endl;
                 casa::ROArrayColumn<casa::Double>
-                arcolumn( *casaTable_p, colname );
+                arcolumn( *itsCasaTable, colname );
                 int cell = 0;
                 casa::IPosition start (1,cell)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
@@ -560,7 +560,7 @@ namespace DAL {
       {
         // print the name of the table
 #ifdef DAL_WITH_CASA
-        std::cerr << "CASA table name: " << casaTable_p->tableName() << endl;
+        std::cerr << "CASA table name: " << itsCasaTable->tableName() << endl;
 #else
         std::cerr << "CASA support not enabled." << endl;
 #endif
@@ -584,11 +584,11 @@ namespace DAL {
   {
     if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
-      if ( filter->isSet() ) {
+      if ( itsFilter->isSet() ) {
 	try {
-	  *casaTable_p = casa::Table( tablename );
-	  *casaTable_p = casa::tableCommand( filter->get(),
-						   *casaTable_p );
+	  *itsCasaTable = casa::Table( tablename );
+	  *itsCasaTable = casa::tableCommand( itsFilter->get(),
+						   *itsCasaTable );
 	}
 	catch (casa::AipsError x) {
 	  std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -596,7 +596,7 @@ namespace DAL {
       }
       else {
 	try {
-	  *casaTable_p = casa::Table( tablename );
+	  *itsCasaTable = casa::Table( tablename );
 	}
 	catch (casa::AipsError x) {
 	  std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -625,7 +625,7 @@ namespace DAL {
     if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
       try {
-	*casaTable_p = reader->table( tablename );
+	*itsCasaTable = reader->table( tablename );
       }
       catch (casa::AipsError x) {
 	std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -655,9 +655,10 @@ namespace DAL {
     if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
       try {
-	*casaTable_p = reader->table( tablename );
-	*casaTable_p = casa::tableCommand( filter->get(),
-					   *casaTable_p );
+	*itsCasaTable = reader->table( tablename );
+	itsFilter     = filter;
+	*itsCasaTable = casa::tableCommand( itsFilter->get(),
+					   *itsCasaTable );
       }
       catch (casa::AipsError x) {
 	std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -721,25 +722,25 @@ namespace DAL {
       size_out = (size_t*)malloc( sizeof(size_t) );
       
       /* Alocate space */
-      field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+      itsFieldNames = (char**)malloc( sizeof(char*) * (size_t)nfields );
       for ( unsigned int i = 0; i < nfields; i++)
 	{
-	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
+	  itsFieldNames[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
 	}
-      status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+      status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
 				   field_sizes, field_offsets, size_out );
       
       for (unsigned int ii=0; ii<nfields; ii++)
 	{
-	  std::cerr << std::setw(17) << field_names[ii];
-	  free(field_names[ii]);
+	  std::cerr << std::setw(17) << itsFieldNames[ii];
+	  free(itsFieldNames[ii]);
 	}
-      free(field_names);
+      free(itsFieldNames);
       std::cerr << endl;
     }
     else if ( type == MSCASATYPE ) {
 #ifdef DAL_WITH_CASA
-      casa::TableDesc td = casaTable_p->tableDesc();
+      casa::TableDesc td = itsCasaTable->tableDesc();
       std::cerr << td.columnNames() << endl;
 #else
       std::cerr << "ERROR: CASA support not enabled.\n";
@@ -857,10 +858,10 @@ namespace DAL {
        the table
     */
 
-    field_names = (char**)malloc( nfields * sizeof(char*) );
+    itsFieldNames = (char**)malloc( nfields * sizeof(char*) );
 
     for (unsigned int ii=0; ii<nfields; ii++) {
-      field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+      itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
     }
     
     /*________________________________________________________________
@@ -871,7 +872,7 @@ namespace DAL {
     */
     h5err = H5TBget_field_info (fileID_p,
 				name.c_str(),
-				field_names,
+				itsFieldNames,
 				NULL,
 				NULL,
 				NULL);
@@ -887,21 +888,21 @@ namespace DAL {
     */
 
     for (unsigned int ii=0; ii<nfields; ii++) {
-      if (0 == strcmp( column_name.c_str(), field_names[ii] )) {
+      if (0 == strcmp( column_name.c_str(), itsFieldNames[ii] )) {
 	std::cerr << "WARNING: Cannot create column \'"
 		  << column_name.c_str()
 		  <<	"\'. Column already exists." << endl;
 	return false;
       }
-      else if (0 == strcmp("000dummy000",field_names[ii])) {
+      else if (0 == strcmp("000dummy000",itsFieldNames[ii])) {
 	removedummy = true;
       }
     }
     
     for (unsigned int ii=0; ii<nfields; ii++) {
-      free(field_names[ii]);
+      free(itsFieldNames[ii]);
     }
-    free(field_names);
+    free(itsFieldNames);
 
     return true;
   }
@@ -1188,22 +1189,22 @@ namespace DAL {
 
         hsize_t nfields_start = nfields;
 
-        field_names = (char **)malloc(nfields_start * sizeof(char *));
+        itsFieldNames = (char **)malloc(nfields_start * sizeof(char *));
         for (unsigned int ii=0; ii<nfields_start; ii++)
           {
-            field_names[ii] = (char *)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+            itsFieldNames[ii] = (char *)malloc(MAX_COL_NAME_SIZE * sizeof(char));
           }
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), field_names, NULL,
+        status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames, NULL,
                                      NULL, NULL );
 
         bool columnpresent = false;
         for (unsigned int ii=0; ii < nfields; ii++) {
 	  
-	  if (0 == strcmp(colname.c_str(),field_names[ii])) {
+	  if (0 == strcmp(colname.c_str(),itsFieldNames[ii])) {
 	    
 	    status = H5TBdelete_field( fileID_p, name.c_str(),
-				       field_names[ii]);
+				       itsFieldNames[ii]);
 	    
 	    status = H5TBget_table_info ( fileID_p, name.c_str(),
 					  &nfields, &nofRecords_p );
@@ -1214,9 +1215,9 @@ namespace DAL {
 	}
 	
         for (unsigned int ii=0; ii<nfields_start; ii++) {
-	  free(field_names[ii]);
+	  free(itsFieldNames[ii]);
 	}
-        free(field_names);
+        free(itsFieldNames);
 	
         if ( !columnpresent )
           std::cerr << "WARNING: Column \'" << colname <<
@@ -1406,153 +1407,6 @@ namespace DAL {
       }
   }
 
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a character attribute.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-  */
-  bool dalTable::setAttribute( std::string attrname,
-			       char const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a short attribute.
-
-    Add a short attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-  */
-  bool dalTable::setAttribute( std::string attrname,
-			       short const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a integer attribute.
-
-    Add a integer attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalTable::setAttribute( std::string attrname,
-			       int const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a unsigned integer attribute.
-
-    Add a unsigned integer attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalTable::setAttribute( std::string attrname,
-                               uint const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a long attribute.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-  */
-  bool dalTable::setAttribute( std::string attrname,
-			       long const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a float attribute.
-
-    Add a float attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-  */
-  bool dalTable::setAttribute( std::string attrname,
-			       float const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Add a double precision floating point attribute.
-
-    Add a double precision floating point attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \param size An optional parameter specifiying the array size of the
-                attribute.  If not supplied, it will default to being
-                a scalar attribute.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalTable::setAttribute( std::string attrname,
-			       double const * data,
-                               int size )
-  {
-    return HDF5Attribute::write (tableID_p, attrname, data, size);
-  }
-  
   //_____________________________________________________________________________
   //                                                                 setAttribute
   
@@ -1612,26 +1466,26 @@ namespace DAL {
       size_out = (size_t*)malloc( sizeof(size_t) );
       
       /* Alocate space */
-      field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+      itsFieldNames = (char**)malloc( sizeof(char*) * (size_t)nfields );
       for ( unsigned int i = 0; i < nfields; i++)
 	{
-	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
+	  itsFieldNames[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
 	}
-      status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+      status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
 				   field_sizes, field_offsets, size_out );
       
       for (unsigned int ii=0; ii<nfields; ii++)
 	{
-	  colnames.push_back( field_names[ii] );
-	  free(field_names[ii]);
+	  colnames.push_back( itsFieldNames[ii] );
+	  free(itsFieldNames[ii]);
 	}
-      free(field_names);
+      free(itsFieldNames);
       return colnames;
     }
     else if ( type == MSCASATYPE )
       {
 #ifdef DAL_WITH_CASA
-        casa::TableDesc td = casaTable_p->tableDesc();
+        casa::TableDesc td = itsCasaTable->tableDesc();
         casa::Vector<casa::String> names = td.columnNames();
         casa::Array<casa::String> myarray = names;
         std::vector<casa::String> foovec;
@@ -1707,13 +1561,13 @@ namespace DAL {
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
         size_out = (size_t*)malloc( sizeof(size_t) );
-        field_names = (char**)malloc( nfields * sizeof(char*) );
+        itsFieldNames = (char**)malloc( nfields * sizeof(char*) );
         for (unsigned int ii=0; ii<nfields; ii++)
           {
-            field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
+            itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
           }
 
-        status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+        status = H5TBget_field_info( fileID_p, name.c_str(), itsFieldNames,
                                      field_sizes, field_offsets, size_out );
 
         hsize_t start = nstart;
@@ -1730,9 +1584,9 @@ namespace DAL {
         free(size_out);
         for (unsigned int ii=0; ii<nfields; ii++)
           {
-            free(field_names[ii]);
+            free(itsFieldNames[ii]);
           }
-        free(field_names);
+        free(itsFieldNames);
         if (status < 0)
           {
             std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
@@ -1852,7 +1706,7 @@ namespace DAL {
     else if ( type == MSCASATYPE )
       {
 #ifdef DAL_WITH_CASA
-        casa::TableRecord table_rec = casaTable_p->keywordSet();
+        casa::TableRecord table_rec = itsCasaTable->keywordSet();
         casa::String dtype = GetKeywordType(attrname);
         if (dtype == "Float")
           {
@@ -1907,13 +1761,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        *result = casaTable_p->keywordSet().asString(KeywordName);
+        *result = itsCasaTable->keywordSet().asString(KeywordName);
       }
     catch (casa::AipsError x)
       {
@@ -1943,13 +1797,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        *result = casaTable_p->keywordSet().asDouble(KeywordName);
+        *result = itsCasaTable->keywordSet().asDouble(KeywordName);
       }
     catch (casa::AipsError x)
       {
@@ -1979,13 +1833,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        *result = casaTable_p->keywordSet().asFloat(KeywordName);
+        *result = itsCasaTable->keywordSet().asFloat(KeywordName);
       }
     catch (casa::AipsError x)
       {
@@ -2015,13 +1869,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        *result = casaTable_p->keywordSet().asDComplex(KeywordName);
+        *result = itsCasaTable->keywordSet().asDComplex(KeywordName);
       }
     catch (casa::AipsError x)
       {
@@ -2051,13 +1905,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        result->reference(casaTable_p->keywordSet().asArrayDouble(KeywordName));
+        result->reference(itsCasaTable->keywordSet().asArrayDouble(KeywordName));
       }
     catch (casa::AipsError x)
       {
@@ -2087,13 +1941,13 @@ namespace DAL {
 #endif
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return casa::False;
           };
-        result->reference(casaTable_p->keywordSet().asArrayDComplex(KeywordName));
+        result->reference(itsCasaTable->keywordSet().asArrayDComplex(KeywordName));
       }
     catch (casa::AipsError x)
       {
@@ -2122,13 +1976,13 @@ namespace DAL {
   {
     try
       {
-        if (!casaTable_p->keywordSet().isDefined(KeywordName))
+        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeywordType: Keyword named \"" << KeywordName <<
                       "\" does not exist" << endl;
             return "";
           };
-        casa::DataType type = casaTable_p->keywordSet().dataType(KeywordName);
+        casa::DataType type = itsCasaTable->keywordSet().dataType(KeywordName);
         switch (type)
           {
           case casa::TpString:
