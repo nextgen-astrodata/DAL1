@@ -420,7 +420,7 @@ namespace DAL {
                 should normally be followed by a write.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::extend( std::vector<int> newdims )
+  bool dalArray::extend (std::vector<int> const &newdims)
   {
     uint32_t rank = newdims.size();
     hsize_t lcldims[ rank ];

@@ -85,6 +85,7 @@ namespace DAL {
       return itsRank;
     }
     
+    //! Get attributes attached to the array
     bool getAttributes();
 
     // === Methods ==============================================================
@@ -170,15 +171,15 @@ namespace DAL {
       }
 
     //! Increase the dimensions of the array.
-    bool extend (std::vector<int> dims);
+    bool extend (std::vector<int> const &dims);
     //! Write \e data of type \e short.
-    bool write(int offset, short data[], int arraysize);
+    bool write (int offset, short data[], int arraysize);
     //! Write \e data of type \e int.
-    bool write(int offset, int data[], int arraysize);
+    bool write (int offset, int data[], int arraysize);
     //! Write \e data of type \e complex<float>.
-    bool write( int offset, std::complex<float> data[], int arraysize );
+    bool write (int offset, std::complex<float> data[], int arraysize );
     //! Write \e data of type \e complex<Int16>.
-    bool write( int offset, std::complex<Int16> data[], int arraysize );
+    bool write (int offset, std::complex<Int16> data[], int arraysize );
     
     // === Python wrapper functions =============================================
 
