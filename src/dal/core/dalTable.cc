@@ -326,7 +326,7 @@ namespace DAL {
   {
     itsFilter = new dalFilter;
     itsFilter->setFiletype( type );
-    itsFilter->set(columns);
+    itsFilter->setFilter(columns);
   }
 
   //_____________________________________________________________________________
@@ -347,7 +347,7 @@ namespace DAL {
 			    std::string conditions )
   {
     itsFilter->setFiletype( type );
-    itsFilter->set(columns,conditions);
+    itsFilter->setFilter(columns,conditions);
   }
   
   // ---------------------------------------------------------- getColumnData

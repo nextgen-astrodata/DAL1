@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -58,9 +55,9 @@ int test_MeasurementSet (std::string const &filename_ms)
   int nofFailedTests (0);
 
   //__________________________________________________________________
-  // Creating a dataset object of type MSCASA
+  // Creating a dataset object of type CASA_MS
   
-  cout << "[1] Creating a dataset object of type MSCASA ..." << endl;
+  cout << "[1] Creating a dataset object of type CASA_MS ..." << endl;
   try {
     dalDataset msds;
     msds.open (filename_ms.c_str());

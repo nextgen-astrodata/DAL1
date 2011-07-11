@@ -44,16 +44,16 @@
 */
 int test_constructors ()
 {
-  std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
+  std::cout << "\n[tdalDataset::test_constructors]" << std::endl;
 
   int nofFailedTests (0);
-  std::string columns ("Data");
+  std::string columns ("DATA");
 
   /*__________________________________________________________________
     Test 1: Default constructor
   */
   
-  std::cout << "[1] Testing dalFilter() ..." << std::endl;
+  std::cout << "\n[1] Testing dalFilter() ..." << std::endl;
   try {
     DAL::dalFilter filter;
     //
@@ -65,15 +65,38 @@ int test_constructors ()
   }
 
   /*__________________________________________________________________
-    Test 2: Default constructor
+    Test 2: Test argumented constructor
   */
   
-  std::cout << "[2] Testing dalFilter(string) ..." << std::endl;
+  std::cout << "\n[2] Testing dalFilter(dalFileType,string) ..." << std::endl;
+  try {
+    DAL::dalFilter filterHDF5 (DAL::dalFileType::HDF5, columns);
+    filterHDF5.summary();
+    //
+    DAL::dalFilter filterFITS (DAL::dalFileType::FITS, columns);
+    filterFITS.summary();
+    //
+    DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns);
+    filterMS.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  /*__________________________________________________________________
+    Test 2: Test argumented constructor
+  */
+  
+  std::cout << "\n[3] Testing dalFilter (string,string) ..." << std::endl;
   try {
     DAL::dalFilter filterHDF5 ("HDF5", columns);
     filterHDF5.summary();
     //
-    DAL::dalFilter filterMS ("MSCASA", columns);
+    DAL::dalFilter filterFITS ("FITS", columns);
+    filterFITS.summary();
+    //
+    DAL::dalFilter filterMS ("CASA_MS", columns);
     filterMS.summary();
   }
   catch (std::string message) {

@@ -69,15 +69,15 @@ namespace DAL {
     // === Methods ==============================================================
 
     //! Restrict the opening of a table to particular columns.
-    bool set (std::string const &columns);
-
+    bool setFilter (std::string const &columns);
+    
     //! Restrict the opening of a table to particular columns.
-    bool set (std::vector<std::string> const &columns);
-
+    bool setFilter (std::vector<std::string> const &columns);
+    
     //! Restrict the opening of a table to particular columns and conditions.
-    void set (std::string const &columns,
-	      std::string const &conditions);
-
+    bool setFilter (std::string const &columns,
+		    std::string const &conditions);
+    
     //! Get the type of the file
     inline std::string filetype () {
       return itsFiletype.name();
@@ -94,6 +94,11 @@ namespace DAL {
       return itsFilterIsSet;
     }
 
+    //! Retrieve the filter string.
+    inline std::string filterString () {
+      return itsFilterString;
+    }
+    
     //! Retrieve the filter string.
     inline std::string get () {
       return itsFilterString;

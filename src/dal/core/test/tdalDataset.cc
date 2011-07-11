@@ -178,6 +178,21 @@ int test_MS (std::string const &filename)
 
   DAL::dalDataset ms (filename);
   ms.summary();
+
+  /*________________________________________________________
+    Assign filter to access tables
+   */
+
+  try {  
+    string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+    string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+
+    ms.setFilter (columns, filter_conditions);
+    ms.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
   
   return nofFailedTests;
 }

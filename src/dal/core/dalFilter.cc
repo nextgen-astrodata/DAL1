@@ -47,10 +47,9 @@ namespace DAL {
   dalFilter::dalFilter (DAL::dalFileType const &type,
 			std::string columns)
   {
-    init ();             /* Initialize internal parameters */
-    setFiletype(type);   /* Set file type                  */
-    
-    set (columns);
+    init ();
+    setFiletype(type);
+    setFilter (columns);
   }
 
   //_____________________________________________________________________________
@@ -66,10 +65,9 @@ namespace DAL {
   dalFilter::dalFilter (std::string type,
 			std::string columns)
   {
-    init ();             /* Initialize internal parameters */
-    setFiletype(type);   /* Set file type                  */
-    
-    set (columns);
+    init ();
+    setFiletype(type);
+    setFilter (columns);
   }
   
   //_____________________________________________________________________________
@@ -88,10 +86,9 @@ namespace DAL {
                         std::string cols,
                         std::string conditions )
   {
-    init ();             /* Initialize internal parameters */
-    setFiletype(type);   /* Set file type                  */
-
-    set (cols,conditions);
+    init ();
+    setFiletype(type);
+    setFilter (cols,conditions);
   }
 
   //_____________________________________________________________________________
@@ -105,15 +102,14 @@ namespace DAL {
            (i.e. "ANTENNA1=1 AND ANTENNA2=10")
 
     Restrict the opening of a table to particular columns and conditions.
-   */
+  */
   dalFilter::dalFilter( std::string type,
                         std::string cols,
                         std::string conditions )
   {
-    init ();             /* Initialize internal parameters */
-    setFiletype(type);   /* Set file type                  */
-
-    set (cols,conditions);
+    init ();
+    setFiletype(type);
+    setFilter (cols,conditions);
   }
 
   // ============================================================================
@@ -130,7 +126,7 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                          set
+  //                                                                    setFilter
   
   /*!
     \param columns A comma-separated list of the column names that you
@@ -139,10 +135,9 @@ namespace DAL {
             was encountered, e.g. because the operation is not supported for the
 	    file type.
   */
-  bool dalFilter::set (std::string const &columns)
+  bool dalFilter::setFilter (std::string const &columns)
   {
-    bool status         = true;
-    std::string message = "[dalFilter::set]";
+    bool status = true;
     
     switch (itsFiletype.type()) {
     case dalFileType::CASA_MS:
@@ -151,13 +146,10 @@ namespace DAL {
       break;
     default:
       {
+	std::cerr << "[dalFilter::setFilter] Operation not yet supoorted for type "
+		  << itsFiletype.name()
+		  << std::endl;
 	status = false;
-	/* Assemble error mesage */
-	message += "Operation not yet supported for type: ";
-	message += itsFiletype.name();
-	message += ". Sorry.";
-	/* Write error message */
-	std::cerr << message << std::endl;
       }
       break;
     };
@@ -166,12 +158,12 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                          set
+  //                                                                    setFilter
   
   /*!
     \param columns -- Names of the columns to select.
   */
-  bool dalFilter::set (std::vector<std::string> const &columns)
+  bool dalFilter::setFilter (std::vector<std::string> const &columns)
   {
     if (columns.empty()) {
       std::cerr << "[dalFilter::set] Empty list of column names!" << std::endl;
@@ -184,7 +176,7 @@ namespace DAL {
 	names += columns[n];
       }
       /* Set the column selection */
-      return set (names);
+      return setFilter (names);
     }
   }
   
@@ -197,9 +189,11 @@ namespace DAL {
     \param conditions A list of the conditions you want to apply.
                       (i.e. "ANTENNA1=1 AND ANTENNA2=10")
    */
-  void dalFilter::set (std::string const &cols,
-		       std::string const &conditions)
+  bool dalFilter::setFilter (std::string const &cols,
+			     std::string const &conditions)
   {
+    bool status = true;
+
     switch (itsFiletype.type()) {
     case dalFileType::CASA_MS:
       break;
@@ -207,19 +201,22 @@ namespace DAL {
         itsFilterIsSet  = true;
     default:
       {
-      std::cerr << "Operation not yet supported for type: " 
-		<< itsFiletype.name()
-		<< ". Sorry.\n";
+	std::cerr << "[dalFilter::setFilter] Operation not yet supoorted for type "
+		  << itsFiletype.name()
+		  << std::endl;
+	status = false;
       }
       break;
     };
+
+    return status;
   }
 
   //_____________________________________________________________________________
   //                                                                  setFiletype
   
   /*!
-    \param type The type of the file (i.e. "MSCAS", "HDF5", etc.)
+    \param type The type of the file (i.e. "CASA_MS", "HDF5", etc.)
    */
   bool dalFilter::setFiletype (std::string const &type)
   {

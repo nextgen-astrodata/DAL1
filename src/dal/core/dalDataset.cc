@@ -260,10 +260,11 @@ namespace DAL {
   {
     os << "[dalDataset] Summary of object properties" << std::endl;
 
-    os << "-- Dataset type     = " << itsFiletype.name() << std::endl;
-    os << "-- Dataset name     = " << getName()          << std::endl;
-    os << "-- HDF5 file handle = " << getFileHandle()    << std::endl;
-    os << "-- HDF5 group ID    = " << getId()            << std::endl;
+    os << "-- Dataset type     = " << itsFiletype.name()    << std::endl;
+    os << "-- Dataset name     = " << getName()             << std::endl;
+    os << "-- HDF5 file handle = " << getFileHandle()       << std::endl;
+    os << "-- HDF5 group ID    = " << getId()               << std::endl;
+    os << "-- Filter string    = " << filter.filterString() << std::endl;
 
     /* Further properties only can be requested if the object is connected
      * to a dataset.
@@ -595,7 +596,7 @@ namespace DAL {
   void dalDataset::setFilter (std::string const &columns)
   {
     filter.setFiletype(itsFiletype);
-    filter.set(columns);
+    filter.setFilter(columns);
   }
 
   //_____________________________________________________________________________
@@ -611,7 +612,7 @@ namespace DAL {
 			      std::string const &conditions)
   {
     filter.setFiletype(itsFiletype);
-    filter.set(columns,conditions);
+    filter.setFilter(columns,conditions);
   }
 
   //_____________________________________________________________________________
