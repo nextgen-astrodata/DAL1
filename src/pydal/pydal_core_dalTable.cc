@@ -146,7 +146,7 @@ PyObject* dalTable::readRows_boost (int start,
   PyObject* py_list = PyList_New( 0 );
   PyObject *py_item;
   void * value;
-  if ( type == H5TYPE ) {
+  if (itsFiletype.type()==DAL::dalFileType::HDF5) {
     char * data_out;
     data_out = (char*) malloc ( 1 );
     
@@ -254,7 +254,8 @@ PyObject* dalTable::readRows_boost (int start,
     }
   }
   else {
-    std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+	      << ".  Sorry.\n";
   }
   
   return py_list;
@@ -524,7 +525,7 @@ void export_dalTable ()
 #ifdef DAL_WITH_CASA
     .def( "openTable", &dalTable::ot_nonMStable,
 	  "Open a casa table." )
-    .def( "getName", &dalTable::getName,
+    .def( "tableName", &dalTable::tableName,
 	  "Get the name of a casa table." )
     .def( "setFilter", &dalTable::setFilter_boost1,
 	  "Set a filter on a casa table." )

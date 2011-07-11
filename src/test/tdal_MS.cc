@@ -90,7 +90,7 @@ int test_MeasurementSet (std::string const &filename_ms)
     dalTable * maintable = msds.openTable( tablename );
     
     // print the name of the table [ doesn't seem to work ]
-    maintable->getName();
+    cout << "-- Table name = " << maintable->tableName() << std::endl;
     
   }
   catch (std::string message) {
