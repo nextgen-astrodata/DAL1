@@ -99,12 +99,9 @@ int test_constructors (std::map<std::string,std::string> &filenames)
 
   \brief filename -- Name of the dataset to be created and used for the test
 */
-int test_attributes (std::string const &filename,
-		     std::string const dalType)
+int test_attributes (std::string const &filename)
 {
   std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
-  std::cout << "-- Filename      = " << filename << std::endl;
-  std::cout << "-- DAL file type = " << dalType  << std::endl;
 
   int nofFailedTests = 0;
   // int nelem          = 5;
@@ -165,6 +162,27 @@ int test_attributes (std::string const &filename,
 }
 
 //_______________________________________________________________________________
+//                                                                        test_MS
+
+int test_MS (std::string const &filename)
+{
+  std::cout << "\n[tdalDataset::test_MS]\n" << std::endl;
+
+  int nofFailedTests = 0;
+
+  /*________________________________________________________
+    Open MeasurementSet file
+  */
+  
+  std::cout << "[1] Opening MeasurementSet ..." << std::endl;
+
+  DAL::dalDataset ms (filename);
+  ms.summary();
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -177,25 +195,24 @@ int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
   bool haveDataset     = false;
-  std::string dalType  = "HDF5";
   std::string filename = "tdalDataset.h5";
-  std::string dataset;
+  DAL::dalFileType filetype;
 
   std::map<std::string,std::string> filenames;
-  filenames["HDF5"]   = "tdalDataset.h5";
-  filenames["FITS"]   = "tdalDataset.fits";
-  filenames["MSCASA"] = "tdalDataset.ms";
+  filenames["HDF5"]    = "tdalDataset.h5";
+  filenames["FITS"]    = "tdalDataset.fits";
+  filenames["CASA_MS"] = "tdalDataset.ms";
 
   //________________________________________________________
   // Process parameters from the command line
   
   if (argc > 1) {
-    dataset     = std::string(argv[1]);
+    filename    = std::string(argv[1]);
     haveDataset = true;
   }
 
   if (argc > 2) {
-    dalType = std::string(argv[2]);
+    filetype.setType(std::string(argv[2]));
   }
   
   //________________________________________________________
@@ -204,7 +221,16 @@ int main (int argc, char *argv[])
   //! Test constructors for dalDataset object
   nofFailedTests += test_constructors(filenames);
   //! Test creation of and access to attributes
-  nofFailedTests += test_attributes (filename, dalType);
+  nofFailedTests += test_attributes (filename);
+
+  switch (filetype.type()) {
+  case DAL::dalFileType::CASA_MS:
+    nofFailedTests += test_MS (filename);
+    break;
+  default:
+    std::cout << "--> Unsupported file type " << argv[2] << std::endl;
+    break;
+  };
   
   return nofFailedTests;
 }

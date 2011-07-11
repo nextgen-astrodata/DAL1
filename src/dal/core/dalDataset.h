@@ -89,7 +89,7 @@ namespace DAL {
       \code
       // Get the group ID
       dataset.getId();
-      // Retrieve the dataset type ("HDF5", "MSCASA", etc.)
+      // Retrieve the dataset type ("HDF5", "CASA_MS", etc.)
       dataset.getType();
       // Retrieve the name of the data set
       dataset.getName();
@@ -155,7 +155,7 @@ namespace DAL {
     // === Public methods =======================================================
 
     //! Open the dataset
-    bool open (const char * filename);
+    bool open (std::string const &filename);
     //! Close the dataset
     bool close();
     //! Get the attributes of the dataset
@@ -268,8 +268,8 @@ namespace DAL {
     //! List the tables in a dataset.
     std::vector<std::string> listTables();
     /*!
-      \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.).
-      \return type -- A string describing the file format ("HDF5", "MSCASA", etc.)
+      \brief Retrieve the dataset type ("HDF5", "CASA_MS", etc.).
+      \return type -- A string describing the file format ("HDF5", "CASA_MS", etc.)
     */
     inline std::string getType() {
       return itsFiletype.name();
@@ -312,9 +312,9 @@ namespace DAL {
     //! Unconditional deletion of internal parameters
     bool destroy ();
     //! Try to open HDF5 file
-    bool openFITS (const char * fname);
+    bool openFITS (std::string const &filename);
     //! Try to open FITS file
-    hid_t openHDF5 (const char * fname);
+    hid_t openHDF5 (std::string const &filename);
     
     // ==========================================================================
     //

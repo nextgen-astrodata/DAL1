@@ -73,9 +73,9 @@ endif (H5LS_EXECUTABLE)
 
 ## tdalDataset ___________________________________
 
-if (dataset_ms)
-  add_test (tdalDataset_ms tdalDataset ${dataset_ms} MSCASA)
-endif (dataset_ms)
+if (TESTDATA_L20851_SB120)
+  add_test (tdalDataset_ms tdalDataset ${TESTDATA_L20851_SB120} CASA_MS)
+endif (TESTDATA_L20851_SB120)
 
 if (dataset_beamformed)
   add_test (tdalDataset_hdf5_bf tdalDataset ${dataset_beamformed})
