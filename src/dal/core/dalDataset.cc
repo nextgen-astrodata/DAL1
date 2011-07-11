@@ -266,8 +266,9 @@ namespace DAL {
     os << "-- HDF5 group ID    = " << getId()               << std::endl;
     os << "-- Filter string    = " << filter.filterString() << std::endl;
 
-    /* Further properties only can be requested if the object is connected
-     * to a dataset.
+    /*______________________________________________________
+      Further properties only can be requested if the object
+      is connected to a dataset.
      */
 
     if (getName() != "UNDEFINED") {

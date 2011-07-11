@@ -164,7 +164,8 @@ int test_attributes (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                        test_MS
 
-int test_MS (std::string const &filename)
+int test_MS (std::string const &filename,
+	     std::string const &tablename="MAIN")
 {
   std::cout << "\n[tdalDataset::test_MS]\n" << std::endl;
 
@@ -180,20 +181,40 @@ int test_MS (std::string const &filename)
   ms.summary();
 
   /*________________________________________________________
-    Assign filter to access tables
-   */
+    Assign filter to access tables; the additional condition 
+    applied to the column selection will cause extraction of
+    the auto-correlation products.
+  */
+  
+  std::cout << "[2] Set Filter used when acessing table ..." << std::endl;
 
   try {  
     string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
     string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
-
+    
     ms.setFilter (columns, filter_conditions);
     ms.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
+
+  /*________________________________________________________
+    Open a specific table in the MeasurementSet; by default 
+    this will be the 'MAIN' table at the root lavel of the 
+    data set.
+  */
+
+  std::cout << "[3] Open table " << tablename << " ..." << std::endl;
+
+  try {
+    DAL::dalTable * table = ms.openTable (tablename);
+    table->summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
