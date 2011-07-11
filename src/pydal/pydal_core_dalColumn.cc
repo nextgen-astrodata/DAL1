@@ -97,9 +97,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  case casa::TpInt:
 	    {
 	      rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
-	      scalar_vals_int = rosc_int->getColumn();
+	      casa::Vector<int> data = rosc_int->getColumn();
 	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
+	      data_object->data = (int *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;
@@ -115,9 +115,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  case casa::TpDouble:
 	    {
 	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
-	      scalar_vals_dbl = rosc_dbl->getColumn();
+	      casa::Vector<double> data = rosc_dbl->getColumn();
 	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
+	      data_object->data = (double *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;

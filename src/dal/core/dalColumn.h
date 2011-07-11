@@ -54,7 +54,7 @@ namespace DAL {
     //! HDF5 file object identifier
     hid_t itsFileID;
     //! HDF5 table object identifier
-    hid_t tableID_p;
+    hid_t itsTableID;
     //! HDF5 field count
     hsize_t nofFields_p;
     //! HDF5 record count
@@ -90,9 +90,7 @@ namespace DAL {
     casa::Array<casa::String> itsArrayString;
     
     // VECTORs
-    casa::Vector<casa::Double> scalar_vals_dbl;
     casa::Vector<casa::Complex> scalar_vals_comp;
-    casa::Vector<casa::Int> scalar_vals_int;
     casa::Vector<casa::String> scalar_vals_string;
     casa::Vector<bool> scalar_vals_bool;
     vector< std::complex< float > > stl_vec_comp;
