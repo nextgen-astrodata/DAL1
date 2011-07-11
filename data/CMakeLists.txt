@@ -1,5 +1,5 @@
 
-file (GLOB dalExampledata *.h5)
+file (GLOB dalExampledata *.h5 *.ms)
 
 if (dalExampledata)
   
