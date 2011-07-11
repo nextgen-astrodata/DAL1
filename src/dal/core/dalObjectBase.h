@@ -59,6 +59,8 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
 
+    //! Object handler, used with underlying low-level libraries
+    void * itsObjectHandler;
     //! File type: CASA_MS, HDF5, FITS, etc.
     dalFileType itsFiletype;
     //! I/O mode flags
@@ -117,7 +119,8 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
     
-    
+    virtual bool open (std::string const &name,
+		       IO_Mode const &flags=IO_Mode(IO_Mode::Open)) = 0;
     
     // === Static methods =======================================================
     
