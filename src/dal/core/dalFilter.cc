@@ -47,8 +47,7 @@ namespace DAL {
   dalFilter::dalFilter (DAL::dalFileType const &type,
 			std::string columns)
   {
-    init ();
-    setFiletype(type);
+    init (type);
     setFilter (columns);
   }
 
@@ -65,8 +64,7 @@ namespace DAL {
   dalFilter::dalFilter (std::string type,
 			std::string columns)
   {
-    init ();
-    setFiletype(type);
+    init (DAL::dalFileType(type));
     setFilter (columns);
   }
   
@@ -86,8 +84,7 @@ namespace DAL {
                         std::string cols,
                         std::string conditions )
   {
-    init ();
-    setFiletype(type);
+    init (type);
     setFilter (cols,conditions);
   }
 
@@ -107,8 +104,7 @@ namespace DAL {
                         std::string cols,
                         std::string conditions )
   {
-    init ();
-    setFiletype(type);
+    init (DAL::dalFileType(type));
     setFilter (cols,conditions);
   }
 
@@ -118,10 +114,10 @@ namespace DAL {
   //
   // ============================================================================
 
-  void dalFilter::init ()
+  void dalFilter::init (dalFileType const &type)
   {
     itsFilterString = "";
-    itsFiletype     = dalFileType();
+    itsFiletype     = type;
     itsFilterIsSet  = false;
   }
 
@@ -181,7 +177,7 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                          set
+  //                                                                    setFilter
   
   /*!
     \param columns A comma-separated list of the column names that you

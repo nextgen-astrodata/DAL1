@@ -55,14 +55,14 @@ namespace DAL {
     dalFilter (dalFileType const &type,
 	       std::string columns);
     //! Argumented constructor
-    dalFilter( std::string type,
+    dalFilter (std::string type,
 	       std::string columns);
     //! Argumented constructor
     dalFilter (DAL::dalFileType const &type,
 	       std::string columns,
 	       std::string conditions);
     //! Argumented constructor
-    dalFilter( std::string type,
+    dalFilter (std::string type,
 	       std::string columns,
 	       std::string conditions);
     
@@ -114,7 +114,7 @@ namespace DAL {
   private:
 
     //! Initialize internal parameters
-    void init ();
+    void init (dalFileType const &type=dalFileType());
     
   };
   
