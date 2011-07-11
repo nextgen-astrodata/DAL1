@@ -38,7 +38,10 @@ namespace DAL {
 
   //_____________________________________________________________________________
   //                                                                     dalTable
-  
+
+  /*!
+    \param filetype -- File type descriptor, passed as \c dalFileType object.
+  */
   dalTable::dalTable (dalFileType const &filetype)
   {
     init (filetype);
@@ -47,6 +50,9 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                     dalTable
   
+  /*!
+    \param filetype -- File type descriptor, passed as \c dalFileType::Type.
+  */
   dalTable::dalTable (dalFileType::Type const &filetype)
   {
     init (dalFileType(filetype));
@@ -55,6 +61,9 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                     dalTable
   
+  /*!
+    \param filetype -- File type descriptor, passed as \c string.
+  */
   dalTable::dalTable (std::string const &filetype)
   {
     init (dalFileType(filetype));
@@ -90,6 +99,9 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                         init
   
+  /*!
+    \param filetype -- File type descriptor, passed as \c dalFileType object.
+  */
   void dalTable::init (DAL::dalFileType const &filetype)
   {
     file           = NULL;
@@ -100,6 +112,7 @@ namespace DAL {
     nofRecords_p   = 0;
     status         = 0;
     itsFirstRecord = true;
+    itsFilter      = NULL;
 
     columns.clear();
     
