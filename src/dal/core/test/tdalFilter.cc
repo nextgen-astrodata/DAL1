@@ -46,8 +46,9 @@ int test_constructors ()
 {
   std::cout << "\n[tdalDataset::test_constructors]" << std::endl;
 
-  int nofFailedTests (0);
-  std::string columns ("DATA");
+  int nofFailedTests     = 0;
+  std::string columns    = "DATA";
+  std::string conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
 
   /*__________________________________________________________________
     Test 1: Default constructor
@@ -85,7 +86,7 @@ int test_constructors ()
   }
 
   /*__________________________________________________________________
-    Test 2: Test argumented constructor
+    Test 3: Test argumented constructor
   */
   
   std::cout << "\n[3] Testing dalFilter (string,string) ..." << std::endl;
@@ -104,6 +105,45 @@ int test_constructors ()
     nofFailedTests++;
   }
 
+  /*__________________________________________________________________
+    Test 4: Test argumented constructor
+  */
+  
+  std::cout << "\n[4] Testing dalFilter(dalFileType,string,string) ..." << std::endl;
+  try {
+    DAL::dalFilter filterHDF5 (DAL::dalFileType::HDF5, columns, conditions);
+    filterHDF5.summary();
+    //
+    DAL::dalFilter filterFITS (DAL::dalFileType::FITS, columns, conditions);
+    filterFITS.summary();
+    //
+    DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns, conditions);
+    filterMS.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                   test_methods
+
+/*!
+  \brief Test the various public methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_methods ()
+{
+  std::cout << "\n[tdalDataset::test_methods]" << std::endl;
+  
+  int nofFailedTests (0);
+  std::string columns ("DATA");
+  
   return nofFailedTests;
 }
 
@@ -130,6 +170,7 @@ int main (int argc, char *argv[])
   // Run the tests
 
   nofFailedTests += test_constructors ();
+  nofFailedTests += test_methods ();
 
   return nofFailedTests;
 }

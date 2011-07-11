@@ -189,12 +189,14 @@ namespace DAL {
 			     std::string const &conditions)
   {
     bool status = true;
-
+    
     switch (itsFiletype.type()) {
     case dalFileType::CASA_MS:
-      break;
+      {
         itsFilterString = "Select " + cols + " from $1 where " + conditions;
         itsFilterIsSet  = true;
+      }
+      break;
     default:
       {
 	std::cerr << "[dalFilter::setFilter] Operation not yet supoorted for type "
@@ -204,7 +206,7 @@ namespace DAL {
       }
       break;
     };
-
+    
     return status;
   }
 
