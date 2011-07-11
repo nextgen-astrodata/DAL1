@@ -648,38 +648,51 @@ namespace DAL {
   //                                                                    openTable
   
   /*!
-    \param tablename The name of the table you want to open.
+    \param tablename -- The name of the table you want to open.
+    \return status   -- Status of the operation; return \e false in case an error
+            was encountered.
   */
-  void dalTable::openTable( std::string tablename )
+  bool dalTable::openTable (std::string tablename )
   {
-    if (itsFiletype.type()==dalFileType::CASA_MS) {
+    bool status = true;
+
+    switch (itsFiletype.type()) {
 #ifdef DAL_WITH_CASA
-      if ( itsFilter->isSet() ) {
-	try {
-	  *itsCasaTable = casa::Table( tablename );
-	  *itsCasaTable = casa::tableCommand( itsFilter->get(),
-						   *itsCasaTable );
+    case dalFileType::CASA_MS:
+      {
+	if ( itsFilter->isSet() ) {
+	  try {
+	    *itsCasaTable = casa::Table( tablename );
+	    *itsCasaTable = casa::tableCommand( itsFilter->get(),
+						*itsCasaTable );
+	  }
+	  catch (casa::AipsError x) {
+	    std::cerr << "ERROR: " << x.getMesg() << endl;
+	  }
 	}
-	catch (casa::AipsError x) {
-	  std::cerr << "ERROR: " << x.getMesg() << endl;
+	else {
+	  try {
+	    *itsCasaTable = casa::Table( tablename );
+	  }
+	  catch (casa::AipsError x) {
+	    std::cerr << "ERROR: " << x.getMesg() << endl;
+	  }
 	}
       }
-      else {
-	try {
-	  *itsCasaTable = casa::Table( tablename );
-	}
-	catch (casa::AipsError x) {
-	  std::cerr << "ERROR: " << x.getMesg() << endl;
-	}
-      }
-#else
-      std::cerr << "ERROR: CASA support not enabled.\n";
+      break;
 #endif
-    }
-    else {
-      std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-		<< itsFiletype.name() << endl;
-    }
+    default:
+      {
+	std::cerr << "[dalTable::openTable]"
+		  << " Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+	status = false;
+      }
+      break;
+    };
+    
+    return status;
   }
   
   //_____________________________________________________________________________

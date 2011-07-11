@@ -132,7 +132,7 @@ namespace DAL {
     
 #ifdef DAL_WITH_CASA
     //! Open a CASA table, not in a MeasurementSet.
-    void openTable (std::string tablename);
+    bool openTable (std::string tablename);
     //! Open the table in a measurement set.
     void openTable (std::string tablename,
 		    casa::MSReader * reader );
