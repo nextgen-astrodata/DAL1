@@ -87,16 +87,29 @@ void export_dalFileType ()
     .def("name",
 	 &dalFileType::name,
 	 "Get file type as name.")
-    // .def("+++",
-    // 	 &dalFileType::+++,
-    // 	 "+++")
-    // Methods
+    .def("isFITS",
+    	 &dalFileType::isFITS,
+    	 "Is the file of type FITS?")
+    .def("isHDF5",
+    	 &dalFileType::isHDF5,
+    	 "Is the file of type HDF5?")
+    .def("isCASA",
+    	 &dalFileType::isCASA,
+    	 "Is the file of type CASA?")
+    .def("className",
+	 &dalFileType::className,
+	 "Get the name of the class.")
+    // Public methods
     .def("summary",
 	 summary1,
 	 "Summary of the object's internal parameters and status.")
     .def("summary",
 	 summary2,
 	 "Summary of the object's internal parameters and status.")
+    // Static methods 
+    .staticmethod("getMap")
+    .staticmethod("getType")
+    .staticmethod("getName")
     ;
 }
 
