@@ -97,57 +97,57 @@ void export_BF_RootGroup ()
       ;
       
    // Data access methods       
-`   bool ( BF_RootGroup::*open)(hid_t const &,
-            string const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::open;
-
+   bool ( BF_RootGroup::*open)(hid_t const &,
+			       string const &,
+			       DAL::IO_Mode const &) = &BF_RootGroup::open;
+   
    bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
-
+						DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
+   
    bool ( BF_RootGroup::*openBeam1)(hid_t const &,
-            const string &,
-            DAL::IO_Mode const &) = &BF_RootGroup::open;
-      
+				    const string &,
+				    DAL::IO_Mode const &) = &BF_RootGroup::open;
+   
    bool ( BF_RootGroup::*openStokesDataset1)(unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
-
+					     unsigned int const &,
+					     unsigned int const &,
+					     DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
+   
    bool ( BF_RootGroup::*openBeam2)(unsigned int const &,
-               unsigned const int &,
-               DAL::IO_Mode const &) = &BF_RootGroup::openBeam;
-      
+				    unsigned const int &,
+				    DAL::IO_Mode const &) = &BF_RootGroup::openBeam;
+   
    bool ( BF_RootGroup::*openStokesDataset2)(unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            DAL::Stokes::Component const &,
-            hid_t const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
-
+					     unsigned int const &,
+					     unsigned int const &,
+					     unsigned int const &,
+					     unsigned int const &,
+					     unsigned int const &,
+					     DAL::Stokes::Component const &,
+					     hid_t const &,
+					     DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
+   
    bool ( BF_RootGroup::*openStokesDataset3)(unsigned int const &pointingID,
-            unsigned int const &beamID,
-            unsigned int const &stokesID,
-            unsigned int const &nofSamples,
-            unsigned int const &nofSubbands,
-            unsigned int const &nofChannels,
-            DAL::Stokes::Component const &component,
-            hid_t const &datatype=H5T_NATIVE_FLOAT,
-            DAL::IO_Mode const &flags);
-
+					     unsigned int const &beamID,
+					     unsigned int const &stokesID,
+					     unsigned int const &nofSamples,
+					     unsigned int const &nofSubbands,
+					     unsigned int const &nofChannels,
+					     DAL::Stokes::Component const &component,
+					     hid_t const &datatype=H5T_NATIVE_FLOAT,
+					     DAL::IO_Mode const &flags);
+   
    bool ( BF_RootGroup::*openStokesDataset)(unsigned int const &pointingID,
-            unsigned int const &beamID,
-            unsigned int const &stokesID,
-            unsigned int const &nofSamples,
-            std::vector<unsigned int> const &nofChannels,
-            DAL::Stokes::Component const &component=DAL::Stokes::I,
-            hid_t const &datatype=H5T_NATIVE_FLOAT,
-            DAL::IO_Mode const &flags);
-
+					    unsigned int const &beamID,
+					    unsigned int const &stokesID,
+					    unsigned int const &nofSamples,
+					    std::vector<unsigned int> const &nofChannels,
+					    DAL::Stokes::Component const &component=DAL::Stokes::I,
+					    hid_t const &datatype=H5T_NATIVE_FLOAT,
+					    DAL::IO_Mode const &flags);
+   
    BF_BeamGroup ( BF_RootGroup::*getBeamGroup)(unsigned int const &pointingID,
-			       unsigned int const &beamID);
+					       unsigned int const &beamID);
 }
 
 
