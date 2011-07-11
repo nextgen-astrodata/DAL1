@@ -51,8 +51,10 @@ namespace DAL {
   
   class dalTable {
     
-    void * file;  // can be HDF5File, FITS, MS
-    
+    //! File pointer (can be HDF5, FITS or CASA MS)
+    void * file;
+    //! File type: CASA_MS, HDF5, FITS, etc.
+    dalFileType itsFiletype;
     //! HDF5 file_id
     hid_t itsFileID;
     //! HDF5 table id
@@ -63,14 +65,13 @@ namespace DAL {
     hsize_t nofRecords_p;
     //! HDF5 return status
     herr_t status;
-    //! HDF5 list of columns
-    char **itsFieldNames;
     //! Table access filter
     dalFilter * itsFilter;
+    //! HDF5 list of columns
+    char **itsFieldNames;
     
-    bool firstrecord;
+    bool itsFirstRecord;
     std::string name;  // table name
-    std::string type;  // "HDF5", "MSCASA" or "FITS"; for example
     std::vector<dalColumn> columns; // list of table columns
     
 #ifdef DAL_WITH_CASA
@@ -80,14 +81,6 @@ namespace DAL {
     casa::ROTableColumn * itsCasaColumn;
 #endif
     
-    //! Setup for adding another column to an HDF5 table
-    bool h5addColumn_setup (std::string const &column_name,
-			    bool &removedummy);
-    void h5addColumn_insert (uint const & indims,
-			     std::string const & colname,
-			     hid_t const & field_type,
-			     bool const & removedummy );
-    
   public:
     
     // === Construction =========================================================
@@ -95,9 +88,11 @@ namespace DAL {
     //! Default table constructor
     dalTable ();
     //! Table constructor for a specific file format.
-    dalTable (std::string const &filetype);
-    //! Table constructor for a specific file format.
     dalTable (dalFileType const &filetype);
+    //! Table constructor for a specific file format.
+    dalTable (dalFileType::Type const &filetype);
+    //! Table constructor for a specific file format.
+    dalTable (std::string const &filetype);
     
     // === Destruction ==========================================================
 
@@ -240,8 +235,8 @@ namespace DAL {
     bool findAttribute( std::string attrname );
     //! Get the number of rows within the table
     long getNumberOfRows();
-    //! Print the name of the table
-    void getName();
+    //! Get the name of the table
+    std::string tableName ();
     //! Retrieve a dalColumn by name.
     void * getColumnData ( std::string colname );
     
@@ -295,6 +290,21 @@ namespace DAL {
 #endif
     
 #endif
+
+  // === Private methods ========================================================
+
+ private:
+
+  //! Initialize internal parameters
+  void init (DAL::dalFileType const &filetype=DAL::dalFileType());
+  //! Setup for adding another column to an HDF5 table
+  bool h5addColumn_setup (std::string const &column_name,
+			  bool &removedummy);
+  void h5addColumn_insert (uint const & indims,
+			   std::string const & colname,
+			   hid_t const & field_type,
+			   bool const & removedummy );
+
   };
   
 } // end namespace DAL

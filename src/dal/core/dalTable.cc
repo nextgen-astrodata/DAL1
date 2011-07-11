@@ -33,31 +33,31 @@ namespace DAL {
   
   dalTable::dalTable()
   {
-    itsFilter = new dalFilter;
+    init ();
   }
-  
+
   //_____________________________________________________________________________
-  //                                                                    dalFilter
+  //                                                                     dalTable
   
-  /*!
-    \param filetype -- The type of table you want to create (i.e. "HDF5",
-           "MSCASA", etc.)
-  */
+  dalTable::dalTable (dalFileType const &filetype)
+  {
+    init (filetype);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     dalTable
+  
+  dalTable::dalTable (dalFileType::Type const &filetype)
+  {
+    init (dalFileType(filetype));
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     dalTable
+  
   dalTable::dalTable (std::string const &filetype)
   {
-    itsFilter = new dalFilter;
-
-    type = filetype;
-    columns.clear();  // clear the columns vector
-    firstrecord = true;
-    
-    if ( type == MSCASATYPE ) {
-#ifdef DAL_WITH_CASA
-      itsCasaTable = new casa::Table;
-#else
-      std::cerr << "CASA support not enabled." << std::endl;
-#endif
-    }
+    init (dalFileType(filetype));
   }
   
   // ============================================================================
@@ -72,11 +72,13 @@ namespace DAL {
   dalTable::~dalTable()
   {
     delete itsFilter;
-    if ( type == MSCASATYPE ) {
+
 #ifdef DAL_WITH_CASA
+    if (itsFiletype.type() == dalFileType::CASA_MS) {
       delete itsCasaTable;
-#endif
+      delete itsCasaColumn;
     }
+#endif
   }
   
   // ============================================================================
@@ -84,6 +86,39 @@ namespace DAL {
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void dalTable::init (DAL::dalFileType const &filetype)
+  {
+    file           = NULL;
+    itsFiletype    = filetype;
+    itsFileID      = 0;
+    itsTableID     = 0;
+    nfields        = 0;
+    nofRecords_p   = 0;
+    status         = 0;
+    itsFirstRecord = true;
+
+    columns.clear();
+    
+    switch (itsFiletype.type()) {
+#ifdef DAL_WITH_CASA
+    case dalFileType::CASA_MS:
+      {
+	itsCasaTable = new casa::Table;
+      }
+      break;
+#endif
+    case dalFileType::FITS:
+      break;
+    case dalFileType::HDF5:
+      break;
+    default:
+      break;
+    }
+  }
   
   //_____________________________________________________________________________
   //                                                                      summary
@@ -96,10 +131,10 @@ namespace DAL {
     os << "\n[dalTable] Summary of object properties"  << endl;
 
     if (name != "") {
-      os << "-- Table name    = " << name              << std::endl;
-      os << "-- Table type    = " << type              << std::endl;
-      os << "-- nof. rows     = " << getNumberOfRows() << std::endl;
-      os << "-- nof. columns  = " << nofColumns()      << std::endl;
+      os << "-- Table name    = " << name               << std::endl;
+      os << "-- Table type    = " << itsFiletype.name() << std::endl;
+      os << "-- nof. rows     = " << getNumberOfRows()  << std::endl;
+      os << "-- nof. columns  = " << nofColumns()       << std::endl;
     }
     
     /* If the table contains a non-zero number of columns, list their names.
@@ -116,7 +151,7 @@ namespace DAL {
     /* If the table is working with HDF5 as back-end, provide a summary of the
      * identifiers and properties.
      */
-    if (type == H5TYPE && itsFileID > 0) {
+    if (itsFiletype.type()==dalFileType::HDF5 && itsFileID > 0) {
       os << "-- HDF5 file ID  = " << itsFileID    << std::endl;
       os << "-- HDF5 table ID = " << itsTableID   << std::endl;
       os << "-- nof. fields   = " << nfields      << std::endl;
@@ -137,81 +172,83 @@ namespace DAL {
   */
   dalColumn * dalTable::getColumn ( std::string colname )
   {
-    if ( type == MSCASATYPE ) {
+
+    switch (itsFiletype.type()) {
+    case dalFileType::CASA_MS:
+      {
 #ifdef DAL_WITH_CASA
       // using the dalColumn class
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *itsCasaTable, colname );
-      
-#ifdef DAL_DEBUGGING_MESSAGES
-      lclcol->getType();
-      if ( lclcol->isScalar() )
-	std::cerr << colname << " is SCALAR" << endl;
-      if ( lclcol->isArray() )
-	std::cerr << colname << " is ARRAY" << endl;
-#endif
-      
       return lclcol;
-      
 #else
-      
       std::cerr << "ERROR: casacore not installed" << endl;
-      
       // prevent unsused var build warning when casacore isn't installed
       colname = colname;
       return NULL;
 #endif
-    }
-    else if ( type == H5TYPE ) {
-      std::cerr << "ERROR: hdf5 not yet supported for this function."
-		<< " Try getColumn_Float32, etc." << endl;
-      return NULL;
-    }
-    else {
-      return NULL;
-    }
+      }
+      break;
+    default:
+      {
+	std::cerr << "[dalTable::getColumn] Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+	return NULL;
+      }
+      break;
+    };
+    
   }
   
   //_____________________________________________________________________________
   //                                                            getColumn_Float32
   
   /*!
-  \brief Get a column object from a table.
-
-   Gets a column object from a table object.
-
-   \param colname The name of the column you want to get from the table.
-   \return dalColumn Pointer to a column object.
+    \brief Get a column object from a table.
+    
+    Gets a column object from a table object.
+    
+    \param colname The name of the column you want to get from the table.
+    \return dalColumn Pointer to a column object.
   */
   dalColumn * dalTable::getColumn_Float32( std::string colname )
   {
-    if ( type == MSCASATYPE ) {
+
+    switch (itsFiletype.type()) {
 #ifdef DAL_WITH_CASA
-      // using the dalColumn class
+    case dalFileType::CASA_MS:
+      {
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *itsCasaTable, colname );
-#ifdef DAL_DEBUGGING_MESSAGES
-      lclcol->getType();
-      if ( lclcol->isScalar() )
-	std::cerr << colname << " is SCALAR" << endl;
-      if ( lclcol->isArray() )
-	std::cerr << colname << " is ARRAY" << endl;
-#endif
       return lclcol;
+      }
+      break;
 #endif
-    }
-    else if ( type == H5TYPE ) {
-      dalColumn * lclcol;
-      lclcol = new dalColumn (itsFileID,
-			      itsTableID,
-			      H5TYPE,
-			      name,
-			      colname,
-			      dal_FLOAT);
-      
-      return lclcol;
-    }
-    return NULL;
+    case dalFileType::HDF5:
+      {
+	dalColumn * lclcol;
+	lclcol = new dalColumn (itsFileID,
+				itsTableID,
+				H5TYPE,
+				name,
+				colname,
+				dal_FLOAT);
+	
+	return lclcol;
+      }
+      break;
+    default:
+      {
+	std::cerr << "[dalTable::getColumn_Float32]"
+		  << " Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+	return NULL;
+      }
+      break;
+    };
+
   }
   
   //_____________________________________________________________________________
@@ -227,23 +264,18 @@ namespace DAL {
   */
   dalColumn * dalTable::getColumn_complexFloat32( std::string colname )
   {
-    if ( type == MSCASATYPE )
-      {
+
+    switch (itsFiletype.type()) {
 #ifdef DAL_WITH_CASA
-        // using the dalColumn class
+    case dalFileType::CASA_MS:
+      {
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *itsCasaTable, colname );
-#ifdef DAL_DEBUGGING_MESSAGES
-        lclcol->getType();
-        if ( lclcol->isScalar() )
-          std::cerr << colname << " is SCALAR" << endl;
-        if ( lclcol->isArray() )
-          std::cerr << colname << " is ARRAY" << endl;
-#endif
         return lclcol;
-#endif
       }
-    else if ( type == H5TYPE )
+      break;
+#endif
+    case dalFileType::HDF5:
       {
         dalColumn * lclcol;
         lclcol = new dalColumn (itsFileID,
@@ -255,7 +287,18 @@ namespace DAL {
 
         return lclcol;
       }
-    return NULL;
+      break;
+    default:
+      {
+	std::cerr << "[dalTable::getColumn_ComplexFloat32]"
+		  << " Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+	return NULL;
+      }
+      break;
+    };
+
   }
 
   //_____________________________________________________________________________
@@ -271,28 +314,18 @@ namespace DAL {
   */
   dalColumn * dalTable::getColumn_complexInt16( std::string colname )
   {
-    if ( type == MSCASATYPE )
-      {
+
+    switch (itsFiletype.type()) {
 #ifdef DAL_WITH_CASA
-        // using the dalColumn class
+    case dalFileType::CASA_MS:
+      {
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *itsCasaTable, colname );
-#ifdef DAL_DEBUGGING_MESSAGES
-        lclcol->getType();
-        if ( lclcol->isScalar() )
-          std::cerr << colname << " is SCALAR" << endl;
-        if ( lclcol->isArray() )
-          std::cerr << colname << " is ARRAY" << endl;
-#endif
         return lclcol;
-#else
-        std::cerr << "ERROR: casacore not installed" << endl;
-        // prevent unused variable build warning if casacore isn't installed
-        colname = colname;
-        return NULL;
-#endif
       }
-    else if ( type == H5TYPE )
+      break;
+#endif
+    case dalFileType::HDF5:
       {
         dalColumn * lclcol;
         lclcol = new dalColumn (itsFileID,
@@ -302,12 +335,19 @@ namespace DAL {
 				colname,
                                 dal_COMPLEX_SHORT);
         return lclcol;
-
       }
-    else
+      break;
+    default:
       {
-        return NULL;
+	std::cerr << "[dalTable::getColumn_complexInt16]"
+		  << " Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+	return NULL;
       }
+      break;
+    };
+
   }
 
   //_____________________________________________________________________________
@@ -325,7 +365,7 @@ namespace DAL {
   void dalTable::setFilter( std::string columns )
   {
     itsFilter = new dalFilter;
-    itsFilter->setFiletype( type );
+    itsFilter->setFiletype(itsFiletype);
     itsFilter->setFilter(columns);
   }
 
@@ -346,11 +386,12 @@ namespace DAL {
   void dalTable::setFilter (std::string columns,
 			    std::string conditions )
   {
-    itsFilter->setFiletype( type );
+    itsFilter->setFiletype(itsFiletype);
     itsFilter->setFilter(columns,conditions);
   }
   
-  // ---------------------------------------------------------- getColumnData
+  //_____________________________________________________________________________
+  //                                                                getColumnData
 
   /*!
     \param colname The name of the column to retrieve.
@@ -358,7 +399,7 @@ namespace DAL {
    */
   void * dalTable::getColumnData( std::string colname )
   {
-    if ( type == MSCASATYPE )
+    if (itsFiletype.type()==dalFileType::CASA_MS)
       {
 #ifdef DAL_WITH_CASA
         // using the dalColumn class
@@ -554,7 +595,7 @@ namespace DAL {
     else
       {
         std::cerr << "dalTable::getColumnData operation not supported for type "
-                  << type << endl;
+                  << itsFiletype.name() << endl;
         return NULL;
       }
   }
@@ -562,22 +603,30 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                      getName
   
-  void dalTable::getName()
+  std::string dalTable::tableName()
   {
-    if ( type == MSCASATYPE )
+
+    switch (itsFiletype.type()) {
+    case dalFileType::CASA_MS:
       {
-        // print the name of the table
 #ifdef DAL_WITH_CASA
-        std::cerr << "CASA table name: " << itsCasaTable->tableName() << endl;
+	return itsCasaTable->tableName();
 #else
-        std::cerr << "CASA support not enabled." << endl;
+        return std::string ("");
 #endif
       }
-    else
+      break;
+    default:
       {
-        std::cerr << "dalTable::getName operation not supported for type "
-                  << type << endl;
+	std::cerr << "[dalTable::tableName]"
+		  << " Operation not supported for filetype ("
+		  << itsFiletype.name() << ")."
+		  << std::endl;
+        return std::string ("");
       }
+      break;
+    };
+
   }
 
 #ifdef DAL_WITH_CASA
@@ -590,7 +639,7 @@ namespace DAL {
   */
   void dalTable::openTable( std::string tablename )
   {
-    if ( type == MSCASATYPE ) {
+    if (itsFiletype.type()==dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
       if ( itsFilter->isSet() ) {
 	try {
@@ -616,7 +665,7 @@ namespace DAL {
     }
     else {
       std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-		<< type << endl;
+		<< itsFiletype.name() << endl;
     }
   }
   
@@ -630,7 +679,7 @@ namespace DAL {
   void dalTable::openTable (std::string tablename,
                             casa::MSReader * reader)
   {
-    if ( type == MSCASATYPE ) {
+    if (itsFiletype.type()==dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
       try {
 	*itsCasaTable = reader->table( tablename );
@@ -644,7 +693,7 @@ namespace DAL {
     }
     else {
       std::cerr << "dalTable::openTable operation not supported for type "
-		<< type << endl;
+		<< itsFiletype.name() << endl;
     }
   }
   
@@ -660,7 +709,7 @@ namespace DAL {
                             casa::MSReader * reader,
                             dalFilter * filter )
   {
-    if ( type == MSCASATYPE ) {
+    if (itsFiletype.type()==dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
       try {
 	*itsCasaTable = reader->table( tablename );
@@ -677,7 +726,7 @@ namespace DAL {
     }
     else {
       std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-		<< type << endl;
+		<< itsFiletype.name() << endl;
     }
   }
 #endif
@@ -695,7 +744,7 @@ namespace DAL {
                             std::string tablename,
                             std::string groupname )
   {
-    if ( type == H5TYPE ) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       name = groupname + '/' + tablename;
       hid_t * lclfile = (hid_t*)voidfile; // H5File object
       file = lclfile;
@@ -705,7 +754,7 @@ namespace DAL {
     }
     else {
       std::cerr << "dalTable::openTable operation not supported for type "
-		<< type << endl;
+		<< itsFiletype.name() << endl;
     }
   }
   
@@ -717,7 +766,7 @@ namespace DAL {
   */
   void dalTable::printColumns()
   {
-    if ( type == H5TYPE ) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       size_t * field_sizes = NULL;
       size_t * field_offsets = NULL;
       size_t * size_out = NULL;
@@ -746,7 +795,7 @@ namespace DAL {
       free(itsFieldNames);
       std::cerr << endl;
     }
-    else if ( type == MSCASATYPE ) {
+    else if (itsFiletype.type()==dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
       casa::TableDesc td = itsCasaTable->tableDesc();
       std::cerr << td.columnNames() << endl;
@@ -755,7 +804,8 @@ namespace DAL {
 #endif
     }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
     }
   }
   
@@ -775,7 +825,7 @@ namespace DAL {
                               std::string tablename,
                               std::string groupname )
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         // It is necessary to have at least one column for table creation
         // so we create a dummy column that will be deleted when real
@@ -819,7 +869,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
       }
 
   }
@@ -967,7 +1018,7 @@ namespace DAL {
                             std::string coltype,
                             uint indims )
   {
-    if ( type == H5TYPE ) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       bool removedummy = false;
       
       h5addColumn_setup( colname, removedummy );
@@ -1073,7 +1124,8 @@ namespace DAL {
       h5addColumn_insert( indims, colname, field_type, removedummy );
     }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
     }
   }
   
@@ -1095,7 +1147,7 @@ namespace DAL {
                                    std::vector<dalColumn> foo,
                                    int subfields )
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         bool removedummy = false;
 
@@ -1169,7 +1221,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
       }
 
   }
@@ -1182,7 +1235,7 @@ namespace DAL {
   */
   void dalTable::removeColumn (const std::string &colname)
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         status = H5TBget_table_info (itsFileID,
 				     name.c_str(),
@@ -1232,7 +1285,8 @@ namespace DAL {
 	    "\' not present.  Cannot delete." << endl;
       }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
     }
   }
   
@@ -1253,7 +1307,7 @@ namespace DAL {
 				    int rownum,
 				    long nrecs)
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
 	
         size_t * field_sizes = NULL;
@@ -1294,7 +1348,8 @@ namespace DAL {
 
       }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
     }
   }
   
@@ -1312,7 +1367,7 @@ namespace DAL {
   */
   void dalTable::appendRow( void * data )
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         hsize_t recs2write     = 1; // number of records to append
         size_t * field_sizes   = NULL;
@@ -1329,14 +1384,14 @@ namespace DAL {
         status = H5TBget_field_info( itsFileID, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
 
-        if ( firstrecord )
+        if ( itsFirstRecord )
           {
             hsize_t start = 0;
             hsize_t numrows = 1;
             status = H5TBwrite_records( itsFileID, name.c_str(), start,
                                         numrows, *size_out, field_offsets, field_sizes,
                                         data);
-            firstrecord = false;
+            itsFirstRecord = false;
           }
         else
           {
@@ -1350,7 +1405,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
       }
   }
 
@@ -1367,9 +1423,10 @@ namespace DAL {
                 table itself.
     \param row_count The number of rows you wish to append.
   */
-  void dalTable::appendRows( void * data, long row_count )
+  void dalTable::appendRows (void * data,
+			     long row_count)
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         size_t * field_sizes = NULL;
         size_t * field_offsets = NULL;
@@ -1385,7 +1442,7 @@ namespace DAL {
         status = H5TBget_field_info( itsFileID, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
 
-        if ( firstrecord )
+        if ( itsFirstRecord )
           {
             hsize_t start = 0;
             if (row_count>1)
@@ -1397,7 +1454,7 @@ namespace DAL {
             status = H5TBwrite_records( itsFileID, name.c_str(), start,
                                         (hsize_t)row_count, *size_out,
                                         field_offsets, field_sizes, data );
-            firstrecord = false;
+            itsFirstRecord = false;
           }
         else
           {
@@ -1411,7 +1468,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
       }
   }
 
@@ -1461,7 +1519,7 @@ namespace DAL {
     std::vector<std::string> colnames;
     colnames.clear();
     
-    if ( type == H5TYPE ) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       size_t * field_sizes = NULL;
       size_t * field_offsets = NULL;
       size_t * size_out = NULL;
@@ -1490,7 +1548,7 @@ namespace DAL {
       free(itsFieldNames);
       return colnames;
     }
-    else if ( type == MSCASATYPE )
+    else if (itsFiletype.type()==dalFileType::CASA_MS)
       {
 #ifdef DAL_WITH_CASA
         casa::TableDesc td = itsCasaTable->tableDesc();
@@ -1506,7 +1564,8 @@ namespace DAL {
 #endif
       }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
       return colnames;
     }
     
@@ -1524,7 +1583,7 @@ namespace DAL {
   */
   long dalTable::getNumberOfRows()
   {
-    if ( type == H5TYPE ) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       if (itsFileID > 0) {
 	H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
       }
@@ -1534,7 +1593,8 @@ namespace DAL {
       return nofRecords_p;
     }
     else {
-      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
       return(-1);
     }
   }
@@ -1557,7 +1617,7 @@ namespace DAL {
                            long numberRecs,
                            long buffersize )
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         size_t * field_sizes = NULL;
         size_t * field_offsets = NULL;
@@ -1604,7 +1664,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
       }
   }
 
@@ -1621,7 +1682,7 @@ namespace DAL {
   */
   casa::Bool dalTable::findAttribute( std::string attrname )
   {
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 )
           {
@@ -1635,7 +1696,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
         return false;
       }
   }
@@ -1654,7 +1716,7 @@ namespace DAL {
   void * dalTable::getAttribute( std::string attrname )
   {
 
-    if ( type == H5TYPE )
+    if (itsFiletype.type()==dalFileType::HDF5)
       {
         hsize_t dims;
         H5T_class_t type_class;
@@ -1713,7 +1775,7 @@ namespace DAL {
             return NULL;
           }
       }
-    else if ( type == MSCASATYPE )
+    else if (itsFiletype.type()==dalFileType::CASA_MS)
       {
 #ifdef DAL_WITH_CASA
         casa::TableRecord table_rec = itsCasaTable->keywordSet();
@@ -1726,13 +1788,15 @@ namespace DAL {
               return result_p;
             else
               {
-                std::cerr << "ERROR: dalTable:GetKeyword Could not get '" << attrname << endl;
+                std::cerr << "ERROR: dalTable:GetKeyword Could not get '"
+			  << attrname
+			  << endl;
                 return NULL;
               }
           }
         else
           {
-            std::cerr << "(TBD) datatype is " << type << endl;
+            std::cerr << "(TBD) datatype is " << itsFiletype.name() << endl;
             return NULL;
           }
 #else
@@ -1742,7 +1806,8 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		  << ".  Sorry.\n";
         return NULL;
       }
 

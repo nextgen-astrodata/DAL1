@@ -916,7 +916,7 @@ namespace DAL {
     case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
-        dalTable * lt = new dalTable( MSCASATYPE );
+        dalTable * lt = new dalTable (itsFiletype.type());
         if ( filter.isSet() )
           lt->openTable( tablename, itsMSReader, &filter );
         else
