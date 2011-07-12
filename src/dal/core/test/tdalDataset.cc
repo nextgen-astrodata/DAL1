@@ -32,6 +32,7 @@
 */
 
 #include <core/dalDataset.h>
+#include <core/IO_Mode.h>
 
 using std::endl;
 
@@ -49,6 +50,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
   std::cout << "\n[tdalDataset::test_constructors]\n" << endl;
 
   int nofFailedTests  = 0;
+  DAL::IO_Mode flags (DAL::IO_Mode::OpenOrCreate);
   std::map<std::string,std::string>::iterator it;
 
   /*__________________________________________________________________
@@ -71,7 +73,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
             parameters for the creation of a dataset/-file.
    */
 
-  std::cout << "[2] Testing dalDataset(string,string,bool) ..." << endl;
+  std::cout << "[2] Testing dalDataset(string,string,IO_Mode) ..." << endl;
   try {
     for (it=filenames.begin(); it!=filenames.end(); ++it) {
       // Display which type of dataset is being created
@@ -80,7 +82,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
       // Create dataset
       DAL::dalDataset dataset (it->second.c_str(),
 			       it->first.c_str(),
-			       true);
+			       flags);
       dataset.summary();
     }
     
@@ -106,7 +108,7 @@ int test_attributes (std::string const &filename)
   std::cout << "\n[tdalDataset::test_attributes]\n" << endl;
 
   int nofFailedTests = 0;
-  // int nelem          = 5;
+  unsigned int nelem = 5;
   
   /* Open the dataset to work with */
   DAL::dalDataset ds (filename);
@@ -116,17 +118,17 @@ int test_attributes (std::string const &filename)
     Test 1: Integer-type attributes
   */
 
-  // cout << "[1] Integer-type attributes ..." << endl;
-  // try {
-  //   int var        = 1;
-  //   int varArray[] = {1,2,3,4,5};
-
-  //   ds.setAttribute ("h5a_int", var);
-  //   ds.setAttribute ("h5a_array_int", varArray, nelem);
-  // } catch (std::string message) {
-  //   std::cerr << message << endl;
-  //   nofFailedTests++;
-  // }
+  cout << "[1] Integer-type attributes ..." << endl;
+  try {
+    int var        = 1;
+    int varArray[] = {1,2,3,4,5};
+    
+    ds.setAttribute ("h5a_int", var);
+    ds.setAttribute ("h5a_array_int", varArray, nelem);
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
   
   /*__________________________________________________________________
     Test 2: Float-type attributes
@@ -256,8 +258,8 @@ int main (int argc, char *argv[])
   DAL::dalFileType filetype;
 
   std::map<std::string,std::string> filenames;
-  filenames["HDF5"]    = "tdalDataset.h5";
-  filenames["FITS"]    = "tdalDataset.fits";
+  // filenames["HDF5"]    = "tdalDataset.h5";
+  // filenames["FITS"]    = "tdalDataset.fits";
   filenames["CASA_MS"] = "tdalDataset.ms";
 
   //________________________________________________________
@@ -278,7 +280,9 @@ int main (int argc, char *argv[])
   //! Test constructors for dalDataset object
   nofFailedTests += test_constructors(filenames);
   //! Test creation of and access to attributes
-  nofFailedTests += test_attributes (filename);
+  // nofFailedTests += test_attributes (filename);
+
+  return 0;
 
   switch (filetype.type()) {
   case DAL::dalFileType::CASA_MS:

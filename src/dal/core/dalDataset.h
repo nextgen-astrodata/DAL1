@@ -116,7 +116,7 @@ namespace DAL {
     hid_t h5fh_p;
     
 #ifdef DAL_WITH_CASA
-    casa::MeasurementSet * ms; // CASA measurement set pointer
+    casa::MeasurementSet itsMS;   // CASA measurement set
     casa::MSReader * itsMSReader; // CASA measurement set reader pointer
     casa::Vector<casa::String> ms_tables; // vector of CASA MS tables
 #endif
@@ -312,8 +312,22 @@ namespace DAL {
 	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     //! Unconditional deletion of internal parameters
     bool destroy ();
+
     //! Try to open HDF5 file
-    bool openFITS (std::string const &filename);
+    bool openHDF5 (std::string const &filename,
+		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
+#ifdef DAL_WITH_CFITSIO
+    //! Try to open FITS file
+    bool openFITS (std::string const &filename,
+		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+#endif
+    
+#ifdef DAL_WITH_CASA
+    //! Try to open casa MeasurementSet file
+    bool openMS (std::string const &filename,
+		 IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+#endif
     
     // ==========================================================================
     //

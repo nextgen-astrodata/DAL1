@@ -129,7 +129,6 @@ namespace DAL {
     /* Release pointer of casacore objects */
     
 #ifdef DAL_WITH_CASA
-    if (ms != NULL)           { ms          = NULL;  }
     if (itsMSReader != NULL)  { itsMSReader = NULL;  }
 #endif
     
@@ -161,11 +160,11 @@ namespace DAL {
     itsFiletype    = dalFileType();
     name           = "UNDEFINED";
     itsFlags       = IO_Mode();
-    itsFilter         = dalFilter();
+    itsFilter      = dalFilter();
     h5fh_p         = 0;
+    itsMS          = casa::MeasurementSet();
 
 #ifdef DAL_WITH_CASA
-    ms          = NULL;
     itsMSReader = NULL;
 #endif
   }
@@ -187,9 +186,9 @@ namespace DAL {
     /* Initialize internal data with default values */
     init ();
 
-    name           = filename;
-    itsFiletype    = filetype;
-    itsFlags       = flags;
+    name        = filename;
+    itsFiletype = filetype;
+    itsFlags    = flags;
   }
 
   //_____________________________________________________________________________
@@ -226,50 +225,222 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                     openFITS
+  //                                                                     openHDF5
 
   /*!
-    \param filename  -- The name of the dataset/file to open.
+    \param filename    -- The name of the dataset/file to open.
+    \param flags       -- I/O mode flags
+    \return fileIsOpen -- Has the file been opened by reaching the end of this
+            function? Returns \e false in case an error was encountered trying
+	    to open the file.
   */  
-  bool dalDataset::openFITS (std::string const &filename)
+  bool dalDataset::openHDF5 (std::string const &filename,
+			     IO_Mode const &flags)
   {
+    bool fileIsOpen    = false;
+    bool fileTruncated = false;
     
-#ifdef DAL_WITH_CFITSIO
+    fileTruncated = HDF5Object::openFile (h5fh_p,
+					  filename,
+					  flags);
     
-    fitsfile * fptr = NULL;
-    int status      = 0;  /* MUST initialize status */
-    int nkeys       = 0;
-    int ii          = 0;
-    char card [500 ];
-    memset( card, '\0', 500);
-    
-    fits_open_file (&fptr, filename.c_str(), READONLY, &status);
-    
-    /* print any error messages */
-    if (status) {
-      return DAL::FAIL;
+    /* Check the HDF5 objec identifier; if it is ok, do internal book-keeping */
+    if (H5Iis_valid(h5fh_p)) {
+      itsFiletype.setType (dalFileType::HDF5);
+      itsFilePointer = &h5fh_p;
+      name           = filename;
+      fileIsOpen     = false;
+    } else {
+      fileIsOpen = false;
     }
-    else {
+    
+    return fileIsOpen;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     openFITS
+
+#ifdef DAL_WITH_CFITSIO
+
+  /*!
+    \param filename    -- The name of the dataset/file to open.
+    \param flags       -- I/O mode flags
+    \return fileIsOpen -- Has the file been opened by reaching the end of this
+            function? Returns \e false in case an error was encountered trying
+	    to open the file.
+  */  
+  bool dalDataset::openFITS (std::string const &filename,
+			     IO_Mode const &flags)
+  {
+    fitsfile * fptr    = NULL;
+    int status         = 0;  /* MUST initialize status */
+    bool fileExists    = false;
+    bool fileTruncated = false; 
+    bool fileIsOpen    = false;
+    std::ifstream infile (filename.c_str(), std::ifstream::in);
+    char card [500];
+    memset (card, '\0', 500);
+    
+    /*______________________________________________________
+      Check if the file already exists
+    */
+    
+    if (infile.is_open() && infile.good()) {
+      fileExists = true;
+    } else {
+      fileExists = false;
+    }
+    infile.close();
+    
+    /*______________________________________________________
+      Open or create file.
+    */
+    
+    if (fileExists) {
+      if ( flags.flags() & IO_Mode::Truncate ) {
+	std::string tmpname = "!" + filename;
+	/* Truncate existing file */
+	fileTruncated = true;
+	fits_create_file(&fptr, tmpname.c_str(), &status);
+      } else if ( flags.flags() & IO_Mode::Create ) {
+	std::string tmpname = "!" + filename;
+	/* Truncate existing file */
+	fileTruncated = true;
+	fits_create_file(&fptr, tmpname.c_str(), &status);
+      } else {
+	if ( flags.flags() & IO_Mode::ReadWrite ) {
+	  /* Open file as read/write */
+	  fileTruncated = false;
+	  fits_open_file (&fptr, filename.c_str(), READWRITE, &status);
+	} else {
+	  /* Open file as read-only */
+	  fileTruncated = false;
+	  fits_open_file (&fptr, filename.c_str(), READONLY, &status);
+	}
+      }
+    } else {
+      /* Create new file from scratch */
+      fileTruncated = true;
+      fits_create_file(&fptr, filename.c_str(), &status);
+    }
+
+    /* Get header information of opened FITS file */
+    if (status) {
+      fileIsOpen = false;
+    } else {
+
+      fileIsOpen = true;
+
+      int nkeys = 0;
+
       fits_get_hdrspace(fptr, &nkeys, NULL, &status);
       
-      for (ii = 1; ii <= nkeys; ii++) {
+      for (int ii=1; ii <= nkeys; ii++) {
 	fits_read_record(fptr, ii, card, &status); /* read keyword */
 	printf("%s\n", card);
       }
       
       fits_close_file(fptr, &status);
-      
-      return DAL::SUCCESS;
     }
-#else
-    
-    filename = filename; // to get rid of unused var compiler warning
-    return DAL::FAIL;
+
+    return fileIsOpen;
+  }
 
 #endif
 
+  //_____________________________________________________________________________
+  //                                                                       openMS
+
+#ifdef DAL_WITH_CASA
+
+  /*!
+    \param filename    -- The name of the dataset/file to open.
+    \param flags       -- I/O mode flags
+    \return fileIsOpen -- Has the file been opened by reaching the end of this
+            function? Returns \e false in case an error was encountered trying
+	    to open the file.
+  */  
+  bool dalDataset::openMS (std::string const &filename,
+			   IO_Mode const &flags)
+  {
+    bool fileExists    = false;
+    bool fileTruncated = false; 
+    
+    /*______________________________________________________
+      Check if the file already exists
+    */
+    
+    casa::File msfile (filename);
+
+    fileExists = msfile.exists();
+    
+    /*______________________________________________________
+      Open or create file.
+    */
+    
+    if (fileExists) {
+      
+      std::string absoluteName;
+
+      if (msfile.isSymLink()) {
+	casa::SymLink link (msfile);
+	casa::Path realFileName = link.followSymLink();
+	absoluteName = realFileName.absoluteName();
+      } else {
+	absoluteName = filename;
+      }
+
+      if ( flags.flags() & IO_Mode::Truncate ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	itsMS = casa::MeasurementSet (absoluteName, casa::Table::New);
+      } else if ( flags.flags() & IO_Mode::Create ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	itsMS = casa::MeasurementSet (absoluteName, casa::Table::New);
+      } else {
+	if ( flags.flags() & IO_Mode::ReadWrite ) {
+	  /* Open file as read/write */
+	  fileTruncated = false;
+	  itsMS = casa::MeasurementSet (absoluteName);
+	} else {
+	  /* Open file as read-only */
+	  fileTruncated = false;
+	  itsMS = casa::MeasurementSet (absoluteName);
+	}
+      }
+
+      /* Attach MSReader to the just opened dataset */
+      itsMSReader = new casa::MSReader (itsMS);
+
+    } else {
+      // create table descriptor
+      casa::TableDesc simpleDesc = casa::MS::requiredTableDesc();
+      // set up a new table
+      casa::SetupNewTable newTab (filename,
+				  simpleDesc,
+				  casa::Table::New);
+      // create the new MeasurementSet
+      itsMS = casa::MeasurementSet (newTab);
+      // create the required sub-tables
+      itsMS.createDefaultSubtables(casa::Table::New);
+      /* book-keeping */
+      fileTruncated = true;
+    }
+    
+    if (itsMS.validate()) {
+      fileExists     = true;
+      name           = filename;
+      itsFilePointer = &itsMS;
+    } else {
+      fileExists     = false;
+    }
+
+    return fileExists;
   }
 
+#endif
+  
   //_____________________________________________________________________________
   //                                                                         open
 
@@ -304,65 +475,69 @@ namespace DAL {
     /*________________________________________________________________
       Open existing file
     */
-
     
     if (fileExits) {
-      /* Try opening file through HDF5 library */
-      status = HDF5Object::openFile (h5fh_p,
-				     filename,
-				     flags);
-      if (status) {
-	itsFilePointer = &h5fh_p;
-	itsFiletype.setType (dalFileType::HDF5);
-	name = filename;
-      } else {
-	/* Try opening file through HDF5 library */
-	status = openFITS (filename);
-	if (status) {
-	  itsFiletype.setType (dalFileType::FITS);
-	  name = filename;
-#ifdef DAL_WITH_CASA
-	} else {
-	  casa::File msfile (filename);
-	  /* Check if file is regular file or symbolic link */
-	  if (msfile.isSymLink()) {
-	    casa::SymLink link (msfile);
-	    casa::Path realFileName = link.followSymLink();
-	    ms             = new casa::MeasurementSet( realFileName.absoluteName() );
-	  } else {
-	    ms             = new casa::MeasurementSet( filename );
-	  }
-	  /* Store MS information */
-	  itsFiletype.setType (dalFileType::CASA_MS);
-	  name           = filename;
-	  itsFilePointer = &ms;
-	  itsMSReader    = new casa::MSReader( *ms );
-#endif
-	}
+
+      bool fileIsOpen = false;
+
+      /* Set up I/O mode flags for the case the file already exists;
+	 if this indeed is the case, flags resulting in creation need
+	 to be removed.
+      */
+      DAL::IO_Mode tmpFlags (flags);
+      tmpFlags.addFlag (IO_Mode::Open);
+      tmpFlags.removeFlag (IO_Mode::OpenOrCreate);
+      tmpFlags.removeFlag (IO_Mode::Create);
+      tmpFlags.removeFlag (IO_Mode::CreateNew);
+      
+      // Try opening file through HDF5 library _______________________
+      
+      fileIsOpen = openHDF5 (filename,
+			     tmpFlags);
+      
+      // Try opening file through CFITSIO library ____________________
+      
+#ifdef DAL_WITH_CFITSIO
+      if (!fileIsOpen) {
+	fileIsOpen = openFITS (filename,
+			       tmpFlags);
       }
+#endif
+      
+      // Try opening file through casacore library _____________________
+      
+#ifdef DAL_WITH_CASA
+      if (!fileIsOpen) {
+	fileIsOpen = openMS (filename,
+			     tmpFlags);
+      }
+#endif
+      
     } else {
       switch (itsFiletype.type()) {
 	// Create new file of type HDF5
       case dalFileType::HDF5:
 	{
-	  status = HDF5Object::openFile (h5fh_p,
-					 filename,
-					 flags);
-	  if (status) {
-	    itsFilePointer = &h5fh_p;
-	    itsFiletype.setType (dalFileType::HDF5);
-	    name = filename;
-	  }
+	  status = openHDF5 (filename,
+			     flags);
 	}
 	break;
+#ifdef DAL_WITH_CFITSIO
       case dalFileType::FITS:
 	{
-	  fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
-	  int status;
-	  /* Create new FITS file. */
-	  fits_create_file(&fptr, filename.c_str(), &status);
+	  openFITS (filename,
+		    flags);
 	}
 	break;
+#endif
+#ifdef DAL_WITH_CASA
+      case dalFileType::CASA_MS:
+	{
+	  openMS (filename,
+		    flags);
+	}
+	break;
+#endif
       default:
 	{
 	  std::cerr << "[dalDataset::open] Creating of new dataset of type "
@@ -372,7 +547,7 @@ namespace DAL {
 	  status = false;
 	}
 	break;
-      }
+      };
     }
 
     return status;
