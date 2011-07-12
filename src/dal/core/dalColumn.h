@@ -85,10 +85,6 @@ namespace DAL {
     casa::ROScalarColumn< std::complex< float > > * rosc_comp;
     casa::ROScalarColumn<casa::String> * rosc_string;
     
-    // ARRAYs
-    casa::Array<casa::Complex> itsArrayComplex;
-    casa::Array<casa::String> itsArrayString;
-    
     // VECTORs
     casa::Vector<casa::Complex> scalar_vals_comp;
     casa::Vector<casa::String> scalar_vals_string;

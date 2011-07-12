@@ -179,19 +179,19 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  case casa::TpComplex:
 	    {
 	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-	      itsArrayComplex = roac_comp->getColumn();
+	      casa::Array<casa::Complex> data = roac_comp->getColumn();
 	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
 	      data_object->data =
-		(std::complex<float> *)itsArrayComplex.getStorage(deleteIt);
+		(std::complex<float> *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
-	      itsArrayString = roac_string->getColumn();
+	      casa::Array<casa::String> data = roac_string->getColumn();
 	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data = (std::string *)itsArrayString.getStorage(deleteIt);
+	      data_object->data = (std::string *)data.getStorage(deleteIt);
 	      return data_object->get_boost3( offset, length );
 	    }
 	    break;

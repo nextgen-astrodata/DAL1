@@ -79,25 +79,44 @@ void export_BF_BeamGroup ()
 
 void export_BF_RootGroup ()
 {
-   bpl::class_<BF_RootGroup>("BF_RootGroup", bpl::init<const string>())
-      // Argumented constructor 
-      .def( bpl::init<DAL::Filename, bool>())
-      .def( bpl::init<string const &>())
-      .def( bpl::init<string &>())
-      .def( bpl::init<DAL::CommonAttributes, bool>())     
-      // Access to internal parameters 
-      .def( "className", &BF_RootGroup::className, 
-      "Get name of the class" )
-      //void ( BF_RootGroup::*summary)() = &BF_RootGroup::summary)
-      .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
-      "Get the common attributes of the class." )      
-      
-      .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
-      "Get the number of SubArray pointings." )
-      ;
-      
-   // Data access methods       
-   bool ( BF_RootGroup::*open)(hid_t const &,
+
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (BF_RootGroup::*summary1)(bool const &) 
+    = &BF_RootGroup::summary;
+  void (BF_RootGroup::*summary2)(std::ostream &, bool const &) 
+    = &BF_RootGroup::summary;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<BF_RootGroup>("BF_RootGroup", bpl::init<const string>())
+    // Argumented constructor 
+    .def( bpl::init<DAL::Filename, bool>())
+    .def( bpl::init<string const &>())
+    .def( bpl::init<string &>())
+    .def( bpl::init<DAL::CommonAttributes, bool>())     
+    // Access to internal parameters 
+    .def( "className", &BF_RootGroup::className, 
+	  "Get name of the class" )
+    //void ( BF_RootGroup::*summary)() = &BF_RootGroup::summary)
+    .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
+	  "Get the common attributes of the class." )      
+    
+    .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
+	  "Get the number of SubArray pointings." )
+    // Public methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    ;
+  
+  // Data access methods       
+  bool ( BF_RootGroup::*open)(hid_t const &,
 			       string const &,
 			       DAL::IO_Mode const &) = &BF_RootGroup::open;
    
