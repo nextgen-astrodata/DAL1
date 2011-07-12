@@ -152,9 +152,10 @@ namespace DAL {
     bool isArray();
     //! Is the column a scalar?
     bool isScalar();
-    std::vector<int> shape();
     //! Get the number of dimensions of the column.
     int ndims();
+    //! Get the shape of the column data
+    std::vector<int> shape();
     //! Get the number of rows in the column.
     uint nofRows ();
     //! Get the data object for the column.

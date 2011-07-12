@@ -162,14 +162,16 @@ namespace DAL {
   void dalColumn::summary(std::ostream &os)
   {
     os << "\n[dalColumn] Summary of object properties"  << endl;
-    os << "-- File type            = " << filetype    << std::endl;
-    os << "-- HDF5 file ID         = " << itsFileID   << std::endl;
-    os << "-- HDF5 table ID        = " << itsTableID  << std::endl;
-    os << "-- Table name           = " << tablename   << std::endl;
-    os << "-- Column name          = " << name        << std::endl;
-    os << "-- Column datatype      = " << itsDatatype << std::endl;
-    os << "-- Datatype size        = " << size        << std::endl;
-    os << "-- nof. rows per column = " << num_of_rows << std::endl;
+    os << "-- File type                = " << filetype    << std::endl;
+    os << "-- HDF5 file object ID      = " << itsFileID   << std::endl;
+    os << "-- HDF5 table object ID     = " << itsTableID  << std::endl;
+    os << "-- Table name               = " << tablename   << std::endl;
+    os << "-- Column name              = " << name        << std::endl;
+    os << "-- Column datatype          = " << itsDatatype << std::endl;
+    os << "-- Datatype size            = " << size        << std::endl;
+    os << "-- nof. rows per column     = " << num_of_rows << std::endl;
+    os << "-- Is column of scalar type = " << isScalar()  << std::endl;
+    os << "-- Is column of array type  = " << isArray()   << std::endl;
   }
 
   //_____________________________________________________________________________

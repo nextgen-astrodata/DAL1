@@ -143,16 +143,14 @@ namespace DAL {
 	itsFilePointer = &h5fh_p;
       }
     }
-    else if ( filetype == FITSTYPE ) {
 #ifdef DAL_WITH_CFITSIO
+    else if ( filetype == FITSTYPE ) {
       fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
       int status;
       /* Create new FITS file. */
       fits_create_file(&fptr, filename.c_str(), &status);
-#else
-      std::cerr << "ERROR: CFITSIO libraries not found.\n";
-#endif
     }
+#endif
     else if (filetype == MSCASATYPE) {
     }
     else {
