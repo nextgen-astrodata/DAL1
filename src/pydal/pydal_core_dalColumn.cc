@@ -98,47 +98,47 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
 	      casa::Vector<int> data = rosc_int->getColumn();
-	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpBool:
 	    {
 	      rosc_bool = new casa::ROScalarColumn<bool>( *casa_column );
-	      scalar_vals_bool = rosc_bool->getColumn();
-	      data_object = new dalData( filetype, dal_BOOL, shape(), nrows() );
-	      data_object->data = (int *)scalar_vals_bool.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<bool> data = rosc_bool->getColumn();
+	      itsColumnData = new dalData( filetype, dal_BOOL, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpDouble:
 	    {
 	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	      casa::Vector<double> data = rosc_dbl->getColumn();
-	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData->data = (double *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpComplex:
 	    {
 	      rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	      scalar_vals_comp = rosc_comp->getColumn();
-	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	      data_object->data =
+	      itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData->data =
 		(std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
-	      scalar_vals_string = rosc_string->getColumn();
-	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data =
-		(std::string *)scalar_vals_string.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<casa::String> data = rosc_string->getColumn();
+	      itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+	      itsColumnData->data =
+		(std::string *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	    /************************************
@@ -162,37 +162,37 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
 	      casa::Array<int> data = roac_int->getColumn();
-	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpDouble:
 	    {
 	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
 	      casa::Array<double> data = roac_dbl->getColumn();
-	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData->data = (double *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpComplex:
 	    {
 	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
 	      casa::Array<casa::Complex> data = roac_comp->getColumn();
-	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	      data_object->data =
+	      itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData->data =
 		(std::complex<float> *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
 	      casa::Array<casa::String> data = roac_string->getColumn();
-	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data = (std::string *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+	      itsColumnData->data = (std::string *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	    /************************************
@@ -234,8 +234,8 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
     std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
     int start = 0;
     int length = -1;
-    data_object = data(start,length);
-    return data_object->get_boost3( offset, length );
+    itsColumnData = data(start,length);
+    return itsColumnData->get_boost3( offset, length );
   }
   else {
     std::cerr <<

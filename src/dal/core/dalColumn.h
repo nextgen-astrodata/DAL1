@@ -64,12 +64,13 @@ namespace DAL {
     //! HDF5 call return status
     herr_t  status;
     
-    dalData * data_object;  // object to hold column data
+    dalData * itsColumnData;  // object to hold column data
     
 #ifdef DAL_WITH_CASA
     
-    std::string casa_datatype;  // column datatype
-    
+    //! Column data type
+    std::string casa_datatype;
+    //! Column descriptor
     casa::ColumnDesc casa_col_desc;
     casa::ROTableColumn * casa_column;
     
@@ -87,8 +88,6 @@ namespace DAL {
     
     // VECTORs
     casa::Vector<casa::Complex> scalar_vals_comp;
-    casa::Vector<casa::String> scalar_vals_string;
-    casa::Vector<bool> scalar_vals_bool;
     vector< std::complex< float > > stl_vec_comp;
     
     bool deleteIt;
@@ -117,20 +116,26 @@ namespace DAL {
 	       std::string colname,
 	       std::string coldatatype );
     //! Argumented constructor for a new column object.
-   dalColumn( std::string colname,
-	       std::string coltype );
+    dalColumn (std::string colname,
+	       std::string coltype);
     
 #ifdef DAL_WITH_CASA
     //! Create a new column object from a CASA table.
     dalColumn (casa::Table table,
 	       std::string colname);
 #endif
-
+    
     // === Methods ==============================================================
     
-    void addMember( std::string member_name, std::string type );
-    //! Get the name of the column.
-    std::string getName();
+    void addMember (std::string member_name,
+		    std::string type);
+    /*!
+      \brief Get the name of the column.
+      \return name -- The name of the column.
+    */
+    inline std::string getName() {
+      return name;
+    }
     //! Set the name of the column.
     void setName(std::string colname);
     //! Set the file type of the dataset containing the column.
@@ -143,6 +148,7 @@ namespace DAL {
     inline std::string getType() {
       return itsDatatype;
     }
+    //! Is the column an array?
     bool isArray();
     //! Is the column a scalar?
     bool isScalar();
@@ -150,7 +156,8 @@ namespace DAL {
     //! Get the number of dimensions of the column.
     int ndims();
     //! Get the number of rows in the column.
-    uint nrows();
+    uint nofRows ();
+    //! Get the data object for the column.
     dalData * data (int &start,
 		    int &length);
     //! Get the data object for the column.
@@ -164,8 +171,16 @@ namespace DAL {
     bpl::numeric::array data_boost1( );
     bpl::numeric::array data_boost2( int32_t length );
     bpl::numeric::array data_boost3( int64_t offset, int32_t length );
-    
+
 #endif
+
+    // === Private methods ======================================================
+
+  private:
+
+    //! Initialize the object's internal parameters
+    void init();
+
   };  // dalColumn class
   
   

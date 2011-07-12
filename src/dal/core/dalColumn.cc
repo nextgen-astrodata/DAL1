@@ -32,7 +32,9 @@ namespace DAL {
   //                                                                    dalColumn
 
   dalColumn::dalColumn()
-  {}
+  {
+    init ();
+  }
 
   //_____________________________________________________________________________
   //                                                                    dalColumn
@@ -44,7 +46,8 @@ namespace DAL {
   */
   dalColumn::dalColumn( std::string complexcolname )
   {
-    name = complexcolname;
+    init ();
+    name        = complexcolname;
     itsDatatype = dal_COMPLEX;
   }
 
@@ -66,11 +69,11 @@ namespace DAL {
                         std::string colname,
                         std::string coldatatype )
   {
-    itsFileID    = fileid;
-    itsTableID   = tableid;
-    filetype     = lcl_filetype;
-    tablename    = lcl_tablename;
-    name         = colname;
+    itsFileID   = fileid;
+    itsTableID  = tableid;
+    filetype    = lcl_filetype;
+    tablename   = lcl_tablename;
+    name        = colname;
     itsDatatype = coldatatype;
   }
 
@@ -138,6 +141,26 @@ namespace DAL {
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  void dalColumn::init ()
+  {
+    filetype      = "";
+    name          = "";
+    tablename     = "";
+    itsDatatype   = "";
+    size          = 0;
+    num_of_rows   = 0;
+    itsFileID     = 0;
+    itsTableID    = 0;
+    nofFields_p   = 0;
+    nofRecords_p  = 0;
+    coltype       = 0;
+    status        = 0;
+    itsColumnData = NULL;
+  }
 
   //_____________________________________________________________________________
   //                                                              getCasaDataType
@@ -297,7 +320,7 @@ namespace DAL {
                 casa::IPosition ipos = casa_column->shape(0);
                 casa::Vector<casa::Int> col_shape = ipos.asVector();
                 col_shape.tovector( shape_vals );
-                shape_vals.push_back( nrows() );
+                shape_vals.push_back( nofRows() );
                 std::reverse(shape_vals.begin(), shape_vals.end());
               }
             catch (casa::AipsError x)
@@ -308,7 +331,7 @@ namespace DAL {
           }
         else
           {
-            shape_vals.push_back( nrows() );
+            shape_vals.push_back( nofRows() );
             return shape_vals;
           }
 #else
@@ -377,23 +400,12 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                      getName
+  //                                                                      nofRows
 
   /*!
-    \return name -- The name of the column.
+    \return rows -- A number specifying the number of column rows.
   */
-  std::string dalColumn::getName()
-  {
-    return name;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                        nrows
-
-  /*!
-    \return A number specifying the number of column rows.
-  */
-  uint dalColumn::nrows()
+  uint dalColumn::nofRows()
   {
     if ( MSCASATYPE == filetype )
       {
@@ -407,12 +419,12 @@ namespace DAL {
       }
     else
       {
-        std::cerr << "dalColumn::nrows() File type " << filetype
+        std::cerr << "dalColumn::nofRows() File type " << filetype
                   << " not yet supported.";
         return 0;
       }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                         data
 
@@ -439,38 +451,38 @@ namespace DAL {
       {
         rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
         casa::Vector<int> data = rosc_int->getColumn();
-        data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-        data_object->data = (int *)data.getStorage(deleteIt);
-        return data_object;
+        itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+        itsColumnData->data = (int *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
       case casa::TpDouble:
       {
         rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	casa::Vector<double> data = rosc_dbl->getColumn();
-        data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-        data_object->data = (double *)data.getStorage(deleteIt);
-        return data_object;
+        itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+        itsColumnData->data = (double *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
       case casa::TpComplex:
       {
         rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
         scalar_vals_comp = rosc_comp->getColumn();
-        data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-        data_object->data =
+        itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+        itsColumnData->data =
           (std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
-        return data_object;
+        return itsColumnData;
       }
       break;
       case casa::TpString:
       {
         rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
-        scalar_vals_string = rosc_string->getColumn();
-        data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-        data_object->data =
-          (std::string *)scalar_vals_string.getStorage(deleteIt);
-        return data_object;
+        casa::Vector<casa::String> data = rosc_string->getColumn();
+        itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+        itsColumnData->data =
+          (std::string *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
       /************************************
@@ -499,18 +511,18 @@ namespace DAL {
       {
         roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
 	casa::Array<int> data = roac_int->getColumn();
-        data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-        data_object->data = (int *)data.getStorage(deleteIt);
-        return data_object;
+        itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+        itsColumnData->data = (int *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
     case casa::TpDouble:
       {
         roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
         casa::Array<double> data = roac_dbl->getColumn();
-        data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-        data_object->data = (double *)data.getStorage(deleteIt);
-        return data_object;
+        itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+        itsColumnData->data = (double *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
     case casa::TpComplex:
@@ -527,19 +539,19 @@ namespace DAL {
             return NULL;
           }
         casa::Array<casa::Complex> data = roac_comp->getColumn( );
-        data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-        data_object->data =
+        itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+        itsColumnData->data =
           (std::complex<float> *)data.getStorage(deleteIt);
-        return data_object;
+        return itsColumnData;
       }
       break;
     case casa::TpString:
       {
         roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
         casa::Array<casa::String> data = roac_string->getColumn();
-        data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-        data_object->data = (std::string *)data.getStorage(deleteIt);
-        return data_object;
+        itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+        itsColumnData->data = (std::string *)data.getStorage(deleteIt);
+        return itsColumnData;
       }
       break;
       /************************************
@@ -642,9 +654,9 @@ namespace DAL {
 	
         std::vector<int> shape(1);
 	
-        data_object = new dalData( filetype, dal_COMPLEX_SHORT,
+        itsColumnData = new dalData( filetype, dal_COMPLEX_SHORT,
                                    shape, length );
-        data_object->data = (DAL::Complex_Int16 *)data;
+        itsColumnData->data = (DAL::Complex_Int16 *)data;
       }
     else if ( dal_FLOAT == getType() ) {
       float * data = NULL;
@@ -673,8 +685,8 @@ namespace DAL {
       
       std::vector<int> shape(1);
       
-      data_object = new dalData( filetype, dal_FLOAT, shape, length );
-      data_object->data = (float *)data;
+      itsColumnData = new dalData( filetype, dal_FLOAT, shape, length );
+      itsColumnData->data = (float *)data;
     }
     else {
       std::cerr << "ERROR: datatype not supported [dalColumn.data]\n";
@@ -689,7 +701,7 @@ namespace DAL {
     free( field_offsets );
     free( size_out );
     
-    return data_object;
+    return itsColumnData;
     
   }
   
