@@ -33,6 +33,8 @@
 
 #include <core/dalDataset.h>
 
+using std::endl;
+
 //_______________________________________________________________________________
 //                                                              test_constructors
 
@@ -44,7 +46,7 @@
 */
 int test_constructors (std::map<std::string,std::string> &filenames)
 {
-  std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
+  std::cout << "\n[tdalDataset::test_constructors]\n" << endl;
 
   int nofFailedTests  = 0;
   std::map<std::string,std::string>::iterator it;
@@ -54,13 +56,13 @@ int test_constructors (std::map<std::string,std::string> &filenames)
             to a dataset/-file.
   */
 
-  std::cout << "[1] Testing dalDataset() ..." << std::endl;
+  std::cout << "[1] Testing dalDataset() ..." << endl;
   try {
     DAL::dalDataset dataset;
     dataset.summary();
   }
   catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -69,12 +71,12 @@ int test_constructors (std::map<std::string,std::string> &filenames)
             parameters for the creation of a dataset/-file.
    */
 
-  std::cout << "[2] Testing dalDataset(string,string,bool) ..." << std::endl;
+  std::cout << "[2] Testing dalDataset(string,string,bool) ..." << endl;
   try {
     for (it=filenames.begin(); it!=filenames.end(); ++it) {
       // Display which type of dataset is being created
       std::cout << "--> Creating dataset of type '" << it->first
-		<< "' ..." << std::endl;
+		<< "' ..." << endl;
       // Create dataset
       DAL::dalDataset dataset (it->second.c_str(),
 			       it->first.c_str(),
@@ -84,7 +86,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
     
   }
   catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -101,7 +103,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
 */
 int test_attributes (std::string const &filename)
 {
-  std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
+  std::cout << "\n[tdalDataset::test_attributes]\n" << endl;
 
   int nofFailedTests = 0;
   // int nelem          = 5;
@@ -122,7 +124,7 @@ int test_attributes (std::string const &filename)
   //   ds.setAttribute ("h5a_int", var);
   //   ds.setAttribute ("h5a_array_int", varArray, nelem);
   // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
+  //   std::cerr << message << endl;
   //   nofFailedTests++;
   // }
   
@@ -138,7 +140,7 @@ int test_attributes (std::string const &filename)
   //   ds.setAttribute ("h5a_float", var);
   //   ds.setAttribute ("h5a_array_float", varArray, nelem);
   // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
+  //   std::cerr << message << endl;
   //   nofFailedTests++;
   // }
   
@@ -154,7 +156,7 @@ int test_attributes (std::string const &filename)
   //   ds.setAttribute ("ATTRIBUTE_DOUBLE", var);
   //   ds.setAttribute ("ATTRIBUTE_DOUBLE_ARRAY", varArray, nelem);
   // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
+  //   std::cerr << message << endl;
   //   nofFailedTests++;
   // }
   
@@ -167,7 +169,7 @@ int test_attributes (std::string const &filename)
 int test_MS (std::string const &filename,
 	     std::string const &tablename="MAIN")
 {
-  std::cout << "\n[tdalDataset::test_MS]\n" << std::endl;
+  std::cout << "\n[tdalDataset::test_MS]\n" << endl;
 
   int nofFailedTests = 0;
 
@@ -175,7 +177,7 @@ int test_MS (std::string const &filename,
     Open MeasurementSet file
   */
   
-  std::cout << "[1] Opening MeasurementSet ..." << std::endl;
+  std::cout << "[1] Opening MeasurementSet ..." << endl;
 
   DAL::dalDataset ms (filename);
   ms.summary();
@@ -186,7 +188,7 @@ int test_MS (std::string const &filename,
     the auto-correlation products.
   */
   
-  std::cout << "[2] Set Filter used when acessing table ..." << std::endl;
+  std::cout << "[2] Set Filter used when acessing table ..." << endl;
 
   try {  
     string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
@@ -195,7 +197,7 @@ int test_MS (std::string const &filename,
     ms.setFilter (columns, filter_conditions);
     ms.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -205,13 +207,32 @@ int test_MS (std::string const &filename,
     data set.
   */
 
-  std::cout << "[3] Open table " << tablename << " ..." << std::endl;
+  std::cout << "[3] Open table " << tablename << " ..." << endl;
 
   try {
     DAL::dalTable * table = ms.openTable (tablename);
     table->summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*________________________________________________________
+    Get data from the TIME column of the MAIN table.
+  */
+  
+  std::cout << "[4] Get data from the TIME column of the MAIN table ..." << endl;
+
+  try {
+    std::cout << "--> Opening table ..." << std::endl;
+    DAL::dalTable * table = ms.openTable (tablename);
+    //
+    std::cout << "--> Opening table column ..." << std::endl;
+    DAL::dalColumn * columTime = table->getColumn("TIME");
+    // 
+    columTime->summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -264,7 +285,7 @@ int main (int argc, char *argv[])
     nofFailedTests += test_MS (filename);
     break;
   default:
-    std::cout << "--> Unsupported file type " << argv[2] << std::endl;
+    std::cout << "--> Unsupported file type " << argv[2] << endl;
     break;
   };
   

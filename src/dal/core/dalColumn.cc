@@ -44,11 +44,25 @@ namespace DAL {
 
     \param complexcolname Name of the column you want to create.
   */
-  dalColumn::dalColumn( std::string complexcolname )
+  dalColumn::dalColumn (std::string complexcolname)
   {
-    init ();
-    name        = complexcolname;
+    init (complexcolname);
     itsDatatype = dal_COMPLEX;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
+
+  /*!
+    \param colname The name of the column you want to create.
+    \param coltype The datatype of the column you want to craete (i.e.
+    dalINT, dalFLOAT, dalSTRING, etc.)
+  */
+  dalColumn::dalColumn (std::string const &colname,
+			std::string const &type )
+  {
+    init (colname);
+    itsDatatype = type;
   }
 
   //_____________________________________________________________________________
@@ -69,26 +83,12 @@ namespace DAL {
                         std::string colname,
                         std::string coldatatype )
   {
+    init (colname);
     itsFileID   = fileid;
     itsTableID  = tableid;
     filetype    = lcl_filetype;
     tablename   = lcl_tablename;
-    name        = colname;
     itsDatatype = coldatatype;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                    dalColumn
-
-  /*!
-    \param colname The name of the column you want to create.
-    \param coltype The datatype of the column you want to craete (i.e.
-    dalINT, dalFLOAT, dalSTRING, etc.)
-  */
-  dalColumn::dalColumn( std::string colname, std::string type )
-  {
-    name = colname;
-    itsDatatype = type;
   }
 
   //_____________________________________________________________________________
@@ -102,6 +102,7 @@ namespace DAL {
   dalColumn::dalColumn(casa::Table table,
 		       std::string colname)
   {
+    init (colname);
     filetype = MSCASATYPE;
     bool error = false;
     try
@@ -126,16 +127,6 @@ namespace DAL {
   }
 #endif
 
-  //_____________________________________________________________________________
-  //                                                                        close
-
-  void dalColumn::close()
-  {
-#ifdef DAL_WITH_CASA
-    delete casa_column;
-#endif
-  }
-  
   // ============================================================================
   //
   //  Methods
@@ -145,10 +136,10 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                         init
 
-  void dalColumn::init ()
+  void dalColumn::init (std::string const &columnName)
   {
     filetype      = "";
-    name          = "";
+    name          = columnName;
     tablename     = "";
     itsDatatype   = "";
     size          = 0;
@@ -160,6 +151,25 @@ namespace DAL {
     coltype       = 0;
     status        = 0;
     itsColumnData = NULL;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  /*!
+    \param os -- The output stream to which the summary is going to be written
+  */
+  void dalColumn::summary(std::ostream &os)
+  {
+    os << "\n[dalColumn] Summary of object properties"  << endl;
+    os << "-- File type            = " << filetype    << std::endl;
+    os << "-- HDF5 file ID         = " << itsFileID   << std::endl;
+    os << "-- HDF5 table ID        = " << itsTableID  << std::endl;
+    os << "-- Table name           = " << tablename   << std::endl;
+    os << "-- Column name          = " << name        << std::endl;
+    os << "-- Column datatype      = " << itsDatatype << std::endl;
+    os << "-- Datatype size        = " << size        << std::endl;
+    os << "-- nof. rows per column = " << num_of_rows << std::endl;
   }
 
   //_____________________________________________________________________________
@@ -438,6 +448,16 @@ namespace DAL {
     return data( start, length );
   }
 
+  //_____________________________________________________________________________
+  //                                                                        close
+
+  void dalColumn::close()
+  {
+#ifdef DAL_WITH_CASA
+    delete casa_column;
+#endif
+  }
+  
   //_____________________________________________________________________________
   //                                                              CasaData_scalar
 

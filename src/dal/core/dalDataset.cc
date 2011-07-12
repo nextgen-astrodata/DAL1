@@ -217,7 +217,7 @@ namespace DAL {
     itsFiletype    = dalFileType();
     name           = "UNDEFINED";
     overwrite_p    = false;
-    filter         = dalFilter();
+    itsFilter         = dalFilter();
     h5fh_p         = 0;
 
 #ifdef DAL_WITH_CASA
@@ -264,7 +264,7 @@ namespace DAL {
     os << "-- Dataset name     = " << getName()             << std::endl;
     os << "-- HDF5 file handle = " << getFileHandle()       << std::endl;
     os << "-- HDF5 group ID    = " << getId()               << std::endl;
-    os << "-- Filter string    = " << filter.filterString() << std::endl;
+    os << "-- Filter string    = " << itsFilter.filterString() << std::endl;
 
     /*______________________________________________________
       Further properties only can be requested if the object
@@ -596,8 +596,8 @@ namespace DAL {
   */
   void dalDataset::setFilter (std::string const &columns)
   {
-    filter.setFiletype(itsFiletype);
-    filter.setFilter(columns);
+    itsFilter.setFiletype(itsFiletype);
+    itsFilter.setFilter(columns);
   }
 
   //_____________________________________________________________________________
@@ -612,8 +612,8 @@ namespace DAL {
   void dalDataset::setFilter (std::string const &columns,
 			      std::string const &conditions)
   {
-    filter.setFiletype(itsFiletype);
-    filter.setFilter(columns,conditions);
+    itsFilter.setFiletype(itsFiletype);
+    itsFilter.setFilter(columns,conditions);
   }
 
   //_____________________________________________________________________________
@@ -916,9 +916,9 @@ namespace DAL {
     case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
-        dalTable * lt = new dalTable (itsFiletype.type());
-        if ( filter.isSet() )
-          lt->openTable( tablename, itsMSReader, filter);
+        dalTable * lt = new dalTable (itsFiletype);
+        if ( itsFilter.isSet() )
+          lt->openTable( tablename, itsMSReader, itsFilter);
         else
           lt->openTable( tablename, itsMSReader );
         return lt;

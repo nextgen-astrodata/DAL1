@@ -110,7 +110,7 @@ namespace DAL {
     //! Overwrite existing file if one already exists
     bool overwrite_p;
     //! Dataset filter
-    dalFilter filter;
+    dalFilter itsFilter;
     //! HDF5 file handle
     hid_t h5fh_p;
     

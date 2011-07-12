@@ -259,7 +259,7 @@ void export_dalColumn ()
   bpl::class_<dalColumn>("dalColumn")
     .def( bpl::init<>())
     .def( bpl::init<string>())
-    .def( bpl::init<string,string>())
+    .def( bpl::init<string const &,string const &>())
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"
 	  "with a compound datatype.  For example, use this method if an \n"

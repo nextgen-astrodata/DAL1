@@ -141,12 +141,11 @@ namespace DAL {
   {
     os << "\n[dalTable] Summary of object properties"  << endl;
 
-    if (name != "") {
-      os << "-- Table name    = " << name               << std::endl;
-      os << "-- Table type    = " << itsFiletype.name() << std::endl;
-      os << "-- nof. rows     = " << getNumberOfRows()  << std::endl;
-      os << "-- nof. columns  = " << nofColumns()       << std::endl;
-    }
+    os << "-- Table name    = " << name               << std::endl;
+    os << "-- Table type    = " << itsFiletype.name() << std::endl;
+    os << "-- nof. rows     = " << getNumberOfRows()  << std::endl;
+    os << "-- nof. columns  = " << nofColumns()       << std::endl;
+    
     
     /* If the table contains a non-zero number of columns, list their names.
      */
@@ -162,15 +161,11 @@ namespace DAL {
     /* If the table is working with HDF5 as back-end, provide a summary of the
      * identifiers and properties.
      */
-    if (itsFiletype.type()==dalFileType::HDF5 && itsFileID > 0) {
+    if (itsFiletype.type()==dalFileType::HDF5) {
       os << "-- HDF5 file ID  = " << itsFileID    << std::endl;
       os << "-- HDF5 table ID = " << itsTableID   << std::endl;
       os << "-- nof. fields   = " << nfields      << std::endl;
       os << "-- nof. records  = " << nofRecords_p << std::endl;
-    }
-    else {
-      os << "-- File type is HDF5, but object not connected to file!"
-	 << std::endl;
     }
   }
   
@@ -1599,20 +1594,36 @@ namespace DAL {
   */
   long dalTable::getNumberOfRows()
   {
-    if (itsFiletype.type()==dalFileType::HDF5) {
-      if (itsFileID > 0) {
-	H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
+
+    switch (itsFiletype.type()) {
+    case dalFileType::HDF5:
+      {
+	if (itsFileID > 0) {
+	  H5TBget_table_info (itsFileID,
+			      name.c_str(),
+			      &nfields,
+			      &nofRecords_p);
+	}
+	else if (itsTableID > 0) {
+	  H5TBget_table_info (itsTableID,
+			      name.c_str(),
+			      &nfields,
+			      &nofRecords_p);
+	}
+	return nofRecords_p;
       }
-      else if (itsTableID > 0) {
-	H5TBget_table_info ( itsTableID, name.c_str(), &nfields, &nofRecords_p );
+      break;
+    default:
+      {
+	std::cerr << "[dalTable::getNumberOfRows]"
+		  << " Operation not yet supported for type "
+		  << itsFiletype.name()
+		  << std::endl;
+	return(-1);
       }
-      return nofRecords_p;
-    }
-    else {
-      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
-		<< ".  Sorry.\n";
-      return(-1);
-    }
+      break;
+    };
+
   }
   
   //_____________________________________________________________________________

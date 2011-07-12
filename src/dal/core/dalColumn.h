@@ -107,7 +107,10 @@ namespace DAL {
     //! Default constructor
     dalColumn();
     //! Create a new complex column.
-    dalColumn( std::string complexcolname );
+    dalColumn (std::string complexcolname);
+    //! Argumented constructor for a new column object.
+    dalColumn (std::string const &colname,
+	       std::string const &coltype);
     //! Argumented constructor for a new column object.
     dalColumn( hid_t fileid,
 	       hid_t tableid,
@@ -115,9 +118,6 @@ namespace DAL {
 	       std::string lcl_tablename,
 	       std::string colname,
 	       std::string coldatatype );
-    //! Argumented constructor for a new column object.
-    dalColumn (std::string colname,
-	       std::string coltype);
     
 #ifdef DAL_WITH_CASA
     //! Create a new column object from a CASA table.
@@ -163,6 +163,13 @@ namespace DAL {
     //! Get the data object for the column.
     dalData * data();
     
+    //! Provide a summary of the object's internal parameters and status
+    inline void summary() {
+      summary(std::cout);
+    }
+    //! Provide a summary of the object's internal parameters and status
+    void summary(std::ostream &os);
+
     // === Boost.Python wrappers ================================================
 
 #ifdef PYTHON
@@ -179,7 +186,7 @@ namespace DAL {
   private:
 
     //! Initialize the object's internal parameters
-    void init();
+    void init (std::string const &columnName="");
 
   };  // dalColumn class
   
