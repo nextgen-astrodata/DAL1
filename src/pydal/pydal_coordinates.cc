@@ -198,7 +198,7 @@ void export_Stokes ()
     .def("className",
 	 &Stokes::className,
 	 "Get the name of the class.")
-    // Methods
+    // Public methods
     .def("summary",
 	 summary1,
 	 "Summary of the object's internal parameters and status.")

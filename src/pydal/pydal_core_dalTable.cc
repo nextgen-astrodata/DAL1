@@ -299,30 +299,6 @@ bool dalTable::setAttribute_char( std::string attrname, char data )
 {
   return setAttribute( attrname, &data );
 }
-bool dalTable::setAttribute_short( std::string attrname, short data )
-{
-  return setAttribute( attrname, &data );
-}
-bool dalTable::setAttribute_int( std::string attrname, int data )
-{
-  return setAttribute( attrname, &data );
-}
-bool dalTable::setAttribute_uint( std::string attrname, uint data )
-{
-  return setAttribute( attrname, &data );
-}
-bool dalTable::setAttribute_long( std::string attrname, long data )
-{
-  return setAttribute( attrname, &data );
-}
-bool dalTable::setAttribute_float( std::string attrname, float data )
-{
-  return setAttribute( attrname, &data );
-}
-bool dalTable::setAttribute_double( std::string attrname, double data )
-{
-  return setAttribute( attrname, &data );
-}
 bool dalTable::setAttribute_string( std::string attrname, std::string data )
 {
   return setAttribute( attrname, &data );
@@ -330,7 +306,7 @@ bool dalTable::setAttribute_string( std::string attrname, std::string data )
 
 #ifdef DAL_WITH_CASA
 
-void dalTable::ot_nonMStable( std::string tablename )
+void dalTable::ot_nonMStable( std::string const &tablename )
 {
   openTable( tablename );
 }
@@ -451,41 +427,77 @@ void export_dalTable ()
   // Specialisation of overloaded methods
   
   void (dalTable::*openTableHDF5)(void * voidfile,
-				  std::string,
-				  std::string) 
+				  std::string const &,
+				  std::string const &) 
     = &dalTable::openTable;
+  void (dalTable::*summary1)() 
+    = &dalTable::summary;
+  void (dalTable::*summary2)(std::ostream &) 
+    = &dalTable::summary;
+  
+  bool (dalTable::*setAttribute_short)(std::string const &,
+				       short const *,
+				       unsigned int const &) 
+    = &dalTable::setAttribute;
+  bool (dalTable::*setAttribute_int)(std::string const &,
+				     int const *,
+				     unsigned int const &) 
+    = &dalTable::setAttribute;
+  bool (dalTable::*setAttribute_uint)(std::string const &,
+				      uint const *,
+				      unsigned int const &) 
+    = &dalTable::setAttribute;
+  bool (dalTable::*setAttribute_long)(std::string const &,
+				      long const *,
+				      unsigned int const &) 
+    = &dalTable::setAttribute;
+  bool (dalTable::*setAttribute_float)(std::string const &,
+				       float const *,
+				       unsigned int const &) 
+    = &dalTable::setAttribute;
+  bool (dalTable::*setAttribute_double)(std::string const &,
+					double const *,
+					unsigned int const &) 
+    = &dalTable::setAttribute;
   
   //________________________________________________________
   // Bindings for class and its methods
   
   bpl::class_<dalTable>("dalTable")
     .def( bpl::init<char*>())
+    // Public methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
     .def( "setAttribute_char", &dalTable::setAttribute_char,
 	  "Set a character attribute" )
+    .def( "setAttribute_short", setAttribute_short,
+	  "Set a short integer attribute" )
+    .def( "setAttribute_int", setAttribute_int,
+	  "Set a integer attribute" )
+    .def( "setAttribute_uint", setAttribute_uint,
+	  "Set a unsigned integer attribute" )
+    .def( "setAttribute_long", setAttribute_long,
+	  "Set a long integer attribute" )
+    .def( "setAttribute_float", setAttribute_float,
+	  "Set a floating point attribute" )
+    .def( "setAttribute_double", setAttribute_double,
+	  "Set a double precision floating point attribute" )
     .def( "setAttribute_char", &dalTable::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
-    .def( "setAttribute_short", &dalTable::setAttribute_short,
-	  "Set a short integer attribute" )
     .def( "setAttribute_short", &dalTable::setAttribute_short_vector,
 	  "Set an attribute from a list of shorts." )
-    .def( "setAttribute_int", &dalTable::setAttribute_int,
-	  "Set a integer attribute" )
     .def( "setAttribute_int", &dalTable::setAttribute_int_vector,
 	  "Set an attribute from a list of integers." )
-    .def( "setAttribute_uint", &dalTable::setAttribute_uint,
-	  "Set a unsigned integer attribute" )
     .def( "setAttribute_uint", &dalTable::setAttribute_uint_vector,
 	  "Set an attribute from a list of unsigned integers." )
-    .def( "setAttribute_long", &dalTable::setAttribute_long,
-	  "Set a long integer attribute" )
     .def( "setAttribute_long", &dalTable::setAttribute_long_vector,
 	  "Set an attribute from a list of longs." )
-    .def( "setAttribute_float", &dalTable::setAttribute_float,
-	  "Set a floating point attribute" )
     .def( "setAttribute_float", &dalTable::setAttribute_float_vector,
 	  "Set an attribute from a list of floats." )
-    .def( "setAttribute_double", &dalTable::setAttribute_double,
-	  "Set a double precision floating point attribute" )
     .def( "setAttribute_double", &dalTable::setAttribute_double_vector,
 	  "Set an attribute from a list of doubles." )
     .def( "setAttribute_string", &dalTable::setAttribute_string,

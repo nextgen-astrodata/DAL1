@@ -80,8 +80,6 @@ namespace DAL {
   
   dalTable::~dalTable()
   {
-    delete itsFilter;
-
 #ifdef DAL_WITH_CASA
     if (itsFiletype.type() == dalFileType::CASA_MS) {
       delete itsCasaTable;
@@ -112,7 +110,7 @@ namespace DAL {
     nofRecords_p   = 0;
     status         = 0;
     itsFirstRecord = true;
-    itsFilter      = NULL;
+    itsFilter      = dalFilter();
 
     columns.clear();
     
@@ -375,11 +373,11 @@ namespace DAL {
   \param columns A comma-separated list of columns you wish read from the
                  table.
   */
-  void dalTable::setFilter( std::string columns )
+  void dalTable::setFilter (std::string const &columns)
   {
-    itsFilter = new dalFilter;
-    itsFilter->setFiletype(itsFiletype);
-    itsFilter->setFilter(columns);
+    itsFilter = dalFilter();
+    itsFilter.setFiletype(itsFiletype);
+    itsFilter.setFilter(columns);
   }
 
   //_____________________________________________________________________________
@@ -396,11 +394,11 @@ namespace DAL {
     \param conditions The condition you wish to apply to the columns in the
            filter.  For example: "TIME>100".
   */
-  void dalTable::setFilter (std::string columns,
-			    std::string conditions )
+  void dalTable::setFilter (std::string const &columns,
+			    std::string const &conditions)
   {
-    itsFilter->setFiletype(itsFiletype);
-    itsFilter->setFilter(columns,conditions);
+    itsFilter.setFiletype(itsFiletype);
+    itsFilter.setFilter(columns,conditions);
   }
   
   //_____________________________________________________________________________
@@ -652,7 +650,7 @@ namespace DAL {
     \return status   -- Status of the operation; return \e false in case an error
             was encountered.
   */
-  bool dalTable::openTable (std::string tablename )
+  bool dalTable::openTable (std::string const &tablename)
   {
     bool status = true;
 
@@ -660,10 +658,10 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
     case dalFileType::CASA_MS:
       {
-	if ( itsFilter->isSet() ) {
+	if ( itsFilter.isSet() ) {
 	  try {
 	    *itsCasaTable = casa::Table( tablename );
-	    *itsCasaTable = casa::tableCommand( itsFilter->get(),
+	    *itsCasaTable = casa::tableCommand( itsFilter.get(),
 						*itsCasaTable );
 	  }
 	  catch (casa::AipsError x) {
@@ -702,7 +700,7 @@ namespace DAL {
     \param tablename The name of the table you want to open.
     \param reader The CASA MS table reader object.
   */
-  void dalTable::openTable (std::string tablename,
+  void dalTable::openTable (std::string const &tablename,
                             casa::MSReader * reader)
   {
     if (itsFiletype.type()==dalFileType::CASA_MS) {
@@ -731,17 +729,17 @@ namespace DAL {
     \param reader    -- MeasurementSet reader
     \param filter    -- Access filter to be applied to the table
   */
-  void dalTable::openTable( std::string tablename,
+  void dalTable::openTable( std::string const &tablename,
                             casa::MSReader * reader,
-                            dalFilter * filter )
+                            dalFilter const &filter)
   {
     if (itsFiletype.type()==dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
       try {
 	*itsCasaTable = reader->table( tablename );
 	itsFilter     = filter;
-	*itsCasaTable = casa::tableCommand( itsFilter->get(),
-					   *itsCasaTable );
+	*itsCasaTable = casa::tableCommand( itsFilter.get(),
+					    *itsCasaTable );
       }
       catch (casa::AipsError x) {
 	std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -761,14 +759,14 @@ namespace DAL {
   //                                                                    openTable
   
   /*!
-    \param voidfile A pointer to the file you want to open.
-    \param tablename The name of the table you want to open.
-    \param groupname The name of the group containing the table you want
+    \param voidfile  -- A pointer to the file you want to open.
+    \param tablename -- The name of the table you want to open.
+    \param groupname -- The name of the group containing the table you want
            to open.
   */
   void dalTable::openTable( void * voidfile,
-                            std::string tablename,
-                            std::string groupname )
+                            std::string const &tablename,
+                            std::string const &groupname)
   {
     if (itsFiletype.type()==dalFileType::HDF5) {
       name = groupname + '/' + tablename;
@@ -847,8 +845,8 @@ namespace DAL {
     \param groupname The name of the group you where you want to create
            the table.
   */
-  void dalTable::createTable( void * voidfile,
-                              std::string tablename,
+  void dalTable::createTable (void * voidfile,
+                              std::string const &tablename,
                               std::string groupname )
   {
     if (itsFiletype.type()==dalFileType::HDF5)
@@ -883,12 +881,21 @@ namespace DAL {
         dst_size = sizeof( Particle );
         dst_offset[0] = HOFFSET( Particle, dummy );
 
-        tablename = groupname + '/' + tablename;
+	std::string pathToTable = groupname + '/' + tablename;
 
-        status = H5TBmake_table( tablename.c_str(), itsFileID, tablename.c_str(),
-                                 1, 1, dst_size, lclfield_names,
-                                 dst_offset, field_type, chunk_size,
-                                 fill, compress, data );
+        status = H5TBmake_table (pathToTable.c_str(),
+				 itsFileID,
+				 pathToTable.c_str(),
+                                 1,
+				 1,
+				 dst_size,
+				 lclfield_names,
+                                 dst_offset,
+				 field_type,
+				 chunk_size,
+                                 fill,
+				 compress,
+				 data);
         delete [] fill;
         fill = NULL;
         itsTableID = H5Dopen ( itsFileID, tablename.c_str(), H5P_DEFAULT );
@@ -1515,23 +1522,6 @@ namespace DAL {
     return HDF5Attribute::write ( itsTableID, attrname, &data, 1 );
   }
 
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-  
-  /*!
-    \brief Define a string attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalTable::setAttribute( std::string attrname,
-			       std::string const * data,
-                               int size )
-  {
-    return HDF5Attribute::write ( itsTableID, attrname, data, size );
-  }
-  
   //_____________________________________________________________________________
   //                                                                  listColumns
   

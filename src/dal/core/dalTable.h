@@ -66,7 +66,7 @@ namespace DAL {
     //! HDF5 return status
     herr_t status;
     //! Table access filter
-    dalFilter * itsFilter;
+    dalFilter itsFilter;
     //! HDF5 list of columns
     char **itsFieldNames;
     
@@ -117,6 +117,13 @@ namespace DAL {
     inline hsize_t nofRecords () const {
       return nofRecords_p;
     }
+    //! Get the number of columns in the table
+    inline unsigned int nofColumns () const {
+      return columns.size();
+    }
+
+    // === Public methods =======================================================
+
     //! Print a list of the columns contained in the table.
     void printColumns();
     //! Provide a summary of the object's internal parameters and status
@@ -127,19 +134,19 @@ namespace DAL {
     void summary(std::ostream &os);
     //! Open the table.  Called from dalDataset, not from the user.
     void openTable (void * voidfile,
-		    std::string tablename,
-		    std::string groupname);
+		    std::string const &tablename,
+		    std::string const &groupname);
     
 #ifdef DAL_WITH_CASA
     //! Open a CASA table, not in a MeasurementSet.
-    bool openTable (std::string tablename);
+    bool openTable (std::string const &tablename);
     //! Open the table in a measurement set.
-    void openTable (std::string tablename,
+    void openTable (std::string const &tablename,
 		    casa::MSReader * reader );
     //! Open a filtered CASA measurement set table.
-    void openTable (std::string tablename,
+    void openTable (std::string const &tablename,
 		    casa::MSReader * reader,
-		    dalFilter * filter );
+		    dalFilter const &filter);
     //! Get keyword of type casa::String
     bool GetKeyword (casa::String const KeywordName,
 		     casa::String *result);
@@ -160,12 +167,8 @@ namespace DAL {
     
     //! Create a new table
     void createTable (void * voidfile,
-		      std::string tablename,
+		      std::string const &tablename,
 		      std::string groupname);
-    //! Get the number of columns in the table
-    inline unsigned int nofColumns () const {
-      return columns.size();
-    }
     //! Get a column object
     dalColumn * getColumn_complexInt16( std::string colname );
     //! Get a column object
@@ -182,11 +185,19 @@ namespace DAL {
 			   int subfields );
     //! Remove a column from the table
     void removeColumn( const std::string &colname );
-    void writeDataByColNum( void * structure, int index, int rownum, long nrecords=1 );
-    void setFilter( std::string columns );
-    void setFilter( std::string columns, std::string conditions );
-    void appendRow( void * data );
-    void appendRows( void * data, long number_of_rows );
+    void writeDataByColNum( void * structure,
+			    int index,
+			    int rownum,
+			    long nrecords=1);
+    //! Set filter to select \e columns.
+    void setFilter (std::string const &columns);
+    //! Set filter to select \e columns with additional \e conditions applied.
+    void setFilter (std::string const &columns,
+		    std::string const &conditions);
+    //! Append row of data to the table.
+    void appendRow (void * data );
+    //! Append rows of data to the table.
+    void appendRows (void * data, long number_of_rows );
     //! List the column of the table
     std::vector<std::string> listColumns();
     //! Read rows from the table
@@ -230,7 +241,6 @@ namespace DAL {
       }
 
     bool setAttribute( std::string attrname, std::string data );
-    bool setAttribute( std::string attrname, std::string const * data, int size=1 );
     //! Find an attribute associated with the table
     bool findAttribute( std::string attrname );
     //! Get the number of rows within the table
@@ -259,18 +269,6 @@ namespace DAL {
     
     //! Set attribute of type \e char
     bool setAttribute_char( std::string attrname, char data );
-    //! Set attribute of type \e short
-    bool setAttribute_short( std::string attrname, short data );
-    //! Set attribute of type \e int
-    bool setAttribute_int( std::string attrname, int data );
-    //! Set attribute of type \e uint
-    bool setAttribute_uint( std::string attrname, uint data );
-    //! Set attribute of type \e long
-    bool setAttribute_long( std::string attrname, long data );
-    //! Set attribute of type \e float
-    bool setAttribute_float( std::string attrname, float data );
-    //! Set attribute of type \e double
-    bool setAttribute_double( std::string attrname, double data );
     //! Set attribute of type \e string
     bool setAttribute_string( std::string attrname, std::string data );
     bool setAttribute_char_vector (std::string attrname, bpl::list data);
@@ -283,7 +281,7 @@ namespace DAL {
     bool setAttribute_string_vector (std::string attrname, bpl::list data);
     
 #ifdef DAL_WITH_CASA
-    void ot_nonMStable( std::string tablename );
+    void ot_nonMStable( std::string const &tablename );
     void setFilter_boost1(std::string);
     void setFilter_boost2(std::string,std::string);
     // 	bpl::numeric::array getColumnData_boost( string colname );

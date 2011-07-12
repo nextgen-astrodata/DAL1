@@ -918,7 +918,7 @@ namespace DAL {
 #ifdef DAL_WITH_CASA
         dalTable * lt = new dalTable (itsFiletype.type());
         if ( filter.isSet() )
-          lt->openTable( tablename, itsMSReader, &filter );
+          lt->openTable( tablename, itsMSReader, filter);
         else
           lt->openTable( tablename, itsMSReader );
         return lt;
