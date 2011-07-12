@@ -126,12 +126,6 @@ namespace DAL {
   {
     bool status (true);
 
-    /* Release pointer of casacore objects */
-    
-#ifdef DAL_WITH_CASA
-    if (itsMSReader != NULL)  { itsMSReader = NULL;  }
-#endif
-    
     /* Release HDF5 object handler */
 
     DAL::HDF5Object::close(h5fh_p);
@@ -163,10 +157,6 @@ namespace DAL {
     itsFilter      = dalFilter();
     h5fh_p         = 0;
     itsMS          = casa::MeasurementSet();
-
-#ifdef DAL_WITH_CASA
-    itsMSReader = NULL;
-#endif
   }
 
   //_____________________________________________________________________________
@@ -249,11 +239,11 @@ namespace DAL {
       itsFiletype.setType (dalFileType::HDF5);
       itsFilePointer = &h5fh_p;
       name           = filename;
-      fileIsOpen     = false;
+      fileIsOpen     = true;
     } else {
       fileIsOpen = false;
     }
-    
+
     return fileIsOpen;
   }
 
@@ -363,56 +353,59 @@ namespace DAL {
   bool dalDataset::openMS (std::string const &filename,
 			   IO_Mode const &flags)
   {
-    bool fileExists    = false;
-    bool fileTruncated = false; 
+    bool fileIsOpen    = false;
+    bool fileTruncated = false;
     
     /*______________________________________________________
-      Check if the file already exists
+      Check if the dataset already exists.
     */
     
     casa::File msfile (filename);
 
-    fileExists = msfile.exists();
-    
     /*______________________________________________________
       Open or create file.
     */
     
-    if (fileExists) {
+    if (msfile.exists()) {
       
       std::string absoluteName;
 
-      if (msfile.isSymLink()) {
-	casa::SymLink link (msfile);
-	casa::Path realFileName = link.followSymLink();
-	absoluteName = realFileName.absoluteName();
+      if (msfile.isDirectory()) {
+	if (msfile.isSymLink()) {
+	  casa::SymLink link (msfile);
+	  casa::Path realFileName = link.followSymLink();
+	  absoluteName = realFileName.absoluteName();
+	} else {
+	  absoluteName = filename;
+	}
       } else {
-	absoluteName = filename;
+	return false;
       }
-
+      
       if ( flags.flags() & IO_Mode::Truncate ) {
+	std::cout << "[dalDataset::openMS(IO_Mode::Truncate)]" << std::endl;
 	/* Truncate existing file */
 	fileTruncated = true;
 	itsMS = casa::MeasurementSet (absoluteName, casa::Table::New);
       } else if ( flags.flags() & IO_Mode::Create ) {
+	std::cout << "[dalDataset::openMS(IO_Mode::Create)]" << std::endl;
 	/* Truncate existing file */
 	fileTruncated = true;
 	itsMS = casa::MeasurementSet (absoluteName, casa::Table::New);
       } else {
 	if ( flags.flags() & IO_Mode::ReadWrite ) {
+	  std::cout << "[dalDataset::openMS(IO_Mode::ReadWrite)]" << std::endl;
 	  /* Open file as read/write */
 	  fileTruncated = false;
 	  itsMS = casa::MeasurementSet (absoluteName);
 	} else {
+	  std::cout << "[dalDataset::openMS(IO_Mode::ReadOnly)]" << std::endl;
 	  /* Open file as read-only */
 	  fileTruncated = false;
 	  itsMS = casa::MeasurementSet (absoluteName);
 	}
       }
-
-      /* Attach MSReader to the just opened dataset */
-      itsMSReader = new casa::MSReader (itsMS);
-
+      
     } else {
       // create table descriptor
       casa::TableDesc simpleDesc = casa::MS::requiredTableDesc();
@@ -429,14 +422,15 @@ namespace DAL {
     }
     
     if (itsMS.validate()) {
-      fileExists     = true;
+      fileIsOpen     = true;
       name           = filename;
       itsFilePointer = &itsMS;
+      itsFiletype.setType (dalFileType::CASA_MS);
     } else {
-      fileExists     = false;
+      fileIsOpen     = false;
     }
 
-    return fileExists;
+    return fileIsOpen;
   }
 
 #endif
@@ -457,6 +451,9 @@ namespace DAL {
     bool fileExits = false;
     itsFlags       = flags;
     
+    /* Turn off error reporting */
+    H5Eset_auto(H5E_DEFAULT, NULL, NULL);
+
     /*________________________________________________________________
       Generic check whether or not the provided name points to a file
       that is accessable.
@@ -534,7 +531,7 @@ namespace DAL {
       case dalFileType::CASA_MS:
 	{
 	  openMS (filename,
-		    flags);
+		  flags);
 	}
 	break;
 #endif
@@ -661,7 +658,8 @@ namespace DAL {
     case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
-        ms_tables = itsMSReader->tables();
+	casa::MSReader msReader (itsMS);
+        ms_tables = msReader.tables();
         unsigned int nelem (ms_tables.nelements());
 	
         // list the names of the tables
@@ -1014,11 +1012,12 @@ namespace DAL {
     case dalFileType::CASA_MS:
       {
 #ifdef DAL_WITH_CASA
+	casa::MSReader msReader (itsMS);
         dalTable * lt = new dalTable (itsFiletype);
         if ( itsFilter.isSet() )
-          lt->openTable( tablename, itsMSReader, itsFilter);
+          lt->openTable( tablename, &msReader, itsFilter);
         else
-          lt->openTable( tablename, itsMSReader );
+          lt->openTable( tablename, &msReader );
         return lt;
 #else
         std::cerr << "CASA support not enabled.\n";

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2008-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -47,7 +47,7 @@ using std::endl;
 */
 int test_constructors (std::map<std::string,std::string> &filenames)
 {
-  std::cout << "\n[tdalDataset::test_constructors]\n" << endl;
+  std::cout << "\n[tdalDataset::test_constructors]" << endl;
 
   int nofFailedTests  = 0;
   DAL::IO_Mode flags (DAL::IO_Mode::OpenOrCreate);
@@ -58,7 +58,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
             to a dataset/-file.
   */
 
-  std::cout << "[1] Testing dalDataset() ..." << endl;
+  std::cout << "\n[1] Testing dalDataset() ..." << endl;
   try {
     DAL::dalDataset dataset;
     dataset.summary();
@@ -71,9 +71,9 @@ int test_constructors (std::map<std::string,std::string> &filenames)
   /*__________________________________________________________________
     Test 2: Argumented constructor, proving the necessary set of 
             parameters for the creation of a dataset/-file.
-   */
+  */
 
-  std::cout << "[2] Testing dalDataset(string,string,IO_Mode) ..." << endl;
+  std::cout << "\n[2] Testing dalDataset(string,string,IO_Mode) ..." << endl;
   try {
     for (it=filenames.begin(); it!=filenames.end(); ++it) {
       // Display which type of dataset is being created
@@ -85,13 +85,56 @@ int test_constructors (std::map<std::string,std::string> &filenames)
 			       flags);
       dataset.summary();
     }
-    
   }
   catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
+  /*__________________________________________________________________
+    Test 3: Argumented constructor, proving the necessary set of 
+            parameters for the creation of a dataset/-file.
+  */
+
+  std::cout << "\n[3] Testing dalDataset(string,string) ..." << endl;
+  try {
+    for (it=filenames.begin(); it!=filenames.end(); ++it) {
+      // Display which type of dataset is being created
+      std::cout << "--> Opening dataset of type '" << it->first
+		<< "' ..." << endl;
+      // Create dataset
+      DAL::dalDataset dataset (it->second.c_str(),
+			       it->first.c_str());
+      dataset.summary();
+    }
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                      test_open
+
+/*!
+  \param filename -- Name of the dataset to open.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_open (std::string const &filename)
+{
+  std::cout << "\n[tdalDataset::test_open]\n" << endl;
+
+  int nofFailedTests  = 0;
+
+  std::cout << "--> Opening dataset " << filename << " ..." << std::endl;
+
+  DAL::dalDataset dataset (filename);
+  dataset.summary();
+
   return nofFailedTests;
 }
 
@@ -258,10 +301,10 @@ int main (int argc, char *argv[])
   DAL::dalFileType filetype;
 
   std::map<std::string,std::string> filenames;
-  // filenames["HDF5"]    = "tdalDataset.h5";
-  // filenames["FITS"]    = "tdalDataset.fits";
+  filenames["HDF5"]    = "tdalDataset.h5";
+  filenames["FITS"]    = "tdalDataset.fits";
   filenames["CASA_MS"] = "tdalDataset.ms";
-
+  
   //________________________________________________________
   // Process parameters from the command line
   
@@ -276,22 +319,15 @@ int main (int argc, char *argv[])
   
   //________________________________________________________
   // Run the tests
-
+  
   //! Test constructors for dalDataset object
   nofFailedTests += test_constructors(filenames);
   //! Test creation of and access to attributes
   // nofFailedTests += test_attributes (filename);
 
-  return 0;
-
-  switch (filetype.type()) {
-  case DAL::dalFileType::CASA_MS:
-    nofFailedTests += test_MS (filename);
-    break;
-  default:
-    std::cout << "--> Unsupported file type " << argv[2] << endl;
-    break;
-  };
+  if (haveDataset) {
+    nofFailedTests += test_open (filename);
+  }
   
   return nofFailedTests;
 }

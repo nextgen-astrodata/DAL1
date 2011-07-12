@@ -117,7 +117,6 @@ namespace DAL {
     
 #ifdef DAL_WITH_CASA
     casa::MeasurementSet itsMS;   // CASA measurement set
-    casa::MSReader * itsMSReader; // CASA measurement set reader pointer
     casa::Vector<casa::String> ms_tables; // vector of CASA MS tables
 #endif
     

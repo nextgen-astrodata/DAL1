@@ -56,7 +56,6 @@ endforeach (_test)
 ## tHDF5Object ___________________________________
 
 add_test (tHDF5Attribute tHDF5Attribute )
-add_test (tHDF5Dataset   tHDF5Dataset   )
 add_test (tHDF5Datatype  tHDF5Datatype  )
 
 if (TESTDATA_H5EXAMPLE_DAL)
@@ -74,7 +73,9 @@ endif (H5LS_EXECUTABLE)
 ## tdalDataset ___________________________________
 
 if (TESTDATA_L20851_SB120)
-  add_test (tdalDataset_ms tdalDataset ${TESTDATA_L20851_SB120} CASA_MS)
+  add_test (tdalDataset tdalDataset ${TESTDATA_L20851_SB120} CASA_MS)
+else (TESTDATA_L20851_SB120)
+  add_test (tHDF5Dataset tHDF5Dataset )
 endif (TESTDATA_L20851_SB120)
 
 if (dataset_beamformed)

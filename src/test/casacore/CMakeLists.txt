@@ -24,3 +24,9 @@ foreach (src
   endif (DAL_ENABLE_TESTING)
   
 endforeach (src)
+
+## Additional tests taking input datasets
+
+if (TESTDATA_L20851_SB120)
+  add_test (tcasacore_ms2 tcasacore_ms ${TESTDATA_L20851_SB120})
+endif (TESTDATA_L20851_SB120)
