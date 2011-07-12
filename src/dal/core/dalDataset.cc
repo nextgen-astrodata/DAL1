@@ -39,20 +39,6 @@ namespace DAL {
 
   //_____________________________________________________________________________
   //                                                                   dalDataset
-  
-  /*!
-    \param filename -- Name of the dataset to be opened.
-  */
-  dalDataset::dalDataset (std::string const &filename)
-  {
-    /* Initialize internal parameters ... */
-    init ();
-    /* ... and try to open the file. */
-    open (filename.c_str());
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                   dalDataset
 
   /*!
     \param filename  -- The name of the dataset/file to open.
@@ -68,6 +54,28 @@ namespace DAL {
     /* Initialize internal parameters ... */
     init (name.c_str(),
 	  filetype,
+	  overwrite);
+    /* ... and try to open the file. */
+    open (filename.c_str());
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
+
+  /*!
+    \param filename  -- The name of the dataset/file to open.
+    \param filetype  -- Type of file to open ("HDF5", "CASA_MS", etc.).
+    \param overwrite -- Overwrite existing file if one already exists for name
+           \e filename. By default an already existing file is kept and only
+	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
+  */
+  dalDataset::dalDataset (std::string const &filename,
+			  dalFileType::Type const &filetype,
+			  const bool &overwrite)
+  {
+    /* Initialize internal parameters ... */
+    init (name.c_str(),
+	  dalFileType(filetype),
 	  overwrite);
     /* ... and try to open the file. */
     open (filename.c_str());
@@ -214,6 +222,7 @@ namespace DAL {
     itsFilePointer = NULL;
     itsFiletype    = dalFileType();
     name           = "UNDEFINED";
+    itsFlags       = IO_Mode();
     overwrite_p    = false;
     itsFilter         = dalFilter();
     h5fh_p         = 0;
@@ -241,11 +250,9 @@ namespace DAL {
     /* Initialize internal data with default values */
     init ();
 
-    itsFilePointer = NULL;
     name           = filename;
     itsFiletype    = filetype;
     overwrite_p    = overwrite;
-    h5fh_p         = 0;
   }
 
   //_____________________________________________________________________________
@@ -258,10 +265,11 @@ namespace DAL {
   {
     os << "[dalDataset] Summary of object properties" << std::endl;
 
-    os << "-- Dataset type     = " << itsFiletype.name()    << std::endl;
-    os << "-- Dataset name     = " << getName()             << std::endl;
-    os << "-- HDF5 file handle = " << getFileHandle()       << std::endl;
-    os << "-- HDF5 group ID    = " << getId()               << std::endl;
+    os << "-- Dataset type     = " << itsFiletype.name()       << std::endl;
+    os << "-- Dataset name     = " << getName()                << std::endl;
+    os << "-- HDF5 file handle = " << getFileHandle()          << std::endl;
+    os << "-- HDF5 group ID    = " << getId()                  << std::endl;
+    os << "-- I/O mode flags   = " << itsFlags.names()         << std::endl;
     os << "-- Filter string    = " << itsFilter.filterString() << std::endl;
 
     /*______________________________________________________

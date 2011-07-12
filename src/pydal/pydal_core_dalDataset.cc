@@ -512,8 +512,15 @@ void export_dalDataset ()
   // Bindings for class and its methods
 
   bpl::class_<dalDataset>("dalDataset")
-    .def( bpl::init<string>() )
-    .def( bpl::init<string,string>() )
+    .def( bpl::init<std::string const &,
+		    DAL::dalFileType const &,
+		    const bool &>())
+    .def( bpl::init<std::string const &,
+		    DAL::dalFileType::Type const &,
+		    const bool &>())
+    .def( bpl::init<std::string const &,
+		    std::string const &,
+		    const bool &>())
     .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,

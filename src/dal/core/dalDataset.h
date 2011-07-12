@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2006-2011                                               *
  *   Joseph Masters (jmasters@science.uva.nl)                              *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -24,6 +24,7 @@
 
 #include <core/dalGroup.h>
 #include <core/HDF5Attribute.h>
+#include <core/IO_Mode.h>
 
 namespace DAL {
   
@@ -107,6 +108,8 @@ namespace DAL {
     dalFileType itsFiletype;
     //! Dataset name
     std::string name;
+    //! I/O mode flags
+    IO_Mode itsFlags;
     //! Overwrite existing file if one already exists
     bool overwrite_p;
     //! Dataset filter
@@ -128,11 +131,13 @@ namespace DAL {
     dalDataset();
 
     //! Argumented constructor
-    dalDataset (std::string const &filename);
+    dalDataset (std::string const &filename,
+		dalFileType const &filetype=dalFileType(),
+		const bool &overwrite=false);
 
     //! Argumented constructor
     dalDataset (std::string const &filename,
-		dalFileType const &filetype,
+		dalFileType::Type const &filetype,
 		const bool &overwrite=false);
 
     //! Argumented constructor
@@ -261,7 +266,8 @@ namespace DAL {
     //! Opens an array at the higest level of a dataset
     dalArray * openArray (std::string const &array);
     //! Open an array in a group.
-    dalArray * openArray (std::string const &array, std::string const &group);
+    dalArray * openArray (std::string const &array,
+			  std::string const &group);
     //! Get a list of groups in the dataset.
     std::vector<std::string> getGroupNames();
     dalGroup * openGroup (std::string groupname );
