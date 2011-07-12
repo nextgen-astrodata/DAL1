@@ -514,13 +514,13 @@ void export_dalDataset ()
   bpl::class_<dalDataset>("dalDataset")
     .def( bpl::init<std::string const &,
 		    DAL::dalFileType const &,
-		    const bool &>())
+		    DAL::IO_Mode const &>())
     .def( bpl::init<std::string const &,
 		    DAL::dalFileType::Type const &,
-		    const bool &>())
+		    DAL::IO_Mode const &>())
     .def( bpl::init<std::string const &,
 		    std::string const &,
-		    const bool &>())
+		    DAL::IO_Mode const &>())
     .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,

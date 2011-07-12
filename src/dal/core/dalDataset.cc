@@ -43,20 +43,21 @@ namespace DAL {
   /*!
     \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "CASA_MS", etc.).
-    \param overwrite -- Overwrite existing file if one already exists for name
+    \param flags     -- I/O mode flags
            \e filename. By default an already existing file is kept and only
 	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
   dalDataset::dalDataset (std::string const &filename,
 			  dalFileType const &filetype,
-			  const bool &overwrite)
+			  IO_Mode const &flags)
   {
     /* Initialize internal parameters ... */
     init (name.c_str(),
 	  filetype,
-	  overwrite);
+	  flags);
     /* ... and try to open the file. */
-    open (filename.c_str());
+    open (filename.c_str(),
+	  flags);
   }
   
   //_____________________________________________________________________________
@@ -65,20 +66,21 @@ namespace DAL {
   /*!
     \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "CASA_MS", etc.).
-    \param overwrite -- Overwrite existing file if one already exists for name
+    \param flags     -- I/O mode flags.
            \e filename. By default an already existing file is kept and only
 	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
   dalDataset::dalDataset (std::string const &filename,
 			  dalFileType::Type const &filetype,
-			  const bool &overwrite)
+			  IO_Mode const &flags)
   {
     /* Initialize internal parameters ... */
     init (name.c_str(),
 	  dalFileType(filetype),
-	  overwrite);
+	  flags);
     /* ... and try to open the file. */
-    open (filename.c_str());
+    open (filename.c_str(),
+	  flags);
   }
   
   //_____________________________________________________________________________
@@ -93,78 +95,14 @@ namespace DAL {
   */
   dalDataset::dalDataset (std::string const &filename,
                           std::string filetype,
-                          const bool &overwrite)
+			  IO_Mode const &flags)
   {
     init (filename,
 	  filetype,
-	  overwrite);
-    
-    if ( filetype == H5TYPE ) {
-      /*
-       * Check if the provided name belongs to an already existing dataset;
-       * if this is the case, open the dataset instead of blindly creating
-       * it (and thereby potentially overwriting the existing one).
-       */
-      if (overwrite_p) {
-	/* Directly try to create the dataset */
-	if ( ( h5fh_p = H5Fcreate( filename.c_str(),
-				   H5F_ACC_TRUNC,
-				   H5P_DEFAULT,
-				   H5P_DEFAULT ) ) < 0 )
-	  {
-	    std::cerr << "ERROR: Could not create file '" << filename << "'."
-		      << std::endl;
-	  }
-      }  // END -- if (overwrite_p)
-      else {
-	FILE * pFile;
-	pFile = fopen ( filename.c_str(), "r" );
-	if ( pFile == NULL )  /* check to see if the file exists */
-	  {
-	    /* if not, create it */
-	    if ( ( h5fh_p = H5Fcreate( filename.c_str(),
-				       H5F_ACC_TRUNC,
-				       H5P_DEFAULT,
-				       H5P_DEFAULT ) ) < 0 )
-	      std::cerr << "ERROR: Could not create file '" << filename << "'.\n";
-	  }
-	else  /* if it does exist, try to reopen it as a hdf5 file */
-	  {
-	    if ( 0 != fclose( pFile ) )
-	      std::cerr << "ERROR: Could not close file '" << filename << "'.\n";
-	    
-	    /* if it does reopen it as an hdf5 file */
-	    
-	    h5fh_p = H5Fopen (filename.c_str(),
-			      H5F_ACC_RDWR,
-			      H5P_DEFAULT);
+	  flags);
 
-	    if (!H5Iis_valid(h5fh_p)) {
-	      std::cerr << "[dalDataset::dalDataset]"
-			<< " There was a problem opening the file '"
-			<< filename << "'.\n";
-	      exit(9);
-	    }
-	    
-	  }
-	
-	itsFilePointer = &h5fh_p;
-      }
-    }
-#ifdef DAL_WITH_CFITSIO
-    else if ( filetype == FITSTYPE ) {
-      fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
-      int status;
-      /* Create new FITS file. */
-      fits_create_file(&fptr, filename.c_str(), &status);
-    }
-#endif
-    else if (filetype == MSCASATYPE) {
-    }
-    else {
-      std::cerr << "(dalDataset::dalDataset) Data format \'" << itsFiletype.name()
-		<< "\' not supported for this operation." << endl;
-    }
+    open (filename,
+	  flags);
   }
   
   // ============================================================================
@@ -223,7 +161,6 @@ namespace DAL {
     itsFiletype    = dalFileType();
     name           = "UNDEFINED";
     itsFlags       = IO_Mode();
-    overwrite_p    = false;
     itsFilter         = dalFilter();
     h5fh_p         = 0;
 
@@ -239,20 +176,20 @@ namespace DAL {
   /*!
     \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
-    \param overwrite -- Overwrite existing file if one already exists for name
+    \param flags     -- I/O mode flags.
            \e filename. By default an already existing file is kept and only
 	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
   void dalDataset::init (std::string const &filename,
 			 dalFileType const &filetype,
-			 const bool &overwrite)
+			 IO_Mode const &flags)
   {
     /* Initialize internal data with default values */
     init ();
 
     name           = filename;
     itsFiletype    = filetype;
-    overwrite_p    = overwrite;
+    itsFlags       = flags;
   }
 
   //_____________________________________________________________________________
@@ -334,56 +271,22 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                     openHDF5
-  
-  /*!
-    \param filename  -- The name of the dataset/file to open.
-  */  
-  hid_t dalDataset::openHDF5 (std::string const &filename)
-  {
-    // the following returns an integer file handle
-
-    hid_t fh = 0;  // file handle
-
-    // Turn off error reporting since we expect failure in cases
-    //   where the file is not hdf5
-    H5Eset_auto1(NULL, NULL);
-
-    /* return -1 if the file is not recognized as hdf5 */
-    if ( H5Fis_hdf5( filename.c_str() ) < 1 )  // hdf5 file returns a positive int
-      {
-        return -1;
-      }
-
-    // the following returns an integer file handle
-    if ( ( fh = H5Fopen(filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT ) ) < 0 )
-      {
-        std::cerr << "Could not open " << filename
-                  << " as read-write.  Trying as read-only." << endl;
-        if ( ( fh = H5Fopen(filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT ) ) < 0 )
-          return -1;
-      }
-    else {
-      return fh;
-    }
-    
-    return fh;
-  }
-  
-  //_____________________________________________________________________________
   //                                                                         open
 
   /*!
     \param filename  -- The name of the file to open.
+    \param flags     -- I/O mode flags.
     \return bool     -- Status of the operation, either DAL::FAIL or
             DAL::SUCCESS.
   */
-  bool dalDataset::open (std::string const &filename)
+  bool dalDataset::open (std::string const &filename,
+			 IO_Mode const &flags)
   {
-    bool status (true);
-    std::string lcltype;
-
-    /*!_______________________________________________________________
+    bool status    = true;
+    bool fileExits = false;
+    itsFlags       = flags;
+    
+    /*________________________________________________________________
       Generic check whether or not the provided name points to a file
       that is accessable.
     */
@@ -392,73 +295,87 @@ namespace DAL {
     infile.open (filename.c_str(), std::ifstream::in);
     
     if (infile.is_open() && infile.good()) {
-      status = true;
+      fileExits = true;
     } else {
-      status = false;
+      fileExits = false;
     }
     infile.close();
 
-    if (!status) {
-      std::cerr << "[dalDataset::open] Low-level test to open file "
-		<< filename
-		<< " failed!"
-		<< std::endl;
-      return false;
-    }
-    
-    /*!_______________________________________________________________
-      Try opening file using the supported underlying libraries.
+    /*________________________________________________________________
+      Open existing file
     */
 
-    if ( DAL::SUCCESS == openFITS (filename) ) {
-      // store the type of the dataset
-      lcltype = FITSTYPE;
-      itsFiletype.setType (dalFileType::FITS);
-      // report successful opening of file
-      std::cerr << lcltype << " file opened, but other FITS operations are not "
-		<< "yet supported.  Sorry." << endl;
-      return DAL::SUCCESS;
-    }
-    else if ( (h5fh_p = openHDF5( filename )) >= 0 ) {
-      itsFilePointer = &h5fh_p;
-      lcltype = H5TYPE;
-      itsFiletype.setType (dalFileType::HDF5);
-      name = filename;
-      return DAL::SUCCESS;
-    }
-    else {
+    
+    if (fileExits) {
+      /* Try opening file through HDF5 library */
+      status = HDF5Object::openFile (h5fh_p,
+				     filename,
+				     flags);
+      if (status) {
+	itsFilePointer = &h5fh_p;
+	itsFiletype.setType (dalFileType::HDF5);
+	name = filename;
+      } else {
+	/* Try opening file through HDF5 library */
+	status = openFITS (filename);
+	if (status) {
+	  itsFiletype.setType (dalFileType::FITS);
+	  name = filename;
 #ifdef DAL_WITH_CASA
-      try {
-	lcltype = MSCASATYPE;
-	itsFiletype.setType (dalFileType::CASA_MS);
-	casa::File msfile( filename );
-	// first treat it as a symbolic link
-	if ( msfile.isSymLink() )
-	  {
-	    casa::SymLink link( msfile );
+	} else {
+	  casa::File msfile (filename);
+	  /* Check if file is regular file or symbolic link */
+	  if (msfile.isSymLink()) {
+	    casa::SymLink link (msfile);
 	    casa::Path realFileName = link.followSymLink();
-	    ms        = new casa::MeasurementSet( realFileName.absoluteName() );
-	    itsFilePointer = &ms;
-	    itsMSReader    = new casa::MSReader( *ms );
-	    name           = filename;
-	    return DAL::SUCCESS;
+	    ms             = new casa::MeasurementSet( realFileName.absoluteName() );
+	  } else {
+	    ms             = new casa::MeasurementSet( filename );
 	  }
-	else // treat it as a regular file
-	  {
-	    ms        = new casa::MeasurementSet( filename );
-	    itsFilePointer   = &ms;
-	    itsMSReader = new casa::MSReader( *ms );
-	    name      = filename;
-	    return DAL::SUCCESS;
-	  }
-      }
-      catch (casa::AipsError x) {
-	return DAL::FAIL;
-      }
-#else
-      return DAL::FAIL;
+	  /* Store MS information */
+	  itsFiletype.setType (dalFileType::CASA_MS);
+	  name           = filename;
+	  itsFilePointer = &ms;
+	  itsMSReader    = new casa::MSReader( *ms );
 #endif
+	}
+      }
+    } else {
+      switch (itsFiletype.type()) {
+	// Create new file of type HDF5
+      case dalFileType::HDF5:
+	{
+	  status = HDF5Object::openFile (h5fh_p,
+					 filename,
+					 flags);
+	  if (status) {
+	    itsFilePointer = &h5fh_p;
+	    itsFiletype.setType (dalFileType::HDF5);
+	    name = filename;
+	  }
+	}
+	break;
+      case dalFileType::FITS:
+	{
+	  fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
+	  int status;
+	  /* Create new FITS file. */
+	  fits_create_file(&fptr, filename.c_str(), &status);
+	}
+	break;
+      default:
+	{
+	  std::cerr << "[dalDataset::open] Creating of new dataset of type "
+		    << itsFiletype.name()
+		    << " not supported yet!"
+		    << std::endl;
+	  status = false;
+	}
+	break;
+      }
     }
+
+    return status;
   }
   
   //_____________________________________________________________________________
@@ -1164,8 +1081,8 @@ namespace DAL {
     \return A pointer to a structure containing the block of data.
    */
   void dalDataset::read_tbb (std::string id,
-                             int start,
-                             int length,
+                             int const &start,
+                             int const &length,
                              short data_out[])
   {
     char stid[3]; // station id

@@ -24,7 +24,7 @@
 
 #include <core/dalGroup.h>
 #include <core/HDF5Attribute.h>
-#include <core/IO_Mode.h>
+#include <core/HDF5Object.h>
 
 namespace DAL {
   
@@ -110,8 +110,6 @@ namespace DAL {
     std::string name;
     //! I/O mode flags
     IO_Mode itsFlags;
-    //! Overwrite existing file if one already exists
-    bool overwrite_p;
     //! Dataset filter
     dalFilter itsFilter;
     //! HDF5 file handle
@@ -133,20 +131,20 @@ namespace DAL {
     //! Argumented constructor
     dalDataset (std::string const &filename,
 		dalFileType const &filetype=dalFileType(),
-		const bool &overwrite=false);
-
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     //! Argumented constructor
     dalDataset (std::string const &filename,
 		dalFileType::Type const &filetype,
-		const bool &overwrite=false);
-
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     //! Argumented constructor
     dalDataset (std::string const &filename,
 		std::string filetype,
-		const bool &overwrite=false);
-
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     // === Destruction ==========================================================
-
+    
     //! Default destructor
     ~dalDataset();
 
@@ -158,9 +156,10 @@ namespace DAL {
     }
 
     // === Public methods =======================================================
-
+    
     //! Open the dataset
-    bool open (std::string const &filename);
+    bool open (std::string const &filename,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     //! Close the dataset
     bool close();
     //! Get the attributes of the dataset
@@ -297,15 +296,11 @@ namespace DAL {
     }
     //! Read TBB data
     void read_tbb (std::string id,
-		   int start,
-		   int length,
+		   int const &start,
+		   int const &length,
 		   short data_out[]);
     
-    // ==========================================================================
-    //
-    //  Private methods
-    //
-    // ==========================================================================
+    // === Private methods ======================================================
     
   private:
     
@@ -314,13 +309,11 @@ namespace DAL {
     //! Initialize the object's internal parameters
     void init (std::string const &filename,
 	       dalFileType const &filetype,
-	       const bool &overwrite=false);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     //! Unconditional deletion of internal parameters
     bool destroy ();
     //! Try to open HDF5 file
     bool openFITS (std::string const &filename);
-    //! Try to open FITS file
-    hid_t openHDF5 (std::string const &filename);
     
     // ==========================================================================
     //
