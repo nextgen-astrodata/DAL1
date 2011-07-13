@@ -290,6 +290,7 @@ message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"       
 
 message (STATUS " Enable code using casacore      = ${CASACORE_FOUND}"            )
 message (STATUS " .. Include directory            = ${CASACORE_INCLUDES}"         )
+message (STATUS " .. Measures data                = ${CASACORE_DATADIR}"          )
 
 message (STATUS " Enable code using CFITSIO       = ${CFITSIO_FOUND}"             )
 if (CFITSIO_FOUND OR DAL_VERBOSE_CONFIGURE)
