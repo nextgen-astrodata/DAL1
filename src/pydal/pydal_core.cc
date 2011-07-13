@@ -153,56 +153,56 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
     mydims.push_back(length);
     hh=1;
   }
-  for (; hh<shape.size(); hh++) {
-    mydims.push_back(shape[hh]);
+  for (; hh<itsShape.size(); hh++) {
+    mydims.push_back(itsShape[hh]);
   }
   
-  if ( dal_CHAR == dataType_p ) {
+  if ( dal_CHAR == itsDatatype ) {
     return num_util::makeNum( ((char*)data) + offset, mydims );
   }
-  else if ( dal_BOOL == dataType_p ) {
+  else if ( dal_BOOL == itsDatatype ) {
     return num_util::makeNum( ((unsigned char*)data) + offset, mydims );
   }
-  else if ( dal_INT == dataType_p )
+  else if ( dal_INT == itsDatatype )
     {
       return num_util::makeNum( ((int*)data) + offset, mydims );
     }
-  else if ( dal_FLOAT == dataType_p ) {
+  else if ( dal_FLOAT == itsDatatype ) {
     return num_util::makeNum(((float*)data)+offset,mydims);
   }
-  else if ( dal_DOUBLE == dataType_p ) {
+  else if ( dal_DOUBLE == itsDatatype ) {
     return num_util::makeNum(((double*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX == dataType_p ) {
+  else if ( dal_COMPLEX == itsDatatype ) {
     return num_util::makeNum(((std::complex<float>*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX_CHAR == dataType_p ) {
+  else if ( dal_COMPLEX_CHAR == itsDatatype ) {
     return num_util::makeNum(((std::complex<char>*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX_SHORT == dataType_p ) {
+  else if ( dal_COMPLEX_SHORT == itsDatatype ) {
     return num_util::makeNum(((std::complex<short>*)data)+offset,mydims);
   }
-  else if ( dal_STRING == dataType_p ) {
+  else if ( dal_STRING == itsDatatype ) {
     bpl::list data_list;
     
-    if ( 1 == shape.size() ) // 1D case
+    if ( 1 == itsShape.size() ) // 1D case
       {
 	for (int ii=0; ii<nrows; ii++)
 	  {
 	    data_list.append( (*((std::string*)get(ii))) );
 	  }
       }
-    else if ( 2 == shape.size() ) // 2D case
+    else if ( 2 == itsShape.size() ) // 2D case
       {
-	for ( int xx=0; xx<shape[0]; xx++)
-	  for ( int yy=0; yy<shape[1]; yy++)
+	for ( int xx=0; xx<itsShape[0]; xx++)
+	  for ( int yy=0; yy<itsShape[1]; yy++)
 	    data_list.append( (*((std::string*)get(xx,yy))) );
       }
-    else if ( 3 == shape.size() ) // 3D case
+    else if ( 3 == itsShape.size() ) // 3D case
       {
-	for ( int xx=0; xx<shape[0]; xx++)
-	  for ( int yy=0; yy<shape[1]; yy++)
-	    for ( int zz=0; zz<shape[2]; zz++)
+	for ( int xx=0; xx<itsShape[0]; xx++)
+	  for ( int yy=0; yy<itsShape[1]; yy++)
+	    for ( int zz=0; zz<itsShape[2]; zz++)
 	      data_list.append( (*((std::string*)get(xx,yy,zz))) );
       }
     else {
@@ -214,7 +214,7 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
     return narray;
   }
   else {
-    std::cerr << "ERROR:  Datatype '" << dataType_p
+    std::cerr << "ERROR:  Datatype '" << itsDatatype
 	      << "' not yet supported.  (dalData::get_boost)\n";
     
     for (int ii=0; ii<1; ii++)

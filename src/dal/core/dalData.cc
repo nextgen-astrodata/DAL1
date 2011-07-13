@@ -33,10 +33,10 @@ namespace DAL {
   
   dalData::dalData ()
   {
-    dataType_p  = "UNKNOWN";
-    filetype_p  = "UNKNOWN";
-    array_order = "UNKNOWN";
-    data        = NULL;
+    itsDatatype   = "UNKNOWN";
+    itsFiletype   = dalFileType();
+    itsArrayOrder = "UNKNOWN";
+    data          = NULL;
   }
   
   //_____________________________________________________________________________
@@ -54,16 +54,16 @@ namespace DAL {
 		    std::vector<int> lclshape,
 		    long lclnrows)
   {
-    filetype_p = lclfiletype;
-    dataType_p = lcldatatype;
-    shape      = lclshape;
+    itsFiletype = dalFileType(lclfiletype);
+    itsDatatype = lcldatatype;
+    itsShape      = lclshape;
     nrows      = lclnrows;
     data       = NULL;
 
-    if ( MSCASATYPE == lclfiletype ) {
-      array_order = "fortran";
-    } else if ( H5TYPE == lclfiletype ) {
-      array_order = "c";
+    if ( itsFiletype.isCASA() ) {
+      itsArrayOrder = "fortran";
+    } else if ( itsFiletype.isHDF5() ) {
+      itsArrayOrder = "c";
     }
   }
   
@@ -72,6 +72,20 @@ namespace DAL {
   //  Methods
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
+  void dalData::summary (std::ostream &os)
+  {
+    os << "[dalData] Summary of object properties"  << std::endl;
+    os << "-- File type   = " << itsFiletype.name() << std::endl;
+    os << "-- Data type   = " << itsDatatype        << std::endl;
+    os << "-- Array order = " << itsArrayOrder      << std::endl;
+  }
   
   //_____________________________________________________________________________
   //                                                                fortran_index
@@ -102,7 +116,7 @@ namespace DAL {
     if ( idx3>-1 )
       indices.push_back( idx3 );
     
-    if (indices.size() != (shape.size()) )
+    if (indices.size() != (itsShape.size()) )
       {
         cerr << "ERROR: Number of indices do not match shape of column." << endl;
         return(-1);
@@ -111,16 +125,16 @@ namespace DAL {
     unsigned long index = 0;
     long bb = 1;
     
-    shape.insert( shape.begin(), 1 );
-    for (unsigned int dim=0; dim<shape.size()-1; dim++)
+    itsShape.insert( itsShape.begin(), 1 );
+    for (unsigned int dim=0; dim<itsShape.size()-1; dim++)
       {
         for (unsigned int ss=dim; ss>0; ss--)
-          bb *= shape[ ss ];
+          bb *= itsShape[ ss ];
 
         index += indices[dim]*bb;
         bb=1;
       }
-    shape.erase( shape.begin() );
+    itsShape.erase( itsShape.begin() );
     return index;
   }
   
@@ -153,7 +167,7 @@ namespace DAL {
     if ( idx3>-1 )
       indices.push_back( idx3 );
 
-    if (indices.size() != (shape.size()) )
+    if (indices.size() != (itsShape.size()) )
       {
         cerr << "ERROR: Number of indices do not match shape of column.\n";
         return(-1);
@@ -164,11 +178,11 @@ namespace DAL {
 
     //   std::cerr << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
     // indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;
-    for (unsigned int dim = 0; dim < shape.size(); dim++)
+    for (unsigned int dim = 0; dim < itsShape.size(); dim++)
       {
-        for (unsigned int ss = shape.size()-1; ss > dim; ss--)
+        for (unsigned int ss = itsShape.size()-1; ss > dim; ss--)
           {
-            bb *= shape[ ss ];
+            bb *= itsShape[ ss ];
           }
 
         index += indices[dim]*bb;
@@ -196,11 +210,11 @@ namespace DAL {
     // Determine the correct index value, depending on the order
     //   of the underlying array (determined by the filetype)
     //
-    if ( MSCASATYPE == filetype_p )
+    if ( itsFiletype.isCASA() )
       {
         index = fortran_index( idx1, idx2, idx3 );
       }
-    else if ( H5TYPE == filetype_p )
+    else if ( itsFiletype.isHDF5() )
       {
         index = c_index( idx1, idx2, idx3 );
       }
@@ -210,31 +224,31 @@ namespace DAL {
         return NULL;
       }
 
-    if ( dal_COMPLEX == dataType_p )
+    if ( dal_COMPLEX == itsDatatype )
       return (&(((std::complex<float>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_CHAR == dataType_p )
+    else if ( dal_COMPLEX_CHAR == itsDatatype )
       return (&(((std::complex<char>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_SHORT == dataType_p )
+    else if ( dal_COMPLEX_SHORT == itsDatatype )
       return (&(((std::complex<short>*)data)[ index ]));
 
-    else if ( dal_DOUBLE == dataType_p )
+    else if ( dal_DOUBLE == itsDatatype )
       return (&(((double*)data)[ index ]));
 
-    else if ( dal_INT == dataType_p )
+    else if ( dal_INT == itsDatatype )
       return (&(((int*)data)[ index ]));
 
-    else if ( dal_SHORT == dataType_p )
+    else if ( dal_SHORT == itsDatatype )
       return (&(((short*)data)[ index ]));
 
-    else if ( dal_FLOAT == dataType_p )
+    else if ( dal_FLOAT == itsDatatype )
       return (&(((float*)data)[ index ]));
 
-    else if ( dal_CHAR == dataType_p )
+    else if ( dal_CHAR == itsDatatype )
       return (&(((char*)data)[ index ]));
 
-    else if ( dal_STRING == dataType_p )
+    else if ( dal_STRING == itsDatatype )
       return (&(((std::string*)data)[ index ]));
 
     return NULL;

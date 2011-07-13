@@ -22,6 +22,7 @@
 #define DALDATA_H
 
 #include <core/dalBaseTypes.h>
+#include <core/dalFileType.h>
 
 #ifdef PYTHON
 #include <pydal/num_util.h>
@@ -31,8 +32,10 @@ namespace DAL {
   
   /*!
     \class dalData
+
     \ingroup DAL
     \ingroup core
+
     \brief Represents container of data.
     
     <h3>Synopsis</h3>
@@ -51,10 +54,11 @@ namespace DAL {
   class dalData {
     
     //! Type of the data,  i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
-    std::string dataType_p;
-    //! i.e. "MSCASA", "FITS", "HDF5"
-    std::string filetype_p;
-    std::string array_order; // i.e. "fortran", "c"
+    std::string itsDatatype;
+    //! File type: CASA_MS, HDF5, FITS, etc.
+    dalFileType itsFiletype;
+    //! Ordering of the array elements: "fortran", "c"
+    std::string itsArrayOrder;
     
     public:
 
@@ -63,7 +67,7 @@ namespace DAL {
       //! Used to convert one datatype to another
       void * data2;
       //! Get the shape of the data array
-      std::vector<int> shape;
+      std::vector<int> itsShape;
       //! Get the number of rows inside the array
       long nrows;
 
@@ -71,6 +75,13 @@ namespace DAL {
 
       //! Default constructor
       dalData();
+
+      //! Argumented constructor with a specific file type.
+      dalData (dalFileType const &itsFiletype,
+	       std::string const &lcldatatype,
+               std::vector<int> const &lclshape,
+	       long const &lclnrows);
+
       //! Argumented constructor with a specific file type.
       dalData (std::string lclfiletype,
 	       std::string lcldatatype,
@@ -89,20 +100,20 @@ namespace DAL {
       
       //! Get the type of data held by the object, i.e. dal_INT, dal_FLOAT, etc.
       inline std::string datatype() {
-        return dataType_p;
+        return itsDatatype;
       }
       
       //! Get the filetype, i.e. "MSCASA", "FITS", "HDF5"
       inline std::string filetype() {
-        return filetype_p;
+        return itsFiletype.name();
       }
       
       //! Get the axis ordering of the data array, i.e. "fortran", "c"
       inline std::string arrayOrder () {
-        return array_order;
+        return itsArrayOrder;
       }
       
-      // === Methods ============================================================
+      // === Public methods =====================================================
       
       //! Get the fortran index value of up to a three-dimensional array.
       unsigned long fortran_index (long idx1,
@@ -119,10 +130,20 @@ namespace DAL {
 		  long idx2=-1,
 		  long idx3=-1);
       
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);
+
+    // === Python bindings ======================================================
+
 #ifdef PYTHON
-      bpl::numeric::array get_boost1();
-      bpl::numeric::array get_boost2( int32_t length );
-      bpl::numeric::array get_boost3( int64_t offset, int32_t length );
+      bpl::numeric::array get_boost1 ();
+      bpl::numeric::array get_boost2 (int32_t length );
+      bpl::numeric::array get_boost3 (int64_t offset, int32_t length );
 #endif
 
     };

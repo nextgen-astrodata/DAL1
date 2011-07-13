@@ -732,8 +732,8 @@ namespace DAL {
       Get the number of data array elements
     */
 
-    for (unsigned int ll=0; ll<data_object->shape.size(); ll++) {
-      mysize *= data_object->shape[ll];
+    for (unsigned int ll=0; ll<data_object->itsShape.size(); ll++) {
+      mysize *= data_object->itsShape[ll];
     }
 
     /*________________________________________________________________
@@ -748,9 +748,9 @@ namespace DAL {
       int yy=0;
       int zz=0;
       
-      for (xx=0; xx<data_object->shape[0]; xx++) {
-	for (yy=0; yy<data_object->shape[1]; yy++) {
-	  for (zz=0; zz<data_object->shape[2]; zz++) {
+      for (xx=0; xx<data_object->itsShape[0]; xx++) {
+	for (yy=0; yy<data_object->itsShape[1]; yy++) {
+	  for (zz=0; zz<data_object->itsShape[2]; zz++) {
 	    indx = data_object->c_index(xx,yy,zz);
 	    cdata[ indx ] = *( (std::complex<float>*)data_object->get(xx,yy,zz) );
 	  }   //   END -- zz
@@ -763,7 +763,7 @@ namespace DAL {
     
     if ( dal_COMPLEX == data_object->datatype() )
       return createComplexFloatArray (arrayname,
-				      data_object->shape,
+				      data_object->itsShape,
                                       cdata,
 				      cdims);
     else {
