@@ -236,8 +236,8 @@ int test_MS (std::string const &filename,
   std::cout << "[2] Set Filter used when acessing table ..." << endl;
 
   try {  
-    string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
-    string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+    std::string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+    std::string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
     
     ms.setFilter (columns, filter_conditions);
     ms.summary();
