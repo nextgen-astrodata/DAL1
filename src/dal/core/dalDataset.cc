@@ -396,12 +396,10 @@ namespace DAL {
 	itsMS = casa::MeasurementSet (absoluteName, casa::Table::New);
       } else {
 	if ( flags.flags() & IO_Mode::ReadWrite ) {
-	  std::cout << "[dalDataset::openMS(IO_Mode::ReadWrite)]" << std::endl;
 	  /* Open file as read/write */
 	  fileTruncated = false;
 	  itsMS = casa::MeasurementSet (absoluteName);
 	} else {
-	  std::cout << "[dalDataset::openMS(IO_Mode::ReadOnly)]" << std::endl;
 	  /* Open file as read-only */
 	  fileTruncated = false;
 	  itsMS = casa::MeasurementSet (absoluteName);

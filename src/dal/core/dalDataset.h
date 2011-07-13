@@ -186,11 +186,14 @@ namespace DAL {
     template <class T>
       bool getAttribute (std::string attrname, T &value )
       {
-	if (H5Iis_valid(h5fh_p)) {
+	switch (itsFiletype.type()) {
+	  case dalFileType::HDF5:
 	  return HDF5Attribute::read (h5fh_p, attrname, value );
-	} else {
+	  break;
+	default:
 	  return false;
-	}
+	  break;
+	};
       }
     
     /*!
@@ -203,9 +206,16 @@ namespace DAL {
       bool setAttribute (std::string const &name,
 			 T const &data)
       {
-	return HDF5Attribute::write (h5fh_p,
-				     name,
-				     data);
+	switch (itsFiletype.type()) {
+	  case dalFileType::HDF5:
+	  return HDF5Attribute::write (h5fh_p,
+				       name,
+				       data);
+	  break;
+	default:
+	  return false;
+	  break;
+	};
       }
     
     /*!
@@ -220,10 +230,17 @@ namespace DAL {
 			 T const *data,
 			 unsigned int const &size=1)
       {
-	return HDF5Attribute::write (h5fh_p,
-				     name,
-				     data,
-				     size);
+	switch (itsFiletype.type()) {
+	case dalFileType::HDF5:
+	  return HDF5Attribute::write (h5fh_p,
+				       name,
+				       data,
+				       size);
+	  break;
+	default:
+	  return false;
+	  break;
+	};
       }
     
     //! Define a string attribute.
