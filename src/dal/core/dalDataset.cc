@@ -156,7 +156,9 @@ namespace DAL {
     itsFlags       = IO_Mode();
     itsFilter      = dalFilter();
     h5fh_p         = 0;
+#ifdef DAL_WITH_CASA
     itsMS          = casa::MeasurementSet();
+#endif
   }
 
   //_____________________________________________________________________________
