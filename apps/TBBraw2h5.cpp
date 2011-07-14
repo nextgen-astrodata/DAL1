@@ -532,6 +532,11 @@ bool readStationsFromSockets (std::vector<int> ports,
     float startTimeout,
     float readTimeout,
     std::string outFileBase,
+    std::string observer,
+    std::string project,
+    std::string observationID,
+    std::string filterSelection,
+    std::string antennaSet,
     bool verbose=false)
 {
   unsigned int i = 0;
@@ -658,7 +663,7 @@ bool readStationsFromSockets (std::vector<int> ports,
       std::ostringstream outfile;
       outfile << outFileBase << "-" << timestamp_buffer << "-" << int(stationId) << ".h5";
       
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str(), observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
         cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
           << outfile.str() << endl;
@@ -742,7 +747,12 @@ int main(int argc, char *argv[])
   std::string infile;
   std::string outfileOrig;
   vector<int> ports;
-  std::string outfile   = "test-TBBraw";
+  std::string outfile   = "TBB";
+  std::string observer  = "UNDEFINED";
+  std::string project   = "UNDEFINED";
+  std::string observationID = "UNDEFINED";
+  std::string filterSelection = "UNDEFINED";
+  std::string antennaSet = "UNDEFINED";
   std::string ip        = "All Hosts";
   bool verboseMode      = false;
   float timeoutStart    = 0.0;
@@ -764,17 +774,15 @@ int main(int argc, char *argv[])
   // Define command line options
 
   desc.add_options ()
-    ("help,H",
-     "Show help messages")
-    ("outfile,O",
-     bpo::value<std::string>(),
-     "Name of the output dataset")
-    ("infile,I",
-     bpo::value<std::string>(),
-     "Name of the input file, Mutually exclusive to -P")
-    ("port,P",
-     bpo::value< vector<int> >(),
-     "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
+    ("help,H", "Show help messages")
+    ("observer", bpo::value<std::string>(), "Observer")
+    ("project", bpo::value<std::string>(), "Project")
+    ("observationID", bpo::value<std::string>(), "Observation ID")
+    ("filterSelection", bpo::value<std::string>(), "Filter selection")
+    ("antennaSet", bpo::value<std::string>(), "Antenna set")
+    ("outfile,O", bpo::value<std::string>(), "Name of the output dataset")
+    ("infile,I", bpo::value<std::string>(), "Name of the input file, Mutually exclusive to -P")
+    ("port,P", bpo::value< vector<int> >(), "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
     ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
     ("timeoutStart,S", bpo::value<float>(), "Time-out when opening socket connection, [sec].")
     ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
@@ -800,6 +808,31 @@ int main(int argc, char *argv[])
   if (vm.count("verbose"))
   {
     verboseMode=true;
+  }
+
+  if (vm.count("observer"))
+  {
+    observer = vm["observer"].as<std::string>();
+  }
+
+  if (vm.count("project"))
+  {
+    project = vm["project"].as<std::string>();
+  }
+
+  if (vm.count("observationID"))
+  {
+    observationID = vm["observationID"].as<std::string>();
+  }
+
+  if (vm.count("filterSelection"))
+  {
+    filterSelection = vm["filterSelection"].as<std::string>();
+  }
+
+  if (vm.count("antennaSet"))
+  {
+    antennaSet = vm["antennaSet"].as<std::string>();
   }
 
   if (vm.count("waitForAll"))
@@ -944,7 +977,7 @@ int main(int argc, char *argv[])
   // Process data from multiple stations
   // returns only in case of an error
   if (multipeStations) {
-    readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, verboseMode);
+    readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, observer, project, observationID, filterSelection, antennaSet, verboseMode);
     return 1;
   };
   // -----------------------------------------------------------------

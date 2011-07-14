@@ -55,7 +55,8 @@ namespace DAL {  // Namespace DAL -- begin
 		  string const &project,
 		  string const &observation_id,
 		  string const &observationMode,
-		  string const &telescope)
+		  string const &telescope,
+      string const &antenna_set)
   {
     init();
     open_file (filename,
@@ -63,7 +64,8 @@ namespace DAL {  // Namespace DAL -- begin
 	       project,
 	       observation_id,
 	       observationMode,
-	       telescope);
+	       telescope,
+         antenna_set);
   }
   
   //_____________________________________________________________________________
@@ -115,7 +117,8 @@ namespace DAL {  // Namespace DAL -- begin
 			  std::string const &project,
 			  std::string const &observation_id,
 			  std::string const &filterSelection,
-			  std::string const &telescope)
+			  std::string const &telescope,
+        std::string const &antenna_set)
   {
     filename_p = filename;
     /* Store the common attributes attached to the root group of the file */
@@ -129,6 +132,7 @@ namespace DAL {  // Namespace DAL -- begin
     commonAttributes_p.setObserver (observer);
     commonAttributes_p.setFilterSelection (filterSelection);
     commonAttributes_p.setTelescope(telescope);
+    commonAttributes_p.setAntennaSet(antenna_set);
     /* Open the file */
     return open_file();
   };
