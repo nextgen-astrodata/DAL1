@@ -297,9 +297,6 @@ namespace DAL {
   const bool SUCCESS = true;
   const bool FAIL    = false;
   
-  const std::string FITSTYPE          = "FITS";
-  const std::string MSCASATYPE        = "MSCASA";
-  
   const std::string dal_CHAR          = "dalCHAR";
   const std::string dal_STRING        = "dalSTRING";
   const std::string dal_BOOL          = "dalBOOL";
@@ -317,31 +314,24 @@ namespace DAL {
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
-  //! DAL datatypes
-  enum Datatype {
-    //! Character
-    Char,
-    //! String
-    String,
-    //! Boolean
-    Bool,
-    //! Short integer
-    Short,
-    Integer,
-    Float,
-    Double
-  };
-
-
-  typedef unsigned char              UInt8;
-  typedef unsigned short            UInt16;
-  typedef short                      Int16;
-  typedef unsigned int              UInt32;
-  typedef int                        Int32;
-  typedef float                    Float32;
-  typedef long long                  Int64;
-  typedef unsigned long long        UInt64;
-  typedef double                   Float64;
+  //! 8-bit unsigned integer number
+  typedef unsigned char           UInt8;
+  //! 16-bit unsigned integer number
+  typedef unsigned short         UInt16;
+  //! 16-bit unsigned integer number
+  typedef short                   Int16;
+  //! 32-bit unsigned integer number
+  typedef unsigned int           UInt32;
+  //! 32-bit signed integer number
+  typedef int                     Int32;
+  //! 32-bit floating point number
+  typedef float                 Float32;
+  //! 64-bit signed integer number
+  typedef long long               Int64;
+  //! 64-bit unsigned integer number
+  typedef unsigned long long     UInt64;
+  //! 64-bit floating point number
+  typedef double                Float64;
 
   //! Complex number composed of two 8-bit unsigned integers
   struct Complex_UInt8 {
@@ -361,43 +351,57 @@ namespace DAL {
 
   //! Complex number composed of two 32-bit unsigned integers
   struct Complex_UInt32 {
+    //! Real part of the complex number
     UInt32 real;
+    //! Imaginary part of the complex number
     UInt32 imag;
   };
 
   //! Complex number composed of two 16-bit integers
   struct Complex_Int16 {
+    //! Real part of the complex number
     Int16 real;
+    //! Imaginary part of the complex number
     Int16 imag;
   };
 
   //! Complex number composed of two 32-bit integers
   struct Complex_Int32 {
+    //! Real part of the complex number
     Int32 real;
+    //! Imaginary part of the complex number
     Int32 imag;
   };
 
   //! Complex number composed of two 64-bit integers
   struct Complex_Int64 {
+    //! Real part of the complex number
     Int64 real;
+    //! Imaginary part of the complex number
     Int64 imag;
   };
 
   //! Complex number composed of two 32-bit floats 
   struct Complex_Float32 {
+    //! Real part of the complex number
     Float32 real;
+    //! Imaginary part of the complex number
     Float32 imag;
   };
 
   //! Complex number composed of two 64-bit floats 
   struct Complex_Float64 {
+    //! Real part of the complex number
     Float64 real;
+    //! Imaginary part of the complex number
     Float64 imag;
   };
 
   struct Complex_Char {
-    char real;  // real part
-    char imag;  // imaginary part
+    //! Real part of the complex number
+    char real;
+    //! Imaginary part of the complex number
+    char imag;
   };
 
   typedef Complex_Float32    Complex_Float;
