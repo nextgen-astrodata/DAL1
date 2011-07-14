@@ -21,6 +21,8 @@
 #ifndef DALARRAY_H
 #define DALARRAY_H
 
+#include <complex>
+
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
 
@@ -34,7 +36,8 @@ namespace DAL {
 
     \brief Represents an n-dimensional array.
 
-    \author Joseph Masters, Lars B&auml;hren
+    \author Joseph Masters
+    \author Lars B&auml;hren
     
     The dalArray object holds an n-dimensional array of a single datatype.
   */
@@ -223,27 +226,6 @@ namespace DAL {
     bool setAttribute_string_vector( std::string attrname, boost::python::list data );
     
 #endif
-  };
-  
-  /*!
-    \class dalIntArray
-    \ingroup DAL
-    \ingroup  core
-    \brief Represents an n-dimensional array of type \e int
-  */
-  class dalIntArray: public dalArray {
-    
-  public:
-
-    //! Argumented constructor
-    dalIntArray (hid_t obj_id,
-		 std::string arrayname,
-		 std::vector<int> dims,
-		 int data[],
-		 std::vector<int>chnkdims );
-    //! Read array data from object \e obj_id
-    int * readIntArray (hid_t obj_id,
-			std::string arrayname);
   };
   
   /*!

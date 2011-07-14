@@ -25,6 +25,7 @@
 
 #include <core/dalTable.h>
 #include <core/dalArray.h>
+#include <core/dalIntArray.h>
 #include <core/dalShortArray.h>
 #include <core/dalComplexArray_int16.h>
 

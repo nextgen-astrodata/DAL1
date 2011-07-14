@@ -21,6 +21,7 @@
 #ifndef DALDATA_H
 #define DALDATA_H
 
+#include <complex>
 #include <core/dalCommon.h>
 #include <core/dalFileType.h>
 

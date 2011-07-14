@@ -23,6 +23,7 @@
 #define DALDATASET_H
 
 #include <core/dalGroup.h>
+#include <core/dalIntArray.h>
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Object.h>
 
