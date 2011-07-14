@@ -206,11 +206,12 @@ namespace DAL {  // Namespace DAL -- begin
       \param telescope -- name of the telescope (usually "LOFAR")
     */
     TBBraw (std::string const &filename,
-	    string const &observer="John Doe",
+	    string const &observer="UNDEFINED",
 	    string const &project="UNDEFINED",
 	    string const &observation_id="UNDEFINED",
 	    string const &filterSelection="UNDEFINED",
-	    string const &telescope="LOFAR");
+	    string const &telescope="LOFAR",
+      string const &antenna_set="UNDEFINED");
 
     // === Destruction ==========================================================
     
@@ -304,7 +305,8 @@ namespace DAL {  // Namespace DAL -- begin
 		   string const &project="UNDEFINED",
 		   string const &observation_id="UNDEFINED",
 		   string const &filterSelection="UNDEFINED",
-		   string const &telescope="LOFAR");
+		   string const &telescope="LOFAR",
+       string const &antenna_set="UNDEFINED");
     
     /*!
       \brief Process one block of data and add it's contents to the output file
