@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 #include <sstream>
 
 #include <dal_config.h>
@@ -487,12 +488,13 @@ bool readStationsFromSockets (std::vector<int> ports,
 
   unsigned int nofTBBfiles = 256;
   int lasttimes[nofTBBfiles];  
-  int runnumbers[nofTBBfiles];  
+  time_t timestamp;
+  char timestamp_buffer[20];
+  
   DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
 
   for (i=0; i<nofTBBfiles; i++) {
     TBBfiles[i]   = NULL;
-    runnumbers[i] = 0;
   }
 
   //________________________________________________________
@@ -573,9 +575,15 @@ bool readStationsFromSockets (std::vector<int> ports,
         delete TBBfiles[stationId];
         TBBfiles[stationId] = NULL;
       };
+
+      // Get timestamp and convert to ISO 8601 format for filename
+      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      strftime (buffer, 20, "%Y-%m-%dT%H:%M:%S", gmtime ( &timestamp ));
+
+      // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << int(stationId) << "-" << runnumbers[stationId] << ".h5";
-      runnumbers[stationId]++;
+      outfile << outFileBase << "-" << timestamp_buffer << "-" << int(stationId) << ".h5";
+      
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
       if ( !TBBfiles[stationId]->isConnected() ) {
         cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
