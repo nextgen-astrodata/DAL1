@@ -225,7 +225,7 @@ if (GIT_FOUND AND GIT_REMOTE_ORIGIN)
   add_custom_target (release
     COMMAND ${GIT_EXECUTABLE} add CMakeLists.txt
     COMMAND ${GIT_EXECUTABLE} commit -m "DAL release, version ${DAL_VERSION}"
-    COMMAND ${GIT_EXECUTABLE} tag v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
+    COMMAND ${GIT_EXECUTABLE} tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
     COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} --tags
     COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} release
     COMMAND make package_source
