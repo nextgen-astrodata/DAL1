@@ -6,7 +6,7 @@
 ## ==============================================================================
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.8.0)
+cmake_minimum_required (VERSION 2.8.4)
 
 ## Name of the project
 project (DAL)
