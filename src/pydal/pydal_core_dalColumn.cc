@@ -80,9 +80,9 @@ boost::python::numeric::array dalColumn::data_boost2( int32_t length )
 //                                                                  data_boost2
 
 boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
-					    int32_t length)
+						      int32_t length)
 {
-  if ( MSCASATYPE == filetype ) {
+  if (itsFiletype.type()==DAL::dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
     
     if ("unknown" == casa_datatype) {
@@ -98,7 +98,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
 	      casa::Vector<int> data = rosc_int->getColumn();
-	      itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -107,7 +107,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_bool = new casa::ROScalarColumn<bool>( *casa_column );
 	      casa::Vector<bool> data = rosc_bool->getColumn();
-	      itsColumnData = new dalData( filetype, dal_BOOL, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_BOOL, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -116,7 +116,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	      casa::Vector<double> data = rosc_dbl->getColumn();
-	      itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
 	      itsColumnData->data = (double *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -125,7 +125,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	      scalar_vals_comp = rosc_comp->getColumn();
-	      itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
 	      itsColumnData->data =
 		(std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
@@ -135,7 +135,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
 	      casa::Vector<casa::String> data = rosc_string->getColumn();
-	      itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
 	      itsColumnData->data =
 		(std::string *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
@@ -162,7 +162,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
 	      casa::Array<int> data = roac_int->getColumn();
-	      itsColumnData = new dalData( filetype, dal_INT, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -171,7 +171,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
 	      casa::Array<double> data = roac_dbl->getColumn();
-	      itsColumnData = new dalData( filetype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
 	      itsColumnData->data = (double *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -180,7 +180,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
 	      casa::Array<casa::Complex> data = roac_comp->getColumn();
-	      itsColumnData = new dalData( filetype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
 	      itsColumnData->data =
 		(std::complex<float> *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
@@ -190,7 +190,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
 	      casa::Array<casa::String> data = roac_string->getColumn();
-	      itsColumnData = new dalData( filetype, dal_STRING, shape(), nofRows() );
+	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
 	      itsColumnData->data = (std::string *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
@@ -230,7 +230,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
     }
 #endif // DAL_WITH_CASA
   }
-  else if ( H5TYPE == filetype ) {
+  else if (itsFiletype.type()==DAL::dalFileType::HDF5) {
     std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
     int start = 0;
     int length = -1;

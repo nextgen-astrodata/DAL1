@@ -58,17 +58,6 @@ namespace DAL {
     init (dalFileType(filetype));
   }
 
-  //_____________________________________________________________________________
-  //                                                                     dalTable
-  
-  /*!
-    \param filetype -- File type descriptor, passed as \c string.
-  */
-  dalTable::dalTable (std::string const &filetype)
-  {
-    init (dalFileType(filetype));
-  }
-  
   // ============================================================================
   //
   //  Destruction
@@ -236,7 +225,7 @@ namespace DAL {
 	dalColumn * lclcol;
 	lclcol = new dalColumn (itsFileID,
 				itsTableID,
-				H5TYPE,
+				dalFileType(dalFileType::HDF5),
 				name,
 				colname,
 				dal_FLOAT);
@@ -286,7 +275,7 @@ namespace DAL {
         dalColumn * lclcol;
         lclcol = new dalColumn (itsFileID,
 				itsTableID,
-				H5TYPE,
+				dalFileType(dalFileType::HDF5),
 				name,
 				colname,
                                 dal_COMPLEX);
@@ -336,7 +325,7 @@ namespace DAL {
         dalColumn * lclcol;
         lclcol = new dalColumn (itsFileID,
 				itsTableID,
-				H5TYPE,
+				dalFileType(dalFileType::HDF5),
 				name,
 				colname,
                                 dal_COMPLEX_SHORT);

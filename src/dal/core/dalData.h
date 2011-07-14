@@ -66,28 +66,28 @@ namespace DAL {
       void * data;
       //! Used to convert one datatype to another
       void * data2;
-      //! Get the shape of the data array
+      //! Shape of the data array
       std::vector<int> itsShape;
-      //! Get the number of rows inside the array
+      //! Number of rows inside the array.
       long nrows;
 
       // === Construction =======================================================
 
       //! Default constructor
       dalData();
-
+      
       //! Argumented constructor with a specific file type.
-      dalData (dalFileType const &itsFiletype,
+      dalData (dalFileType::Type const &filetype,
 	       std::string const &lcldatatype,
                std::vector<int> const &lclshape,
 	       long const &lclnrows);
-
+      
       //! Argumented constructor with a specific file type.
-      dalData (std::string lclfiletype,
-	       std::string lcldatatype,
-               std::vector<int> lclshape,
-	       long lclnrows);
-
+      dalData (dalFileType const &filetype,
+	       std::string const &lcldatatype,
+               std::vector<int> const &lclshape,
+	       long const &lclnrows);
+      
       // === Destruction ========================================================
 
       //! Destructor
@@ -145,6 +145,11 @@ namespace DAL {
       boost::python::numeric::array get_boost2 (int32_t length );
       boost::python::numeric::array get_boost3 (int64_t offset, int32_t length );
 #endif
+
+      // === Private methods ====================================================
+
+      //! Initialize internal variables
+      void init (dalFileType const &filetype=dalFileType());
 
     };
 

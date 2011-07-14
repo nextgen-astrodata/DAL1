@@ -297,7 +297,6 @@ namespace DAL {
   const bool SUCCESS = true;
   const bool FAIL    = false;
   
-  const std::string H5TYPE            = "HDF5";
   const std::string FITSTYPE          = "FITS";
   const std::string MSCASATYPE        = "MSCASA";
   
@@ -317,6 +316,21 @@ namespace DAL {
   const std::string dal_DCOMPLEX      = "dalDCOMPLEX";
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
+
+  //! DAL datatypes
+  enum Datatype {
+    //! Character
+    Char,
+    //! String
+    String,
+    //! Boolean
+    Bool,
+    //! Short integer
+    Short,
+    Integer,
+    Float,
+    Double
+  };
 
 
   typedef unsigned char              UInt8;

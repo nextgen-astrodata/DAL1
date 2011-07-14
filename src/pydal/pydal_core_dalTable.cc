@@ -464,7 +464,8 @@ void export_dalTable ()
   // Bindings for class and its methods
   
   boost::python::class_<dalTable>("dalTable")
-    .def( boost::python::init<char*>())
+    .def( boost::python::init<DAL::dalFileType const &>())
+    .def( boost::python::init<DAL::dalFileType::Type const &>())
     // Public methods
     .def("summary",
 	 summary1,

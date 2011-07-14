@@ -935,7 +935,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  dalTable * lt = new dalTable( H5TYPE );
+	  dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
 	  lt->createTable( itsFilePointer, tablename, "/" );
 	  return lt;
 	} else {
@@ -976,7 +976,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  dalTable * lt = new dalTable( H5TYPE );
+	  dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
 	  lt->createTable( itsFilePointer, tablename, groupname );
 	  return lt;
 	} else {
@@ -1027,7 +1027,7 @@ namespace DAL {
       break;
     case dalFileType::HDF5:
       {
-        dalTable * lt = new dalTable( H5TYPE );
+        dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
         lt->openTable( itsFilePointer, tablename, "/" );
         return lt;
       }
@@ -1058,7 +1058,7 @@ namespace DAL {
     switch (itsFiletype.type()) {
     case dalFileType::HDF5:
       {
-        dalTable * lt = new dalTable( H5TYPE );
+        dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
         try {
 	  lt->openTable( itsFilePointer, tablename, '/' + groupname );
 	}

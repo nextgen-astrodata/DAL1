@@ -23,6 +23,7 @@
 
 #include <core/dalCommon.h>
 #include <core/dalData.h>
+#include <core/dalFileType.h>
 
 #ifdef PYTHON
 #include <pydal/num_util.h>
@@ -45,9 +46,9 @@ namespace DAL {
   */
   class dalColumn
   {
-    std::string filetype;      // "HDF5", "MSCASA" or "FITS"; for example
+    dalFileType itsFiletype;      // "HDF5", "MSCASA" or "FITS"; for example
     std::string name;          // Column name
-    std::string tablename;     // Table name
+    std::string itsTablename;     // Table name
     std::string itsDatatype;   // Column datatype
     int size;                  // Datatype size
     uint num_of_rows;          // Number of rows in the column
@@ -115,7 +116,7 @@ namespace DAL {
     //! Argumented constructor for a new column object.
     dalColumn( hid_t fileid,
 	       hid_t tableid,
-	       std::string filetype,
+	       dalFileType filetype,
 	       std::string lcl_tablename,
 	       std::string colname,
 	       std::string coldatatype );
@@ -140,7 +141,8 @@ namespace DAL {
     //! Set the name of the column.
     void setName(std::string colname);
     //! Set the file type of the dataset containing the column.
-    void setFileType( std::string type );
+    void setFileType (std::string type);
+    void setFiletype (dalFileType const &filetype);
     std::string getDataType();
     int getSize();
     //! Close the column.

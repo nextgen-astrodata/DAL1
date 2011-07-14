@@ -27,49 +27,59 @@ namespace DAL {
   //  Construction
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                      dalData
   
   dalData::dalData ()
   {
-    itsDatatype   = "UNKNOWN";
-    itsFiletype   = dalFileType();
-    itsArrayOrder = "UNKNOWN";
-    data          = NULL;
+    init();
   }
   
   //_____________________________________________________________________________
   //                                                                      dalData
   
   /*!
-    \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
-    \param lcldatatype The data type this instance of the class will
-                       contain.
-    \param lclshape The shape of the data object.
-    \param lclnrows The number of rows in the data object.
-   */
-  dalData::dalData (std::string lclfiletype,
-		    std::string lcldatatype,
-		    std::vector<int> lclshape,
-		    long lclnrows)
+    \param filetype -- File type: CASA_MS, HDF5, FITS, etc.
+    \param datatype -- Type of the data,  i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+    \param shape    -- Shape of the data array.
+    \param nofRows  -- Number of rows inside the array.
+  */
+  dalData::dalData (dalFileType::Type const &filetype,
+		    std::string const &datatype,
+		    std::vector<int> const &shape,
+		    long const &nofRows)
   {
-    itsFiletype = dalFileType(lclfiletype);
-    itsDatatype = lcldatatype;
-    itsShape      = lclshape;
-    nrows      = lclnrows;
-    data       = NULL;
+    init (dalFileType(filetype));
+    itsDatatype   = datatype;
+    itsShape      = shape;
+    nrows         = nofRows;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      dalData
+  
+  /*!
+    \param filetype -- File type: CASA_MS, HDF5, FITS, etc.
+    \param datatype -- Type of the data,  i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+    \param shape    -- Shape of the data array.
+    \param nofRows  -- Number of rows inside the array.
+  */
+  dalData::dalData (dalFileType const &filetype,
+		    std::string const &datatype,
+		    std::vector<int> const &shape,
+		    long const &nofRows)
+  {
+    init (filetype);
 
-    if ( itsFiletype.isCASA() ) {
-      itsArrayOrder = "fortran";
-    } else if ( itsFiletype.isHDF5() ) {
-      itsArrayOrder = "c";
-    }
+    itsDatatype = datatype;
+    itsShape    = shape;
+    nrows       = nofRows;
   }
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
   
@@ -254,5 +264,25 @@ namespace DAL {
     return NULL;
   }
 
+  // ============================================================================
+  //
+  //  Private methods
+  //
+  // ============================================================================
+
+  void dalData::init (dalFileType const &filetype)
+  {
+    itsFiletype   = filetype;
+    itsDatatype   = "UNKNOWN";
+    itsArrayOrder = "UNKNOWN";
+    data          = NULL;
+
+    if ( itsFiletype.isCASA() ) {
+      itsArrayOrder = "fortran";
+    } else if ( itsFiletype.isHDF5() ) {
+      itsArrayOrder = "c";
+    }
+  }
+  
 } // DAL namespace
 

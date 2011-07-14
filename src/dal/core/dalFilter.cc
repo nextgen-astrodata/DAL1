@@ -55,12 +55,12 @@ namespace DAL {
   //                                                                    dalFilter
   
   /*!
-    \param type The type of file (i.e. H5TYPE, MSCASATYPE).
+    \param type The type of file (i.e. CASA_MS, HDF5, FITS).
     \param columns A comma-separated list of the column names that you
                    want to pass the filter (i.e. "TIME,DATA,ANTENNA").
 
     Restrict the opening of a table to particular columns.
-   */
+  */
   dalFilter::dalFilter (std::string type,
 			std::string columns)
   {
@@ -92,7 +92,7 @@ namespace DAL {
   //                                                                    dalFilter
   
   /*!
-    \param type The type of file (i.e. H5TYPE, MSCASATYPE).
+    \param type The type of file (i.e. CASA_MS, HDF5, FITS).
     \param columns A comma-separated list of the column names that you want to
            pass the filter (i.e. "TIME,DATA,ANTENNA").
     \param conditions A list of the conditions you want to apply.

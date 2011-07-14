@@ -87,7 +87,7 @@ int test_constructors (std::string const &filename,
   
   std::cout << "[2] Construct object for table of type HDF5..." << std::endl;
   try {
-    DAL::dalTable table ("HDF5");
+    DAL::dalTable table (DAL::dalFileType::HDF5);
     table.summary();
   }
   catch (std::string message) {
@@ -97,7 +97,7 @@ int test_constructors (std::string const &filename,
   
   std::cout << "[3] Construct object for table of type FITS..." << std::endl;
   try {
-    DAL::dalTable table ("FITS");
+    DAL::dalTable table (DAL::dalFileType::FITS);
     table.summary();
   }
   catch (std::string message) {

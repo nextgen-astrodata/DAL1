@@ -93,8 +93,6 @@ namespace DAL {
     dalTable (dalFileType const &filetype);
     //! Table constructor for a specific file format.
     dalTable (dalFileType::Type const &filetype);
-    //! Table constructor for a specific file format.
-    dalTable (std::string const &filetype);
     
     // === Destruction ==========================================================
 
