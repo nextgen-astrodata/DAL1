@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2006-2011                                               *
  *   Joseph Masters (jmasters@science.uva.nl)                              *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,7 +23,9 @@
 #define DALDATASET_H
 
 #include <core/dalGroup.h>
+#include <core/dalIntArray.h>
 #include <core/HDF5Attribute.h>
+#include <core/HDF5Object.h>
 
 namespace DAL {
   
@@ -107,16 +109,15 @@ namespace DAL {
     dalFileType itsFiletype;
     //! Dataset name
     std::string name;
-    //! Overwrite existing file if one already exists
-    bool overwrite_p;
+    //! I/O mode flags
+    IO_Mode itsFlags;
     //! Dataset filter
-    dalFilter filter;
+    dalFilter itsFilter;
     //! HDF5 file handle
     hid_t h5fh_p;
     
 #ifdef DAL_WITH_CASA
-    casa::MeasurementSet * ms; // CASA measurement set pointer
-    casa::MSReader * itsMSReader; // CASA measurement set reader pointer
+    casa::MeasurementSet itsMS;   // CASA measurement set
     casa::Vector<casa::String> ms_tables; // vector of CASA MS tables
 #endif
     
@@ -128,20 +129,22 @@ namespace DAL {
     dalDataset();
 
     //! Argumented constructor
-    dalDataset (std::string const &filename);
-
+    dalDataset (std::string const &filename,
+		dalFileType const &filetype=dalFileType(),
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     //! Argumented constructor
     dalDataset (std::string const &filename,
-		dalFileType const &filetype,
-		const bool &overwrite=false);
-
+		dalFileType::Type const &filetype,
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     //! Argumented constructor
     dalDataset (std::string const &filename,
 		std::string filetype,
-		const bool &overwrite=false);
-
+		IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
     // === Destruction ==========================================================
-
+    
     //! Default destructor
     ~dalDataset();
 
@@ -153,9 +156,10 @@ namespace DAL {
     }
 
     // === Public methods =======================================================
-
+    
     //! Open the dataset
-    bool open (std::string const &filename);
+    bool open (std::string const &filename,
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     //! Close the dataset
     bool close();
     //! Get the attributes of the dataset
@@ -183,11 +187,14 @@ namespace DAL {
     template <class T>
       bool getAttribute (std::string attrname, T &value )
       {
-	if (H5Iis_valid(h5fh_p)) {
+	switch (itsFiletype.type()) {
+	  case dalFileType::HDF5:
 	  return HDF5Attribute::read (h5fh_p, attrname, value );
-	} else {
+	  break;
+	default:
 	  return false;
-	}
+	  break;
+	};
       }
     
     /*!
@@ -200,9 +207,16 @@ namespace DAL {
       bool setAttribute (std::string const &name,
 			 T const &data)
       {
-	return HDF5Attribute::write (h5fh_p,
-				     name,
-				     data);
+	switch (itsFiletype.type()) {
+	  case dalFileType::HDF5:
+	  return HDF5Attribute::write (h5fh_p,
+				       name,
+				       data);
+	  break;
+	default:
+	  return false;
+	  break;
+	};
       }
     
     /*!
@@ -217,10 +231,17 @@ namespace DAL {
 			 T const *data,
 			 unsigned int const &size=1)
       {
-	return HDF5Attribute::write (h5fh_p,
-				     name,
-				     data,
-				     size);
+	switch (itsFiletype.type()) {
+	case dalFileType::HDF5:
+	  return HDF5Attribute::write (h5fh_p,
+				       name,
+				       data,
+				       size);
+	  break;
+	default:
+	  return false;
+	  break;
+	};
       }
     
     //! Define a string attribute.
@@ -261,7 +282,8 @@ namespace DAL {
     //! Opens an array at the higest level of a dataset
     dalArray * openArray (std::string const &array);
     //! Open an array in a group.
-    dalArray * openArray (std::string const &array, std::string const &group);
+    dalArray * openArray (std::string const &array,
+			  std::string const &group);
     //! Get a list of groups in the dataset.
     std::vector<std::string> getGroupNames();
     dalGroup * openGroup (std::string groupname );
@@ -291,15 +313,11 @@ namespace DAL {
     }
     //! Read TBB data
     void read_tbb (std::string id,
-		   int start,
-		   int length,
+		   int const &start,
+		   int const &length,
 		   short data_out[]);
     
-    // ==========================================================================
-    //
-    //  Private methods
-    //
-    // ==========================================================================
+    // === Private methods ======================================================
     
   private:
     
@@ -308,13 +326,25 @@ namespace DAL {
     //! Initialize the object's internal parameters
     void init (std::string const &filename,
 	       dalFileType const &filetype,
-	       const bool &overwrite=false);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     //! Unconditional deletion of internal parameters
     bool destroy ();
+
     //! Try to open HDF5 file
-    bool openFITS (std::string const &filename);
+    bool openHDF5 (std::string const &filename,
+		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+    
+#ifdef DAL_WITH_CFITSIO
     //! Try to open FITS file
-    hid_t openHDF5 (std::string const &filename);
+    bool openFITS (std::string const &filename,
+		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+#endif
+    
+#ifdef DAL_WITH_CASA
+    //! Try to open casa MeasurementSet file
+    bool openMS (std::string const &filename,
+		 IO_Mode const &flags=IO_Mode(IO_Mode::Open));
+#endif
     
     // ==========================================================================
     //
@@ -329,48 +359,48 @@ namespace DAL {
     
     // create[]Array wrappers
     dalArray * cia_boost1 (std::string arrayname,
-			   bpl::list dims,
-			   bpl::list data);
+			   boost::python::list dims,
+			   boost::python::list data);
     dalArray * cia_boost2 (std::string arrayname,
-			   bpl::list dims,
-			   bpl::list data,
-			   bpl::list cdims);
+			   boost::python::list dims,
+			   boost::python::list data,
+			   boost::python::list cdims);
     dalArray * cia_boost_numarray1 (std::string arrayname,
-				    bpl::list dims,
-				    bpl::numeric::array data);
+				    boost::python::list dims,
+				    boost::python::numeric::array data);
     dalArray * cia_boost_numarray2 (std::string arrayname,
-				    bpl::list dims,
-				    bpl::numeric::array data,
-				    bpl::list cdims);
+				    boost::python::list dims,
+				    boost::python::numeric::array data,
+				    boost::python::list cdims);
     dalArray * cfa_boost (std::string arrayname,
-			  bpl::list dims,
-			  bpl::list data,
-			  bpl::list cdims);
+			  boost::python::list dims,
+			  boost::python::list data,
+			  boost::python::list cdims);
     dalArray * cfa_boost_numarray (std::string arrayname,
-				   bpl::list dims,
-				   bpl::numeric::array data,
-				   bpl::list cdims);
-    bpl::numeric::array ria_boost (std::string arrayname);
-    bpl::numeric::array rfa_boost (std::string arrayname);
+				   boost::python::list dims,
+				   boost::python::numeric::array data,
+				   boost::python::list cdims);
+    boost::python::numeric::array ria_boost (std::string arrayname);
+    boost::python::numeric::array rfa_boost (std::string arrayname);
     
-    bpl::list listTables_boost();
+    boost::python::list listTables_boost();
     
-    bool setAttribute_char_vector (std::string attrname, bpl::list data);
-    bool setAttribute_short_vector (std::string attrname, bpl::list data);
-    bool setAttribute_int_vector (std::string attrname, bpl::list data);
-    bool setAttribute_uint_vector (std::string attrname, bpl::list data);
-    bool setAttribute_long_vector (std::string attrname, bpl::list data);
-    bool setAttribute_float_vector (std::string attrname, bpl::list data);
-    bool setAttribute_double_vector (std::string attrname, bpl::list data);
-    bool setAttribute_string_vector (std::string attrname, bpl::list data);
+    bool setAttribute_char_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_short_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_int_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_uint_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_long_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_float_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_double_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_string_vector (std::string attrname, boost::python::list data);
     
-    bpl::numeric::array getAttribute_float_boost (std::string attrname);
-    bpl::numeric::array getAttribute_double_boost (std::string attrname);
-    bpl::numeric::array getAttribute_int_boost (std::string attrname);
-    bpl::numeric::array getAttribute_uint_boost (std::string attrname);
-    bpl::numeric::array getAttribute_short_boost (std::string attrname);
-    bpl::numeric::array getAttribute_long_boost (std::string attrname);
-    bpl::list getAttribute_string_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_float_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_double_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_int_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_uint_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_short_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_long_boost (std::string attrname);
+    boost::python::list getAttribute_string_boost (std::string attrname);
 
 #endif  /* end PYTHON */
     

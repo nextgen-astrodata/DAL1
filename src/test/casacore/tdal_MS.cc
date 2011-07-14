@@ -90,7 +90,7 @@ int test_MeasurementSet (std::string const &filename_ms)
     dalTable * maintable = msds.openTable( tablename );
     
     // print the name of the table [ doesn't seem to work ]
-    maintable->getName();
+    cout << "-- Table name = " << maintable->tableName() << std::endl;
     
   }
   catch (std::string message) {
@@ -112,9 +112,9 @@ int test_MeasurementSet (std::string const &filename_ms)
     
     if ( time_col->isScalar() ) cout << "SCALAR" << endl;
     if ( time_col->isArray() ) cout << "ARRAY" << endl;
-    cout << "Number of rows: " << time_col->nrows() << endl;
+    cout << "Number of rows: " << time_col->nofRows() << endl;
     
-    if ( time_col->nrows() <= 0 )
+    if ( time_col->nofRows() <= 0 )
       {
 	cout << "ERROR:  No rows within filtered file." << endl;
 	nofFailedTests++;
@@ -181,7 +181,7 @@ int test_MeasurementSet (std::string const &filename_ms)
       data_col->getDataType();
       if ( data_col->isScalar() )  cout << "SCALAR" << endl;
       if ( data_col->isArray() )  cout << "ARRAY" << endl;
-      unsigned int nrows3 = data_col->nrows();
+      unsigned int nrows3 = data_col->nofRows();
       cout << "Number of rows: " << nrows3 << endl;
       std::complex<float> * value3;
       int pol    = 0;

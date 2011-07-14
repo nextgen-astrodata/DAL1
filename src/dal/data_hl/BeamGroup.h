@@ -245,27 +245,28 @@ namespace DAL
        *   defined functions to be easily called from a python prompt.
        *
        ************************************************************************/
+
 #ifdef PYTHON
-
-      bpl::numeric::array getIntensity_boost( int subband,
-                                              int start,
-                                              int length );
-      bpl::numeric::array getIntensitySquared_boost( int subband,
-                                              int start,
-                                              int length );
-      bpl::numeric::array getSubbandData_X_boost( int subband,
-          int start,
-          int length );
-
-      bpl::numeric::array getSubbandData_Y_boost( int subband,
-          int start,
-          int length );
-
-      bpl::numeric::array getSubbandData_XY_boost( int subband,
-          int start,
-          int length );
+      
+      boost::python::numeric::array getIntensity_boost( int subband,
+							int start,
+							int length );
+      boost::python::numeric::array getIntensitySquared_boost( int subband,
+							       int start,
+							       int length );
+      boost::python::numeric::array getSubbandData_X_boost( int subband,
+							    int start,
+							    int length );
+      
+      boost::python::numeric::array getSubbandData_Y_boost( int subband,
+							    int start,
+							    int length );
+      
+      boost::python::numeric::array getSubbandData_XY_boost( int subband,
+							     int start,
+							     int length );
 #endif // end #ifdef PYTHON
-
+      
     }; // end BeamGroup class
 
 

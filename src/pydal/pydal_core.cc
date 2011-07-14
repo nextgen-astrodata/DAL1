@@ -37,7 +37,6 @@ using DAL::dalData;
 using DAL::dalDataset;
 using DAL::dalGroup;
 using DAL::IO_Mode;
-using DAL::HDF5Hyperslab;
 
 // ==============================================================================
 //
@@ -110,15 +109,15 @@ namespace DAL {
     
     \param mjd_time The time as Modified Julian Date.
   */
-  bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
+  boost::python::numeric::array mjd2unix_boost ( boost::python::numeric::array mjd_time )
   {
-    int array_size           = bpl::len( mjd_time );
+    int array_size           = boost::python::len( mjd_time );
     double unix_base_time    = 40587;
     double seconds_per_day   = 86400;
     double adjustment_factor = unix_base_time*seconds_per_day;
     
     for ( int idx=0; idx < array_size; idx++ ) {
-      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+      mjd_time[ idx ] = boost::python::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
     }
     
     return mjd_time;
@@ -132,19 +131,19 @@ namespace DAL {
 //
 // ==============================================================================
 
-bpl::numeric::array DAL::dalData::get_boost1()
+boost::python::numeric::array DAL::dalData::get_boost1()
 {
   return get_boost3(0,-1);
 }
 
-bpl::numeric::array DAL::dalData::get_boost2( int32_t length )
+boost::python::numeric::array DAL::dalData::get_boost2( int32_t length )
 {
   return get_boost3(0,length);
 }
 
-bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
+boost::python::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 {
-  bpl::list data_list;
+  boost::python::list data_list;
   std::vector<int> mydims;
   
   unsigned int hh = 0;
@@ -153,56 +152,56 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
     mydims.push_back(length);
     hh=1;
   }
-  for (; hh<shape.size(); hh++) {
-    mydims.push_back(shape[hh]);
+  for (; hh<itsShape.size(); hh++) {
+    mydims.push_back(itsShape[hh]);
   }
   
-  if ( dal_CHAR == dataType_p ) {
+  if ( dal_CHAR == itsDatatype ) {
     return num_util::makeNum( ((char*)data) + offset, mydims );
   }
-  else if ( dal_BOOL == dataType_p ) {
+  else if ( dal_BOOL == itsDatatype ) {
     return num_util::makeNum( ((unsigned char*)data) + offset, mydims );
   }
-  else if ( dal_INT == dataType_p )
+  else if ( dal_INT == itsDatatype )
     {
       return num_util::makeNum( ((int*)data) + offset, mydims );
     }
-  else if ( dal_FLOAT == dataType_p ) {
+  else if ( dal_FLOAT == itsDatatype ) {
     return num_util::makeNum(((float*)data)+offset,mydims);
   }
-  else if ( dal_DOUBLE == dataType_p ) {
+  else if ( dal_DOUBLE == itsDatatype ) {
     return num_util::makeNum(((double*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX == dataType_p ) {
+  else if ( dal_COMPLEX == itsDatatype ) {
     return num_util::makeNum(((std::complex<float>*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX_CHAR == dataType_p ) {
+  else if ( dal_COMPLEX_CHAR == itsDatatype ) {
     return num_util::makeNum(((std::complex<char>*)data)+offset,mydims);
   }
-  else if ( dal_COMPLEX_SHORT == dataType_p ) {
+  else if ( dal_COMPLEX_SHORT == itsDatatype ) {
     return num_util::makeNum(((std::complex<short>*)data)+offset,mydims);
   }
-  else if ( dal_STRING == dataType_p ) {
-    bpl::list data_list;
+  else if ( dal_STRING == itsDatatype ) {
+    boost::python::list data_list;
     
-    if ( 1 == shape.size() ) // 1D case
+    if ( 1 == itsShape.size() ) // 1D case
       {
 	for (int ii=0; ii<nrows; ii++)
 	  {
 	    data_list.append( (*((std::string*)get(ii))) );
 	  }
       }
-    else if ( 2 == shape.size() ) // 2D case
+    else if ( 2 == itsShape.size() ) // 2D case
       {
-	for ( int xx=0; xx<shape[0]; xx++)
-	  for ( int yy=0; yy<shape[1]; yy++)
+	for ( int xx=0; xx<itsShape[0]; xx++)
+	  for ( int yy=0; yy<itsShape[1]; yy++)
 	    data_list.append( (*((std::string*)get(xx,yy))) );
       }
-    else if ( 3 == shape.size() ) // 3D case
+    else if ( 3 == itsShape.size() ) // 3D case
       {
-	for ( int xx=0; xx<shape[0]; xx++)
-	  for ( int yy=0; yy<shape[1]; yy++)
-	    for ( int zz=0; zz<shape[2]; zz++)
+	for ( int xx=0; xx<itsShape[0]; xx++)
+	  for ( int yy=0; yy<itsShape[1]; yy++)
+	    for ( int zz=0; zz<itsShape[2]; zz++)
 	      data_list.append( (*((std::string*)get(xx,yy,zz))) );
       }
     else {
@@ -210,17 +209,17 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 		<< "dalData::get_boost()\n";
     }
     
-    bpl::numeric::array narray = num_util::makeNum(data_list);
+    boost::python::numeric::array narray = num_util::makeNum(data_list);
     return narray;
   }
   else {
-    std::cerr << "ERROR:  Datatype '" << dataType_p
+    std::cerr << "ERROR:  Datatype '" << itsDatatype
 	      << "' not yet supported.  (dalData::get_boost)\n";
     
     for (int ii=0; ii<1; ii++)
       data_list.append(0);
     
-    bpl::numeric::array nadata( data_list );
+    boost::python::numeric::array nadata( data_list );
     
     return nadata;
   }
@@ -228,8 +227,8 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 
 void export_dalData () 
 {
-  bpl::class_<dalData>("dalData")
-    .def( bpl::init<>())
+  boost::python::class_<dalData>("dalData")
+    .def( boost::python::init<>())
     .def( "filetype", &dalData::filetype,
 	  "Get the filetype." )
     .def( "datatype", &dalData::datatype,
@@ -260,7 +259,7 @@ void export_IO_Mode ()
   //________________________________________________________
   // Enumeration: I/O mode flags
 
-  bpl::enum_<IO_Mode::Flags>("Flags")
+  boost::python::enum_<IO_Mode::Flags>("Flags")
     .value("ReadOnly",     IO_Mode::ReadOnly)
     .value("ReadWrite",    IO_Mode::ReadWrite)
     .value("WriteOnly",    IO_Mode::WriteOnly)
@@ -288,12 +287,12 @@ void export_IO_Mode ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<IO_Mode>("IO_Mode")
+  boost::python::class_<IO_Mode>("IO_Mode")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<IO_Mode::Flags>())
-    .def( bpl::init<int>())
-    .def( bpl::init<IO_Mode>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<IO_Mode::Flags>())
+    .def( boost::python::init<int>())
+    .def( boost::python::init<IO_Mode>())
     // Parameter access
     .def("flags",
 	 &IO_Mode::flags,
@@ -327,47 +326,4 @@ void export_IO_Mode ()
 	 summary2,
 	 "Summary of the object's internal parameters and status.")
     ;
-}
-
-// ==============================================================================
-//
-//                                                                  HDF5Hyperslab
-//
-// ==============================================================================
-
-void export_HDF5Hyperslab ()
-{
-  void (HDF5Hyperslab::*summary1)() 
-    = &HDF5Hyperslab::summary;
-  void (HDF5Hyperslab::*summary2)(std::ostream &) 
-    = &HDF5Hyperslab::summary;
-  
-  bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
-    .def( bpl::init<>())
-    .def( bpl::init<int const &>())
-    // Parameter access
-    .def( "shape", &HDF5Hyperslab::rank,
-	  "Get the rank of the array to which the hyperslab is applied.")
-    .def( "start", &HDF5Hyperslab::start,
-	  "Get the offset of the starting element of the specified hyperslab.")
-    .def( "setStart", &HDF5Hyperslab::setStart,
-	  "Set the offset of the starting element of the specified hyperslab.")
-    .def( "stride", &HDF5Hyperslab::stride,
-	  "Get the number of elements to separate each element or block.")
-    .def( "setStride", &HDF5Hyperslab::setStride,
-	  "Set the number of elements to separate each element or block.")
-    .def( "count", &HDF5Hyperslab::count,
-	  "Get the number of elements or blocks to select along each dimension.")
-    .def( "setCount", &HDF5Hyperslab::setCount,
-	  "Set the number of elements or blocks to select along each dimension.")
-    .def( "block", &HDF5Hyperslab::block,
-	  "Get the size of the element block selected from the dataspace.")
-    .def( "setBlock", &HDF5Hyperslab::setBlock,
-	  "Set the size of the element block selected from the dataspace.")
-    // Methods
-    .def( "className", &HDF5Hyperslab::className,
-	  "Get the name of the class.")
-    .def("summary", summary1)
-    .def("summary", summary2)
-    ; 
 }

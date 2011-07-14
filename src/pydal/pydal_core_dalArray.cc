@@ -39,18 +39,18 @@ using DAL::dalArray;
 //
 // ==============================================================================
 
-void DAL::dalArray::extend_boost (bpl::list pydims )
+void DAL::dalArray::extend_boost (boost::python::list pydims )
 {
   std::vector<int> dims;
   
-  for (int ii=0; ii<bpl::len(pydims); ii++) {
-    dims.push_back(bpl::extract<int>(pydims[ii]));
+  for (int ii=0; ii<boost::python::len(pydims); ii++) {
+    dims.push_back(boost::python::extract<int>(pydims[ii]));
   }
   
   extend( dims );
 }
 
-bool DAL::dalArray::setAttribute_char( std::string attrname,
+bool DAL::dalArray::setAttribute_char (std::string attrname,
 				       char data )
 {
   return setAttribute( attrname, &data );
@@ -98,90 +98,98 @@ bool DAL::dalArray::setAttribute_string (std::string attrname,
   return setAttribute( attrname, &data );
 }
 
-bool DAL::dalArray::setAttribute_char_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_char_vector (std::string attrname,
+					      boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<char> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<char>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<char>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_short_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_short_vector (std::string attrname,
+					       boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<short> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<short>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<short>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_int_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_int_vector (std::string attrname,
+					     boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<int> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<int>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<int>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_uint_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_uint_vector (std::string attrname,
+					      boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<uint> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<uint>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<uint>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_long_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_long_vector (std::string attrname,
+					      boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<long> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<long>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<long>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_float_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_float_vector (std::string attrname,
+					       boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<float> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<float>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<float>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_double_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_double_vector (std::string attrname,
+						boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<double> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<double>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<double>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_string_vector (std::string attrname, bpl::list data )
+bool DAL::dalArray::setAttribute_string_vector (std::string attrname,
+						boost::python::list data )
 {
-  int size = bpl::len(data);
+  int size = boost::python::len(data);
   std::vector<std::string> mydata;
   
-  for (int ii=0; ii<bpl::len(data); ii++)
-    mydata.push_back(bpl::extract<std::string>(data[ii]));
+  for (int ii=0; ii<boost::python::len(data); ii++)
+    mydata.push_back(boost::python::extract<std::string>(data[ii]));
   
   return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
 }
@@ -194,7 +202,7 @@ bool DAL::dalArray::setAttribute_string_vector (std::string attrname, bpl::list 
 
 void export_dalArray ()
 {  
-  bpl::class_<dalArray>("dalArray")
+  boost::python::class_<dalArray>("dalArray")
     .def( "setAttribute_char", &dalArray::setAttribute_char,
 	  "Set a character attribute" )
     .def( "setAttribute_char", &dalArray::setAttribute_char_vector,

@@ -56,11 +56,11 @@ void export_Angle ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<Angle>("Angle")
+  boost::python::class_<Angle>("Angle")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<double const &, bool const &>())
-    .def( bpl::init<Angle>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<double const &, bool const &>())
+    .def( boost::python::init<Angle>())
     // Parameter access
     .def("setAngle", &Angle::setAngle, "Set the angle.")
     .def("rad",      &Angle::rad,      "Get the angle in radian.")
@@ -99,11 +99,11 @@ void export_RaDec ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<RaDec>("RaDec")
+  boost::python::class_<RaDec>("RaDec")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<double const &, double const &, bool const &>())
-    .def( bpl::init<RaDec>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<double const &, double const &, bool const &>())
+    .def( boost::python::init<RaDec>())
     // Parameter access
     .def("setRA",    &RaDec::setRA,    "Set Right Ascension angle.")
     .def("setDec",   &RaDec::setDec,    "Set Declination angle.")
@@ -135,7 +135,7 @@ void export_Stokes ()
   //________________________________________________________
   // Enumeration: Stokes component
 
-  bpl::enum_<Stokes::Component>("Component")
+  boost::python::enum_<Stokes::Component>("Component")
     .value("I", Stokes::I)
     .value("Q", Stokes::Q)
     .value("U", Stokes::U)
@@ -177,11 +177,11 @@ void export_Stokes ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<Stokes>("Stokes")
+  boost::python::class_<Stokes>("Stokes")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<Stokes::Component>())
-    .def( bpl::init<Stokes>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<Stokes::Component>())
+    .def( boost::python::init<Stokes>())
     // Parameter access
     .def("type",
 	 &Stokes::type,
@@ -198,7 +198,7 @@ void export_Stokes ()
     .def("className",
 	 &Stokes::className,
 	 "Get the name of the class.")
-    // Methods
+    // Public methods
     .def("summary",
 	 summary1,
 	 "Summary of the object's internal parameters and status.")
@@ -239,7 +239,7 @@ void export_Coordinate ()
   //________________________________________________________
   // Enumeration: Cordinate type
 
-  bpl::enum_<Coordinate::Type>("Type")
+  boost::python::enum_<Coordinate::Type>("Type")
     .value("DIRECTION", DAL::Coordinate::DIRECTION)
     .value("LINEAR",    DAL::Coordinate::LINEAR)
     .value("TABULAR",   DAL::Coordinate::TABULAR)

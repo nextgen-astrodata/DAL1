@@ -42,19 +42,19 @@ using DAL::dalColumn;
 //_____________________________________________________________________________
 //                                                                  shape_boost
 
-bpl::tuple dalColumn::shape_boost()
+boost::python::tuple dalColumn::shape_boost()
 {
   std::vector<int> lclvals;
   lclvals = shape();
-  bpl::list lcllist;
+  boost::python::list lcllist;
   
   std::vector<int>::iterator iter;
   for (iter=lclvals.begin(); iter < lclvals.end(); iter++) {
     lcllist.append(*iter);
   }
   
-  bpl::tuple lcl_tuple;
-  lcl_tuple = bpl::make_tuple(lcllist);
+  boost::python::tuple lcl_tuple;
+  lcl_tuple = boost::python::make_tuple(lcllist);
   
   return lcl_tuple;
 }
@@ -62,7 +62,7 @@ bpl::tuple dalColumn::shape_boost()
 //_____________________________________________________________________________
 //                                                                  data_boost1
 
-bpl::numeric::array dalColumn::data_boost1()
+boost::python::numeric::array dalColumn::data_boost1()
 {
   return data_boost3( 0, -1 );
 }
@@ -70,7 +70,7 @@ bpl::numeric::array dalColumn::data_boost1()
 //_____________________________________________________________________________
 //                                                                  data_boost2
 
-bpl::numeric::array dalColumn::data_boost2( int32_t length )
+boost::python::numeric::array dalColumn::data_boost2( int32_t length )
 {
   return data_boost3( 0, length );
   
@@ -79,14 +79,14 @@ bpl::numeric::array dalColumn::data_boost2( int32_t length )
 //_____________________________________________________________________________
 //                                                                  data_boost2
 
-bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
-					    int32_t length)
+boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
+						      int32_t length)
 {
-  if ( MSCASATYPE == filetype ) {
+  if (itsFiletype.type()==DAL::dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
     
     if ("unknown" == casa_datatype) {
-      bpl::list lcllist;
+      boost::python::list lcllist;
       return num_util::makeNum(lcllist);
     }
     
@@ -97,48 +97,48 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  case casa::TpInt:
 	    {
 	      rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
-	      scalar_vals_int = rosc_int->getColumn();
-	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<int> data = rosc_int->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpBool:
 	    {
 	      rosc_bool = new casa::ROScalarColumn<bool>( *casa_column );
-	      scalar_vals_bool = rosc_bool->getColumn();
-	      data_object = new dalData( filetype, dal_BOOL, shape(), nrows() );
-	      data_object->data = (int *)scalar_vals_bool.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<bool> data = rosc_bool->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_BOOL, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpDouble:
 	    {
 	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
-	      scalar_vals_dbl = rosc_dbl->getColumn();
-	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<double> data = rosc_dbl->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData->data = (double *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpComplex:
 	    {
 	      rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	      scalar_vals_comp = rosc_comp->getColumn();
-	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	      data_object->data =
+	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData->data =
 		(std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
-	      scalar_vals_string = rosc_string->getColumn();
-	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data =
-		(std::string *)scalar_vals_string.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Vector<casa::String> data = rosc_string->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
+	      itsColumnData->data =
+		(std::string *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	    /************************************
@@ -148,9 +148,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      std::cerr << "dalColumn::data() Column type not yet supported."
 			<< endl;
-	      bpl::list tmp_list;
+	      boost::python::list tmp_list;
 	      tmp_list.append(0);
-	      bpl::numeric::array nadata(tmp_list);
+	      boost::python::numeric::array nadata(tmp_list);
 	      return nadata;
 	    }
 	  }
@@ -162,37 +162,37 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
 	      casa::Array<int> data = roac_int->getColumn();
-	      data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-	      data_object->data = (int *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
+	      itsColumnData->data = (int *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpDouble:
 	    {
 	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
 	      casa::Array<double> data = roac_dbl->getColumn();
-	      data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-	      data_object->data = (double *)data.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
+	      itsColumnData->data = (double *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpComplex:
 	    {
 	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-	      itsArrayComplex = roac_comp->getColumn();
-	      data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	      data_object->data =
-		(std::complex<float> *)itsArrayComplex.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Array<casa::Complex> data = roac_comp->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
+	      itsColumnData->data =
+		(std::complex<float> *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
 	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
-	      itsArrayString = roac_string->getColumn();
-	      data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-	      data_object->data = (std::string *)itsArrayString.getStorage(deleteIt);
-	      return data_object->get_boost3( offset, length );
+	      casa::Array<casa::String> data = roac_string->getColumn();
+	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
+	      itsColumnData->data = (std::string *)data.getStorage(deleteIt);
+	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	    /************************************
@@ -203,9 +203,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	      std::cerr <<
 		"dalColumn::data() Column type not yet supported.\n";
 	      
-	      bpl::list tmp_list;
+	      boost::python::list tmp_list;
 	      tmp_list.append(0);
-	      bpl::numeric::array nadata(tmp_list);
+	      boost::python::numeric::array nadata(tmp_list);
 	      return nadata;
 	    }
 	  }
@@ -215,36 +215,36 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 		  << " Do not know how to handle."
 		  << std::endl;
 	
-	bpl::list tmp_list;
+	boost::python::list tmp_list;
 	tmp_list.append(0);
-	bpl::numeric::array nadata(tmp_list);
+	boost::python::numeric::array nadata(tmp_list);
 	return nadata;
       }
     }
     catch (casa::AipsError x) {
       std::cerr << "ERROR: " << x.getMesg() << endl;
-      bpl::list tmp_list;
+      boost::python::list tmp_list;
       tmp_list.append(0);
-      bpl::numeric::array nadata(tmp_list);
+      boost::python::numeric::array nadata(tmp_list);
       return nadata;
     }
 #endif // DAL_WITH_CASA
   }
-  else if ( H5TYPE == filetype ) {
+  else if (itsFiletype.type()==DAL::dalFileType::HDF5) {
     std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
     int start = 0;
     int length = -1;
-    data_object = data(start,length);
-    return data_object->get_boost3( offset, length );
+    itsColumnData = data(start,length);
+    return itsColumnData->get_boost3( offset, length );
   }
   else {
     std::cerr <<
       "ERROR: filetype not supported [dalColumn.data - python]\n";
   }
   
-  bpl::list tmp_list;
+  boost::python::list tmp_list;
   tmp_list.append(0);
-  bpl::numeric::array nadata(tmp_list);
+  boost::python::numeric::array nadata(tmp_list);
   return nadata;
 }
 
@@ -256,10 +256,10 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 
 void export_dalColumn ()
 {
-  bpl::class_<dalColumn>("dalColumn")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
-    .def( bpl::init<string,string>())
+  boost::python::class_<dalColumn>("dalColumn")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
+    .def( boost::python::init<string const &,string const &>())
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"
 	  "with a compound datatype.  For example, use this method if an \n"

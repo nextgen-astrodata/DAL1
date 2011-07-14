@@ -43,6 +43,7 @@
 #include <core/dalColumn.h>
 #include <core/dalData.h>
 #include <core/dalDataset.h>
+#include <core/dalFileType.h>
 #include <core/dalGroup.h>
 #include <core/dalTable.h>
 #include <core/IO_Mode.h>

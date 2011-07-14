@@ -1,4 +1,14 @@
 
+/*!
+  \file dal_config.h
+
+  \ingroup DAL
+
+  \brief Common configured header file
+
+  \author Lars B&auml;hren
+*/
+
 #ifndef DAL_CONFIG_H
 #define DAL_CONFIG_H
 
@@ -8,12 +18,16 @@
 //
 // ==============================================================================
 
+//! DAL version number/string
 #define DAL_VERSION "${DAL_VERSION}"
+//! DAL major version
 #define DAL_VERSION_MAJOR ${DAL_VERSION_MAJOR}
+//! DAL minor version
 #define DAL_VERSION_MINOR ${DAL_VERSION_MINOR}
+//! DAL pathc version
 #define DAL_VERSION_PATCH ${DAL_VERSION_PATCH}
 
-/* Print debugging information? */
+/* Print debugging information */
 #cmakedefine DAL_DEBUGGING_MESSAGES
 
 // ==============================================================================
@@ -22,16 +36,16 @@
 //
 // ==============================================================================
 
-/* The full version of cmake in major.minor.patch[.tweak[-id]] format. */
+//! The full version of cmake in major.minor.patch[.tweak[-id]] format.
 #cmakedefine CMAKE_VERSION "${CMAKE_VERSION}"
 
-/* Name of system cmake is compiling for. */
+//! Name of system cmake is compiling for.
 #cmakedefine CMAKE_SYSTEM "${CMAKE_SYSTEM}"
 
-/* OS version CMake is building for. */
+//! OS version CMake is building for.
 #cmakedefine CMAKE_SYSTEM_VERSION "${CMAKE_SYSTEM_VERSION}"
 
-/* The name of the CPU CMake is building for. */
+//! The name of the CPU CMake is building for.
 #cmakedefine CMAKE_SYSTEM_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}"
 
 #cmakedefine CMAKE_HOST_APPLE
@@ -46,35 +60,35 @@
 //
 // ==============================================================================
 
-/* Define if we have the BOOST library */
+//! Define if we have the BOOST library
 #cmakedefine DAL_WITH_BOOST
 
-/* Define if we have the CFITSIO library */
+//! Define if we have the CFITSIO library
 #cmakedefine DAL_WITH_CFITSIO
 
-/* Define if we have the CASACORE/CASA library */
+//! Define if we have the CASACORE/CASA library
 #cmakedefine DAL_WITH_CASACORE
 
-/* Define if we have the GSL library */
+//! Define if we have the GSL library
 #cmakedefine DAL_WITH_GSL
 
-/* Define if we have a working installation of the HDF5 library */
+//! Define if we have a working installation of the HDF5 library
 #cmakedefine DAL_WITH_HDF5
 
-/* Define if we have the LOFAR library */
+//! Define if we have the LOFAR library
 #cmakedefine DAL_WITH_LOFAR
 
-/*
-  Define if we have the MySQL library (for configuration inspection):
-  MYSQL_VERSION  = ${MYSQL_VERSION}
-  MYSQL_INCLUDES = ${MYSQL_INCLUDES}
+/*!
+  \brief Define if we have the MySQL library (for configuration inspection):
+  - MYSQL_VERSION  = ${MYSQL_VERSION}
+  - MYSQL_INCLUDES = ${MYSQL_INCLUDES}
 */
 #cmakedefine DAL_WITH_MYSQL
 
-/* Define if we have the OPENMP library */
+//! Define if we have the OPENMP library
 #cmakedefine DAL_WITH_OPENMP
 
-/* Define if we have the WCSLIB library */
+//! Define if we have the WCSLIB library
 #cmakedefine DAL_WITH_WCSLIB
 
 // ==============================================================================
@@ -216,6 +230,11 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 
+//! Default chunking size used with HDF5 datasets
+const int32_t CHUNK_SIZE        = 5000;
+//! Maximum number of characters for the name of a table column
+const int32_t MAX_COL_NAME_SIZE = 256;
+
 #endif
 
 //__________________________________________________________
@@ -248,6 +267,7 @@
 // Header files for Python bindings
 
 #ifdef PYTHON
+#include <Python.h>
 // Boost.Python headers
 #include <boost/python.hpp>
 #include <boost/python/object.hpp>
@@ -272,13 +292,10 @@
 
 namespace DAL {
 
+  //! Numerical constant: PI
   const double PI    = 3.1415926535897932384626433832795;
   const bool SUCCESS = true;
   const bool FAIL    = false;
-  
-  const std::string H5TYPE            = "HDF5";
-  const std::string FITSTYPE          = "FITS";
-  const std::string MSCASATYPE        = "MSCASA";
   
   const std::string dal_CHAR          = "dalCHAR";
   const std::string dal_STRING        = "dalSTRING";
@@ -297,68 +314,94 @@ namespace DAL {
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
-
-  typedef unsigned char              UInt8;
-  typedef unsigned short            UInt16;
-  typedef short                      Int16;
-  typedef unsigned int              UInt32;
-  typedef int                        Int32;
-  typedef float                    Float32;
-  typedef long long                  Int64;
-  typedef unsigned long long        UInt64;
-  typedef double                   Float64;
+  //! 8-bit unsigned integer number
+  typedef unsigned char           UInt8;
+  //! 16-bit unsigned integer number
+  typedef unsigned short         UInt16;
+  //! 16-bit unsigned integer number
+  typedef short                   Int16;
+  //! 32-bit unsigned integer number
+  typedef unsigned int           UInt32;
+  //! 32-bit signed integer number
+  typedef int                     Int32;
+  //! 32-bit floating point number
+  typedef float                 Float32;
+  //! 64-bit signed integer number
+  typedef long long               Int64;
+  //! 64-bit unsigned integer number
+  typedef unsigned long long     UInt64;
+  //! 64-bit floating point number
+  typedef double                Float64;
 
   //! Complex number composed of two 8-bit unsigned integers
   struct Complex_UInt8 {
+    //! Real part of the complex number
     UInt8 real;
+    //! Imaginary part of the complex number
     UInt8 imag;
   };
 
   //! Complex number composed of two 16-bit unsigned integers
   struct Complex_UInt16 {
+    //! Real part of the complex number
     UInt16 real;
+    //! Imaginary part of the complex number
     UInt16 imag;
   };
 
   //! Complex number composed of two 32-bit unsigned integers
   struct Complex_UInt32 {
+    //! Real part of the complex number
     UInt32 real;
+    //! Imaginary part of the complex number
     UInt32 imag;
   };
 
   //! Complex number composed of two 16-bit integers
   struct Complex_Int16 {
+    //! Real part of the complex number
     Int16 real;
+    //! Imaginary part of the complex number
     Int16 imag;
   };
 
   //! Complex number composed of two 32-bit integers
   struct Complex_Int32 {
+    //! Real part of the complex number
     Int32 real;
+    //! Imaginary part of the complex number
     Int32 imag;
   };
 
   //! Complex number composed of two 64-bit integers
   struct Complex_Int64 {
+    //! Real part of the complex number
     Int64 real;
+    //! Imaginary part of the complex number
     Int64 imag;
   };
 
   //! Complex number composed of two 32-bit floats 
   struct Complex_Float32 {
+    //! Real part of the complex number
     Float32 real;
+    //! Imaginary part of the complex number
     Float32 imag;
   };
 
   //! Complex number composed of two 64-bit floats 
   struct Complex_Float64 {
+    //! Real part of the complex number
     Float64 real;
+    //! Imaginary part of the complex number
     Float64 imag;
   };
 
   struct Complex_Char {
-    char real;  // real part
-    char imag;  // imaginary part
+    //! Real part of the complex number
+    char real;
+    //! Imaginary part of the complex number
+    char imag;
   };
 
   typedef Complex_Float32    Complex_Float;

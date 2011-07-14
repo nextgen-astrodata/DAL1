@@ -41,13 +41,13 @@
 
 BOOST_PYTHON_MODULE(pydal)
 {
-  bpl::scope().attr("__doc__") =
+  boost::python::scope().attr("__doc__") =
     "Routines for python bindings to the data access library (DAL)."
     ;
   
   Py_Initialize();
   import_array();
-  bpl::numeric::array::set_module_and_type("numpy", "ndarray");
+  boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
 
   // ============================================================================
   //

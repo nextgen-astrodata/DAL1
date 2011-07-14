@@ -18,4 +18,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/dalBaseTypes.h>
+#ifndef DALINTARRAY_H
+#define DALINTARRAY_H
+
+#include <core/dalArray.h>
+
+namespace DAL {
+
+  /*!
+    \class dalIntArray
+    \ingroup DAL
+    \ingroup core
+    \brief Represents an n-dimensional array of type \e int
+  */
+  class dalIntArray: public dalArray {
+    
+  public:
+
+    //! Argumented constructor
+    dalIntArray (hid_t obj_id,
+		 std::string arrayname,
+		 std::vector<int> dims,
+		 int data[],
+		 std::vector<int>chnkdims );
+    //! Read array data from object \e obj_id
+    int * readIntArray (hid_t obj_id,
+			std::string arrayname);
+  };
+  
+}   // END : namespace DAL
+
+#endif
+

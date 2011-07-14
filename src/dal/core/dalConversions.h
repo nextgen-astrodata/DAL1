@@ -29,17 +29,10 @@
 #include <vector>
 #include <assert.h>
 
+#include <dal_config.h>
+
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
-#endif
-
-#ifdef PYTHON
-#include <Python.h>
-#include <boost/python.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
-namespace bpl = boost::python;
 #endif
 
 /*!
@@ -129,7 +122,7 @@ namespace DAL { // Namespace DAL -- begin
   
 #ifdef PYTHON
   //! Convert Modified Julian Date (mjd) to unix time
-  bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
+  boost::python::numeric::array mjd2unix_boost( boost::python::numeric::array mjd_time );
 #endif
   
   // ============================================================================

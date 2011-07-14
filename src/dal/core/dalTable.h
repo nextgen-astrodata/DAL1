@@ -21,6 +21,8 @@
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
+#include <iomanip>
+
 #include <core/HDF5Attribute.h>
 #include <core/dalFilter.h>
 #include <core/dalColumn.h>
@@ -51,8 +53,10 @@ namespace DAL {
   
   class dalTable {
     
-    void * file;  // can be HDF5File, FITS, MS
-    
+    //! File pointer (can be HDF5, FITS or CASA MS)
+    void * file;
+    //! File type: CASA_MS, HDF5, FITS, etc.
+    dalFileType itsFiletype;
     //! HDF5 file_id
     hid_t itsFileID;
     //! HDF5 table id
@@ -63,14 +67,13 @@ namespace DAL {
     hsize_t nofRecords_p;
     //! HDF5 return status
     herr_t status;
+    //! Table access filter
+    dalFilter itsFilter;
     //! HDF5 list of columns
     char **itsFieldNames;
-    //! Table access filter
-    dalFilter * itsFilter;
     
-    bool firstrecord;
+    bool itsFirstRecord;
     std::string name;  // table name
-    std::string type;  // "HDF5", "MSCASA" or "FITS"; for example
     std::vector<dalColumn> columns; // list of table columns
     
 #ifdef DAL_WITH_CASA
@@ -80,14 +83,6 @@ namespace DAL {
     casa::ROTableColumn * itsCasaColumn;
 #endif
     
-    //! Setup for adding another column to an HDF5 table
-    bool h5addColumn_setup (std::string const &column_name,
-			    bool &removedummy);
-    void h5addColumn_insert (uint const & indims,
-			     std::string const & colname,
-			     hid_t const & field_type,
-			     bool const & removedummy );
-    
   public:
     
     // === Construction =========================================================
@@ -95,9 +90,9 @@ namespace DAL {
     //! Default table constructor
     dalTable ();
     //! Table constructor for a specific file format.
-    dalTable (std::string const &filetype);
-    //! Table constructor for a specific file format.
     dalTable (dalFileType const &filetype);
+    //! Table constructor for a specific file format.
+    dalTable (dalFileType::Type const &filetype);
     
     // === Destruction ==========================================================
 
@@ -122,6 +117,13 @@ namespace DAL {
     inline hsize_t nofRecords () const {
       return nofRecords_p;
     }
+    //! Get the number of columns in the table
+    inline unsigned int nofColumns () const {
+      return columns.size();
+    }
+
+    // === Public methods =======================================================
+
     //! Print a list of the columns contained in the table.
     void printColumns();
     //! Provide a summary of the object's internal parameters and status
@@ -132,19 +134,19 @@ namespace DAL {
     void summary(std::ostream &os);
     //! Open the table.  Called from dalDataset, not from the user.
     void openTable (void * voidfile,
-		    std::string tablename,
-		    std::string groupname);
+		    std::string const &tablename,
+		    std::string const &groupname);
     
 #ifdef DAL_WITH_CASA
     //! Open a CASA table, not in a MeasurementSet.
-    void openTable (std::string tablename);
+    bool openTable (std::string const &tablename);
     //! Open the table in a measurement set.
-    void openTable (std::string tablename,
+    void openTable (std::string const &tablename,
 		    casa::MSReader * reader );
     //! Open a filtered CASA measurement set table.
-    void openTable (std::string tablename,
+    void openTable (std::string const &tablename,
 		    casa::MSReader * reader,
-		    dalFilter * filter );
+		    dalFilter const &filter);
     //! Get keyword of type casa::String
     bool GetKeyword (casa::String const KeywordName,
 		     casa::String *result);
@@ -165,12 +167,8 @@ namespace DAL {
     
     //! Create a new table
     void createTable (void * voidfile,
-		      std::string tablename,
+		      std::string const &tablename,
 		      std::string groupname);
-    //! Get the number of columns in the table
-    inline unsigned int nofColumns () const {
-      return columns.size();
-    }
     //! Get a column object
     dalColumn * getColumn_complexInt16( std::string colname );
     //! Get a column object
@@ -187,11 +185,19 @@ namespace DAL {
 			   int subfields );
     //! Remove a column from the table
     void removeColumn( const std::string &colname );
-    void writeDataByColNum( void * structure, int index, int rownum, long nrecords=1 );
-    void setFilter( std::string columns );
-    void setFilter( std::string columns, std::string conditions );
-    void appendRow( void * data );
-    void appendRows( void * data, long number_of_rows );
+    void writeDataByColNum( void * structure,
+			    int index,
+			    int rownum,
+			    long nrecords=1);
+    //! Set filter to select \e columns.
+    void setFilter (std::string const &columns);
+    //! Set filter to select \e columns with additional \e conditions applied.
+    void setFilter (std::string const &columns,
+		    std::string const &conditions);
+    //! Append row of data to the table.
+    void appendRow (void * data );
+    //! Append rows of data to the table.
+    void appendRows (void * data, long number_of_rows );
     //! List the column of the table
     std::vector<std::string> listColumns();
     //! Read rows from the table
@@ -235,13 +241,12 @@ namespace DAL {
       }
 
     bool setAttribute( std::string attrname, std::string data );
-    bool setAttribute( std::string attrname, std::string const * data, int size=1 );
     //! Find an attribute associated with the table
     bool findAttribute( std::string attrname );
     //! Get the number of rows within the table
     long getNumberOfRows();
-    //! Print the name of the table
-    void getName();
+    //! Get the name of the table
+    std::string tableName ();
     //! Retrieve a dalColumn by name.
     void * getColumnData ( std::string colname );
     
@@ -254,47 +259,50 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    bool append_row_boost( bpl::object data );
-    bool append_rows_boost( bpl::object data, long nrows );
-    void write_col_by_index_boost( bpl::numeric::array data, int index,
+    bool append_row_boost( boost::python::object data );
+    bool append_rows_boost( boost::python::object data, long nrows );
+    void write_col_by_index_boost( boost::python::numeric::array data, int index,
 				   int rownum, long nrecords );
-    bpl::list listColumns_boost();
-    bpl::numeric::array getAttribute_boost(std::string);
+    boost::python::list listColumns_boost();
+    boost::python::numeric::array getAttribute_boost(std::string);
     PyObject* readRows_boost( int start, int nrecs );
     
     //! Set attribute of type \e char
     bool setAttribute_char( std::string attrname, char data );
-    //! Set attribute of type \e short
-    bool setAttribute_short( std::string attrname, short data );
-    //! Set attribute of type \e int
-    bool setAttribute_int( std::string attrname, int data );
-    //! Set attribute of type \e uint
-    bool setAttribute_uint( std::string attrname, uint data );
-    //! Set attribute of type \e long
-    bool setAttribute_long( std::string attrname, long data );
-    //! Set attribute of type \e float
-    bool setAttribute_float( std::string attrname, float data );
-    //! Set attribute of type \e double
-    bool setAttribute_double( std::string attrname, double data );
     //! Set attribute of type \e string
     bool setAttribute_string( std::string attrname, std::string data );
-    bool setAttribute_char_vector (std::string attrname, bpl::list data);
-    bool setAttribute_short_vector (std::string attrname, bpl::list data);
-    bool setAttribute_int_vector (std::string attrname, bpl::list data);
-    bool setAttribute_uint_vector (std::string attrname, bpl::list data);
-    bool setAttribute_long_vector (std::string attrname, bpl::list data);
-    bool setAttribute_float_vector (std::string attrname, bpl::list data);
-    bool setAttribute_double_vector (std::string attrname, bpl::list data);
-    bool setAttribute_string_vector (std::string attrname, bpl::list data);
+    bool setAttribute_char_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_short_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_int_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_uint_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_long_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_float_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_double_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_string_vector (std::string attrname, boost::python::list data);
     
 #ifdef DAL_WITH_CASA
-    void ot_nonMStable( std::string tablename );
+    void ot_nonMStable( std::string const &tablename );
     void setFilter_boost1(std::string);
     void setFilter_boost2(std::string,std::string);
-    // 	bpl::numeric::array getColumnData_boost( string colname );
+    // 	boost::python::numeric::array getColumnData_boost( string colname );
 #endif
     
 #endif
+
+  // === Private methods ========================================================
+
+ private:
+
+  //! Initialize internal parameters
+  void init (DAL::dalFileType const &filetype=DAL::dalFileType());
+  //! Setup for adding another column to an HDF5 table
+  bool h5addColumn_setup (std::string const &column_name,
+			  bool &removedummy);
+  void h5addColumn_insert (uint const & indims,
+			   std::string const & colname,
+			   hid_t const & field_type,
+			   bool const & removedummy );
+
   };
   
 } // end namespace DAL

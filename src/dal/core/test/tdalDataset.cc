@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2008-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -32,6 +32,10 @@
 */
 
 #include <core/dalDataset.h>
+#include <core/IO_Mode.h>
+
+using std::cout;
+using std::endl;
 
 //_______________________________________________________________________________
 //                                                              test_constructors
@@ -44,9 +48,10 @@
 */
 int test_constructors (std::map<std::string,std::string> &filenames)
 {
-  std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
+  cout << "\n[tdalDataset::test_constructors]" << endl;
 
   int nofFailedTests  = 0;
+  DAL::IO_Mode flags (DAL::IO_Mode::OpenOrCreate);
   std::map<std::string,std::string>::iterator it;
 
   /*__________________________________________________________________
@@ -54,40 +59,83 @@ int test_constructors (std::map<std::string,std::string> &filenames)
             to a dataset/-file.
   */
 
-  std::cout << "[1] Testing dalDataset() ..." << std::endl;
+  cout << "\n[1] Testing dalDataset() ..." << endl;
   try {
     DAL::dalDataset dataset;
     dataset.summary();
   }
   catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
   /*__________________________________________________________________
     Test 2: Argumented constructor, proving the necessary set of 
             parameters for the creation of a dataset/-file.
-   */
+  */
 
-  std::cout << "[2] Testing dalDataset(string,string,bool) ..." << std::endl;
+  cout << "\n[2] Testing dalDataset(string,string,IO_Mode) ..." << endl;
   try {
     for (it=filenames.begin(); it!=filenames.end(); ++it) {
       // Display which type of dataset is being created
-      std::cout << "--> Creating dataset of type '" << it->first
-		<< "' ..." << std::endl;
+      cout << "--> Creating dataset of type '" << it->first
+		<< "' ..." << endl;
       // Create dataset
       DAL::dalDataset dataset (it->second.c_str(),
 			       it->first.c_str(),
-			       true);
+			       flags);
       dataset.summary();
     }
-    
   }
   catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
+  /*__________________________________________________________________
+    Test 3: Argumented constructor, proving the necessary set of 
+            parameters for the creation of a dataset/-file.
+  */
+
+  cout << "\n[3] Testing dalDataset(string,string) ..." << endl;
+  try {
+    for (it=filenames.begin(); it!=filenames.end(); ++it) {
+      // Display which type of dataset is being created
+      cout << "--> Opening dataset of type '" << it->first
+		<< "' ..." << endl;
+      // Create dataset
+      DAL::dalDataset dataset (it->second.c_str(),
+			       it->first.c_str());
+      dataset.summary();
+    }
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                      test_open
+
+/*!
+  \param filename -- Name of the dataset to open.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_open (std::string const &filename)
+{
+  cout << "\n[tdalDataset::test_open]\n" << endl;
+
+  int nofFailedTests  = 0;
+
+  cout << "--> Opening dataset " << filename << " ..." << std::endl;
+
+  DAL::dalDataset dataset (filename);
+  dataset.summary();
+
   return nofFailedTests;
 }
 
@@ -99,64 +147,95 @@ int test_constructors (std::map<std::string,std::string> &filenames)
 
   \brief filename -- Name of the dataset to be created and used for the test
 */
-int test_attributes (std::string const &filename)
+int test_attributes (std::map<std::string,std::string> &filenames)
 {
-  std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
+  cout << "\n[tdalDataset::test_attributes]\n" << endl;
 
   int nofFailedTests = 0;
-  // int nelem          = 5;
+  int numTest        = 0;
+  unsigned int nelem = 5;
+  std::map<std::string,std::string>::iterator it;
+
+  DAL::IO_Mode flags (DAL::IO_Mode::ReadWrite);
+  flags.addFlag(DAL::IO_Mode::Open);
   
-  /* Open the dataset to work with */
-  DAL::dalDataset ds (filename);
-  ds.summary();
+  for (it=filenames.begin(); it!=filenames.end(); ++it) {
+    // Display which type of dataset is being created
+    cout << "--> Opening dataset of type '" << it->first << "' ..." << endl;
+    // Create dataset
+    DAL::dalDataset dataset (it->second.c_str(),
+			     it->first.c_str(),
+			     flags);
 
-  /*__________________________________________________________________
-    Test 1: Integer-type attributes
-  */
+    /*______________________________________________________
+      Test 1: Create/Set attribute storing atomic value.
+    */
 
-  // cout << "[1] Integer-type attributes ..." << endl;
-  // try {
-  //   int var        = 1;
-  //   int varArray[] = {1,2,3,4,5};
+    ++numTest;
 
-  //   ds.setAttribute ("h5a_int", var);
-  //   ds.setAttribute ("h5a_array_int", varArray, nelem);
-  // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
-  //   nofFailedTests++;
-  // }
-  
-  /*__________________________________________________________________
-    Test 2: Float-type attributes
-  */
+    cout << "[" << numTest << "] Testing setAttribute(string,T) ..." << endl;
+    try {
+      bool valBool             = false;
+      short valShort           = 1;
+      unsigned short valUshort = 2;
+      int valInt               = 3;
+      unsigned int valUint     = 4;
+      long valLong             = 5;
+      unsigned long valUlong   = 6;
+      float valFloat           = 0.5;
+      double valDouble         = 0.25;
+      std::string valString    = "bla";
+      
+      std::cout << "-- Start writing attributes." << endl << std::flush;
+      dataset.setAttribute ("h5a_bool",    valBool);
+      dataset.setAttribute ("h5a_short",   valShort);
+      dataset.setAttribute ("h5a_ushort",  valUshort);
+      dataset.setAttribute ("h5a_int",     valInt);
+      dataset.setAttribute ("h5a_uint",    valUint);
+      dataset.setAttribute ("h5a_long",    valLong);
+      dataset.setAttribute ("h5a_ulong",   valUlong);
+      dataset.setAttribute ("h5a_float",   valFloat);
+      dataset.setAttribute ("h5a_double",  valDouble);
+      dataset.setAttribute ("h5a_string",  valString);
+      std::cout << "-- Finished writing attributes." << endl << std::flush;
+    } catch (std::string message) {
+      std::cerr << message << endl;
+      nofFailedTests++;
+    }
+    
+    /*______________________________________________________
+      Test 2: Create/Set attribute storing array-type value
+    */
+    
+    ++numTest;
 
-  // cout << "[2] Float-type attributes ..." << endl;
-  // try {
-  //   float var        = 0.1;
-  //   float varArray[] = {0.1, 0.2, 0.3, 0.4, 0.5};
-
-  //   ds.setAttribute ("h5a_float", var);
-  //   ds.setAttribute ("h5a_array_float", varArray, nelem);
-  // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
-  //   nofFailedTests++;
-  // }
-  
-  /*__________________________________________________________________
-    Test 3: Double-type attributes
-  */
-
-  // cout << "[3] Double-type attributes ..." << endl;
-  // try {
-  //   double var        = 0.1;
-  //   double varArray[] = {0.1, 0.2, 0.3, 0.4, 0.5};
-
-  //   ds.setAttribute ("ATTRIBUTE_DOUBLE", var);
-  //   ds.setAttribute ("ATTRIBUTE_DOUBLE_ARRAY", varArray, nelem);
-  // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
-  //   nofFailedTests++;
-  // }
+    cout << "[" << numTest << "] Testing setAttribute(string,T*,uint) ..." << endl;
+    try {
+      int valBool[]           = {false,true,false,true,false};
+      int valInt[]            = {1,1,1,1,1};
+      unsigned int valUint[]  = {2,2,2,2,2};
+      short valShort[]        = {3,3,3,3,3};
+      long valLong[]          = {4,4,4,4,4};
+      float valFloat[]        = {0.5,0.5,0.5,0.5,0.5};
+      double valDouble[]      = {0.25,0.25,0.25,0.25,0.25};
+      std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
+      
+      std::cout << "-- Start writing attributes." << endl << std::flush;
+      dataset.setAttribute ("h5a_array_bool",   valBool,   nelem);
+      dataset.setAttribute ("h5a_array_int",    valInt,    nelem);
+      dataset.setAttribute ("h5a_array_uint",   valUint,   nelem);
+      dataset.setAttribute ("h5a_array_short",  valShort,  nelem);
+      dataset.setAttribute ("h5a_array_long",   valLong,   nelem);
+      dataset.setAttribute ("h5a_array_float",  valFloat,  nelem);
+      dataset.setAttribute ("h5a_array_double", valDouble, nelem);
+      dataset.setAttribute ("h5a_array_string", valString, nelem);
+      std::cout << "-- Finished writing attributes." << endl << std::flush;
+    } catch (std::string message) {
+      std::cerr << message << endl;
+      nofFailedTests++;
+    }
+    
+  }   // END: for()
   
   return nofFailedTests;
 }
@@ -164,9 +243,10 @@ int test_attributes (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                        test_MS
 
-int test_MS (std::string const &filename)
+int test_MS (std::string const &filename,
+	     std::string const &tablename="MAIN")
 {
-  std::cout << "\n[tdalDataset::test_MS]\n" << std::endl;
+  cout << "\n[tdalDataset::test_MS]\n" << endl;
 
   int nofFailedTests = 0;
 
@@ -174,26 +254,65 @@ int test_MS (std::string const &filename)
     Open MeasurementSet file
   */
   
-  std::cout << "[1] Opening MeasurementSet ..." << std::endl;
+  cout << "[1] Opening MeasurementSet ..." << endl;
 
   DAL::dalDataset ms (filename);
   ms.summary();
 
   /*________________________________________________________
-    Assign filter to access tables
-   */
+    Assign filter to access tables; the additional condition 
+    applied to the column selection will cause extraction of
+    the auto-correlation products.
+  */
+  
+  cout << "[2] Set Filter used when acessing table ..." << endl;
 
   try {  
-    string columns      = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
-    string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
-
+    std::string columns           = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+    std::string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+    
     ms.setFilter (columns, filter_conditions);
     ms.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  /*________________________________________________________
+    Open a specific table in the MeasurementSet; by default 
+    this will be the 'MAIN' table at the root lavel of the 
+    data set.
+  */
+
+  cout << "[3] Open table " << tablename << " ..." << endl;
+
+  try {
+    DAL::dalTable * table = ms.openTable (tablename);
+    table->summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*________________________________________________________
+    Get data from the TIME column of the MAIN table.
+  */
   
+  cout << "[4] Get data from the TIME column of the MAIN table ..." << endl;
+
+  try {
+    cout << "--> Opening table ..." << std::endl;
+    DAL::dalTable * table = ms.openTable (tablename);
+    //
+    cout << "--> Opening table column ..." << std::endl;
+    DAL::dalColumn * columTime = table->getColumn("TIME");
+    // 
+    columTime->summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
@@ -217,7 +336,7 @@ int main (int argc, char *argv[])
   filenames["HDF5"]    = "tdalDataset.h5";
   filenames["FITS"]    = "tdalDataset.fits";
   filenames["CASA_MS"] = "tdalDataset.ms";
-
+  
   //________________________________________________________
   // Process parameters from the command line
   
@@ -232,20 +351,15 @@ int main (int argc, char *argv[])
   
   //________________________________________________________
   // Run the tests
-
+  
   //! Test constructors for dalDataset object
   nofFailedTests += test_constructors(filenames);
   //! Test creation of and access to attributes
-  nofFailedTests += test_attributes (filename);
+  nofFailedTests += test_attributes (filenames);
 
-  switch (filetype.type()) {
-  case DAL::dalFileType::CASA_MS:
-    nofFailedTests += test_MS (filename);
-    break;
-  default:
-    std::cout << "--> Unsupported file type " << argv[2] << std::endl;
-    break;
-  };
+  if (haveDataset) {
+    nofFailedTests += test_open (filename);
+  }
   
   return nofFailedTests;
 }

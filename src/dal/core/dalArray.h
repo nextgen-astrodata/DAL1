@@ -21,7 +21,9 @@
 #ifndef DALARRAY_H
 #define DALARRAY_H
 
-#include <core/dalBaseTypes.h>
+#include <complex>
+
+#include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
 
 namespace DAL {
@@ -34,7 +36,8 @@ namespace DAL {
 
     \brief Represents an n-dimensional array.
 
-    \author Joseph Masters, Lars B&auml;hren
+    \author Joseph Masters
+    \author Lars B&auml;hren
     
     The dalArray object holds an n-dimensional array of a single datatype.
   */
@@ -185,13 +188,19 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    void extend_boost( bpl::list pydims );
+    void extend_boost (boost::python::list pydims );
     
-    dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
-    dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
-    dalArray * cfa_boost_list( std::string arrayname, bpl::list dims, bpl::list data );
+    dalArray * csa_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
+    dalArray * cia_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
+    dalArray * cfa_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
     
-    bpl::numeric::array ria_boost( std::string arrayname );
+    boost::python::numeric::array ria_boost( std::string arrayname );
     
     bool setAttribute_char   (std::string name, char data);
     bool setAttribute_short  (std::string const &name, short const &data);
@@ -201,43 +210,22 @@ namespace DAL {
     bool setAttribute_float  (std::string const &name, float const &data);
     bool setAttribute_double (std::string const &name, double const &data);
     bool setAttribute_string (std::string name, std::string data );
-    bool setAttribute_char_vector( std::string attrname, bpl::list data );
-    bool setAttribute_short_vector( std::string attrname, bpl::list data );
+    bool setAttribute_char_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_short_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<int>
-    bool setAttribute_int_vector( std::string attrname, bpl::list data );
+    bool setAttribute_int_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<uint>
-    bool setAttribute_uint_vector( std::string attrname, bpl::list data );
+    bool setAttribute_uint_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<long>
-    bool setAttribute_long_vector( std::string attrname, bpl::list data );
+    bool setAttribute_long_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<float>
-    bool setAttribute_float_vector( std::string attrname, bpl::list data );
+    bool setAttribute_float_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<double>
-    bool setAttribute_double_vector( std::string attrname, bpl::list data );
+    bool setAttribute_double_vector( std::string attrname, boost::python::list data );
     //! Set attribute of type \e vector<string>
-    bool setAttribute_string_vector( std::string attrname, bpl::list data );
+    bool setAttribute_string_vector( std::string attrname, boost::python::list data );
     
 #endif
-  };
-  
-  /*!
-    \class dalIntArray
-    \ingroup DAL
-    \ingroup  core
-    \brief Represents an n-dimensional array of type \e int
-  */
-  class dalIntArray: public dalArray {
-    
-  public:
-
-    //! Argumented constructor
-    dalIntArray (hid_t obj_id,
-		 std::string arrayname,
-		 std::vector<int> dims,
-		 int data[],
-		 std::vector<int>chnkdims );
-    //! Read array data from object \e obj_id
-    int * readIntArray (hid_t obj_id,
-			std::string arrayname);
   };
   
   /*!

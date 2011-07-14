@@ -100,6 +100,15 @@ if (NOT CASACORE_FOUND)
   ## adjust the ordering of the individual libraries
   
   list (REVERSE CASACORE_LIBRARIES)
+
+  ##_____________________________________________________________________________
+  ## Check for measures data
+  
+  find_path (CASACORE_DATADIR ephemerides geodetic
+    HINTS ${CASACORE_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES share/casacore share/casacore/data
+    )
   
   ##_____________________________________________________________________________
   ## Compiler flags
@@ -192,6 +201,7 @@ if (NOT CASACORE_FOUND)
     CASACORE_LIBRARIES
     CASACORE_CASA_LIBRARY
     CASACORE_TABLES_LIBRARY
+    CASACORE_DATADIR
     )
   
 endif (NOT CASACORE_FOUND)

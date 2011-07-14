@@ -149,9 +149,6 @@ namespace bpo = boost::program_options;
 
 */
 
-
-
-
 //Global variables
 //! (pointer to) the TBBraw object we are writing to.
 DAL::TBBraw *tbb;
