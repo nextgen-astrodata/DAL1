@@ -9,7 +9,7 @@ set (DAL_VERSION_PATCH 7)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.8.3)
+cmake_minimum_required (VERSION 2.8.4)
 
 ## ==============================================================================
 ##
