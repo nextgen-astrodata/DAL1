@@ -21,6 +21,7 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
+#include <core/dalCommon.h>
 #include <core/dalData.h>
 
 #ifdef PYTHON
@@ -175,10 +176,10 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    bpl::tuple shape_boost();
-    bpl::numeric::array data_boost1( );
-    bpl::numeric::array data_boost2( int32_t length );
-    bpl::numeric::array data_boost3( int64_t offset, int32_t length );
+    boost::python::tuple shape_boost();
+    boost::python::numeric::array data_boost1( );
+    boost::python::numeric::array data_boost2( int32_t length );
+    boost::python::numeric::array data_boost3( int64_t offset, int32_t length );
 
 #endif
 

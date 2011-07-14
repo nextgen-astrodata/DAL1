@@ -44,10 +44,10 @@ using DAL::Timestamp;
 
 void export_CommonAttributes () 
 {
-  bpl::class_<CommonAttributes>("CommonAttributes")
-    .def( bpl::init<>())
-    .def( bpl::init<Filename>())
-    .def( bpl::init<Filename,string>())
+  boost::python::class_<CommonAttributes>("CommonAttributes")
+    .def( boost::python::init<>())
+    .def( boost::python::init<Filename>())
+    .def( boost::python::init<Filename,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,
@@ -141,7 +141,7 @@ void export_CommonAttributes ()
 void export_Filename ()
 {
   /* Enumeration: File type */
-  bpl::enum_<Filename::Type>("Type")
+  boost::python::enum_<Filename::Type>("Type")
     .value("uv",      Filename::uv)
     .value("sky",     Filename::sky)
     .value("rm",      Filename::rm)
@@ -152,7 +152,7 @@ void export_Filename ()
     ;
   
   /* Enumeration: File extension */
-  bpl::enum_<Filename::Extension>("Extension")
+  boost::python::enum_<Filename::Extension>("Extension")
     .value("MS",     Filename::MS)
     .value("h5",     Filename::h5)
     .value("fits",   Filename::fits)
@@ -171,10 +171,10 @@ void export_Filename ()
   void (Filename::*summary2)(std::ostream &) 
     = &Filename::summary;
   
-  bpl::class_<Filename>("Filename")
+  boost::python::class_<Filename>("Filename")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<string,string,Filename::Type,Filename::Extension>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<string,string,Filename::Type,Filename::Extension>())
     // Parameters
     .def( "observationID", &Filename::observationID,
 	  "Get the unique observation ID.")
@@ -212,7 +212,7 @@ void export_Timestamp ()
   //__________________________________________________________________
   // Enumeration: Month of the year
   
-  bpl::enum_<Timestamp::Month>("Month")
+  boost::python::enum_<Timestamp::Month>("Month")
     .value("Jan",Timestamp::Jan)
     .value("Feb",Timestamp::Feb)
     .value("Mar",Timestamp::Mar)
@@ -230,9 +230,9 @@ void export_Timestamp ()
   void (Timestamp::*setMonth1)(int const &)   = &Timestamp::setMonth;
   void (Timestamp::*setMonth2)(Timestamp::Month const &) = &Timestamp::setMonth;
   
-  bpl::class_<Timestamp>("Timestamp")
-    .def( bpl::init<>())
-    .def( bpl::init<int,int,int,int,int,double>())
+  boost::python::class_<Timestamp>("Timestamp")
+    .def( boost::python::init<>())
+    .def( boost::python::init<int,int,int,int,int,double>())
     .def( "year", &Timestamp::year,
 	  "Get the numerical value of the year.")
     .def( "setYear", &Timestamp::setYear,
@@ -279,8 +279,8 @@ void export_Timestamp ()
 
 void export_SAS_Settings () 
 {
-  bpl::class_<SAS_Settings>("SAS_Settings")
-    .def( bpl::init<>())
+  boost::python::class_<SAS_Settings>("SAS_Settings")
+    .def( boost::python::init<>())
     .def( "className", &SAS_Settings::className,
 	  "Get the name of the class.")
     .def( "antennaSet", &SAS_Settings::antennaSet,
@@ -309,14 +309,14 @@ void export_HDF5Quantity ()
   void (HDF5Quantity::*summary2)(std::ostream &) 
     = &HDF5Quantity::summary;
   
-  bpl::class_<HDF5Quantity>("HDF5Quantity")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
-    .def( bpl::init<string,string,string,string>())
-    .def( bpl::init<string,double,string>())
-    .def( bpl::init<string,vector<double>,string>())
-    .def( bpl::init<string,vector<double>,vector<string> >())
-    .def( bpl::init<HDF5Quantity>())
+  boost::python::class_<HDF5Quantity>("HDF5Quantity")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
+    .def( boost::python::init<string,string,string,string>())
+    .def( boost::python::init<string,double,string>())
+    .def( boost::python::init<string,vector<double>,string>())
+    .def( boost::python::init<string,vector<double>,vector<string> >())
+    .def( boost::python::init<HDF5Quantity>())
     .def( "className", &HDF5Quantity::className,
 	  "Get the name of the class.")
     .def( "name", &HDF5Quantity::name,
@@ -366,15 +366,15 @@ void export_HDF5Measure ()
   void (HDF5Measure::*summary2)(std::ostream &) 
     = &HDF5Measure::summary;
 
-  bpl::class_<HDF5Measure>("HDF5Measure")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
-    .def( bpl::init<string,string,string,string,string>())
-    .def( bpl::init<string,double,string,string>())
-    .def( bpl::init<string,vector<double>,string,string>())
-    .def( bpl::init<string,vector<double>,vector<string>,string>())
-    .def( bpl::init<HDF5Quantity,string>())
-    .def( bpl::init<HDF5Measure>())
+  boost::python::class_<HDF5Measure>("HDF5Measure")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
+    .def( boost::python::init<string,string,string,string,string>())
+    .def( boost::python::init<string,double,string,string>())
+    .def( boost::python::init<string,vector<double>,string,string>())
+    .def( boost::python::init<string,vector<double>,vector<string>,string>())
+    .def( boost::python::init<HDF5Quantity,string>())
+    .def( boost::python::init<HDF5Measure>())
     /* Parameter access */
     .def( "frame", &HDF5Measure::frame,
 	  "Get the name of the reference frame.")

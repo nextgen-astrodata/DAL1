@@ -358,48 +358,48 @@ namespace DAL {
     
     // create[]Array wrappers
     dalArray * cia_boost1 (std::string arrayname,
-			   bpl::list dims,
-			   bpl::list data);
+			   boost::python::list dims,
+			   boost::python::list data);
     dalArray * cia_boost2 (std::string arrayname,
-			   bpl::list dims,
-			   bpl::list data,
-			   bpl::list cdims);
+			   boost::python::list dims,
+			   boost::python::list data,
+			   boost::python::list cdims);
     dalArray * cia_boost_numarray1 (std::string arrayname,
-				    bpl::list dims,
-				    bpl::numeric::array data);
+				    boost::python::list dims,
+				    boost::python::numeric::array data);
     dalArray * cia_boost_numarray2 (std::string arrayname,
-				    bpl::list dims,
-				    bpl::numeric::array data,
-				    bpl::list cdims);
+				    boost::python::list dims,
+				    boost::python::numeric::array data,
+				    boost::python::list cdims);
     dalArray * cfa_boost (std::string arrayname,
-			  bpl::list dims,
-			  bpl::list data,
-			  bpl::list cdims);
+			  boost::python::list dims,
+			  boost::python::list data,
+			  boost::python::list cdims);
     dalArray * cfa_boost_numarray (std::string arrayname,
-				   bpl::list dims,
-				   bpl::numeric::array data,
-				   bpl::list cdims);
-    bpl::numeric::array ria_boost (std::string arrayname);
-    bpl::numeric::array rfa_boost (std::string arrayname);
+				   boost::python::list dims,
+				   boost::python::numeric::array data,
+				   boost::python::list cdims);
+    boost::python::numeric::array ria_boost (std::string arrayname);
+    boost::python::numeric::array rfa_boost (std::string arrayname);
     
-    bpl::list listTables_boost();
+    boost::python::list listTables_boost();
     
-    bool setAttribute_char_vector (std::string attrname, bpl::list data);
-    bool setAttribute_short_vector (std::string attrname, bpl::list data);
-    bool setAttribute_int_vector (std::string attrname, bpl::list data);
-    bool setAttribute_uint_vector (std::string attrname, bpl::list data);
-    bool setAttribute_long_vector (std::string attrname, bpl::list data);
-    bool setAttribute_float_vector (std::string attrname, bpl::list data);
-    bool setAttribute_double_vector (std::string attrname, bpl::list data);
-    bool setAttribute_string_vector (std::string attrname, bpl::list data);
+    bool setAttribute_char_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_short_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_int_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_uint_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_long_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_float_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_double_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_string_vector (std::string attrname, boost::python::list data);
     
-    bpl::numeric::array getAttribute_float_boost (std::string attrname);
-    bpl::numeric::array getAttribute_double_boost (std::string attrname);
-    bpl::numeric::array getAttribute_int_boost (std::string attrname);
-    bpl::numeric::array getAttribute_uint_boost (std::string attrname);
-    bpl::numeric::array getAttribute_short_boost (std::string attrname);
-    bpl::numeric::array getAttribute_long_boost (std::string attrname);
-    bpl::list getAttribute_string_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_float_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_double_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_int_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_uint_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_short_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_long_boost (std::string attrname);
+    boost::python::list getAttribute_string_boost (std::string attrname);
 
 #endif  /* end PYTHON */
     

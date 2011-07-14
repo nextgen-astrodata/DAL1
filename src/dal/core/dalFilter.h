@@ -20,7 +20,8 @@
 #ifndef DALFILTER_H
 #define DALFILTER_H
 
-#include <core/dalBaseTypes.h>
+#include <vector>
+
 #include <core/dalFileType.h>
 
 namespace DAL {

@@ -109,15 +109,15 @@ namespace DAL {
     
     \param mjd_time The time as Modified Julian Date.
   */
-  bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
+  boost::python::numeric::array mjd2unix_boost ( boost::python::numeric::array mjd_time )
   {
-    int array_size           = bpl::len( mjd_time );
+    int array_size           = boost::python::len( mjd_time );
     double unix_base_time    = 40587;
     double seconds_per_day   = 86400;
     double adjustment_factor = unix_base_time*seconds_per_day;
     
     for ( int idx=0; idx < array_size; idx++ ) {
-      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+      mjd_time[ idx ] = boost::python::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
     }
     
     return mjd_time;
@@ -131,19 +131,19 @@ namespace DAL {
 //
 // ==============================================================================
 
-bpl::numeric::array DAL::dalData::get_boost1()
+boost::python::numeric::array DAL::dalData::get_boost1()
 {
   return get_boost3(0,-1);
 }
 
-bpl::numeric::array DAL::dalData::get_boost2( int32_t length )
+boost::python::numeric::array DAL::dalData::get_boost2( int32_t length )
 {
   return get_boost3(0,length);
 }
 
-bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
+boost::python::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 {
-  bpl::list data_list;
+  boost::python::list data_list;
   std::vector<int> mydims;
   
   unsigned int hh = 0;
@@ -182,7 +182,7 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
     return num_util::makeNum(((std::complex<short>*)data)+offset,mydims);
   }
   else if ( dal_STRING == itsDatatype ) {
-    bpl::list data_list;
+    boost::python::list data_list;
     
     if ( 1 == itsShape.size() ) // 1D case
       {
@@ -209,7 +209,7 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 		<< "dalData::get_boost()\n";
     }
     
-    bpl::numeric::array narray = num_util::makeNum(data_list);
+    boost::python::numeric::array narray = num_util::makeNum(data_list);
     return narray;
   }
   else {
@@ -219,7 +219,7 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
     for (int ii=0; ii<1; ii++)
       data_list.append(0);
     
-    bpl::numeric::array nadata( data_list );
+    boost::python::numeric::array nadata( data_list );
     
     return nadata;
   }
@@ -227,8 +227,8 @@ bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
 
 void export_dalData () 
 {
-  bpl::class_<dalData>("dalData")
-    .def( bpl::init<>())
+  boost::python::class_<dalData>("dalData")
+    .def( boost::python::init<>())
     .def( "filetype", &dalData::filetype,
 	  "Get the filetype." )
     .def( "datatype", &dalData::datatype,
@@ -259,7 +259,7 @@ void export_IO_Mode ()
   //________________________________________________________
   // Enumeration: I/O mode flags
 
-  bpl::enum_<IO_Mode::Flags>("Flags")
+  boost::python::enum_<IO_Mode::Flags>("Flags")
     .value("ReadOnly",     IO_Mode::ReadOnly)
     .value("ReadWrite",    IO_Mode::ReadWrite)
     .value("WriteOnly",    IO_Mode::WriteOnly)
@@ -287,12 +287,12 @@ void export_IO_Mode ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<IO_Mode>("IO_Mode")
+  boost::python::class_<IO_Mode>("IO_Mode")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<IO_Mode::Flags>())
-    .def( bpl::init<int>())
-    .def( bpl::init<IO_Mode>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<IO_Mode::Flags>())
+    .def( boost::python::init<int>())
+    .def( boost::python::init<IO_Mode>())
     // Parameter access
     .def("flags",
 	 &IO_Mode::flags,

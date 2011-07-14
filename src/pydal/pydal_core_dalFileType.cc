@@ -44,7 +44,7 @@ void export_dalFileType ()
   //________________________________________________________
   // Enumeration: Stokes component
 
-  bpl::enum_<dalFileType::Type>("Type")
+  boost::python::enum_<dalFileType::Type>("Type")
     .value("UNDEFINED",  dalFileType::UNDEFINED)
     .value("FITS",       dalFileType::FITS)
     .value("HDF5",       dalFileType::HDF5)
@@ -68,12 +68,12 @@ void export_dalFileType ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<dalFileType>("dalFileType")
+  boost::python::class_<dalFileType>("dalFileType")
     // Construction
-    .def( bpl::init<>())
-    .def( bpl::init<dalFileType::Type const &>())
-    .def( bpl::init<std::string const &>())
-    .def( bpl::init<dalFileType const &>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<dalFileType::Type const &>())
+    .def( boost::python::init<std::string const &>())
+    .def( boost::python::init<dalFileType const &>())
     // Parameter access
     .def("type",
 	 &dalFileType::type,

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008-2009                                               *
+ *   Copyright (C) 2008-2011                                               *
  *   Joseph Masters (J.S.Masters@uva.nl)                                   *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -35,7 +35,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-#include <core/dalBaseTypes.h>
+#include <core/convert.h>
 #include <core/dalConversions.h>
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Dataspace.h>

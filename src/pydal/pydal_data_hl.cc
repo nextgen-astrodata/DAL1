@@ -58,10 +58,10 @@ using DAL::TBB_StationGroup;
 
 void export_BF_BeamGroup ()
 {
-  bpl::class_<BF_BeamGroup>("BF_BeamGroup")
+  boost::python::class_<BF_BeamGroup>("BF_BeamGroup")
     /* Construction */
-    .def( bpl::init<>())
-    .def( bpl::init<hid_t,string>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<hid_t,string>())
     /* Access to internal parameters */
     .def( "locationID", &BF_BeamGroup::locationID,
 	  "Get the object identifier for the data file." )
@@ -91,12 +91,12 @@ void export_BF_RootGroup ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<BF_RootGroup>("BF_RootGroup", bpl::init<const string>())
+  boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const string>())
     // Argumented constructor 
-    .def( bpl::init<DAL::Filename, bool>())
-    .def( bpl::init<string const &>())
-    .def( bpl::init<string &>())
-    .def( bpl::init<DAL::CommonAttributes, bool>())     
+    .def( boost::python::init<DAL::Filename, bool>())
+    .def( boost::python::init<string const &>())
+    .def( boost::python::init<string &>())
+    .def( boost::python::init<DAL::CommonAttributes, bool>())     
     // Access to internal parameters 
     .def( "className", &BF_RootGroup::className, 
 	  "Get name of the class" )
@@ -178,10 +178,10 @@ void export_BF_RootGroup ()
 
 void export_TBB_Timeseries ()
 {  
-  bpl::class_<TBB_Timeseries>("TBB_Timeseries")
+  boost::python::class_<TBB_Timeseries>("TBB_Timeseries")
     /* Construction */
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
     /* Access to internal parameters */
     .def( "filename", &TBB_Timeseries::filename,
 	  "Get the name of the data file." )
@@ -202,11 +202,11 @@ void export_TBB_Timeseries ()
 
 void export_TBB_StationGroup () 
 {
-  bpl::class_<TBB_StationGroup>("TBB_StationGroup")
+  boost::python::class_<TBB_StationGroup>("TBB_StationGroup")
     /* Construction */
-    .def( bpl::init<>())
-    .def( bpl::init<uint,string>())
-    .def( bpl::init<uint>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<uint,string>())
+    .def( boost::python::init<uint>())
     /* Access to internal parameters */
     .def( "group_name", &TBB_StationGroup::group_name,
 	  "Get the name for this group within the HDF5 file." )
@@ -240,11 +240,11 @@ void export_TBB_DipoleDataset()
 // 					     unsigned int const &)
 //     = &TBB_DipoleDataset::dipoleName;
   
-  bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
+  boost::python::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
     /* Construction */
-    .def( bpl::init<>())
-    .def( bpl::init<hid_t const &, std::string const &>())
-    .def( bpl::init<hid_t const &, uint const &, uint const &, uint const &>())
+    .def( boost::python::init<>())
+    .def( boost::python::init<hid_t const &, std::string const &>())
+    .def( boost::python::init<hid_t const &, uint const &, uint const &, uint const &>())
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )
@@ -275,7 +275,7 @@ void export_TBB_DipoleDataset()
 //
 // ==============================================================================
 
-bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
+boost::python::numeric::array BeamGroup::getIntensity_boost( int subband,
 						   int start,
 						   int length )
 {
@@ -283,13 +283,13 @@ bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
   values = getIntensity( subband, start, length );
   std::vector<int> mydims;
   mydims.push_back( length );
-  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  boost::python::numeric::array narray = num_util::makeNum( values, mydims );
   delete [] values;
   values = NULL;
   return narray;
 }
 
-bpl::numeric::array BeamGroup::getIntensitySquared_boost( int subband,
+boost::python::numeric::array BeamGroup::getIntensitySquared_boost( int subband,
 							  int start,
 							  int length )
 {
@@ -297,13 +297,13 @@ bpl::numeric::array BeamGroup::getIntensitySquared_boost( int subband,
   values = getIntensitySquared( subband, start, length );
   std::vector<int> mydims;
   mydims.push_back( length );
-  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  boost::python::numeric::array narray = num_util::makeNum( values, mydims );
   delete [] values;
   values = NULL;
   return narray;
 }
 
-bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
+boost::python::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
 						       int start,
 						       int length )
 {
@@ -319,13 +319,13 @@ bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
     }
   std::vector<int> mydims;
   mydims.push_back( length );
-  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  boost::python::numeric::array narray = num_util::makeNum( value_list, mydims );
   delete [] value_list;
   value_list = NULL;
   return narray;
 }
 
-bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
+boost::python::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
 						       int start,
 						       int length )
 {
@@ -341,14 +341,14 @@ bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
     }
   std::vector<int> mydims;
   mydims.push_back( length );
-  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  boost::python::numeric::array narray = num_util::makeNum( value_list, mydims );
   delete [] value_list;
   value_list = NULL;
   return narray;
 }
 
 
-bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
+boost::python::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
 							int start,
 							int length )
 {
@@ -361,9 +361,9 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
   getSubbandData_X( subband, start, length, values_x );
   getSubbandData_Y( subband, start, length, values_y );
   
-  bpl::list x_value_list;
-  bpl::list y_value_list;
-  bpl::list xy_value_list;
+  boost::python::list x_value_list;
+  boost::python::list y_value_list;
+  boost::python::list xy_value_list;
   
   for (xvalit=values_x.begin(); xvalit < values_x.end(); xvalit++)
     {
@@ -379,15 +379,15 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
   xy_value_list.append(x_value_list);
   xy_value_list.append(y_value_list);
   
-  bpl::numeric::array narray = num_util::makeNum( xy_value_list );
+  boost::python::numeric::array narray = num_util::makeNum( xy_value_list );
   
   return narray;
 }
 
 void export_BeamGroup ()
 {
-  bpl::class_<BeamGroup>("BeamGroup")
-    .def( bpl::init<>())
+  boost::python::class_<BeamGroup>("BeamGroup")
+    .def( boost::python::init<>())
     .def( "fileID", &BeamGroup::fileID,
 	  "Get the HDF5 file handle ID")
     .def( "groupID", &BeamGroup::groupID,
@@ -419,9 +419,9 @@ void export_BeamGroup ()
 
 void export_BeamFormed ()
 {
-  bpl::class_<BeamFormed>("BeamFormed")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
+  boost::python::class_<BeamFormed>("BeamFormed")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
     .def( "notes", &BeamFormed::notes,
 	  "Return the notes from the header" )
     .def( "filename", &BeamFormed::filename,
@@ -479,7 +479,7 @@ void export_BeamFormed ()
     .def( "station_temperatures", &BeamFormed::station_temperatures,
 	  "Return the station_temperatures from the header" )
     .def( "getBeam", &BeamFormed::getBeam,
-	  bpl::return_value_policy<bpl::manage_new_object>(),
+	  boost::python::return_value_policy<boost::python::manage_new_object>(),
 	  "Return a beam object from the file." )
     ;
 }
@@ -493,7 +493,7 @@ void export_BeamFormed ()
 void export_LOPES_EventFile ()
 {
   /* Enumeration: Event type */
-  bpl::enum_<LOPES_EventFile::EvType>("EvType")
+  boost::python::enum_<LOPES_EventFile::EvType>("EvType")
     .value("Unspecified",LOPES_EventFile::Unspecified)
     .value("Cosmic",LOPES_EventFile::Cosmic)
     .value("Simulation",LOPES_EventFile::Simulation)
@@ -503,14 +503,14 @@ void export_LOPES_EventFile ()
     ;
   
   /* Enumeration: Observatory */
-  bpl::enum_<LOPES_EventFile::Observatory>("Observatory")
+  boost::python::enum_<LOPES_EventFile::Observatory>("Observatory")
     .value("LOPES",LOPES_EventFile::LOPES)
     .value("LORUN",LOPES_EventFile::LORUN)
     ;
   
-  bpl::class_<LOPES_EventFile>("LOPES_EventFile")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
+  boost::python::class_<LOPES_EventFile>("LOPES_EventFile")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
     .def( "filename", &LOPES_EventFile::filename,
 	  "Get the name of the data file." )
     .def( "samplerate", &LOPES_EventFile::samplerate,
@@ -532,7 +532,7 @@ void export_LOPES_EventFile ()
 // ==============================================================================
             
  /*           
-            bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
+            boost::python::numeric::array BeamGroup::getIntensity_boost( int subband,
 						   int start,
 						   int length )
 {
@@ -540,7 +540,7 @@ void export_LOPES_EventFile ()
   values = getIntensity( subband, start, length );
   std::vector<int> mydims;
   mydims.push_back( length );
-  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  boost::python::numeric::array narray = num_util::makeNum( values, mydims );
   delete [] values;
   values = NULL;
   return narray;

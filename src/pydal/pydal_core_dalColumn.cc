@@ -42,19 +42,19 @@ using DAL::dalColumn;
 //_____________________________________________________________________________
 //                                                                  shape_boost
 
-bpl::tuple dalColumn::shape_boost()
+boost::python::tuple dalColumn::shape_boost()
 {
   std::vector<int> lclvals;
   lclvals = shape();
-  bpl::list lcllist;
+  boost::python::list lcllist;
   
   std::vector<int>::iterator iter;
   for (iter=lclvals.begin(); iter < lclvals.end(); iter++) {
     lcllist.append(*iter);
   }
   
-  bpl::tuple lcl_tuple;
-  lcl_tuple = bpl::make_tuple(lcllist);
+  boost::python::tuple lcl_tuple;
+  lcl_tuple = boost::python::make_tuple(lcllist);
   
   return lcl_tuple;
 }
@@ -62,7 +62,7 @@ bpl::tuple dalColumn::shape_boost()
 //_____________________________________________________________________________
 //                                                                  data_boost1
 
-bpl::numeric::array dalColumn::data_boost1()
+boost::python::numeric::array dalColumn::data_boost1()
 {
   return data_boost3( 0, -1 );
 }
@@ -70,7 +70,7 @@ bpl::numeric::array dalColumn::data_boost1()
 //_____________________________________________________________________________
 //                                                                  data_boost2
 
-bpl::numeric::array dalColumn::data_boost2( int32_t length )
+boost::python::numeric::array dalColumn::data_boost2( int32_t length )
 {
   return data_boost3( 0, length );
   
@@ -79,14 +79,14 @@ bpl::numeric::array dalColumn::data_boost2( int32_t length )
 //_____________________________________________________________________________
 //                                                                  data_boost2
 
-bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
+boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 					    int32_t length)
 {
   if ( MSCASATYPE == filetype ) {
 #ifdef DAL_WITH_CASA
     
     if ("unknown" == casa_datatype) {
-      bpl::list lcllist;
+      boost::python::list lcllist;
       return num_util::makeNum(lcllist);
     }
     
@@ -148,9 +148,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    {
 	      std::cerr << "dalColumn::data() Column type not yet supported."
 			<< endl;
-	      bpl::list tmp_list;
+	      boost::python::list tmp_list;
 	      tmp_list.append(0);
-	      bpl::numeric::array nadata(tmp_list);
+	      boost::python::numeric::array nadata(tmp_list);
 	      return nadata;
 	    }
 	  }
@@ -203,9 +203,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 	      std::cerr <<
 		"dalColumn::data() Column type not yet supported.\n";
 	      
-	      bpl::list tmp_list;
+	      boost::python::list tmp_list;
 	      tmp_list.append(0);
-	      bpl::numeric::array nadata(tmp_list);
+	      boost::python::numeric::array nadata(tmp_list);
 	      return nadata;
 	    }
 	  }
@@ -215,17 +215,17 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 		  << " Do not know how to handle."
 		  << std::endl;
 	
-	bpl::list tmp_list;
+	boost::python::list tmp_list;
 	tmp_list.append(0);
-	bpl::numeric::array nadata(tmp_list);
+	boost::python::numeric::array nadata(tmp_list);
 	return nadata;
       }
     }
     catch (casa::AipsError x) {
       std::cerr << "ERROR: " << x.getMesg() << endl;
-      bpl::list tmp_list;
+      boost::python::list tmp_list;
       tmp_list.append(0);
-      bpl::numeric::array nadata(tmp_list);
+      boost::python::numeric::array nadata(tmp_list);
       return nadata;
     }
 #endif // DAL_WITH_CASA
@@ -242,9 +242,9 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
       "ERROR: filetype not supported [dalColumn.data - python]\n";
   }
   
-  bpl::list tmp_list;
+  boost::python::list tmp_list;
   tmp_list.append(0);
-  bpl::numeric::array nadata(tmp_list);
+  boost::python::numeric::array nadata(tmp_list);
   return nadata;
 }
 
@@ -256,10 +256,10 @@ bpl::numeric::array dalColumn::data_boost3 (int64_t offset,
 
 void export_dalColumn ()
 {
-  bpl::class_<dalColumn>("dalColumn")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
-    .def( bpl::init<string const &,string const &>())
+  boost::python::class_<dalColumn>("dalColumn")
+    .def( boost::python::init<>())
+    .def( boost::python::init<string>())
+    .def( boost::python::init<string const &,string const &>())
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"
 	  "with a compound datatype.  For example, use this method if an \n"

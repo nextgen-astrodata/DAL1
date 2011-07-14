@@ -50,9 +50,9 @@ void export_HDF5Hyperslab ()
   //________________________________________________________
   // Bindings for class and its methods
 
-  bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
-    .def( bpl::init<>())
-    .def( bpl::init<int const &>())
+  boost::python::class_<HDF5Hyperslab>("HDF5Hyperslab")
+    .def( boost::python::init<>())
+    .def( boost::python::init<int const &>())
     // Parameter access
     .def( "shape", &HDF5Hyperslab::rank,
 	  "Get the rank of the array to which the hyperslab is applied.")

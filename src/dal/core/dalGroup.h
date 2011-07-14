@@ -193,11 +193,17 @@ namespace DAL {
     // === Boost.Python wrappers ================================================
 
 #ifdef PYTHON
-    dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
-    dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
-    dalArray * cfa_boost_list( std::string arrayname, bpl::list dims, bpl::list data );
+    dalArray * csa_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
+    dalArray * cia_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
+    dalArray * cfa_boost_list (std::string arrayname,
+			       boost::python::list dims,
+			       boost::python::list data);
     
-    bpl::numeric::array ria_boost( std::string arrayname );
+    boost::python::numeric::array ria_boost( std::string arrayname );
     
     bool setAttribute_char   (std::string const &name, char const &data);
     bool setAttribute_short  (std::string const &name, short const &data);
@@ -207,22 +213,22 @@ namespace DAL {
     bool setAttribute_float  (std::string const &name, float const &data);
     bool setAttribute_double (std::string const &name, double const &data);
     bool setAttribute_string (std::string const &name, std::string const &data);
-    bool setAttribute_char_vector( std::string attrname, bpl::list data );
-    bool setAttribute_short_vector( std::string attrname, bpl::list data );
-    bool setAttribute_int_vector( std::string attrname, bpl::list data );
-    bool setAttribute_uint_vector( std::string attrname, bpl::list data );
-    bool setAttribute_long_vector( std::string attrname, bpl::list data );
-    bool setAttribute_float_vector( std::string attrname, bpl::list data );
-    bool setAttribute_double_vector( std::string attrname, bpl::list data );
-    bool setAttribute_string_vector( std::string attrname, bpl::list data );
+    bool setAttribute_char_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_short_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_int_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_uint_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_long_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_float_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_double_vector( std::string attrname, boost::python::list data );
+    bool setAttribute_string_vector( std::string attrname, boost::python::list data );
     
-    bpl::numeric::array getAttribute_float_boost (std::string attrname);
-    bpl::numeric::array getAttribute_double_boost (std::string attrname);
-    bpl::numeric::array getAttribute_int_boost (std::string attrname);
-    bpl::numeric::array getAttribute_uint_boost (std::string attrname);
-    bpl::numeric::array getAttribute_short_boost (std::string attrname);
-    bpl::numeric::array getAttribute_long_boost (std::string attrname);
-    bpl::list getAttribute_string_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_float_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_double_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_int_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_uint_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_short_boost (std::string attrname);
+    boost::python::numeric::array getAttribute_long_boost (std::string attrname);
+    boost::python::list getAttribute_string_boost (std::string attrname);
     
 #endif // end #ifdef PYTHON
 

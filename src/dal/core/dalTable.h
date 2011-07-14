@@ -21,6 +21,8 @@
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
+#include <iomanip>
+
 #include <core/HDF5Attribute.h>
 #include <core/dalFilter.h>
 #include <core/dalColumn.h>
@@ -259,32 +261,32 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    bool append_row_boost( bpl::object data );
-    bool append_rows_boost( bpl::object data, long nrows );
-    void write_col_by_index_boost( bpl::numeric::array data, int index,
+    bool append_row_boost( boost::python::object data );
+    bool append_rows_boost( boost::python::object data, long nrows );
+    void write_col_by_index_boost( boost::python::numeric::array data, int index,
 				   int rownum, long nrecords );
-    bpl::list listColumns_boost();
-    bpl::numeric::array getAttribute_boost(std::string);
+    boost::python::list listColumns_boost();
+    boost::python::numeric::array getAttribute_boost(std::string);
     PyObject* readRows_boost( int start, int nrecs );
     
     //! Set attribute of type \e char
     bool setAttribute_char( std::string attrname, char data );
     //! Set attribute of type \e string
     bool setAttribute_string( std::string attrname, std::string data );
-    bool setAttribute_char_vector (std::string attrname, bpl::list data);
-    bool setAttribute_short_vector (std::string attrname, bpl::list data);
-    bool setAttribute_int_vector (std::string attrname, bpl::list data);
-    bool setAttribute_uint_vector (std::string attrname, bpl::list data);
-    bool setAttribute_long_vector (std::string attrname, bpl::list data);
-    bool setAttribute_float_vector (std::string attrname, bpl::list data);
-    bool setAttribute_double_vector (std::string attrname, bpl::list data);
-    bool setAttribute_string_vector (std::string attrname, bpl::list data);
+    bool setAttribute_char_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_short_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_int_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_uint_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_long_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_float_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_double_vector (std::string attrname, boost::python::list data);
+    bool setAttribute_string_vector (std::string attrname, boost::python::list data);
     
 #ifdef DAL_WITH_CASA
     void ot_nonMStable( std::string const &tablename );
     void setFilter_boost1(std::string);
     void setFilter_boost2(std::string,std::string);
-    // 	bpl::numeric::array getColumnData_boost( string colname );
+    // 	boost::python::numeric::array getColumnData_boost( string colname );
 #endif
     
 #endif

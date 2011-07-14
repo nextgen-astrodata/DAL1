@@ -21,7 +21,7 @@
 #ifndef DALDATA_H
 #define DALDATA_H
 
-#include <core/dalBaseTypes.h>
+#include <core/dalCommon.h>
 #include <core/dalFileType.h>
 
 #ifdef PYTHON
@@ -141,9 +141,9 @@ namespace DAL {
     // === Python bindings ======================================================
 
 #ifdef PYTHON
-      bpl::numeric::array get_boost1 ();
-      bpl::numeric::array get_boost2 (int32_t length );
-      bpl::numeric::array get_boost3 (int64_t offset, int32_t length );
+      boost::python::numeric::array get_boost1 ();
+      boost::python::numeric::array get_boost2 (int32_t length );
+      boost::python::numeric::array get_boost3 (int64_t offset, int32_t length );
 #endif
 
     };
