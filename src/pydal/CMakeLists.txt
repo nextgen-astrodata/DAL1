@@ -20,6 +20,7 @@ set (pydal_sources
   pydal_core_dalFileType.cc
   pydal_core_dalGroup.cc
   pydal_core_HDF5Hyperslab.cc
+  pydal_core_IO_Mode.cc
   pydal_core_dalTable.cc
   pydal_data_common.cc
   pydal_data_hl.cc

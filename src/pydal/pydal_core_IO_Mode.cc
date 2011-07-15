@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 /*!
-  \file pydal_core.cc
+  \file pydal_core_IO_Mode.cc
 
   \ingroup DAL
   \ingroup pydal
