@@ -24,12 +24,16 @@ set (pydal_sources
   pydal_core_dalTable.cc
   pydal_data_common.cc
   pydal_data_hl.cc
+  data_hl/pydal_BeamFormed.cc
+  data_hl/pydal_BeamGroup.cc
   )
 
 ##______________________________________________
 ## Compiler instructions
 
 remove_definitions (-dynamiclib -install_name)
+
+include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
 if (NUMPY_INCLUDES)
   include_directories (${NUMPY_INCLUDES})
