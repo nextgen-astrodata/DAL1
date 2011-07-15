@@ -307,25 +307,36 @@ int test_MS (std::string const &filename,
     DAL::dalTable * table = ms.openTable (tablename);
     //
     cout << "--> Opening table column ..." << endl;
-    DAL::dalColumn * columTime = table->getColumn("TIME");
+    DAL::dalColumn * column = table->getColumn("TIME");
     //
     cout << "--> Retrieve column data ..." << endl;
-    DAL::dalData * columnData = columTime->data();
-    //
-    cout << " .. File type   = " << columnData->filetype()   << endl;
-    cout << " .. Data type   = " << columnData->datatype()   << endl;
-    cout << " .. Array order = " << columnData->arrayOrder() << endl;
-    cout << " .. Array shape = " << columTime->shape()       << endl;
+    DAL::dalData * columnData = column->data();
     //
     unsigned int nofRows = 10;
-
-    if ((columTime->nofRows())<nofRows) {
-      nofRows = columTime->nofRows();
+    if ((column->nofRows())<nofRows) {
+      nofRows = column->nofRows();
     }
 
-    cout << " .. Data type   = [";
+    /*
+     * Retrieve column data, version 1
+     */
+    
+    cout << " .. Column data = [";
     for (unsigned int n=0; n<nofRows; ++n) {
       std::cout << " " << *(double*)(columnData->get(n));
+    }
+    std::cout << " ]" << std::endl;
+
+    /*
+     * Retrieve column data, version 2
+     */
+    
+    std::vector<double> data;
+    column->readData (data);
+    //
+    cout << " .. Column data = [";
+    for (unsigned int n=0; n<nofRows; ++n) {
+      std::cout << " " << data[n];
     }
     std::cout << " ]" << std::endl;
   } catch (std::string message) {

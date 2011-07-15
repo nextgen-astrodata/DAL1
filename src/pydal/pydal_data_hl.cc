@@ -70,7 +70,6 @@ void export_BF_BeamGroup ()
     ;
 }
 
-
 // ==============================================================================
 //
 //                                                                   BF_RootGroup
@@ -85,7 +84,8 @@ void export_BF_RootGroup ()
 
   void (BF_RootGroup::*summary1)(bool const &) 
     = &BF_RootGroup::summary;
-  void (BF_RootGroup::*summary2)(std::ostream &, bool const &) 
+  void (BF_RootGroup::*summary2)(std::ostream &,
+				 bool const &) 
     = &BF_RootGroup::summary;
   
   //________________________________________________________
@@ -100,13 +100,14 @@ void export_BF_RootGroup ()
     // Access to internal parameters 
     .def( "className", &BF_RootGroup::className, 
 	  "Get name of the class" )
-    //void ( BF_RootGroup::*summary)() = &BF_RootGroup::summary)
     .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
 	  "Get the common attributes of the class." )      
     
     .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
 	  "Get the number of SubArray pointings." )
     // Public methods
+    .def( "open", &BF_RootGroup::open, 
+	  "Open the file containing the beamformed data." )
     .def("summary",
 	 summary1,
 	 "Summary of the object's internal parameters and status.")
@@ -116,10 +117,6 @@ void export_BF_RootGroup ()
     ;
   
   // Data access methods       
-  bool ( BF_RootGroup::*open)(hid_t const &,
-			       string const &,
-			       DAL::IO_Mode const &) = &BF_RootGroup::open;
-   
    bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
 						DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
    

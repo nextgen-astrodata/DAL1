@@ -220,23 +220,20 @@ namespace DAL {
     // Determine the correct index value, depending on the order
     //   of the underlying array (determined by the filetype)
     //
-    if ( itsFiletype.isCASA() )
-      {
-        index = fortran_index( idx1, idx2, idx3 );
-      }
-    else if ( itsFiletype.isHDF5() )
-      {
-        index = c_index( idx1, idx2, idx3 );
-      }
-    else
-      {
-        std::cerr << "ERROR: file type not supported in dalData object.\n";
-        return NULL;
-      }
-
+    if ( itsFiletype.isCASA() ) {
+      index = fortran_index( idx1, idx2, idx3 );
+    }
+    else if ( itsFiletype.isHDF5() ) {
+      index = c_index( idx1, idx2, idx3 );
+    }
+    else {
+      std::cerr << "ERROR: file type not supported in dalData object.\n";
+      return NULL;
+    }
+    
     if ( dal_COMPLEX == itsDatatype )
       return (&(((std::complex<float>*)data)[ index ]));
-
+    
     else if ( dal_COMPLEX_CHAR == itsDatatype )
       return (&(((std::complex<char>*)data)[ index ]));
 
