@@ -170,22 +170,25 @@ namespace DAL {
 		      std::string const &tablename,
 		      std::string groupname);
     //! Get a column object
-    dalColumn * getColumn_complexInt16( std::string colname );
+    dalColumn * getColumn_complexInt16 (std::string colname);
     //! Get a column object
-    dalColumn * getColumn_complexFloat32( std::string colname );
+    dalColumn * getColumn_complexFloat32 (std::string colname);
     //! Get a column object
-    dalColumn * getColumn_Float32( std::string colname );
+    dalColumn * getColumn_Float32 (std::string colname);
     //! Get a column object
-    dalColumn * getColumn( std::string colname );
+    dalColumn * getColumn (std::string colname);
     //! Add a new column to the table
-    void addColumn( std::string colname, std::string coltype, uint dims=1);
+    void addColumn (std::string colname,
+		    std::string coltype,
+		    uint dims=1);
     //! Add a new column of type complex to the table
     void addComplexColumn( std::string compname,
 			   std::vector<dalColumn> ri,
-			   int subfields );
+			   int subfields);
     //! Remove a column from the table
-    void removeColumn( const std::string &colname );
-    void writeDataByColNum( void * structure,
+    void removeColumn (const std::string &colname);
+    //! Write data by column number
+    void writeDataByColNum (void * structure,
 			    int index,
 			    int rownum,
 			    long nrecords=1);
@@ -201,7 +204,10 @@ namespace DAL {
     //! List the column of the table
     std::vector<std::string> listColumns();
     //! Read rows from the table
-    void readRows( void * data_out, long start, long stop, long buffersize=0 );
+    void readRows (void * data_out,
+		   long start,
+		   long stop,
+		   long buffersize=0);
     //! Get attribute attached to the table
     void * getAttribute( std::string attrname );
     
