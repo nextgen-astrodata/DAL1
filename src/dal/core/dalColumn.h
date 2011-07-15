@@ -274,6 +274,33 @@ namespace DAL {
     //! Initialize the object's internal parameters
     void init (std::string const &columnName="");
 
+#ifdef DAL_WITH_CASA
+
+    //! Read data from casacore MS file
+    template <class T>
+      bool readData_ms (T *columnData)
+      {
+	bool status = true;
+
+	/* Determine type of column cell: scalar or array */
+
+	if (itsColumnDesc.isScalar()) {
+	  casa::ROScalarColumn<T> readOnlyColumn;
+	  casa::Vector<T> data = readOnlyColumn.getColumn();
+	  columnData           = (T *)data.getStorage(deleteIt);
+	} else if (itsColumnDesc.isArray()) {
+	  casa::ROArrayColumn<T> readOnlyColumn (*itsROTableColumn);
+	  casa::Array<T> data = readOnlyColumn.getColumn();
+	  columnData          = (T *)data.getStorage(deleteIt);
+	} else {
+	  status = false;
+	}
+	
+	return status;
+      }
+    
+#endif    
+    
   };  // dalColumn class
   
   

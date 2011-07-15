@@ -185,7 +185,7 @@ boost::python::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t 
     
     if ( 1 == itsShape.size() ) // 1D case
       {
-	for (int ii=0; ii<nrows; ii++)
+	for (int ii=0; ii<itsNofRows; ii++)
 	  {
 	    data_list.append( (*((std::string*)get(ii))) );
 	  }

@@ -526,7 +526,7 @@ namespace DAL {
       {
         roac_int = new casa::ROArrayColumn<casa::Int>( *itsROTableColumn );
 	casa::Array<int> data = roac_int->getColumn();
-        itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
+        itsColumnData = new dalData (itsFiletype, dal_INT, shape(), nofRows() );
         itsColumnData->data = (int *)data.getStorage(deleteIt);
         return itsColumnData;
       }
@@ -535,7 +535,7 @@ namespace DAL {
       {
         roac_dbl = new casa::ROArrayColumn<casa::Double>( *itsROTableColumn );
         casa::Array<double> data = roac_dbl->getColumn();
-        itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
+        itsColumnData = new dalData (itsFiletype, dal_DOUBLE, shape(), nofRows() );
         itsColumnData->data = (double *)data.getStorage(deleteIt);
         return itsColumnData;
       }
