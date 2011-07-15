@@ -53,7 +53,7 @@ namespace DAL {
     init (dalFileType(filetype));
     itsDatatype   = datatype;
     itsShape      = shape;
-    nrows         = nofRows;
+    itsNofRows    = nofRows;
   }
   
   //_____________________________________________________________________________
@@ -74,7 +74,7 @@ namespace DAL {
 
     itsDatatype = datatype;
     itsShape    = shape;
-    nrows       = nofRows;
+    itsNofRows  = nofRows;
   }
   
   // ============================================================================
@@ -136,14 +136,13 @@ namespace DAL {
     long bb = 1;
     
     itsShape.insert( itsShape.begin(), 1 );
-    for (unsigned int dim=0; dim<itsShape.size()-1; dim++)
-      {
-        for (unsigned int ss=dim; ss>0; ss--)
-          bb *= itsShape[ ss ];
-
-        index += indices[dim]*bb;
-        bb=1;
-      }
+    for (unsigned int dim=0; dim<itsShape.size()-1; dim++) {
+      for (unsigned int ss=dim; ss>0; ss--)
+	bb *= itsShape[ ss ];
+      
+      index += indices[dim]*bb;
+      bb=1;
+    }
     itsShape.erase( itsShape.begin() );
     return index;
   }
@@ -201,7 +200,8 @@ namespace DAL {
     return index;
   }
 
-  // ------------------------------------------------------------ get
+  //_____________________________________________________________________________
+  //                                                                          get
   
   /*!
     \param idx1 Optional parameter specifying the first index.
@@ -267,6 +267,9 @@ namespace DAL {
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void dalData::init (dalFileType const &filetype)
   {
     itsFiletype   = filetype;
