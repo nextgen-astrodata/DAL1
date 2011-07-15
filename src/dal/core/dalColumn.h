@@ -70,15 +70,15 @@ namespace DAL {
     hid_t coltype;
     //! HDF5 call return status
     herr_t  status;
-    
-    dalData * itsColumnData;  // object to hold column data
+    //! Object to hold the actual column data
+    dalData * itsColumnData;
     
 #ifdef DAL_WITH_CASA
     
     //! Column data type
     std::string itsCasaDatatype;
     //! Column descriptor
-    casa::ColumnDesc casa_col_desc;
+    casa::ColumnDesc itsColumnDesc;
     casa::ROTableColumn * itsROTableColumn;
     
     // COLUMNs

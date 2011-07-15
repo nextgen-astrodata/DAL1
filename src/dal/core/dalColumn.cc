@@ -114,7 +114,7 @@ namespace DAL {
     }
     
     if (!error) {
-      casa_col_desc = itsROTableColumn->columnDesc();
+      itsColumnDesc = itsROTableColumn->columnDesc();
       itsCasaDatatype = getDataType();
     }
     else {
@@ -180,7 +180,7 @@ namespace DAL {
   */
   std::string dalColumn::getCasaDataType ()
   {
-    switch ( casa_col_desc.dataType() )
+    switch ( itsColumnDesc.dataType() )
       {
       case ( casa::TpDouble ):
         itsCasaDatatype = "double";
@@ -257,7 +257,7 @@ namespace DAL {
     if (itsFiletype.type()==dalFileType::CASA_MS)
       {
 #ifdef DAL_WITH_CASA
-        if ( casa_col_desc.isScalar() )
+        if ( itsColumnDesc.isScalar() )
           return true;
         else
           return false;
@@ -289,7 +289,7 @@ namespace DAL {
     if (itsFiletype.type()==dalFileType::CASA_MS)
       {
 #ifdef DAL_WITH_CASA
-        if ( casa_col_desc.isArray() )
+        if ( itsColumnDesc.isArray() )
           return true;
         else
           return false;
@@ -460,7 +460,7 @@ namespace DAL {
 
   dalData * dalColumn::CasaData_scalar( )
   {
-    switch ( casa_col_desc.dataType() )
+    switch ( itsColumnDesc.dataType() )
       {
       case casa::TpInt:
       {
@@ -521,7 +521,7 @@ namespace DAL {
 
   dalData * dalColumn::CasaData_array( )
   {
-    switch ( casa_col_desc.dataType() ) {
+    switch ( itsColumnDesc.dataType() ) {
     case casa::TpInt:
       {
         roac_int = new casa::ROArrayColumn<casa::Int>( *itsROTableColumn );
@@ -544,15 +544,13 @@ namespace DAL {
       {
         itsDatatype = dal_COMPLEX;
 	std::vector< std::complex< float > > ret_valvec;
-        try
-          {
-            roac_comp = new casa::ROArrayColumn<casa::Complex>( *itsROTableColumn );
-          }
-        catch (casa::AipsError x)
-          {
-            std::cerr << "ERROR: " << x.getMesg() << endl;
-            return NULL;
-          }
+        try {
+	  roac_comp = new casa::ROArrayColumn<casa::Complex>( *itsROTableColumn );
+	}
+        catch (casa::AipsError x) {
+	  std::cerr << "ERROR: " << x.getMesg() << endl;
+	  return NULL;
+	}
         casa::Array<casa::Complex> data = roac_comp->getColumn( );
         itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
         itsColumnData->data =
