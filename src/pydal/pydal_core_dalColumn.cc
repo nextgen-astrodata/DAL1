@@ -92,7 +92,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
     
     try {
       if ( isScalar() ) {
-	switch ( casa_col_desc.dataType() )
+	switch ( itsColumnDesc.dataType() )
 	  {
 	  case casa::TpInt:
 	    {
@@ -156,7 +156,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  }
       }
       else if ( isArray() ) {
-	switch ( casa_col_desc.dataType() )
+	switch ( itsColumnDesc.dataType() )
 	  {
 	  case casa::TpInt:
 	    {
