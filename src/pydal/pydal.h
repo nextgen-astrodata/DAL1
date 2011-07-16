@@ -37,7 +37,11 @@
 
 */
 
-// === core =====================================================================
+  // ============================================================================
+  //
+  //  [core] Core classes
+  //
+  // ============================================================================
 
 #include <core/dalArray.h>
 #include <core/dalColumn.h>
@@ -68,7 +72,11 @@ void export_IO_Mode ();
 //! Bindings for DAL::HDF5Hyperslab
 void export_HDF5Hyperslab ();
 
-// === coordinates ==============================================================
+  // ============================================================================
+  //
+  //  [coordinates] Representations of World Coordinates
+  //
+  // ============================================================================
 
 #include <coordinates/Angle.h>
 #include <coordinates/RaDec.h>
@@ -84,15 +92,12 @@ void export_Stokes ();
 //! Bindings for DAL::Coordinate
 void export_Coordinate ();
 
-// === data_common ==============================================================
-
-#include <data_common/CommonAttributes.h>
-#include <data_common/Filename.h>
-#include <data_common/HDF5Measure.h>
-#include <data_common/HDF5Quantity.h>
-#include <data_common/SAS_Settings.h>
-#include <data_common/Timestamp.h>
-
+  // ============================================================================
+  //
+  //  [data_common] Common dataset support
+  //
+  // ============================================================================
+  
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
 //! Bindings for DAL::Filename
@@ -106,8 +111,12 @@ void export_SAS_Settings ();
 //! Bindings for DAL::Timestamp
 void export_Timestamp ();
 
-// === data_hl ==================================================================
-
+  // ============================================================================
+  //
+  //  [data_hl] High-level interfaces to specific data
+  //
+  // ============================================================================
+  
 //! Bindings for DAL::BeamFormed
 void export_BeamFormed();
 //! Bindings for DAL::BeamGroup

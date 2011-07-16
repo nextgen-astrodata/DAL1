@@ -31,6 +31,12 @@
 
 // DAL headers
 #include "pydal.h"
+#include <data_common/CommonAttributes.h>
+#include <data_common/Filename.h>
+#include <data_common/HDF5Measure.h>
+#include <data_common/HDF5Quantity.h>
+#include <data_common/SAS_Settings.h>
+#include <data_common/Timestamp.h>
 
 using DAL::CommonAttributes;
 using DAL::Filename;
