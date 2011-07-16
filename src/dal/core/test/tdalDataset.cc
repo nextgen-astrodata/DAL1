@@ -309,17 +309,18 @@ int test_MS (std::string const &filename,
     cout << "--> Opening table column ..." << endl;
     DAL::dalColumn * column = table->getColumn("TIME");
     //
-    cout << "--> Retrieve column data ..." << endl;
-    DAL::dalData * columnData = column->data();
-    //
     unsigned int nofRows = 10;
     if ((column->nofRows())<nofRows) {
       nofRows = column->nofRows();
     }
 
-    /*
+    /* _____________________________________________________
      * Retrieve column data, version 1
      */
+
+    cout << "--> Retrieve column data, version 1 ..." << endl;
+
+    DAL::dalData * columnData = column->data();
     
     cout << " .. Column data = [";
     for (unsigned int n=0; n<nofRows; ++n) {
@@ -327,9 +328,11 @@ int test_MS (std::string const &filename,
     }
     std::cout << " ]" << std::endl;
 
-    /*
+    /* _____________________________________________________
      * Retrieve column data, version 2
      */
+
+    cout << "--> Retrieve column data, version 2 ..." << endl;
     
     std::vector<double> data;
     column->readData (data);
@@ -339,6 +342,18 @@ int test_MS (std::string const &filename,
       std::cout << " " << data[n];
     }
     std::cout << " ]" << std::endl;
+
+    /* _____________________________________________________
+     * Retrieve column data, version 3
+     */
+    
+    // cout << "--> Retrieve column data, version 3 ..." << endl;
+    
+    // {
+    //   double * data;
+    //   column->readData (data);
+    // }
+
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

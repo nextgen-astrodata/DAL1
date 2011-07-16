@@ -106,7 +106,7 @@ namespace DAL {
     itsFiletype = dalFileType (dalFileType::CASA_MS);
     bool error = false;
     try {
-      itsROTableColumn = new casa::ROTableColumn( table, colname );
+      itsROTableColumn = new casa::ROTableColumn (table, colname);
     }
     catch (casa::AipsError x) {
       std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -114,7 +114,7 @@ namespace DAL {
     }
     
     if (!error) {
-      itsColumnDesc = itsROTableColumn->columnDesc();
+      itsColumnDesc   = itsROTableColumn->columnDesc();
       itsCasaDatatype = getDataType();
     }
     else {

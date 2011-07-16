@@ -248,7 +248,35 @@ namespace DAL {
 	/* Return status */
 	return status;
       }
-    
+    /*!
+      \brief Retrieve data from the column
+      \param columnData -- Data stored inside the table column
+      \return status    -- Status of the operation; returns \e false in case
+              an error was encountered.
+    */
+    template <class T>
+      bool readData (T * columnData)
+      {
+	bool status = true;
+	
+	switch (itsFiletype.type()) {
+#ifdef DAL_WITH_CASA
+	case dalFileType::CASA_MS:
+	  status = readData_ms (columnData);
+	  break;
+#endif
+	case dalFileType::HDF5:
+	  columnData = NULL;
+	  status     = false;
+	  break;
+	default:
+	  columnData = NULL;
+	  status     = false;
+	  break;
+	};
+	
+	return status;
+      }    
     //! Provide a summary of the object's internal parameters and status
     inline void summary() {
       summary(std::cout);
@@ -261,9 +289,10 @@ namespace DAL {
 #ifdef PYTHON
     
     boost::python::tuple shape_boost();
-    boost::python::numeric::array data_boost1( );
-    boost::python::numeric::array data_boost2( int32_t length );
-    boost::python::numeric::array data_boost3( int64_t offset, int32_t length );
+    boost::python::numeric::array data_boost1 ();
+    boost::python::numeric::array data_boost2 (int32_t length);
+    boost::python::numeric::array data_boost3 (int64_t offset,
+					       int32_t length);
 
 #endif
 
@@ -287,6 +316,7 @@ namespace DAL {
 	if (itsColumnDesc.isScalar()) {
 	  casa::ROScalarColumn<T> readOnlyColumn;
 	  casa::Vector<T> data = readOnlyColumn.getColumn();
+	  columnData           = new T [data.nelements()];
 	  columnData           = (T *)data.getStorage(deleteIt);
 	} else if (itsColumnDesc.isArray()) {
 	  casa::ROArrayColumn<T> readOnlyColumn (*itsROTableColumn);
