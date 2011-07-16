@@ -78,11 +78,6 @@ void export_HDF5Hyperslab ();
   //
   // ============================================================================
 
-#include <coordinates/Angle.h>
-#include <coordinates/RaDec.h>
-#include <coordinates/Stokes.h>
-#include <coordinates/Coordinate.h>
-
 //! Bindings for DAL::Angle
 void export_Angle ();
 //! Bindings for DAL::RaDec
