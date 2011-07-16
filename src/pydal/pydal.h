@@ -43,7 +43,6 @@
   //
   // ============================================================================
 
-#include <core/dalArray.h>
 #include <core/dalColumn.h>
 #include <core/dalData.h>
 #include <core/dalDataset.h>

@@ -30,6 +30,7 @@
 */
 
 #include "pydal.h"
+#include <core/dalArray.h>
 
 using DAL::dalArray;
 
