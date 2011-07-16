@@ -29,6 +29,8 @@ set (pydal_sources
   pydal_data_hl.cc
   data_hl/pydal_BeamFormed.cc
   data_hl/pydal_BeamGroup.cc
+  data_hl/pydal_TBB_Timeseries.cc
+  data_hl/pydal_TBB_DipoleDataset.cc
   )
 
 ##______________________________________________

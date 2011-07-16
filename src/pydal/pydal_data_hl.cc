@@ -34,16 +34,12 @@
 #include <data_hl/BF_BeamGroup.h>
 #include <data_hl/BF_RootGroup.h>
 #include <data_common/CommonAttributes.h>
-#include <data_hl/TBB_Timeseries.h>
 #include <data_hl/TBB_StationGroup.h>
-#include <data_hl/TBB_DipoleDataset.h>
 #include <data_hl/LOPES_EventFile.h>
 
 using DAL::BF_BeamGroup;
 using DAL::BF_RootGroup;
 using DAL::LOPES_EventFile;
-using DAL::TBB_Timeseries;
-using DAL::TBB_DipoleDataset;
 using DAL::TBB_StationGroup;
 
 // ==============================================================================
@@ -162,31 +158,6 @@ void export_BF_RootGroup ()
 					       unsigned int const &beamID);
 }
 
-
-// ==============================================================================
-//
-//                                                                 TBB_Timeseries
-//
-// ==============================================================================
-
-void export_TBB_Timeseries ()
-{  
-  boost::python::class_<TBB_Timeseries>("TBB_Timeseries")
-    /* Construction */
-    .def( boost::python::init<>())
-    .def( boost::python::init<string>())
-    /* Access to internal parameters */
-    .def( "filename", &TBB_Timeseries::filename,
-	  "Get the name of the data file." )
-    .def( "locationID", &TBB_Timeseries::locationID,
-	  "Get the object identifier for the data file." )
-    .def( "nofStationGroups", &TBB_Timeseries::nofStationGroups,
-	  "Get the number of station groups collected into this file." )
-    .def( "nofDipoleDatasets", &TBB_Timeseries::nofDipoleDatasets,
-	  "Get the number of dipole datasets collected into this file." )
-    ;
-}
-
 // ==============================================================================
 //
 //                                                               TBB_StationGroup
@@ -203,62 +174,6 @@ void export_TBB_StationGroup ()
     /* Access to internal parameters */
     .def( "group_name", &TBB_StationGroup::group_name,
 	  "Get the name for this group within the HDF5 file." )
-    ;
-}
-
-// ==============================================================================
-//
-//                                                              TBB_DipoleDataset
-//
-// ==============================================================================
-
-void export_TBB_DipoleDataset()
-{
-  void (TBB_DipoleDataset::*summary1)()                = &TBB_DipoleDataset::summary;
-  void (TBB_DipoleDataset::*summary2)(std::ostream &)  = &TBB_DipoleDataset::summary;
-  bool (TBB_DipoleDataset::*open1)(hid_t const &)      = &TBB_DipoleDataset::open;
-  bool (TBB_DipoleDataset::*open2)(hid_t const &,
-				   std::string const &,
-				   DAL::IO_Mode const &) = &TBB_DipoleDataset::open;
-  bool (TBB_DipoleDataset::*open3)(hid_t const &,
-				   uint const &,
-				   uint const &,
-				   uint const &,
-				   std::vector<hsize_t> const &,
-				   hid_t const &)      = &TBB_DipoleDataset::open;
-  int (TBB_DipoleDataset::*dipoleNumber1)()      = &TBB_DipoleDataset::dipoleNumber;
-  std::string (TBB_DipoleDataset::*dipoleName1)()      = &TBB_DipoleDataset::dipoleName;
-//   std::string (TBB_DipoleDataset::*dipoleName2)(unsigned int const &,
-// 					     unsigned int const &,
-// 					     unsigned int const &)
-//     = &TBB_DipoleDataset::dipoleName;
-  
-  boost::python::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
-    /* Construction */
-    .def( boost::python::init<>())
-    .def( boost::python::init<hid_t const &, std::string const &>())
-    .def( boost::python::init<hid_t const &, uint const &, uint const &, uint const &>())
-    /* Access to internal parameters */
-    .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
-	  "Get the number of attributes attached to the dataset." )
-    .def( "julianDay", &TBB_DipoleDataset::julianDay,
-	  "Get the time as Julian Day." )
-    .def("summary", summary1,
-	 "Provide a summary of the internal status.")
-    .def("summary", summary2,
-	 "Provide a summary of the internal status.")
-    .def("open", open1,
-	 "Open a dipole dataset.")
-    .def("open", open2,
-	 "Open a dipole dataset.")
-    .def("open", open3,
-	 "Open a dipole dataset.")
-    .def( "dipoleNumber", dipoleNumber1,
-	  "Get the unique channel/dipole identifier." )
-    .def( "getName", dipoleName1,
-	  "Get the unique channel/dipole identifier." )
-//     .def( "getName", dipoleName2,
-// 	  "Get the unique channel/dipole identifier." )
     ;
 }
 
