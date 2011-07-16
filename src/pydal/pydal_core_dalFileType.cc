@@ -30,6 +30,7 @@
 */
 
 #include "pydal.h"
+#include <core/dalFileType.h>
 
 using DAL::dalFileType;
 

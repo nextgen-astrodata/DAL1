@@ -30,6 +30,7 @@
 */
 
 #include "pydal.h"
+#include <core/dalColumn.h>
 
 using DAL::dalColumn;
 

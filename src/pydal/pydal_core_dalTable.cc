@@ -30,6 +30,7 @@
 */
 
 #include "pydal.h"
+#include <core/dalTable.h>
 
 using DAL::dalTable;
 
