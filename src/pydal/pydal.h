@@ -49,8 +49,6 @@
 #include <core/dalFileType.h>
 #include <core/dalGroup.h>
 #include <core/dalTable.h>
-#include <core/IO_Mode.h>
-#include <core/HDF5Hyperslab.h>
 
 //! Bindings for DAL::dalArray
 void export_dalArray ();

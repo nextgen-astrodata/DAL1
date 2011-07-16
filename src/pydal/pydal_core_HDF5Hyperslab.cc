@@ -31,6 +31,7 @@
 
 // DAL headers
 #include "pydal.h"
+#include <core/HDF5Hyperslab.h>
 
 // namespace usage
 using DAL::HDF5Hyperslab;

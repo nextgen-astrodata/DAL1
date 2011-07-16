@@ -31,6 +31,7 @@
 
 // DAL headers
 #include "pydal.h"
+#include <core/IO_Mode.h>
 
 // namespace usage
 using DAL::IO_Mode;
