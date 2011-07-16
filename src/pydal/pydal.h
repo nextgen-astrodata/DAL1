@@ -44,7 +44,6 @@
   // ============================================================================
 
 #include <core/dalData.h>
-#include <core/dalDataset.h>
 
 //! Bindings for DAL::dalArray
 void export_dalArray ();

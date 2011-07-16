@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2011                                                    *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,114 +19,21 @@
  ***************************************************************************/
 
 /*!
-  \file pydal_coordinates.cc
+  \file pydal_Stokes.cc
 
   \ingroup DAL
   \ingroup pydal
 
-  \brief Python bindings DAL C++ classes in the \e coordinates directory
+  \brief Python bindings for the DAL::Stokes class
 
   \author Lars B&auml;hren
 */
 
 // DAL headers
 #include "pydal.h"
-#include <coordinates/Angle.h>
-#include <coordinates/RaDec.h>
 #include <coordinates/Stokes.h>
-#include <coordinates/Coordinate.h>
 
-using DAL::Angle;
-using DAL::RaDec;
 using DAL::Stokes;
-using DAL::Coordinate;
-
-// ==============================================================================
-//
-//                                                                          Angle
-//
-// ==============================================================================
-
-void export_Angle ()
-{
-  //________________________________________________________
-  // Specialisation of overloaded methods
-
-  void (Angle::*summary1)() 
-    = &Angle::summary;
-  void (Angle::*summary2)(std::ostream &) 
-    = &Angle::summary;
-
-  //________________________________________________________
-  // Bindings for class and its methods
-
-  boost::python::class_<Angle>("Angle")
-    // Construction
-    .def( boost::python::init<>())
-    .def( boost::python::init<double const &, bool const &>())
-    .def( boost::python::init<Angle>())
-    // Parameter access
-    .def("setAngle", &Angle::setAngle, "Set the angle.")
-    .def("rad",      &Angle::rad,      "Get the angle in radian.")
-    .def("deg",      &Angle::deg,      "Get the angle in degrees.")
-    .def("hms",      &Angle::hms,      "Get the angle as formatted string (HH:MM:SS)")
-    .def("className",
-	 &Angle::className,
-	 "Get the name of the class.")
-    // Methods
-    .def("summary",
-	 summary1,
-	 "Summary of the object's internal parameters and status.")
-    .def("summary",
-	 summary2,
-	 "Summary of the object's internal parameters and status.")
-    // Static Public Member Functions
-    ;
-}
-
-// ==============================================================================
-//
-//                                                                          RaDec
-//
-// ==============================================================================
-
-void export_RaDec ()
-{
-  //________________________________________________________
-  // Specialisation of overloaded methods
-
-  void (RaDec::*summary1)() 
-    = &RaDec::summary;
-  void (RaDec::*summary2)(std::ostream &) 
-    = &RaDec::summary;
-
-  //________________________________________________________
-  // Bindings for class and its methods
-
-  boost::python::class_<RaDec>("RaDec")
-    // Construction
-    .def( boost::python::init<>())
-    .def( boost::python::init<double const &, double const &, bool const &>())
-    .def( boost::python::init<RaDec>())
-    // Parameter access
-    .def("setRA",    &RaDec::setRA,    "Set Right Ascension angle.")
-    .def("setDec",   &RaDec::setDec,    "Set Declination angle.")
-    .def("rad",      &RaDec::rad,      "Get (RA,Dec) in radian.")
-    .def("deg",      &RaDec::deg,      "Get (RA,Dec) in degrees.")
-    .def("hms",      &RaDec::hms,      "Get (RA,Dec) as formatted string (HH:MM:SS).")
-    .def("className",
-	 &RaDec::className,
-	 "Get the name of the class.")
-    // Methods
-    .def("summary",
-	 summary1,
-	 "Summary of the object's internal parameters and status.")
-    .def("summary",
-	 summary2,
-	 "Summary of the object's internal parameters and status.")
-    // Static Public Member Functions
-    ;
-}
 
 // ==============================================================================
 //
@@ -230,30 +137,4 @@ void export_Stokes ()
     .staticmethod("componentsName")
     ;
   
-}
-
-// ==============================================================================
-//
-//                                                                DAL::Coordinate
-//
-// ==============================================================================
-
-void export_Coordinate ()
-{
-  //________________________________________________________
-  // Enumeration: Cordinate type
-
-  boost::python::enum_<Coordinate::Type>("Type")
-    .value("DIRECTION", DAL::Coordinate::DIRECTION)
-    .value("LINEAR",    DAL::Coordinate::LINEAR)
-    .value("TABULAR",   DAL::Coordinate::TABULAR)
-    .value("STOKES",    DAL::Coordinate::STOKES)
-    .value("SPECTRAL",  DAL::Coordinate::SPECTRAL)
-    .value("UNDEFINED", DAL::Coordinate::UNDEFINED)
-    ;
-  
-  //________________________________________________________
-  // Bindings for class and its methods
-
-
 }

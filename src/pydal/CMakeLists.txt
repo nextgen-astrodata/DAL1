@@ -12,7 +12,10 @@ set (pydal_sources
   num_util.cc
   pydal.cc
   pydal_conversions.cc
-  pydal_coordinates.cc
+  coordinates/pydal_Angle.cc
+  coordinates/pydal_Coordinate.cc
+  coordinates/pydal_RaDec.cc
+  coordinates/pydal_Stokes.cc
   pydal_core.cc
   pydal_core_dalArray.cc
   pydal_core_dalColumn.cc

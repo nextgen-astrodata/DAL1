@@ -34,8 +34,6 @@
 
 // namespace usage
 using DAL::dalData;
-using DAL::dalDataset;
-using DAL::dalGroup;
 
 // ==============================================================================
 //
