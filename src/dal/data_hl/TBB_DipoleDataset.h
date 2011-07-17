@@ -220,6 +220,8 @@ namespace DAL {  // Namespace DAL -- begin
     bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
+    //! Initialize the object's internal parameters
+    void init ();
     //! Initialize the internal dataspace
     void init (std::string const &filename,
 	       std::string const &dataset);

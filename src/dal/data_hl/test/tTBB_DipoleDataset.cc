@@ -55,11 +55,9 @@ int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
 
-  int nofFailedTests    = 0;
-  std::string groupname = "Station001";
+  int nofFailedTests = 0;
+  std::string name   = "Station000/000000000";
 
-  // Perform the tests _____________________________________
-  
   cout << "[1] Testing TBB_DipoleDataset() ..." << endl;
   try {
     TBB_DipoleDataset dataset;
@@ -69,6 +67,14 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
   
+  cout << "[2] Testing TBB_DipoleDataset(hid_t,string) ..." << endl;
+  try {
+    TBB_DipoleDataset dataset (fileID,name);
+    dataset.summary();
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
   
   return nofFailedTests;
 }

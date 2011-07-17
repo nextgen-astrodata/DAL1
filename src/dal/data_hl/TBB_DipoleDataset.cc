@@ -37,10 +37,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   TBB_DipoleDataset::TBB_DipoleDataset ()
   {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    itsShape     = std::vector<hsize_t>();
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -55,11 +52,7 @@ namespace DAL {  // Namespace DAL -- begin
                                         std::string const &name)
     : HDF5GroupBase ()
   {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    itsShape     = std::vector<hsize_t>();
-    //
+    init ();
     open (location,name,false);
   }
 
@@ -78,12 +71,9 @@ namespace DAL {  // Namespace DAL -- begin
 					uint const &rspID,
 					uint const &rcuID)
   {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    itsShape     = std::vector<hsize_t>();
     std::string name = dipoleName (stationID, rspID, rcuID);
 
+    init ();
     open (location,name,false);
   }
   
@@ -107,11 +97,7 @@ namespace DAL {  // Namespace DAL -- begin
 					std::vector<hsize_t> const &shape,
 					hid_t const &datatype)
   {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    itsShape     = std::vector<hsize_t>();
-
+    init ();
     open (location,
 	  stationID,
 	  rspID,
@@ -197,6 +183,17 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
   
+  void TBB_DipoleDataset::init ()
+  {
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    itsShape     = std::vector<hsize_t>();
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   /*!
     \param filename -- HDF5 file within which the dataset in question is
            contained
@@ -267,6 +264,10 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         open
   
+  /*!
+    \param location -- Identifier for the location within the HDF5 file, below
+           which the dataset is placed.
+  */
   bool TBB_DipoleDataset::open (hid_t const &location)
   {
     bool status (true);
@@ -307,8 +308,8 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
            which the dataset is placed.
-    \param name     -- 
-    \param create   -- 
+    \param name     -- Name of the dataset.
+    \param create   -- I/O mode flags.
   */
   bool TBB_DipoleDataset::open (hid_t const &location,
 				std::string const &name,
@@ -472,6 +473,11 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
+  /*!
+    \param flags   -- I/O mode flags.
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool TBB_DipoleDataset::openEmbedded (IO_Mode const &flags)
   {
     bool status = flags.flags();
@@ -685,7 +691,7 @@ namespace DAL {  // Namespace DAL -- begin
       uint samplesSinceSecond;
       double sampleFrequency;
       //
-      getAttribute ("SAMPLE_NUMBER", samplesSinceSecond);
+      getAttribute ("SAMPLE_NUMBER",          samplesSinceSecond);
       getAttribute ("SAMPLE_FREQUENCY_VALUE", sampleFrequency);
       // conversion
       if (sampleFrequency > 0) {
