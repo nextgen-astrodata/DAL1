@@ -45,18 +45,17 @@ namespace DAL {
     \test tdalTable.cc
     
     \author Joseph Masters
-    \date 12-04-2006
+
+    \date 2006-04-12
 
     A dalTable can reside within a dataset, or within a group that is within
     a dataset.
   */
   
-  class dalTable {
+  class dalTable : public dalObjectBase {
     
     //! File pointer (can be HDF5, FITS or CASA MS)
     void * file;
-    //! File type: CASA_MS, HDF5, FITS, etc.
-    dalFileType itsFiletype;
     //! HDF5 file_id
     hid_t itsFileID;
     //! HDF5 table id
@@ -71,10 +70,11 @@ namespace DAL {
     dalFilter itsFilter;
     //! HDF5 list of columns
     char **itsFieldNames;
-    
+
+    //! Access first record?
     bool itsFirstRecord;
-    std::string name;  // table name
-    std::vector<dalColumn> columns; // list of table columns
+    //! List of table columns
+    std::vector<dalColumn> columns;
     
 #ifdef DAL_WITH_CASA
     casa::Table * itsCasaTable;
@@ -265,13 +265,17 @@ namespace DAL {
 
 #ifdef PYTHON
     
-    bool append_row_boost( boost::python::object data );
-    bool append_rows_boost( boost::python::object data, long nrows );
-    void write_col_by_index_boost( boost::python::numeric::array data, int index,
-				   int rownum, long nrecords );
+    bool append_row_boost (boost::python::object data );
+    bool append_rows_boost (boost::python::object data,
+			    long nrows );
+    void write_col_by_index_boost (boost::python::numeric::array data,
+				   int index,
+				   int rownum,
+				   long nrecords );
     boost::python::list listColumns_boost();
     boost::python::numeric::array getAttribute_boost(std::string);
-    PyObject* readRows_boost( int start, int nrecs );
+    PyObject* readRows_boost (int start,
+			      int nrecs);
     
     //! Set attribute of type \e char
     bool setAttribute_char( std::string attrname, char data );
@@ -288,9 +292,8 @@ namespace DAL {
     
 #ifdef DAL_WITH_CASA
     void ot_nonMStable( std::string const &tablename );
-    void setFilter_boost1(std::string);
-    void setFilter_boost2(std::string,std::string);
-    // 	boost::python::numeric::array getColumnData_boost( string colname );
+    void setFilter_boost1 (std::string);
+    void setFilter_boost2 (std::string,std::string);
 #endif
     
 #endif
@@ -300,7 +303,7 @@ namespace DAL {
  private:
 
   //! Initialize internal parameters
-  void init (DAL::dalFileType const &filetype=DAL::dalFileType());
+  void init ();
   //! Setup for adding another column to an HDF5 table
   bool h5addColumn_setup (std::string const &column_name,
 			  bool &removedummy);

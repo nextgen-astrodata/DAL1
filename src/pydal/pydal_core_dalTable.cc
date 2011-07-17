@@ -156,7 +156,7 @@ PyObject* dalTable::readRows_boost (int start,
     size_t * size_out      = NULL;
     
     // retrieve the input fields needed for the append_records call
-    H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
+    H5TBget_table_info ( itsFileID, itsName.c_str(), &nfields, &nofRecords_p );
     
     field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
     field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -168,7 +168,7 @@ PyObject* dalTable::readRows_boost (int start,
 
     /* Retrieve information about table field */
     status = H5TBget_field_info (itsFileID,
-				 name.c_str(),
+				 itsName.c_str(),
 				 itsFieldNames,
 				 field_sizes,
 				 field_offsets,
@@ -178,7 +178,7 @@ PyObject* dalTable::readRows_boost (int start,
 				(*size_out)*nrecs);
     /* Read record entries from the table */
     status = H5TBread_records( itsFileID,
-			       name.c_str(),
+			       itsName.c_str(),
 			       start,
 			       nrecs,
 			       size_out[0],
