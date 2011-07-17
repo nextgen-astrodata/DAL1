@@ -147,7 +147,7 @@ int test_open (std::string const &filename)
     */
     
     // Create the MeasurementSet from an existing Table on disk
-    casa::MeasurementSet ms(absoluteName); 
+    casa::MeasurementSet ms (absoluteName); 
     // Create a columns object that accesses the data in the specified Table. 
     casa::ROMSMainColumns mainColumns (ms);
     // Create object to hold 'TIME' column
@@ -158,10 +158,13 @@ int test_open (std::string const &filename)
     casa::ROArrayColumn<casa::Complex> dataColumn = mainColumns.data ();
 
     /*______________________________________________________
-      Inspect contents of the rows
+      Use generic Table classes to access data
     */
 
-    
+    // Open table
+    casa::Table table (absoluteName);
+    //
+    casa::TableDesc tableDesc = table.tableDesc ();
 
     /*______________________________________________________
       Summary
@@ -177,6 +180,9 @@ int test_open (std::string const &filename)
     cout << "-- 'UVW'  : cell shape = " << uvwColumn.shape(0)         << endl;
     cout << "-- 'DATA' : nof. rows  = " << dataColumn.nrow()          << endl;
     cout << "-- 'DATA' : cell shape = " << dataColumn.shape(0)        << endl;
+    cout << "-- Name of the table   = " << table.tableName()          << endl;
+    cout << "-- nof. table rows     = " << table.nrow()               << endl;
+    cout << "-- Tables column names = " << tableDesc.columnNames()    << endl;
     
   } else {
     std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << endl;
