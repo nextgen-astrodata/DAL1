@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 #include <casa/OS/File.h>
@@ -128,24 +129,39 @@ int test_open (std::string const &filename)
 {
   cout << "\n[tcasacore_ms::test_open]\n" << endl;
   
-  int status      = 0;
+  int nofFailedTests = 0;
   std::string absoluteName;
   casa::File msfile (filename);
+  
+  /*________________________________________________________
+    Check if the file exists; if not, then exit function.
+  */
+  
+  if (!msfile.exists()) {
+    std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << endl;
+    return 1;
+  }
+  
+  /*________________________________________________________
+    Check if the filename is a symbolic link; of this is the
+    case, then resolve the link before opening the dataset.
+  */
+  
+  if (msfile.isSymLink()) {
+    casa::SymLink link (msfile);
+    casa::Path realFileName = link.followSymLink();
+    absoluteName = realFileName.absoluteName();
+  } else {
+    absoluteName = filename;
+  }
+  
+  /*______________________________________________________
+    Use MS-specific classes to access data
+  */
 
-  if (msfile.exists()) {
-    
-    if (msfile.isSymLink()) {
-      casa::SymLink link (msfile);
-      casa::Path realFileName = link.followSymLink();
-      absoluteName = realFileName.absoluteName();
-    } else {
-      absoluteName = filename;
-    }
-    
-    /*______________________________________________________
-      Use MS-specific classes to access data
-    */
-    
+  std::cout << "[1] Use MS-specific classes to access data ..." << std::endl;
+
+  try {
     // Create the MeasurementSet from an existing Table on disk
     casa::MeasurementSet ms (absoluteName); 
     // Create a columns object that accesses the data in the specified Table. 
@@ -156,19 +172,6 @@ int test_open (std::string const &filename)
     casa::ROArrayColumn<casa::Double> uvwColumn = mainColumns.uvw ();
     // Create object to hold 'DATA' column
     casa::ROArrayColumn<casa::Complex> dataColumn = mainColumns.data ();
-
-    /*______________________________________________________
-      Use generic Table classes to access data
-    */
-
-    // Open table
-    casa::Table table (absoluteName);
-    //
-    casa::TableDesc tableDesc = table.tableDesc ();
-
-    /*______________________________________________________
-      Summary
-    */
     
     cout << "-- Filename            = " << filename                   << endl;
     cout << "-- Absolute filename   = " << absoluteName               << endl;
@@ -180,16 +183,51 @@ int test_open (std::string const &filename)
     cout << "-- 'UVW'  : cell shape = " << uvwColumn.shape(0)         << endl;
     cout << "-- 'DATA' : nof. rows  = " << dataColumn.nrow()          << endl;
     cout << "-- 'DATA' : cell shape = " << dataColumn.shape(0)        << endl;
-    cout << "-- Name of the table   = " << table.tableName()          << endl;
-    cout << "-- nof. table rows     = " << table.nrow()               << endl;
-    cout << "-- Tables column names = " << tableDesc.columnNames()    << endl;
     
-  } else {
-    std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << endl;
-    status = 1;
+  } catch (casa::AipsError x) {
+    std::cerr << "ERROR: " << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Use generic Table classes to access data
+  */
+
+  std::cout << "[2] Use generic Table classes to access data ..." << std::endl;
+
+  try {
+    // Open table
+    casa::Table table (absoluteName);
+    // Retrieve table description
+    casa::TableDesc tableDesc = table.tableDesc ();
+    // Retrieve the names of the table columns
+    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
+
+    // Provide basic overview of table properties
+    cout << "-- Name of the table   = " << table.tableName()  << endl;
+    cout << "-- nof. table rows     = " << table.nrow()       << endl;
+    cout << "-- Tables column names = " << columnNames        << endl;
+
+    // Loop through the columns and get their properties
+    for (unsigned int n=0; n<columnNames.nelements(); ++n) {
+      // Get column description
+      casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
+      // Display column properties
+      std::cout << std::setw(5)  << n 
+		<< std::setw(25) << columnDesc.name()
+		<< std::setw(5)  << columnDesc.ndim()
+		<< std::setw(10) << columnDesc.dataType()
+		<< std::setw(5)  << columnDesc.isArray()
+		<< std::setw(10) << columnDesc.shape()
+		<< std::endl;
+    }
+    
+  } catch (casa::AipsError x) {
+    std::cerr << "ERROR: " << x.getMesg() << endl;
+    ++nofFailedTests;
   }
 
-  return status;
+  return nofFailedTests;
 }
 
 //_______________________________________________________________________________
