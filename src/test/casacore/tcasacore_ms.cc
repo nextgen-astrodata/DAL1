@@ -152,6 +152,7 @@ int test_open (std::string const &filename)
     std::cout << "-- Field table name  = " << ms.fieldTableName() << std::endl;
     
   } else {
+    std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << std::endl;
     status = 1;
   }
 
