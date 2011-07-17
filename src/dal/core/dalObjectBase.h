@@ -65,6 +65,8 @@ namespace DAL { // Namespace DAL -- begin
     dalFileType itsFiletype;
     //! I/O mode flags
     IO_Mode itsFlags;
+    //! Name of the object (File, Dataset, Table, etc.)
+    std::string itsName;
     
   public:
     
@@ -72,6 +74,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     dalObjectBase ();
+    
+    //! Default constructor
+    dalObjectBase (std::string const &name);
     
     //! Copy constructor
     dalObjectBase (dalObjectBase const &other);
@@ -88,10 +93,17 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
+    //! Get the name of the object (file, dataset, table, etc.)
+    virtual std::string name () const {
+      return itsName;
+    }
+
+    //! File type: CASA_MS, HDF5, FITS, etc.
     inline DAL::dalFileType::Type filetype () {
       return itsFiletype.type();
     }
     
+    //! File type: CASA_MS, HDF5, FITS, etc.
     inline std::string filetypeName () {
       return itsFiletype.name();
     }
@@ -119,8 +131,8 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
     
-    virtual bool open (std::string const &name,
-		       IO_Mode const &flags=IO_Mode(IO_Mode::Open)) = 0;
+    /* virtual bool open (std::string const &name, */
+    /* 		       IO_Mode const &flags=IO_Mode(IO_Mode::Open)) = 0; */
     
     // === Static methods =======================================================
     

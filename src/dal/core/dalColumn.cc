@@ -135,7 +135,7 @@ namespace DAL {
   void dalColumn::init (std::string const &columnName)
   {
     itsFiletype   = dalFileType();
-    name          = columnName;
+    itsName          = columnName;
     itsTablename  = "";
     itsDatatype   = "";
     size          = 0;
@@ -162,7 +162,7 @@ namespace DAL {
     os << "-- HDF5 file object ID      = " << itsFileID        << std::endl;
     os << "-- HDF5 table object ID     = " << itsTableID       << std::endl;
     os << "-- Table name               = " << itsTablename        << std::endl;
-    os << "-- Column name              = " << name             << std::endl;
+    os << "-- Column name              = " << itsName             << std::endl;
     os << "-- Column datatype          = " << itsDatatype      << std::endl;
     os << "-- Datatype size            = " << size             << std::endl;
     os << "-- nof. rows per column     = " << itsNofRows      << std::endl;
@@ -385,17 +385,6 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                      setName
-
-  /*!
-    \param colname -- The name of the column.
-  */
-  void dalColumn::setName(std::string colname)
-  {
-    name = colname;
-  }
-
-  //_____________________________________________________________________________
   //                                                                  setFileType
 
   /*!
@@ -612,7 +601,7 @@ namespace DAL {
     }
 
     for ( hsize_t ii = 0; ii < itsNofFields; ii++) {
-      if ( 0 == strcmp( field_names[ii], name.c_str() ) ) {
+      if ( 0 == strcmp( field_names[ii], itsName.c_str() ) ) {
 	column_in_table = true;
       }
     }
@@ -653,7 +642,7 @@ namespace DAL {
 	
         if ( H5TBread_fields_name (itsFileID,
 				   itsTablename.c_str(),
-				   name.c_str(),
+				   itsName.c_str(),
 				   start,
 				   length,
 				   sizeof(DAL::Complex_Int16),
@@ -686,7 +675,7 @@ namespace DAL {
       
       if ( H5TBread_fields_name (itsFileID,
 				 itsTablename.c_str(),
-				 name.c_str(),
+				 itsName.c_str(),
 				 start,
 				 length,
 				 sizeof(float),
@@ -743,49 +732,40 @@ namespace DAL {
   int dalColumn::getSize()
   {
 
-    if ( dal_CHAR == getType() )
-      {
-        return sizeof( char );
-      }
-    else if ( dal_INT == getType() )
-      {
-        return sizeof( int );
-      }
-    else if ( dal_SHORT == getType() )
-      {
-        return sizeof( short );
-      }
-    else if ( dal_FLOAT == getType() )
-      {
-        return sizeof( float );
-      }
-    else if ( dal_DOUBLE == getType() )
-      {
-        return sizeof( double );
-      }
-    else if ( dal_COMPLEX == getType() )
-      {
-        return sizeof( DAL::Complex_Double );
-      }
-    else if ( dal_COMPLEX_SHORT == getType() )
-      {
+    if ( dal_CHAR == getType() ) {
+      return sizeof( char );
+    }
+    else if ( dal_INT == getType() ) {
+      return sizeof( int );
+    }
+    else if ( dal_SHORT == getType() ) {
+      return sizeof( short );
+    }
+    else if ( dal_FLOAT == getType() ) {
+      return sizeof( float );
+    }
+    else if ( dal_DOUBLE == getType() ) {
+      return sizeof( double );
+    }
+    else if ( dal_COMPLEX == getType() ) {
+      return sizeof( DAL::Complex_Double );
+    }
+    else if ( dal_COMPLEX_SHORT == getType() ) {
         return sizeof( DAL::Complex_Int16 );
       }
-    else if ( dal_COMPLEX_CHAR == getType() )
-      {
-        return sizeof( DAL::Complex_Char );
-      }
-    else
-      {
-        std::cerr << "WARNING: " << getType() << " not handled. Please "
-                  << "notify developers.\n";
-        return 0;
-      }
+    else if ( dal_COMPLEX_CHAR == getType() ) {
+      return sizeof( DAL::Complex_Char );
+    }
+    else {
+      std::cerr << "WARNING: " << getType() << " not handled. Please "
+		<< "notify developers.\n";
+      return 0;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                    addMember
-
+  
   /*!
     Add a member to a compound column.  A compound column is made up of
     several simple datatypes.  For example a compound column might be two

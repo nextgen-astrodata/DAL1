@@ -49,10 +49,11 @@ namespace DAL {
     //! File type: CASA_MS, HDF5, FITS, etc.
     dalFileType itsFiletype;
     //! Name of the column
-    std::string name;
+    std::string itsName;
     //! Name of the table
     std::string itsTablename;
-    std::string itsDatatype;   // Column datatype
+    //! Datatype of the table column cells
+    std::string itsDatatype;
     //! Datatype size
     int size;
     //! Number of rows within this column
@@ -141,10 +142,12 @@ namespace DAL {
       \return name -- The name of the column.
     */
     inline std::string getName() {
-      return name;
+      return itsName;
     }
     //! Set the name of the column.
-    void setName(std::string colname);
+    inline void setName(std::string const &colname) {
+      itsName = colname;
+    }
     //! Set the file type of the dataset containing the column.
     void setFiletype (std::string const &type);
     //! Set the file type of the dataset containing the column.
