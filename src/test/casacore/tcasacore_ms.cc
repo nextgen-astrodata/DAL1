@@ -109,11 +109,11 @@ int test_open_create (std::string const &filename="tcasacore_ms.ms")
   
   /* Summary */
   
-  std::cout << "-- Filename          = " << filename            << std::endl;
-  std::cout << "-- File exists       = " << fileExists          << std::endl;
-  std::cout << "-- Absolute filename = " << absoluteName        << std::endl;
-  std::cout << "-- Feed table name   = " << ms.feedTableName()  << std::endl;
-  std::cout << "-- Field table name  = " << ms.fieldTableName() << std::endl;
+  cout << "-- Filename          = " << filename            << std::endl;
+  cout << "-- File exists       = " << fileExists          << std::endl;
+  cout << "-- Absolute filename = " << absoluteName        << std::endl;
+  cout << "-- Feed table name   = " << ms.feedTableName()  << std::endl;
+  cout << "-- Field table name  = " << ms.fieldTableName() << std::endl;
   
   return nofFailedTests;
 }
@@ -126,13 +126,10 @@ int test_open (std::string const &filename)
   cout << "\n[tcasacore_ms::test_open]\n" << endl;
   
   int status      = 0;
-  bool fileExists = false;
   std::string absoluteName;
   casa::File msfile (filename);
 
-  fileExists = msfile.exists();
-
-  if (fileExists) {
+  if (msfile.exists()) {
     
     if (msfile.isSymLink()) {
       casa::SymLink link (msfile);
@@ -142,14 +139,41 @@ int test_open (std::string const &filename)
       absoluteName = filename;
     }
     
-    casa::MeasurementSet ms (absoluteName);
+    /*______________________________________________________
+      Use MS-specific classes to access data
+    */
     
-    /* Summary */
+    // Create the MeasurementSet from an existing Table on disk
+    casa::MeasurementSet ms(absoluteName); 
+    // Create a columns object that accesses the data in the specified Table. 
+    casa::ROMSMainColumns mainColumns (ms);
+    // Create object to hold 'TIME' column
+    casa::ROScalarColumn<casa::Double> timeColumn = mainColumns.time ();
+    // Create object to hold 'UVW' column
+    casa::ROArrayColumn<casa::Double> uvwColumn = mainColumns.uvw ();
+    // Create object to hold 'DATA' column
+    casa::ROArrayColumn<casa::Complex> dataColumn = mainColumns.data ();
+
+    /*______________________________________________________
+      Inspect contents of the rows
+    */
+
     
-    std::cout << "-- Filename          = " << filename            << std::endl;
-    std::cout << "-- Absolute filename = " << absoluteName        << std::endl;
-    std::cout << "-- Feed table name   = " << ms.feedTableName()  << std::endl;
-    std::cout << "-- Field table name  = " << ms.fieldTableName() << std::endl;
+
+    /*______________________________________________________
+      Summary
+    */
+    
+    cout << "-- Filename            = " << filename                   << std::endl;
+    cout << "-- Absolute filename   = " << absoluteName               << std::endl;
+    cout << "-- Feed table          = " << ms.feedTableName()         << std::endl;
+    cout << "-- Field table         = " << ms.fieldTableName()        << std::endl;
+    cout << "-- Polarization table  = " << ms.polarizationTableName() << std::endl;
+    cout << "-- 'TIME' : nof. rows  = " << timeColumn.nrow()          << std::endl;
+    cout << "-- 'UVW'  : nof. rows  = " << uvwColumn.nrow()           << std::endl;
+    cout << "-- 'UVW'  : cell shape = " << uvwColumn.shape(0)         << std::endl;
+    cout << "-- 'DATA' : nof. rows  = " << dataColumn.nrow()          << std::endl;
+    cout << "-- 'DATA' : cell shape = " << dataColumn.shape(0)        << std::endl;
     
   } else {
     std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << std::endl;
