@@ -296,7 +296,7 @@ void export_dalColumn ()
 	  "Set the file type of the dataset containing the column." )
     .def( "setFileType", setFileType2,
 	  "Set the file type of the dataset containing the column." )
-    .def( "getName", &dalColumn::getName,
+    .def( "name", &dalColumn::name,
 	  "Return the name of the column." )
     .def( "getSize", &dalColumn::getSize,
 	  "Return the size of the column for any 'normal'\n"

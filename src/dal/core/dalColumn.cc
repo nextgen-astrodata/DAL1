@@ -32,6 +32,7 @@ namespace DAL {
   //                                                                    dalColumn
 
   dalColumn::dalColumn()
+    : dalObjectBase()
   {
     init ();
   }
@@ -45,8 +46,9 @@ namespace DAL {
     \param complexcolname Name of the column you want to create.
   */
   dalColumn::dalColumn (std::string const &complexcolname)
+    : dalObjectBase(complexcolname)
   {
-    init (complexcolname);
+    init ();
     itsDatatype = dal_COMPLEX;
   }
 
@@ -59,9 +61,10 @@ namespace DAL {
     dalINT, dalFLOAT, dalSTRING, etc.)
   */
   dalColumn::dalColumn (std::string const &colname,
-			std::string const &type )
+			std::string const &type)
+    : dalObjectBase(colname)
   {
-    init (colname);
+    init ();
     itsDatatype = type;
   }
 
@@ -82,11 +85,11 @@ namespace DAL {
                         std::string const &tablename,
                         std::string const &colname,
                         std::string const &coldatatype)
+    : dalObjectBase(colname,filetype)
   {
-    init (colname);
+    init ();
     itsFileID    = fileid;
     itsTableID   = tableid;
-    itsFiletype  = filetype;
     itsTablename = tablename;
     itsDatatype  = coldatatype;
   }
@@ -101,9 +104,9 @@ namespace DAL {
   */
   dalColumn::dalColumn (casa::Table table,
 			std::string colname)
+    : dalObjectBase(colname, dalFileType(dalFileType::CASA_MS))
   {
-    init (colname);
-    itsFiletype = dalFileType (dalFileType::CASA_MS);
+    init ();
     bool error = false;
     try {
       itsROTableColumn = new casa::ROTableColumn (table, colname);
@@ -132,17 +135,15 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                         init
 
-  void dalColumn::init (std::string const &columnName)
+  void dalColumn::init ()
   {
-    itsFiletype   = dalFileType();
-    itsName          = columnName;
     itsTablename  = "";
     itsDatatype   = "";
     size          = 0;
     itsNofRows    = 0;
     itsFileID     = 0;
     itsTableID    = 0;
-    itsNofFields   = 0;
+    itsNofFields  = 0;
     itsNofRecords = 0;
     coltype       = 0;
     status        = 0;

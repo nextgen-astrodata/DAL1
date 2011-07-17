@@ -23,7 +23,7 @@
 
 #include <core/dalCommon.h>
 #include <core/dalData.h>
-#include <core/dalFileType.h>
+#include <core/dalObjectBase.h>
 
 #ifdef PYTHON
 #include <pydal/num_util.h>
@@ -44,12 +44,8 @@ namespace DAL {
     \author Joseph Masters
     \date 12-11-2006
   */
-  class dalColumn
+  class dalColumn : public dalObjectBase
   {
-    //! File type: CASA_MS, HDF5, FITS, etc.
-    dalFileType itsFiletype;
-    //! Name of the column
-    std::string itsName;
     //! Name of the table
     std::string itsTablename;
     //! Datatype of the table column cells
@@ -137,13 +133,6 @@ namespace DAL {
     //! Add a member to a compound column.
     void addMember (std::string const &member_name,
 		    std::string const &type);
-    /*!
-      \brief Get the name of the column.
-      \return name -- The name of the column.
-    */
-    inline std::string getName() {
-      return itsName;
-    }
     //! Set the name of the column.
     inline void setName(std::string const &colname) {
       itsName = colname;
@@ -304,7 +293,7 @@ namespace DAL {
   private:
 
     //! Initialize the object's internal parameters
-    void init (std::string const &columnName="");
+    void init ();
 
 #ifdef DAL_WITH_CASA
 

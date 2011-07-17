@@ -144,7 +144,7 @@ namespace DAL {
       os << "-- Column names  = [";
       for (unsigned int n=0; n<columns.size(); ++n)
 	{
-	  os << " " << columns[n].getName();
+	  os << " " << columns[n].name();
 	}
       os << " ]" << std::endl;
     }
@@ -1124,7 +1124,7 @@ namespace DAL {
 	      else if ( dal_DOUBLE == cv[ii].getType() )
 		lcl_datatype = H5T_NATIVE_DOUBLE;
 	      
-	      H5Tinsert( h5type, cv[ii].getName().c_str(), offset, lcl_datatype );
+	      H5Tinsert( h5type, cv[ii].name().c_str(), offset, lcl_datatype );
 	    }
 	}
       else {
@@ -1196,25 +1196,25 @@ namespace DAL {
 
             if ( dal_CHAR == foo[ii].getType() )
               {
-                H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+                H5Tinsert( fieldtype, foo[ii].name().c_str(), offset,
                            H5T_NATIVE_CHAR);
               }
             else if ( dal_SHORT == foo[ii].getType() )
               {
-                H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+                H5Tinsert( fieldtype, foo[ii].name().c_str(), offset,
                            H5T_NATIVE_SHORT);
               }
             else if ( dal_INT == foo[ii].getType() )
               {
-                H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+                H5Tinsert( fieldtype, foo[ii].name().c_str(), offset,
                            H5T_NATIVE_INT);
               }
             else if ( dal_FLOAT == foo[ii].getType() ) {
-	      H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+	      H5Tinsert( fieldtype, foo[ii].name().c_str(), offset,
 			 H5T_NATIVE_FLOAT);
 	    }
             else if ( dal_DOUBLE == foo[ii].getType() ) {
-	      H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+	      H5Tinsert( fieldtype, foo[ii].name().c_str(), offset,
 			 H5T_NATIVE_DOUBLE);
 	    }
           }
