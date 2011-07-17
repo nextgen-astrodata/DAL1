@@ -34,9 +34,6 @@
 
 // namespace usage
 using DAL::dalData;
-using DAL::dalDataset;
-using DAL::dalGroup;
-using DAL::IO_Mode;
 
 // ==============================================================================
 //
@@ -186,7 +183,7 @@ boost::python::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t 
     
     if ( 1 == itsShape.size() ) // 1D case
       {
-	for (int ii=0; ii<nrows; ii++)
+	for (int ii=0; ii<itsNofRows; ii++)
 	  {
 	    data_list.append( (*((std::string*)get(ii))) );
 	  }
@@ -248,82 +245,3 @@ void export_dalData ()
     ;
 }
 
-// ==============================================================================
-//
-//                                                                        IO_Mode
-//
-// ==============================================================================
-
-void export_IO_Mode ()
-{
-  //________________________________________________________
-  // Enumeration: I/O mode flags
-
-  boost::python::enum_<IO_Mode::Flags>("Flags")
-    .value("ReadOnly",     IO_Mode::ReadOnly)
-    .value("ReadWrite",    IO_Mode::ReadWrite)
-    .value("WriteOnly",    IO_Mode::WriteOnly)
-    .value("Open",         IO_Mode::Open)
-    .value("OpenOrCreate", IO_Mode::OpenOrCreate)
-    .value("Create",       IO_Mode::Create)
-    .value("CreateNew",    IO_Mode::CreateNew)
-    .value("Truncate",     IO_Mode::Truncate)
-    ;
-  
-  //________________________________________________________
-  // Specialisation of overloaded methods
-
-  // std::vector<std::string> (IO_Mode::*names1)() 
-  //   = &IO_Mode::names;
-  // std::vector<std::string> (IO_Mode::*names2)(IO_Mode::Flags const &) 
-  //   = &IO_Mode::names;
-  // std::vector<std::string> (IO_Mode::*names3)(int const &) 
-  //   = &IO_Mode::names;
-  void (IO_Mode::*summary1)() 
-    = &IO_Mode::summary;
-  void (IO_Mode::*summary2)(std::ostream &) 
-    = &IO_Mode::summary;
-  
-  //________________________________________________________
-  // Bindings for class and its methods
-
-  boost::python::class_<IO_Mode>("IO_Mode")
-    // Construction
-    .def( boost::python::init<>())
-    .def( boost::python::init<IO_Mode::Flags>())
-    .def( boost::python::init<int>())
-    .def( boost::python::init<IO_Mode>())
-    // Parameter access
-    .def("flags",
-	 &IO_Mode::flags,
-	 "Get object I/O mode flags.")
-    .def("setFlag",
-	 &IO_Mode::setFlag,
-	 "Set object I/O mode flag.")
-    .def("setFlags",
-	 &IO_Mode::setFlags,
-	 "Set object I/O mode flags. ")
-    .def("addFlag",
-	 &IO_Mode::addFlag,
-	 "Add flag to the current seetings.")
-    .def("removeFlag",
-	 &IO_Mode::removeFlag,
-	 "Remove flag from the current seetings.")
-    .def("resetFlags",
-	 &IO_Mode::resetFlags,
-	 "Reset the object I/O mode flags.")
-    // .def("names",
-    // 	 &names1,
-    // 	 "Get array containing the available flag names.")
-    .def("className",
-	 &IO_Mode::className,
-	 "Get the name of the class.")
-    // Methods
-    .def("summary",
-	 summary1,
-	 "Summary of the object's internal parameters and status.")
-    .def("summary",
-	 summary2,
-	 "Summary of the object's internal parameters and status.")
-    ;
-}

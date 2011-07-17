@@ -134,6 +134,8 @@ namespace DAL {
     os << "-- Table type    = " << itsFiletype.name() << std::endl;
     os << "-- nof. rows     = " << getNumberOfRows()  << std::endl;
     os << "-- nof. columns  = " << nofColumns()       << std::endl;
+    os << "-- nof. records  = " << nofRecords()       << std::endl;
+    os << "-- nof. fields   = " << nofFields()        << std::endl;
     
     
     /* If the table contains a non-zero number of columns, list their names.
@@ -153,8 +155,6 @@ namespace DAL {
     if (itsFiletype.type()==dalFileType::HDF5) {
       os << "-- HDF5 file ID  = " << itsFileID    << std::endl;
       os << "-- HDF5 table ID = " << itsTableID   << std::endl;
-      os << "-- nof. fields   = " << nfields      << std::endl;
-      os << "-- nof. records  = " << nofRecords_p << std::endl;
     }
   }
   
@@ -1635,24 +1635,24 @@ namespace DAL {
   {
     if (itsFiletype.type()==dalFileType::HDF5)
       {
-        size_t * field_sizes = NULL;
-        size_t * field_offsets = NULL;
-        size_t * size_out = NULL;
-
         // retrieve the input fields needed for the append_records call
         H5TBget_table_info ( itsFileID, name.c_str(), &nfields, &nofRecords_p );
 
-        field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-        field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-        size_out = (size_t*)malloc( sizeof(size_t) );
+        size_t * field_sizes   = new size_t[nfields];
+        size_t * field_offsets = new size_t[nfields];
+        size_t * size_out      = new size_t[1];
         itsFieldNames = (char**)malloc( nfields * sizeof(char*) );
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
-          }
-
-        status = H5TBget_field_info( itsFileID, name.c_str(), itsFieldNames,
-                                     field_sizes, field_offsets, size_out );
+ 
+	for (unsigned int ii=0; ii<nfields; ii++) {
+	  itsFieldNames[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
+	}
+	
+        status = H5TBget_field_info (itsFileID,
+				     name.c_str(),
+				     itsFieldNames,
+                                     field_sizes,
+				     field_offsets,
+				     size_out);
 
         hsize_t start = nstart;
         hsize_t nrecs = numberRecs;
@@ -1662,82 +1662,77 @@ namespace DAL {
         status = H5TBread_records( itsFileID, name.c_str(), start, nrecs,
                                    size_out[0], field_offsets, field_sizes,
                                    data_out );
+	/* Release allocated memory */
+        delete [] field_sizes;
+        delete [] field_offsets;
+        delete [] size_out;
 
-        free(field_sizes);
-        free(field_offsets);
-        free(size_out);
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            free(itsFieldNames[ii]);
-          }
+        for (unsigned int ii=0; ii<nfields; ii++) {
+	  free(itsFieldNames[ii]);
+	}
         free(itsFieldNames);
-        if (status < 0)
-          {
-            std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
-                      << " Make sure the buffer is smaller than the size of the "
-                      << "table." << endl;
-          }
+
+        if (status < 0) {
+	  std::cerr << "[dalTable::readRows]"
+		    << " Problem reading records. Row buffer may be too big."
+		    << " Make sure the buffer is smaller than the size of the table."
+		    << std::endl;
+	}
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
-		  << ".  Sorry.\n";
-      }
+    else {
+      std::cerr << "Operation not yet supported for type "
+		<< itsFiletype.name()
+		<< ". Sorry."
+		<< std::endl;
+    }
   }
 
 #ifdef DAL_WITH_CASA
-  // ---------------------------------------------------------- findAttribute
 
+  //_____________________________________________________________________________
+  //                                                                findAttribute
+  
   /*!
-  \brief Find an attribute.
-
-  Look for the prescence of an attribute.
-
-  \param attrname The name of the attribute you want to find.
-  \return True if found.  False if not found.
+    \param attrname       -- The name of the attribute you want to find.
+    \return haveAttribute -- \e True if found. \e False if not found.
   */
   casa::Bool dalTable::findAttribute( std::string attrname )
   {
-    if (itsFiletype.type()==dalFileType::HDF5)
-      {
-        if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 )
-          {
-            std::cerr << "Attribute " << attrname << " not found." << endl;
-            return false;
-          }
-        else
-          {
-            return true;
-          }
+    if (itsFiletype.type()==dalFileType::HDF5) {
+      if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 ) {
+	std::cerr << "Attribute " << attrname << " not found." << endl;
+	return false;
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << itsFiletype.name()
-		  << ".  Sorry.\n";
-        return false;
+      else {
+	return true;
       }
+    }
+    else {
+      std::cerr << "Operation not yet supported for type " << itsFiletype.name()
+		<< ".  Sorry.\n";
+      return false;
+    }
   }
 #endif
-
-  // ---------------------------------------------------------- getAttribute
-
+  
+  //_____________________________________________________________________________
+  //                                                                 getAttribute
+  
   /*!
-  \brief Get the value of an attribute.
-
-  Get the value of a table attribute.
-
-  \param attrname The name of the attribute you want to read.
-  \return A pointer to the attribute data.
+    \brief Get the value of an attribute.
+    
+    \param attrname The name of the attribute you want to read.
+    \return A pointer to the attribute data.
   */
-  void * dalTable::getAttribute( std::string attrname )
+  void * dalTable::getAttribute (std::string attrname )
   {
-
+    
     if (itsFiletype.type()==dalFileType::HDF5)
       {
         hsize_t dims;
         H5T_class_t type_class;
         size_t type_size;
-
+	
         // Check if attribute exists
         if ( H5Aexists( itsTableID, attrname.c_str() ) <= 0 )
           {
@@ -1832,8 +1827,9 @@ namespace DAL {
 
 #ifdef DAL_WITH_CASA
 
-  // ---------------------------------------------------------- GetKeyword
-
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
 
@@ -1868,48 +1864,44 @@ namespace DAL {
     return casa::True;
   }
 
-  // ---------------------------------------------------------- GetKeyword
-
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
-
-    Retrieve a casa keykword.
 
     \param KeywordName Name of the keyword to retrieve.
     \param result Keyword value.
     \return Casa boolean value. True on success. False on fail.
    */
 
-  casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
-                                  casa::Double *result)
+  casa::Bool dalTable::GetKeyword (casa::String const KeywordName,
+				   casa::Double *result)
   {
 #ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
-    try
-      {
-        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
-          {
-            std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
-            return casa::False;
-          };
-        *result = itsCasaTable->keywordSet().asDouble(KeywordName);
-      }
-    catch (casa::AipsError x)
-      {
-        std::cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
-        return casa::False;
-      };
+    try {
+      if (!itsCasaTable->keywordSet().isDefined(KeywordName))
+	{
+	  std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
+	    "\" does not exist" << endl;
+	  return casa::False;
+	};
+      *result = itsCasaTable->keywordSet().asDouble(KeywordName);
+    }
+    catch (casa::AipsError x) {
+      std::cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    };
     return casa::True;
   }
-
-  // ---------------------------------------------------------- GetKeyword
-
+  
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
-
-    Retrieve a casa keykword.
 
     \param KeywordName Name of the keyword to retrieve.
     \param result Keyword value.
@@ -1940,12 +1932,11 @@ namespace DAL {
     return casa::True;
   }
 
-  // ---------------------------------------------------------- GetKeyword
-
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
-
-    Retrieve a casa keykword.
 
     \param KeywordName Name of the keyword to retrieve.
     \param result Keyword value.
@@ -1976,12 +1967,11 @@ namespace DAL {
     return casa::True;
   }
 
-  // ---------------------------------------------------------- GetKeyword
-
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
-
-    Retrieve a casa keykword.
 
     \param KeywordName Name of the keyword to retrieve.
     \param result Keyword value.
@@ -2012,12 +2002,11 @@ namespace DAL {
     return casa::True;
   }
 
-  // ---------------------------------------------------------- GetKeyword
-
+  //_____________________________________________________________________________
+  //                                                                   GetKeyword
+  
   /*!
     \brief Retrieve a casa keykword.
-
-    Retrieve a casa keykword.
 
     \param KeywordName Name of the keyword to retrieve.
     \param result Keyword value.
@@ -2049,53 +2038,48 @@ namespace DAL {
   }
 
 
-  // ---------------------------------------------------------- GetKeywordType
-
-  // ==============================================================================
-  // Get the type of the given keyword
-  // ==============================================================================
+  //_____________________________________________________________________________
+  //                                                               GetKeywordType
+  
   /*!
     \brief Get the type of the given casa keyword.
-
-    Get the type of the given casa keyword.
 
     \param KeywordName Name of the keyword to retrieve.
     \return String containing the keyword type.
    */
 
-  casa::String dalTable::GetKeywordType(casa::String const KeywordName)
+  casa::String dalTable::GetKeywordType (casa::String const KeywordName)
   {
-    try
-      {
-        if (!itsCasaTable->keywordSet().isDefined(KeywordName))
-          {
-            std::cerr << "dalTable::GetKeywordType: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
-            return "";
-          };
-        casa::DataType type = itsCasaTable->keywordSet().dataType(KeywordName);
-        switch (type)
-          {
-          case casa::TpString:
-            return "String";
-          case casa::TpFloat:
-            return "Float";
-          case casa::TpDouble:
-            return "Double";
-          case casa::TpDComplex:
-            return "DComplex";
-          case casa::TpArrayDouble:
-            return "Array<Double>";
-          case casa::TpArrayDComplex:
-            return "Array<DComplex>";
-          case casa::TpInt:
-            return "Int";
-          case casa::TpUInt:
-            return "uInt";
-          default:
-            return "unknown";
-          }
-      }
+    try {
+      if (!itsCasaTable->keywordSet().isDefined(KeywordName))
+	{
+	  std::cerr << "dalTable::GetKeywordType: Keyword named \"" << KeywordName <<
+	    "\" does not exist" << endl;
+	  return "";
+	};
+      casa::DataType type = itsCasaTable->keywordSet().dataType(KeywordName);
+      switch (type)
+	{
+	case casa::TpString:
+	  return "String";
+	case casa::TpFloat:
+	  return "Float";
+	case casa::TpDouble:
+	  return "Double";
+	case casa::TpDComplex:
+	  return "DComplex";
+	case casa::TpArrayDouble:
+	  return "Array<Double>";
+	case casa::TpArrayDComplex:
+	  return "Array<DComplex>";
+	case casa::TpInt:
+	  return "Int";
+	case casa::TpUInt:
+	  return "uInt";
+	default:
+	  return "unknown";
+	}
+    }
     catch (casa::AipsError x)
       {
         std::cerr << "dalTable::GetKeywordType: " << x.getMesg() << endl;
@@ -2103,5 +2087,5 @@ namespace DAL {
       };
   }
 #endif // DAL_WITH_CASA
-
+  
 } // end namespace DAL

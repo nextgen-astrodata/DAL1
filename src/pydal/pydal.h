@@ -37,17 +37,13 @@
 
 */
 
-// === core =====================================================================
+  // ============================================================================
+  //
+  //  [core] Core classes
+  //
+  // ============================================================================
 
-#include <core/dalArray.h>
-#include <core/dalColumn.h>
 #include <core/dalData.h>
-#include <core/dalDataset.h>
-#include <core/dalFileType.h>
-#include <core/dalGroup.h>
-#include <core/dalTable.h>
-#include <core/IO_Mode.h>
-#include <core/HDF5Hyperslab.h>
 
 //! Bindings for DAL::dalArray
 void export_dalArray ();
@@ -68,12 +64,11 @@ void export_IO_Mode ();
 //! Bindings for DAL::HDF5Hyperslab
 void export_HDF5Hyperslab ();
 
-// === coordinates ==============================================================
-
-#include <coordinates/Angle.h>
-#include <coordinates/RaDec.h>
-#include <coordinates/Stokes.h>
-#include <coordinates/Coordinate.h>
+  // ============================================================================
+  //
+  //  [coordinates] Representations of World Coordinates
+  //
+  // ============================================================================
 
 //! Bindings for DAL::Angle
 void export_Angle ();
@@ -84,15 +79,12 @@ void export_Stokes ();
 //! Bindings for DAL::Coordinate
 void export_Coordinate ();
 
-// === data_common ==============================================================
-
-#include <data_common/CommonAttributes.h>
-#include <data_common/Filename.h>
-#include <data_common/HDF5Measure.h>
-#include <data_common/HDF5Quantity.h>
-#include <data_common/SAS_Settings.h>
-#include <data_common/Timestamp.h>
-
+  // ============================================================================
+  //
+  //  [data_common] Common dataset support
+  //
+  // ============================================================================
+  
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
 //! Bindings for DAL::Filename
@@ -106,8 +98,12 @@ void export_SAS_Settings ();
 //! Bindings for DAL::Timestamp
 void export_Timestamp ();
 
-// === data_hl ==================================================================
-
+  // ============================================================================
+  //
+  //  [data_hl] High-level interfaces to specific data
+  //
+  // ============================================================================
+  
 //! Bindings for DAL::BeamFormed
 void export_BeamFormed();
 //! Bindings for DAL::BeamGroup
@@ -122,5 +118,8 @@ void export_TBB_StationGroup();
 void export_TBB_DipoleDataset();
 //! Bindings for DAL::LOPES_EventFile
 void export_LOPES_EventFile();
+
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#define NO_IMPORT_ARRAY
 
 #endif

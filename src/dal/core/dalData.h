@@ -70,7 +70,7 @@ namespace DAL {
     //! Shape of the data array
     std::vector<int> itsShape;
     //! Number of rows inside the array.
-    long nrows;
+    long itsNofRows;
     
     // === Construction =======================================================
     
@@ -79,13 +79,13 @@ namespace DAL {
     
     //! Argumented constructor with a specific file type.
     dalData (dalFileType::Type const &filetype,
-	     std::string const &lcldatatype,
+	     std::string const &datatype,
 	     std::vector<int> const &shape,
 	     long const &nofRows);
     
     //! Argumented constructor with a specific file type.
     dalData (dalFileType const &filetype,
-	     std::string const &lcldatatype,
+	     std::string const &datatype,
 	     std::vector<int> const &shape,
 	     long const &nofRows);
     

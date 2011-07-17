@@ -19,64 +19,61 @@
  ***************************************************************************/
 
 /*!
-  \file pydal_core.cc
+  \file pydal_Angle.cc
 
   \ingroup DAL
   \ingroup pydal
 
-  \brief Python bindings DAL C++ classes in the \e core directory
+  \brief Python bindings for the DAL::Angle class
 
   \author Lars B&auml;hren
 */
 
 // DAL headers
 #include "pydal.h"
-#include <core/HDF5Hyperslab.h>
+#include <coordinates/Angle.h>
 
-// namespace usage
-using DAL::HDF5Hyperslab;
+using DAL::Angle;
 
+// ==============================================================================
+//
+//                                                                          Angle
+//
+// ==============================================================================
 
-void export_HDF5Hyperslab ()
+void export_Angle ()
 {
-
   //________________________________________________________
   // Specialisation of overloaded methods
 
-  void (HDF5Hyperslab::*summary1)() 
-    = &HDF5Hyperslab::summary;
-  void (HDF5Hyperslab::*summary2)(std::ostream &) 
-    = &HDF5Hyperslab::summary;
-  
+  void (Angle::*summary1)() 
+    = &Angle::summary;
+  void (Angle::*summary2)(std::ostream &) 
+    = &Angle::summary;
+
   //________________________________________________________
   // Bindings for class and its methods
 
-  boost::python::class_<HDF5Hyperslab>("HDF5Hyperslab")
+  boost::python::class_<Angle>("Angle")
+    // Construction
     .def( boost::python::init<>())
-    .def( boost::python::init<int const &>())
+    .def( boost::python::init<double const &, bool const &>())
+    .def( boost::python::init<Angle>())
     // Parameter access
-    .def( "shape", &HDF5Hyperslab::rank,
-	  "Get the rank of the array to which the hyperslab is applied.")
-    .def( "start", &HDF5Hyperslab::start,
-	  "Get the offset of the starting element of the specified hyperslab.")
-    .def( "setStart", &HDF5Hyperslab::setStart,
-	  "Set the offset of the starting element of the specified hyperslab.")
-    .def( "stride", &HDF5Hyperslab::stride,
-	  "Get the number of elements to separate each element or block.")
-    .def( "setStride", &HDF5Hyperslab::setStride,
-	  "Set the number of elements to separate each element or block.")
-    .def( "count", &HDF5Hyperslab::count,
-	  "Get the number of elements or blocks to select along each dimension.")
-    .def( "setCount", &HDF5Hyperslab::setCount,
-	  "Set the number of elements or blocks to select along each dimension.")
-    .def( "block", &HDF5Hyperslab::block,
-	  "Get the size of the element block selected from the dataspace.")
-    .def( "setBlock", &HDF5Hyperslab::setBlock,
-	  "Set the size of the element block selected from the dataspace.")
+    .def("setAngle", &Angle::setAngle, "Set the angle.")
+    .def("rad",      &Angle::rad,      "Get the angle in radian.")
+    .def("deg",      &Angle::deg,      "Get the angle in degrees.")
+    .def("hms",      &Angle::hms,      "Get the angle as formatted string (HH:MM:SS)")
+    .def("className",
+	 &Angle::className,
+	 "Get the name of the class.")
     // Methods
-    .def( "className", &HDF5Hyperslab::className,
-	  "Get the name of the class.")
-    .def("summary", summary1)
-    .def("summary", summary2)
-    ; 
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    // Static Public Member Functions
+    ;
 }

@@ -31,9 +31,11 @@
   \date 2008/09/21
 */
 
+#include <core/dalData.h>
 #include <core/dalDataset.h>
 #include <core/IO_Mode.h>
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -131,7 +133,7 @@ int test_open (std::string const &filename)
 
   int nofFailedTests  = 0;
 
-  cout << "--> Opening dataset " << filename << " ..." << std::endl;
+  cout << "--> Opening dataset " << filename << " ..." << endl;
 
   DAL::dalDataset dataset (filename);
   dataset.summary();
@@ -246,7 +248,7 @@ int test_attributes (std::map<std::string,std::string> &filenames)
 int test_MS (std::string const &filename,
 	     std::string const &tablename="MAIN")
 {
-  cout << "\n[tdalDataset::test_MS]\n" << endl;
+  cout << "\n[tdalDataset::test_MS]" << endl;
 
   int nofFailedTests = 0;
 
@@ -254,7 +256,7 @@ int test_MS (std::string const &filename,
     Open MeasurementSet file
   */
   
-  cout << "[1] Opening MeasurementSet ..." << endl;
+  cout << "\n[1] Opening MeasurementSet ..." << endl;
 
   DAL::dalDataset ms (filename);
   ms.summary();
@@ -265,7 +267,7 @@ int test_MS (std::string const &filename,
     the auto-correlation products.
   */
   
-  cout << "[2] Set Filter used when acessing table ..." << endl;
+  cout << "\n[2] Set Filter used when acessing table ..." << endl;
 
   try {  
     std::string columns           = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
@@ -284,7 +286,7 @@ int test_MS (std::string const &filename,
     data set.
   */
 
-  cout << "[3] Open table " << tablename << " ..." << endl;
+  cout << "\n[3] Open table " << tablename << " ..." << endl;
 
   try {
     DAL::dalTable * table = ms.openTable (tablename);
@@ -298,16 +300,60 @@ int test_MS (std::string const &filename,
     Get data from the TIME column of the MAIN table.
   */
   
-  cout << "[4] Get data from the TIME column of the MAIN table ..." << endl;
+  cout << "\n[4] Get data from the TIME column of the MAIN table ..." << endl;
 
   try {
-    cout << "--> Opening table ..." << std::endl;
+    cout << "--> Opening table ..." << endl;
     DAL::dalTable * table = ms.openTable (tablename);
     //
-    cout << "--> Opening table column ..." << std::endl;
-    DAL::dalColumn * columTime = table->getColumn("TIME");
-    // 
-    columTime->summary();
+    cout << "--> Opening table column ..." << endl;
+    DAL::dalColumn * column = table->getColumn("TIME");
+    //
+    unsigned int nofRows = 10;
+    if ((column->nofRows())<nofRows) {
+      nofRows = column->nofRows();
+    }
+
+    /* _____________________________________________________
+     * Retrieve column data, version 1
+     */
+
+    cout << "--> Retrieve column data, version 1 ..." << endl;
+
+    DAL::dalData * columnData = column->data();
+    
+    cout << " .. Column data = [";
+    for (unsigned int n=0; n<nofRows; ++n) {
+      std::cout << " " << *(double*)(columnData->get(n));
+    }
+    std::cout << " ]" << std::endl;
+
+    /* _____________________________________________________
+     * Retrieve column data, version 2
+     */
+
+    cout << "--> Retrieve column data, version 2 ..." << endl;
+    
+    std::vector<double> data;
+    column->readData (data);
+    //
+    cout << " .. Column data = [";
+    for (unsigned int n=0; n<nofRows; ++n) {
+      std::cout << " " << data[n];
+    }
+    std::cout << " ]" << std::endl;
+
+    /* _____________________________________________________
+     * Retrieve column data, version 3
+     */
+    
+    // cout << "--> Retrieve column data, version 3 ..." << endl;
+    
+    // {
+    //   double * data;
+    //   column->readData (data);
+    // }
+
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -358,7 +404,13 @@ int main (int argc, char *argv[])
   nofFailedTests += test_attributes (filenames);
 
   if (haveDataset) {
+
     nofFailedTests += test_open (filename);
+
+    if (filetype.type()==DAL::dalFileType::CASA_MS) {
+      nofFailedTests += test_MS (filename);
+    }
+
   }
   
   return nofFailedTests;

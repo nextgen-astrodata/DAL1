@@ -53,7 +53,7 @@ namespace DAL {
     init (dalFileType(filetype));
     itsDatatype   = datatype;
     itsShape      = shape;
-    nrows         = nofRows;
+    itsNofRows    = nofRows;
   }
   
   //_____________________________________________________________________________
@@ -74,7 +74,7 @@ namespace DAL {
 
     itsDatatype = datatype;
     itsShape    = shape;
-    nrows       = nofRows;
+    itsNofRows  = nofRows;
   }
   
   // ============================================================================
@@ -136,14 +136,13 @@ namespace DAL {
     long bb = 1;
     
     itsShape.insert( itsShape.begin(), 1 );
-    for (unsigned int dim=0; dim<itsShape.size()-1; dim++)
-      {
-        for (unsigned int ss=dim; ss>0; ss--)
-          bb *= itsShape[ ss ];
-
-        index += indices[dim]*bb;
-        bb=1;
-      }
+    for (unsigned int dim=0; dim<itsShape.size()-1; dim++) {
+      for (unsigned int ss=dim; ss>0; ss--)
+	bb *= itsShape[ ss ];
+      
+      index += indices[dim]*bb;
+      bb=1;
+    }
     itsShape.erase( itsShape.begin() );
     return index;
   }
@@ -201,7 +200,8 @@ namespace DAL {
     return index;
   }
 
-  // ------------------------------------------------------------ get
+  //_____________________________________________________________________________
+  //                                                                          get
   
   /*!
     \param idx1 Optional parameter specifying the first index.
@@ -220,23 +220,20 @@ namespace DAL {
     // Determine the correct index value, depending on the order
     //   of the underlying array (determined by the filetype)
     //
-    if ( itsFiletype.isCASA() )
-      {
-        index = fortran_index( idx1, idx2, idx3 );
-      }
-    else if ( itsFiletype.isHDF5() )
-      {
-        index = c_index( idx1, idx2, idx3 );
-      }
-    else
-      {
-        std::cerr << "ERROR: file type not supported in dalData object.\n";
-        return NULL;
-      }
-
+    if ( itsFiletype.isCASA() ) {
+      index = fortran_index( idx1, idx2, idx3 );
+    }
+    else if ( itsFiletype.isHDF5() ) {
+      index = c_index( idx1, idx2, idx3 );
+    }
+    else {
+      std::cerr << "ERROR: file type not supported in dalData object.\n";
+      return NULL;
+    }
+    
     if ( dal_COMPLEX == itsDatatype )
       return (&(((std::complex<float>*)data)[ index ]));
-
+    
     else if ( dal_COMPLEX_CHAR == itsDatatype )
       return (&(((std::complex<char>*)data)[ index ]));
 
@@ -270,6 +267,9 @@ namespace DAL {
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void dalData::init (dalFileType const &filetype)
   {
     itsFiletype   = filetype;

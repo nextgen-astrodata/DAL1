@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (lbaehren@gmail.com)                                     *
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,98 +19,99 @@
  ***************************************************************************/
 
 /*!
-  \file pydal_core_dalArray.cc
+  \file pydal_core_IO_Mode.cc
 
   \ingroup DAL
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalFileType class
+  \brief Python bindings DAL C++ classes in the \e core directory
 
   \author Lars B&auml;hren
 */
 
+// DAL headers
 #include "pydal.h"
-#include <core/dalFileType.h>
+#include <core/IO_Mode.h>
 
-using DAL::dalFileType;
+// namespace usage
+using DAL::IO_Mode;
 
 // ==============================================================================
 //
-//                                                      Wrapper for class methods
+//                                                                        IO_Mode
 //
 // ==============================================================================
 
-void export_dalFileType ()
-{  
+void export_IO_Mode ()
+{
   //________________________________________________________
-  // Enumeration: Stokes component
+  // Enumeration: I/O mode flags
 
-  boost::python::enum_<dalFileType::Type>("Type")
-    .value("UNDEFINED",  dalFileType::UNDEFINED)
-    .value("FITS",       dalFileType::FITS)
-    .value("HDF5",       dalFileType::HDF5)
-    .value("HDF5",       dalFileType::HDF5)
-    .value("CASA_MS",    dalFileType::CASA_MS)
-    .value("CASA_IMAGE", dalFileType::CASA_IMAGE)
+  boost::python::enum_<IO_Mode::Flags>("Flags")
+    .value("ReadOnly",     IO_Mode::ReadOnly)
+    .value("ReadWrite",    IO_Mode::ReadWrite)
+    .value("WriteOnly",    IO_Mode::WriteOnly)
+    .value("Open",         IO_Mode::Open)
+    .value("OpenOrCreate", IO_Mode::OpenOrCreate)
+    .value("Create",       IO_Mode::Create)
+    .value("CreateNew",    IO_Mode::CreateNew)
+    .value("Truncate",     IO_Mode::Truncate)
     ;
-
+  
   //________________________________________________________
   // Specialisation of overloaded methods
 
-  bool (dalFileType::*setType1)(dalFileType::Type const &) 
-    = &dalFileType::setType;
-  bool (dalFileType::*setType2)(std::string const &) 
-    = &dalFileType::setType;
-  void (dalFileType::*summary1)() 
-    = &dalFileType::summary;
-  void (dalFileType::*summary2)(std::ostream &) 
-    = &dalFileType::summary;
-
+  // std::vector<std::string> (IO_Mode::*names1)() 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names2)(IO_Mode::Flags const &) 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names3)(int const &) 
+  //   = &IO_Mode::names;
+  void (IO_Mode::*summary1)() 
+    = &IO_Mode::summary;
+  void (IO_Mode::*summary2)(std::ostream &) 
+    = &IO_Mode::summary;
+  
   //________________________________________________________
   // Bindings for class and its methods
 
-  boost::python::class_<dalFileType>("dalFileType")
+  boost::python::class_<IO_Mode>("IO_Mode")
     // Construction
     .def( boost::python::init<>())
-    .def( boost::python::init<dalFileType::Type const &>())
-    .def( boost::python::init<std::string const &>())
-    .def( boost::python::init<dalFileType const &>())
+    .def( boost::python::init<IO_Mode::Flags>())
+    .def( boost::python::init<int>())
+    .def( boost::python::init<IO_Mode>())
     // Parameter access
-    .def("type",
-	 &dalFileType::type,
-	 "Get file type.")
-    .def("setType",
-	 setType1,
-	 "Set the file type.")
-    .def("setType",
-	 setType2,
-	 "Set the file type.")
-    .def("name",
-	 &dalFileType::name,
-	 "Get file type as name.")
-    .def("isFITS",
-    	 &dalFileType::isFITS,
-    	 "Is the file of type FITS?")
-    .def("isHDF5",
-    	 &dalFileType::isHDF5,
-    	 "Is the file of type HDF5?")
-    .def("isCASA",
-    	 &dalFileType::isCASA,
-    	 "Is the file of type CASA?")
+    .def("flags",
+	 &IO_Mode::flags,
+	 "Get object I/O mode flags.")
+    .def("setFlag",
+	 &IO_Mode::setFlag,
+	 "Set object I/O mode flag.")
+    .def("setFlags",
+	 &IO_Mode::setFlags,
+	 "Set object I/O mode flags. ")
+    .def("addFlag",
+	 &IO_Mode::addFlag,
+	 "Add flag to the current seetings.")
+    .def("removeFlag",
+	 &IO_Mode::removeFlag,
+	 "Remove flag from the current seetings.")
+    .def("resetFlags",
+	 &IO_Mode::resetFlags,
+	 "Reset the object I/O mode flags.")
+    // .def("names",
+    // 	 &names1,
+    // 	 "Get array containing the available flag names.")
     .def("className",
-	 &dalFileType::className,
+	 &IO_Mode::className,
 	 "Get the name of the class.")
-    // Public methods
+    // Methods
     .def("summary",
 	 summary1,
 	 "Summary of the object's internal parameters and status.")
     .def("summary",
 	 summary2,
 	 "Summary of the object's internal parameters and status.")
-    // Static methods 
-    .staticmethod("getMap")
-    .staticmethod("getType")
-    .staticmethod("getName")
     ;
 }
-

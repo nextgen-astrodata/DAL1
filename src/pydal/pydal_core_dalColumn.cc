@@ -30,6 +30,7 @@
 */
 
 #include "pydal.h"
+#include <core/dalColumn.h>
 
 using DAL::dalColumn;
 
@@ -85,18 +86,18 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
   if (itsFiletype.type()==DAL::dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
     
-    if ("unknown" == casa_datatype) {
+    if ("unknown" == itsCasaDatatype) {
       boost::python::list lcllist;
       return num_util::makeNum(lcllist);
     }
     
     try {
       if ( isScalar() ) {
-	switch ( casa_col_desc.dataType() )
+	switch ( itsColumnDesc.dataType() )
 	  {
 	  case casa::TpInt:
 	    {
-	      rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
+	      rosc_int = new casa::ROScalarColumn<casa::Int>( *itsROTableColumn );
 	      casa::Vector<int> data = rosc_int->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
@@ -105,7 +106,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpBool:
 	    {
-	      rosc_bool = new casa::ROScalarColumn<bool>( *casa_column );
+	      rosc_bool = new casa::ROScalarColumn<bool>( *itsROTableColumn );
 	      casa::Vector<bool> data = rosc_bool->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_BOOL, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
@@ -114,7 +115,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpDouble:
 	    {
-	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
+	      rosc_dbl = new casa::ROScalarColumn<casa::Double>( *itsROTableColumn );
 	      casa::Vector<double> data = rosc_dbl->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
 	      itsColumnData->data = (double *)data.getStorage(deleteIt);
@@ -123,17 +124,17 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpComplex:
 	    {
-	      rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
-	      scalar_vals_comp = rosc_comp->getColumn();
+	      rosc_comp = new casa::ROScalarColumn<casa::Complex>( *itsROTableColumn );
+	      casa::Vector<casa::Complex> data = rosc_comp->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
 	      itsColumnData->data =
-		(std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+		(std::complex<float> *)data.getStorage(deleteIt);
 	      return itsColumnData->get_boost3( offset, length );
 	    }
 	    break;
 	  case casa::TpString:
 	    {
-	      rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
+	      rosc_string = new casa::ROScalarColumn<casa::String>( *itsROTableColumn );
 	      casa::Vector<casa::String> data = rosc_string->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
 	      itsColumnData->data =
@@ -156,11 +157,11 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	  }
       }
       else if ( isArray() ) {
-	switch ( casa_col_desc.dataType() )
+	switch ( itsColumnDesc.dataType() )
 	  {
 	  case casa::TpInt:
 	    {
-	      roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
+	      roac_int = new casa::ROArrayColumn<casa::Int>( *itsROTableColumn );
 	      casa::Array<int> data = roac_int->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_INT, shape(), nofRows() );
 	      itsColumnData->data = (int *)data.getStorage(deleteIt);
@@ -169,7 +170,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpDouble:
 	    {
-	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
+	      roac_dbl = new casa::ROArrayColumn<casa::Double>( *itsROTableColumn );
 	      casa::Array<double> data = roac_dbl->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_DOUBLE, shape(), nofRows() );
 	      itsColumnData->data = (double *)data.getStorage(deleteIt);
@@ -178,7 +179,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpComplex:
 	    {
-	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *itsROTableColumn );
 	      casa::Array<casa::Complex> data = roac_comp->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_COMPLEX, shape(), nofRows() );
 	      itsColumnData->data =
@@ -188,7 +189,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 	    break;
 	  case casa::TpString:
 	    {
-	      roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
+	      roac_string = new casa::ROArrayColumn<casa::String>( *itsROTableColumn );
 	      casa::Array<casa::String> data = roac_string->getColumn();
 	      itsColumnData = new dalData( itsFiletype, dal_STRING, shape(), nofRows() );
 	      itsColumnData->data = (std::string *)data.getStorage(deleteIt);
@@ -256,14 +257,45 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 
 void export_dalColumn ()
 {
+  
+  //________________________________________________________
+  // Specialisation of overloaded methods
+  
+  void (dalColumn::*summary1)() 
+    = &dalColumn::summary;
+  void (dalColumn::*summary2)(std::ostream &) 
+    = &dalColumn::summary;
+  void (dalColumn::*setFileType1)(std::string const &) 
+    = &dalColumn::setFiletype;
+  void (dalColumn::*setFileType2)(DAL::dalFileType const &) 
+    = &dalColumn::setFiletype;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+  
   boost::python::class_<dalColumn>("dalColumn")
+    /* Construction */
     .def( boost::python::init<>())
-    .def( boost::python::init<string>())
-    .def( boost::python::init<string const &,string const &>())
+    .def( boost::python::init<string const &>())
+    .def( boost::python::init<string const &,
+			      string const &>())
+    .def( boost::python::init<hid_t const &,
+			      hid_t const &,
+			      DAL::dalFileType const &,
+			      std::string const &,
+			      std::string const &,
+			      std::string const &>())
+    /* Public methods */
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"
 	  "with a compound datatype.  For example, use this method if an \n"
 	  "individual column needs to contain an int, a float, and a short." )
+    .def( "setName", &dalColumn::setName,
+	  "Set the name of the column." )
+    .def( "setFileType", setFileType1,
+	  "Set the file type of the dataset containing the column." )
+    .def( "setFileType", setFileType2,
+	  "Set the file type of the dataset containing the column." )
     .def( "getName", &dalColumn::getName,
 	  "Return the name of the column." )
     .def( "getSize", &dalColumn::getSize,
@@ -278,6 +310,12 @@ void export_dalColumn ()
     .def( "data", &dalColumn::data_boost3,
 	  "Returns the column data into a numpy array.  With three parameters, \n"
 	  "it returns N elements beginning at offset O [data(O,N)]." )
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
 #ifdef DAL_WITH_CASA
     .def( "getDataType", &dalColumn::getDataType,
 	  "Return the datatype of the column (casa only)." )

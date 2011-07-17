@@ -46,35 +46,40 @@ namespace DAL {
   */
   class dalColumn
   {
-    dalFileType itsFiletype;      // "HDF5", "MSCASA" or "FITS"; for example
-    std::string name;          // Column name
-    std::string itsTablename;     // Table name
+    //! File type: CASA_MS, HDF5, FITS, etc.
+    dalFileType itsFiletype;
+    //! Name of the column
+    std::string name;
+    //! Name of the table
+    std::string itsTablename;
     std::string itsDatatype;   // Column datatype
-    int size;                  // Datatype size
-    uint num_of_rows;          // Number of rows in the column
+    //! Datatype size
+    int size;
+    //! Number of rows within this column
+    uint itsNofRows;
 
     //! HDF5 file object identifier
     hid_t itsFileID;
     //! HDF5 table object identifier
     hid_t itsTableID;
     //! HDF5 field count
-    hsize_t nofFields_p;
+    hsize_t itsNofFields;
     //! HDF5 record count
-    hsize_t nofRecords_p;
+    hsize_t itsNofRecords;
     //! Identifier for the column type
     hid_t coltype;
     //! HDF5 call return status
     herr_t  status;
-    
-    dalData * itsColumnData;  // object to hold column data
+    //! Object to hold the actual column data
+    dalData * itsColumnData;
     
 #ifdef DAL_WITH_CASA
     
     //! Column data type
-    std::string casa_datatype;
+    std::string itsCasaDatatype;
     //! Column descriptor
-    casa::ColumnDesc casa_col_desc;
-    casa::ROTableColumn * casa_column;
+    casa::ColumnDesc itsColumnDesc;
+    casa::ROTableColumn * itsROTableColumn;
     
     // COLUMNs
     casa::ROArrayColumn<int> * roac_int;
@@ -89,7 +94,6 @@ namespace DAL {
     casa::ROScalarColumn<casa::String> * rosc_string;
     
     // VECTORs
-    casa::Vector<casa::Complex> scalar_vals_comp;
     vector< std::complex< float > > stl_vec_comp;
     
     bool deleteIt;
@@ -109,17 +113,17 @@ namespace DAL {
     //! Default constructor
     dalColumn();
     //! Create a new complex column.
-    dalColumn (std::string complexcolname);
+    dalColumn (std::string const &complexcolname);
     //! Argumented constructor for a new column object.
     dalColumn (std::string const &colname,
 	       std::string const &coltype);
     //! Argumented constructor for a new column object.
-    dalColumn( hid_t fileid,
-	       hid_t tableid,
-	       dalFileType filetype,
-	       std::string lcl_tablename,
-	       std::string colname,
-	       std::string coldatatype );
+    dalColumn( hid_t const &fileid,
+	       hid_t const &tableid,
+	       dalFileType const &filetype,
+	       std::string const &tablename,
+	       std::string const &colname,
+	       std::string const &coldatatype );
     
 #ifdef DAL_WITH_CASA
     //! Create a new column object from a CASA table.
@@ -127,10 +131,11 @@ namespace DAL {
 	       std::string colname);
 #endif
     
-    // === Methods ==============================================================
+    // === Public methods =======================================================
     
-    void addMember (std::string member_name,
-		    std::string type);
+    //! Add a member to a compound column.
+    void addMember (std::string const &member_name,
+		    std::string const &type);
     /*!
       \brief Get the name of the column.
       \return name -- The name of the column.
@@ -141,8 +146,10 @@ namespace DAL {
     //! Set the name of the column.
     void setName(std::string colname);
     //! Set the file type of the dataset containing the column.
-    void setFileType (std::string type);
+    void setFiletype (std::string const &type);
+    //! Set the file type of the dataset containing the column.
     void setFiletype (dalFileType const &filetype);
+    //! Get the type of the data stored inside the column.
     std::string getDataType();
     int getSize();
     //! Close the column.
@@ -163,10 +170,113 @@ namespace DAL {
     uint nofRows ();
     //! Get the data object for the column.
     dalData * data (int &start,
-		    int &length);
+		    int &length)
+    {
+
+      switch (itsFiletype.type()) {
+#ifdef DAL_WITH_CASA
+      case dalFileType::CASA_MS:
+	{
+	  try {
+	    if ( isScalar() ) {
+	      return CasaData_scalar();
+	    }
+	    else if ( isArray() ) {
+	      return CasaData_array();
+	    }
+	    else {
+	      std::cerr << "dalColumn::data() Column is neither "
+			<< "scalar nor array.  "
+			<< "Do not know how to handle.\n";
+	      return NULL;
+	    }
+	  } catch (casa::AipsError x) {
+	    std::cerr << "ERROR: " << x.getMesg() << endl;
+	    return NULL;
+	  }
+	}
+	break;
+#endif
+      case dalFileType::HDF5:
+	{
+	  return H5data (start, length);
+	}
+	break;
+      default:
+	{
+	  std::cerr << "[dalColumn::data] Not yet supported for "
+		    << itsFiletype.name()
+		    << std::endl;
+	  return NULL;
+	}
+	break;
+      };
+      
+    }
     //! Get the data object for the column.
-    dalData * data();
-    
+    dalData * data() {
+      int start  = -1;
+      int length = -1;
+      return data (start, length);
+    }
+    /*!
+      \brief Retrieve data from the column
+      \param columnData -- Data stored inside the table column
+      \return status    -- Status of the operation; returns \e false in case
+              an error was encountered.
+    */
+    template <class T>
+      bool readData (std::vector<T> &columnData)
+      {
+	bool status        = true;
+	dalData * buffer   = data();
+	unsigned int nelem = nofRows();
+	/* Adjust the size of the array returning the data */
+	if (nelem>0) {
+	  columnData.resize(nelem);
+	} else {
+	  return false;
+	}
+	/* Copy data values */
+	for (unsigned int n=0; n<nelem; ++n) {
+	  columnData[n] = *(T*)(buffer->get(n));
+	}
+	/* Debugging feedback */
+	for (unsigned int n=0; n<10; ++n) {
+	  std::cout << columnData[n] << std::endl;
+	}
+	/* Return status */
+	return status;
+      }
+    /*!
+      \brief Retrieve data from the column
+      \param columnData -- Data stored inside the table column
+      \return status    -- Status of the operation; returns \e false in case
+              an error was encountered.
+    */
+    template <class T>
+      bool readData (T * columnData)
+      {
+	bool status = true;
+	
+	switch (itsFiletype.type()) {
+#ifdef DAL_WITH_CASA
+	case dalFileType::CASA_MS:
+	  status = readData_ms (columnData);
+	  break;
+#endif
+	case dalFileType::HDF5:
+	  columnData = NULL;
+	  status     = false;
+	  break;
+	default:
+	  columnData = NULL;
+	  status     = false;
+	  break;
+	};
+	
+	return status;
+      }    
     //! Provide a summary of the object's internal parameters and status
     inline void summary() {
       summary(std::cout);
@@ -179,9 +289,10 @@ namespace DAL {
 #ifdef PYTHON
     
     boost::python::tuple shape_boost();
-    boost::python::numeric::array data_boost1( );
-    boost::python::numeric::array data_boost2( int32_t length );
-    boost::python::numeric::array data_boost3( int64_t offset, int32_t length );
+    boost::python::numeric::array data_boost1 ();
+    boost::python::numeric::array data_boost2 (int32_t length);
+    boost::python::numeric::array data_boost3 (int64_t offset,
+					       int32_t length);
 
 #endif
 
@@ -192,6 +303,34 @@ namespace DAL {
     //! Initialize the object's internal parameters
     void init (std::string const &columnName="");
 
+#ifdef DAL_WITH_CASA
+
+    //! Read data from casacore MS file
+    template <class T>
+      bool readData_ms (T *columnData)
+      {
+	bool status = true;
+
+	/* Determine type of column cell: scalar or array */
+
+	if (itsColumnDesc.isScalar()) {
+	  casa::ROScalarColumn<T> readOnlyColumn;
+	  casa::Vector<T> data = readOnlyColumn.getColumn();
+	  columnData           = new T [data.nelements()];
+	  columnData           = (T *)data.getStorage(deleteIt);
+	} else if (itsColumnDesc.isArray()) {
+	  casa::ROArrayColumn<T> readOnlyColumn (*itsROTableColumn);
+	  casa::Array<T> data = readOnlyColumn.getColumn();
+	  columnData          = (T *)data.getStorage(deleteIt);
+	} else {
+	  status = false;
+	}
+	
+	return status;
+      }
+    
+#endif    
+    
   };  // dalColumn class
   
   

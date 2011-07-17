@@ -12,7 +12,10 @@ set (pydal_sources
   num_util.cc
   pydal.cc
   pydal_conversions.cc
-  pydal_coordinates.cc
+  coordinates/pydal_Angle.cc
+  coordinates/pydal_Coordinate.cc
+  coordinates/pydal_RaDec.cc
+  coordinates/pydal_Stokes.cc
   pydal_core.cc
   pydal_core_dalArray.cc
   pydal_core_dalColumn.cc
@@ -20,15 +23,22 @@ set (pydal_sources
   pydal_core_dalFileType.cc
   pydal_core_dalGroup.cc
   pydal_core_HDF5Hyperslab.cc
+  pydal_core_IO_Mode.cc
   pydal_core_dalTable.cc
   pydal_data_common.cc
   pydal_data_hl.cc
+  data_hl/pydal_BeamFormed.cc
+  data_hl/pydal_BeamGroup.cc
+  data_hl/pydal_TBB_Timeseries.cc
+  data_hl/pydal_TBB_DipoleDataset.cc
   )
 
 ##______________________________________________
 ## Compiler instructions
 
 remove_definitions (-dynamiclib -install_name)
+
+include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
 if (NUMPY_INCLUDES)
   include_directories (${NUMPY_INCLUDES})
