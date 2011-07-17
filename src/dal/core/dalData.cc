@@ -95,9 +95,10 @@ namespace DAL {
   void dalData::summary (std::ostream &os)
   {
     os << "[dalData] Summary of object properties"  << std::endl;
-    os << "-- File type   = " << itsFiletype.name() << std::endl;
-    os << "-- Data type   = " << itsDatatype        << std::endl;
-    os << "-- Array order = " << itsArrayOrder      << std::endl;
+    os << "-- File type      = " << itsFiletype.name() << std::endl;
+    os << "-- I/O mode flags = " << itsFlags.names()   << std::endl;
+    os << "-- Data type      = " << itsDatatype        << std::endl;
+    os << "-- Array order    = " << itsArrayOrder      << std::endl;
   }
   
   //_____________________________________________________________________________
