@@ -28,8 +28,31 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                dalObjectBase
+  
   dalObjectBase::dalObjectBase ()
-  {;}
+  {
+    itsObjectHandler = NULL;
+    itsFiletype      = dalFileType();
+    itsFlags         = IO_Mode();
+    itsName          = "";
+  }
+
+  //_____________________________________________________________________________
+  //                                                                dalObjectBase
+  
+  dalObjectBase::dalObjectBase (std::string const &name,
+				IO_Mode const &flags)
+  {
+    itsObjectHandler = NULL;
+    itsFiletype      = dalFileType();
+    itsFlags         = IO_Mode(flags);
+    itsName          = name;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                dalObjectBase
   
   /*!
     \param other -- Another dalObjectBase object from which to create this new
@@ -83,8 +106,10 @@ namespace DAL { // Namespace DAL -- begin
   */
   void dalObjectBase::copy (dalObjectBase const &other)
   {
-    itsFiletype = other.itsFiletype;
-    itsFlags    = other.itsFlags;
+    itsObjectHandler = other.itsObjectHandler;
+    itsFiletype      = other.itsFiletype;
+    itsFlags         = other.itsFlags;
+    itsName          = other.itsName;
   }
 
   // ============================================================================

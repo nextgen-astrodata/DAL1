@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup core
     
-    \brief Brief description for class DAL::dalObjectBase
+    \brief Basic interface and internal properties common to DAL classes.
     
     \author Lars B&auml;hren
 
@@ -47,10 +47,16 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li><a href="http://code.google.com/p/casacore">casacore library</a>
+      <li><a href="http://heasarc.gsfc.nasa.gov/fitsio">CFITSIO library</a>
+      <li><a href="http://www.hdfgroup.org/HDF5">HDF5 library</a>
     </ul>
     
     <h3>Synopsis</h3>
+
+    There are a number of properties shared (or even required) by all core DAL
+    classes providing a common abstraction layer on top of the underlying
+    low-level libraries (casacore, CFITSIO, HDF5).
     
     <h3>Example(s)</h3>
     
@@ -59,14 +65,14 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
 
-    //! Object handler, used with underlying low-level libraries
-    void * itsObjectHandler;
+    //! Name of the object (File, Dataset, Table, etc.)
+    std::string itsName;
     //! File type: CASA_MS, HDF5, FITS, etc.
     dalFileType itsFiletype;
     //! I/O mode flags
     IO_Mode itsFlags;
-    //! Name of the object (File, Dataset, Table, etc.)
-    std::string itsName;
+    //! Object handler, used with underlying low-level libraries
+    void * itsObjectHandler;
     
   public:
     
@@ -76,7 +82,8 @@ namespace DAL { // Namespace DAL -- begin
     dalObjectBase ();
     
     //! Default constructor
-    dalObjectBase (std::string const &name);
+    dalObjectBase (std::string const &name,
+		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Copy constructor
     dalObjectBase (dalObjectBase const &other);
@@ -93,26 +100,43 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Get the name of the object (file, dataset, table, etc.)
-    virtual std::string name () const {
+    /*!
+      \brief Get the name of the object (file, dataset, table, etc.)
+      \return name -- Name of the object (file, dataset, table, etc.)
+    */
+    virtual std::string name () {
       return itsName;
     }
-
-    //! File type: CASA_MS, HDF5, FITS, etc.
+    
+    /*!
+      \brief Get the file type: CASA_MS, HDF5, FITS, etc.
+      \return type -- File type: CASA_MS, HDF5, FITS, etc.
+    */
     inline DAL::dalFileType::Type filetype () {
       return itsFiletype.type();
     }
     
-    //! File type: CASA_MS, HDF5, FITS, etc.
+    /*!
+      \brief Get the file type: CASA_MS, HDF5, FITS, etc.
+      \return name -- File type name: CASA_MS, HDF5, FITS, etc.
+    */
     inline std::string filetypeName () {
       return itsFiletype.name();
     }
     
-    //! Get object I/O mode flags
+    /*!
+      \brief Get object I/O mode flags
+      \return flags -- Object I/O mode flags.
+    */
     inline int flags () const {
       return itsFlags.flags();
     }
-
+    
+    //! Get the object handler, used with underlying low-level libraries
+    inline void * objectHandler () {
+      return itsObjectHandler;
+    }
+    
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, dalObjectBase.
