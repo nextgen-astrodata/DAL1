@@ -48,7 +48,7 @@ namespace DAL {
   {
     hid_t datatype  = 0;
     hid_t dataspace = 0;  // declare a few h5 variables
-    name = arrayname;  // set the private name variable to the array name
+    itsName = arrayname;  // set the private name variable to the array name
 
     // determine the rank from the size of the dimensions vector
     unsigned int rank = dims.size();

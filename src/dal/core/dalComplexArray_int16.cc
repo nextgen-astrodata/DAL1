@@ -45,7 +45,7 @@ namespace DAL {   // BEGIN -- namespace DAL
     unsigned int rank = dims.size();
 
     // Set the private name variable to the array name
-    name = arrayname;  
+    itsName = arrayname;  
 
     // determine the rank from the size of the dimensions vector
     hsize_t mydims[rank];  // declare a dimensions c-array

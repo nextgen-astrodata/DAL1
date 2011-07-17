@@ -50,7 +50,7 @@ namespace DAL {
   {
     hid_t datatype  = 0;
     hid_t dataspace = 0;
-    name            = arrayname;
+    itsName         = arrayname;
     
     // determine the rank from the size of the dimensions vector
     unsigned int rank = dims.size();

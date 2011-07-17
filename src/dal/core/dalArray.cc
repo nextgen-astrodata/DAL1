@@ -31,14 +31,14 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                     dalArray
   
-  dalArray::dalArray()
+  dalArray::dalArray ()
+    : dalObjectBase()
   {
     itsDatasetID = 0;
     itsFileID    = 0;
     itsRank      = 0;
     datatype     = "UNKNOWN";
     status       = 0;
-    name         = "UNKNOWN";
   }
   
   //_____________________________________________________________________________
@@ -52,11 +52,11 @@ namespace DAL {
   int dalArray::open( void * voidfile,
                       std::string arrayname )
   {
-    name            = arrayname;         // array name
+    itsName         = arrayname;         // array name
     hid_t * lclfile = (hid_t*)voidfile;  // H5File object
     itsFileID       = *lclfile;          // get the file handle
 
-    if ( ( itsDatasetID = H5Dopen( itsFileID, name.c_str(), H5P_DEFAULT ) ) < 0 )
+    if ( ( itsDatasetID = H5Dopen( itsFileID, itsName.c_str(), H5P_DEFAULT ) ) < 0 )
       std::cerr << "ERROR: could not open array '" << arrayname << "'.\n";
 
     return( itsDatasetID );
@@ -95,7 +95,7 @@ namespace DAL {
     os << "[dalArray] Summary of object properties" << std::endl;
     os << "-- File ID            = " << itsFileID   << std::endl;
     os << "-- Array ID           = " << getId()     << std::endl;
-    os << "-- Array name         = " << name        << std::endl;
+    os << "-- Array name         = " << itsName     << std::endl;
     os << "-- Rank of the array  = " << getRank()   << std::endl;
     os << "-- Shape of the array = " << dims()      << std::endl;
   }
@@ -241,10 +241,10 @@ namespace DAL {
 			std::complex<float> data[],
 			int arraysize)
   {
-    hsize_t      dims[1] = { arraysize };
-    hsize_t      off[1]  = { offset };
-    hid_t filespace      = 0;
-    hid_t complex_id     = 0;
+    hsize_t  dims[1] = { arraysize };
+    hsize_t  off[1]  = { offset };
+    hid_t filespace  = 0;
+    hid_t complex_id = 0;
 
     /* Select a hyperslab  */
     if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
@@ -498,7 +498,7 @@ namespace DAL {
     hid_t datatype  = 0;
     hid_t dataspace = 0;  // declare a few h5 variables
 
-    name = arrayname;  // set the private name variable to the array name
+    itsName = arrayname;  // set the private name variable to the array name
 
     // determine the rank from the size of the dimensions vector
     unsigned int rank = dims.size();
@@ -626,7 +626,7 @@ namespace DAL {
     // declare a few h5 variables
     hid_t datatype   = 0;
     hid_t dataspace  = 0;
-    name             = arrayname;  // set the private name variable to the array name
+    itsName          = arrayname;  // set the private name variable to the array name
     hid_t complex_id = 0;
     
     // determine the rank from the size of the dimensions vector

@@ -24,6 +24,7 @@
 #include <complex>
 
 #include <core/dalCommon.h>
+#include <core/dalObjectBase.h>
 #include <core/HDF5Attribute.h>
 
 namespace DAL {
@@ -41,7 +42,7 @@ namespace DAL {
     
     The dalArray object holds an n-dimensional array of a single datatype.
   */
-  class dalArray {
+  class dalArray : public dalObjectBase {
     
     //! Number of dimensions
     int itsRank;
@@ -56,8 +57,6 @@ namespace DAL {
     hid_t itsDatasetID;
     //! HDF5 object ID for file
     hid_t itsFileID;
-    //! Name of the array
-    std::string name;
     
   public:
 
@@ -70,10 +69,6 @@ namespace DAL {
 
     //! Retrieve the dimensions of an array
     std::vector<int> dims();
-    //! Retrieve the name of an array
-    inline std::string getName() {
-      return name;
-    }
     //! Open an existing array.
     int open (void * file,
 	      std::string arrayname);
