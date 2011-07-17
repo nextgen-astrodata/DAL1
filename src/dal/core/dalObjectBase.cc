@@ -31,22 +31,31 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                dalObjectBase
   
-  dalObjectBase::dalObjectBase ()
+  /*!
+    \param filetype -- File type: CASA_MS, HDF5, FITS, etc.
+  */
+  dalObjectBase::dalObjectBase (dalFileType const &filetype)
   {
     itsObjectHandler = NULL;
-    itsFiletype      = dalFileType();
+    itsFiletype      = filetype;
     itsFlags         = IO_Mode();
     itsName          = "";
   }
 
   //_____________________________________________________________________________
   //                                                                dalObjectBase
-  
+ 
+  /*!
+    \param name     -- Name of the object (File, Dataset, Table, etc.)
+    \param filetype -- File type: CASA_MS, HDF5, FITS, etc.
+    \param flags    --  I/O mode flags
+  */
   dalObjectBase::dalObjectBase (std::string const &name,
+				dalFileType const &filetype,
 				IO_Mode const &flags)
   {
     itsObjectHandler = NULL;
-    itsFiletype      = dalFileType();
+    itsFiletype      = filetype;
     itsFlags         = IO_Mode(flags);
     itsName          = name;
   }

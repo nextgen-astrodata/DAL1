@@ -23,7 +23,7 @@
 
 #include <complex>
 #include <core/dalCommon.h>
-#include <core/dalFileType.h>
+#include <core/dalObjectBase.h>
 
 #ifdef PYTHON
 #include <pydal/num_util.h>
@@ -52,12 +52,10 @@ namespace DAL {
     exactly as it is stored.
   */
   
-  class dalData {
+  class dalData : public dalObjectBase {
     
     //! Type of the data,  i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
     std::string itsDatatype;
-    //! File type: CASA_MS, HDF5, FITS, etc.
-    dalFileType itsFiletype;
     //! Ordering of the array elements: "fortran", "c"
     std::string itsArrayOrder;
     
@@ -104,11 +102,6 @@ namespace DAL {
       return itsDatatype;
     }
     
-    //! Get the filetype, i.e. "CASA_MS", "FITS", "HDF5"
-    inline std::string filetype() {
-      return itsFiletype.name();
-    }
-    
     //! Get the axis ordering of the data array, i.e. "fortran", "c"
     inline std::string arrayOrder () {
       return itsArrayOrder;
@@ -150,7 +143,7 @@ namespace DAL {
     // === Private methods ====================================================
     
     //! Initialize internal variables
-    void init (dalFileType const &filetype=dalFileType());
+    void init ();
     
   };
   

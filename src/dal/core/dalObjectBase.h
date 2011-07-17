@@ -79,10 +79,11 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    dalObjectBase ();
+    dalObjectBase (dalFileType const &filetype=dalFileType());
     
     //! Default constructor
     dalObjectBase (std::string const &name,
+		   dalFileType const &filetype=dalFileType(),
 		   IO_Mode const &flags=IO_Mode(IO_Mode::Open));
     
     //! Copy constructor

@@ -32,6 +32,7 @@ namespace DAL {
   //                                                                      dalData
   
   dalData::dalData ()
+    : dalObjectBase ()
   {
     init();
   }
@@ -49,8 +50,9 @@ namespace DAL {
 		    std::string const &datatype,
 		    std::vector<int> const &shape,
 		    long const &nofRows)
+    : dalObjectBase (filetype)
   {
-    init (dalFileType(filetype));
+    init ();
     itsDatatype   = datatype;
     itsShape      = shape;
     itsNofRows    = nofRows;
@@ -69,8 +71,9 @@ namespace DAL {
 		    std::string const &datatype,
 		    std::vector<int> const &shape,
 		    long const &nofRows)
+    : dalObjectBase (filetype)
   {
-    init (filetype);
+    init ();
 
     itsDatatype = datatype;
     itsShape    = shape;
@@ -270,9 +273,8 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                         init
   
-  void dalData::init (dalFileType const &filetype)
+  void dalData::init ()
   {
-    itsFiletype   = filetype;
     itsDatatype   = "UNKNOWN";
     itsArrayOrder = "UNKNOWN";
     data          = NULL;
