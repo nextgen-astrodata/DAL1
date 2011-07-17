@@ -107,13 +107,16 @@ int test_open_create (std::string const &filename="tcasacore_ms.ms")
     
   }
   
-  /* Summary */
-  
-  cout << "-- Filename          = " << filename            << std::endl;
-  cout << "-- File exists       = " << fileExists          << std::endl;
-  cout << "-- Absolute filename = " << absoluteName        << std::endl;
-  cout << "-- Feed table name   = " << ms.feedTableName()  << std::endl;
-  cout << "-- Field table name  = " << ms.fieldTableName() << std::endl;
+    /*____________________________________________
+      Summary of created MeasurementSet
+    */
+    
+  cout << "-- Filename            = " << filename                   << endl;
+  cout << "-- File exists         = " << fileExists                 << endl;
+  cout << "-- Absolute filename   = " << absoluteName               << endl;
+  cout << "-- Feed table          = " << ms.feedTableName()         << endl;
+  cout << "-- Field table         = " << ms.fieldTableName()        << endl;
+  cout << "-- Polarization table  = " << ms.polarizationTableName() << endl;
   
   return nofFailedTests;
 }
@@ -164,19 +167,19 @@ int test_open (std::string const &filename)
       Summary
     */
     
-    cout << "-- Filename            = " << filename                   << std::endl;
-    cout << "-- Absolute filename   = " << absoluteName               << std::endl;
-    cout << "-- Feed table          = " << ms.feedTableName()         << std::endl;
-    cout << "-- Field table         = " << ms.fieldTableName()        << std::endl;
-    cout << "-- Polarization table  = " << ms.polarizationTableName() << std::endl;
-    cout << "-- 'TIME' : nof. rows  = " << timeColumn.nrow()          << std::endl;
-    cout << "-- 'UVW'  : nof. rows  = " << uvwColumn.nrow()           << std::endl;
-    cout << "-- 'UVW'  : cell shape = " << uvwColumn.shape(0)         << std::endl;
-    cout << "-- 'DATA' : nof. rows  = " << dataColumn.nrow()          << std::endl;
-    cout << "-- 'DATA' : cell shape = " << dataColumn.shape(0)        << std::endl;
+    cout << "-- Filename            = " << filename                   << endl;
+    cout << "-- Absolute filename   = " << absoluteName               << endl;
+    cout << "-- Feed table          = " << ms.feedTableName()         << endl;
+    cout << "-- Field table         = " << ms.fieldTableName()        << endl;
+    cout << "-- Polarization table  = " << ms.polarizationTableName() << endl;
+    cout << "-- 'TIME' : nof. rows  = " << timeColumn.nrow()          << endl;
+    cout << "-- 'UVW'  : nof. rows  = " << uvwColumn.nrow()           << endl;
+    cout << "-- 'UVW'  : cell shape = " << uvwColumn.shape(0)         << endl;
+    cout << "-- 'DATA' : nof. rows  = " << dataColumn.nrow()          << endl;
+    cout << "-- 'DATA' : cell shape = " << dataColumn.shape(0)        << endl;
     
   } else {
-    std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << std::endl;
+    std::cerr << "ERROR: MeasurementSet " << filename << " does not exist!" << endl;
     status = 1;
   }
 
