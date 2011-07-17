@@ -152,7 +152,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Provide a summary of the object's internal parameters and status
-    void summary (std::ostream &os);    
+    virtual void summary (std::ostream &os);    
 
     // === Public methods =======================================================
     

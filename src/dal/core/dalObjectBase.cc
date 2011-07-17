@@ -136,6 +136,9 @@ namespace DAL { // Namespace DAL -- begin
   void dalObjectBase::summary (std::ostream &os)
   {
     os << "[dalObjectBase] Summary of internal parameters." << std::endl;
+    os << "-- File type      = " << itsFiletype.name() << std::endl;
+    os << "-- I/O mode flags = " << itsFlags.names()   << std::endl;
+    os << "-- Object name    = " << itsName            << std::endl;
   }
   
   // ============================================================================
