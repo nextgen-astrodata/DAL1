@@ -40,7 +40,7 @@ namespace DAL {  // Namespace DAL -- begin
     datatype_p  = -1;
     dataspace_p = -1;
     location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
+    itsShape     = std::vector<hsize_t>();
   }
   
   //_____________________________________________________________________________
@@ -58,7 +58,7 @@ namespace DAL {  // Namespace DAL -- begin
     datatype_p  = -1;
     dataspace_p = -1;
     location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
+    itsShape     = std::vector<hsize_t>();
     //
     open (location,name,false);
   }
@@ -81,7 +81,7 @@ namespace DAL {  // Namespace DAL -- begin
     datatype_p  = -1;
     dataspace_p = -1;
     location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
+    itsShape     = std::vector<hsize_t>();
     std::string name = dipoleName (stationID, rspID, rcuID);
 
     open (location,name,false);
@@ -110,7 +110,7 @@ namespace DAL {  // Namespace DAL -- begin
     datatype_p  = -1;
     dataspace_p = -1;
     location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
+    itsShape     = std::vector<hsize_t>();
 
     open (location,
 	  stationID,
@@ -175,6 +175,10 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
+  /*!
+    \param other -- Another TBB_DipoleDataset object from which to create
+           this new one.
+  */
   void TBB_DipoleDataset::copy (TBB_DipoleDataset const &other)
   {
     location_p  = other.location_p;
@@ -190,13 +194,19 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-  // ----------------------------------------------------------------------- init
-
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  /*!
+    \param filename -- HDF5 file within which the dataset in question is
+           contained
+    \param dataset  -- Name of the dataset which this object is to encapsulate.
+  */
   void TBB_DipoleDataset::init (std::string const &filename,
                                 std::string const &dataset)
   {
-    hid_t file_id (0);
-    herr_t h5error (0);
+    hid_t file_id  = 0;
+    herr_t h5error = 0;
 
     // Initialize internal variables
     location_p = 0;
@@ -324,12 +334,12 @@ namespace DAL {  // Namespace DAL -- begin
       dataspace_p = H5Dget_space (location_p);
       int rank    = H5Sget_simple_extent_ndims (dataspace_p);
       if (rank>0) {
-	shape_p.resize(rank);
+	itsShape.resize(rank);
 	hsize_t * dims    = new hsize_t[rank];
 	hsize_t * maxdims = new hsize_t[rank];
 	rank              = H5Sget_simple_extent_dims (dataspace_p, dims, maxdims);
 	for (int n(0); n<rank; ++n) {
-	  shape_p[n] = dims[n];
+	  itsShape[n] = dims[n];
 	}
 	// release allocated memory
 	delete [] dims;
@@ -349,10 +359,10 @@ namespace DAL {  // Namespace DAL -- begin
       if ( (flags.flags() & IO_Mode::Create) ||
 	   (flags.flags() & IO_Mode::CreateNew) ) {
 	// Create Dataspace
-	int rank = shape_p.size();
+	int rank = itsShape.size();
 	hsize_t dimensions [rank];
 	for (int n(0); n<rank; ++n) {
-	  dimensions[n] = shape_p[n];
+	  dimensions[n] = itsShape[n];
 	}
 	dataspace_p = H5Screate_simple (rank,dimensions,NULL);
 	/* Create the dataset */
@@ -437,8 +447,8 @@ namespace DAL {  // Namespace DAL -- begin
     // store variables describing the array
     if (datatype != H5I_BADID) {
       datatype_p = H5Tcopy(datatype);
-      shape_p.resize(shape.size());
-      shape_p = shape;
+      itsShape.resize(shape.size());
+      itsShape = shape;
     } else {
       datatype_p = -1;
     }
@@ -475,21 +485,24 @@ namespace DAL {  // Namespace DAL -- begin
     
     return status;
   }
-
-//_____________________________________________________________________________
-  //                                                                    summary
-
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
     os << "[TBB_DipoleDataset::summary]"                      << std::endl;
     os << "-- Dataset ID .............. = " << location_p     << std::endl;
     if (location_p > 0) {
-      os << "-- Dataset name ............ = " << locationName() << std::endl;
-      os << "-- Channel name (ID) ....... = " << dipoleName()   << std::endl;
+      os << "-- Dataset name .......... = " << locationName() << std::endl;
+      os << "-- Channel name (ID) ..... = " << dipoleName()   << std::endl;
     }
     os << "-- Dataspace ID ............ = " << dataspace_p    << std::endl;
     os << "-- Dataset datatype ........ = " << datatype_p     << std::endl;
-    os << "-- Data array shape ........ = " << shape_p        << std::endl;
+    os << "-- Data array shape ........ = " << itsShape       << std::endl;
     
     if (location_p>0) {
       /*
@@ -706,18 +719,18 @@ namespace DAL {  // Namespace DAL -- begin
             an error was encountered.
   */
   bool TBB_DipoleDataset::readData (int const &start,
-                              int const &nofSamples,
-                              short *data)
+				    int const &nofSamples,
+				    short *data)
   {
     bool status (true);
 
     //______________________________________________________
     // Set up the logic for secure access to the underlying data
 
-    int dataStart;
-    int dataEnd (start+nofSamples-1);
-    int dataLength;
-    int dataOffset;
+    int dataStart  = 0;
+    int dataEnd    = start+nofSamples-1;
+    int dataLength = 0;
+    int dataOffset = 0;
 //     short *dataBuffer;
     
     if (start<0) {
@@ -859,7 +872,7 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \return position -- The antenna position as casa::Measure, combining the
             information from ANTENNA_POSITION_VALUE, ANTENNA_POSITION_UNIT and
-      ANTENNA_POSITION_FRAME.
+	    ANTENNA_POSITION_FRAME.
   */
   casa::MPosition TBB_DipoleDataset::antenna_position ()
   {
@@ -872,6 +885,11 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             sample_frequency
   
+  /*!
+    \retval freq   -- casa::Quantity returning the value of the frequency.
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool TBB_DipoleDataset::sample_frequency (casa::Quantity &freq)
   { 
     if (location_p > 0) {
@@ -890,6 +908,11 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             sample_frequency
   
+  /*!
+    \retval freq   -- casa::MFrequency returning the value of the frequency.
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool TBB_DipoleDataset::sample_frequency (casa::MFrequency &freq)
   {
     if (location_p > 0) {
@@ -912,6 +935,8 @@ namespace DAL {  // Namespace DAL -- begin
   
   /*!
     \param freq -- The ADC sample frequency as casa::Quantity
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
   */
   bool TBB_DipoleDataset::set_sample_frequency (casa::Quantity const &freq)
   {
@@ -931,6 +956,8 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \retval record -- A casa::Record container holding the values of the
             attributes attached to the dataset for this dipole
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
   */
   bool TBB_DipoleDataset::getAttributes (casa::Record &rec)
   {

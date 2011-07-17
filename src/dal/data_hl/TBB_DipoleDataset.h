@@ -96,7 +96,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Dataspace identifier
     hid_t dataspace_p;
     //! Shape of the dataset
-    std::vector<hsize_t> shape_p;    
+    std::vector<hsize_t> itsShape;
     
   public:
 
@@ -139,7 +139,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Get the shape of the data array
     inline std::vector<hsize_t> shape () const {
-      return shape_p;
+      return itsShape;
     }
 
     //! Get the time as Julian Day
@@ -147,7 +147,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      
       \return className -- The name of the class, TBB_DipoleDataset.
     */
     inline std::string className () const {
@@ -221,28 +220,12 @@ namespace DAL {  // Namespace DAL -- begin
     bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
-    
-    /*!
-      \brief Initialize the internal dataspace
-      
-      \param filename -- HDF5 file within which the dataset in question is
-             contained
-      \param dataset  -- Name of the dataset which this object is to encapsulate.
-    */
+    //! Initialize the internal dataspace
     void init (std::string const &filename,
 	       std::string const &dataset);
-    
-    /*!
-      \brief Unconditional copying
-      
-      \param other -- Another TBB_DipoleDataset object from which to create
-             this new one.
-    */
+    //! Unconditional copying
     void copy (TBB_DipoleDataset const &other);
-    
-    /*!
-      \brief Unconditional deletion
-    */
+    //! Unconditional deletion
     void destroy(void);
     
   };

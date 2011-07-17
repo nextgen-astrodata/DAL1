@@ -33,15 +33,13 @@ using std::endl;
   \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the TBB_DipoleDataset class
+  \brief A collection of test routines for the DAL::TBB_DipoleDataset class
  
   \author Lars B&auml;hren
  
-  \date 2009/10/28
+  \date 2009-10-28
 */
 
-//! Test constructors for a new TBB_DipoleDataset object
-int test_constructors ();
 //! Test access to the attributes attached to the dipole dataset
 int test_attributes (std::string const &filename);
 
@@ -49,71 +47,20 @@ int test_attributes (std::string const &filename);
 //                                                              test_constructors
 
 /*!
+  \param fileID          -- HDF5 object identifier for the file.
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
 
-  int nofFailedTests (0);
-  uint station (0);
-  uint rsp (0);
-  uint rcu (0);
-  std::string filename ("tTBB_DipoleDataset.h5");
-  std::string groupname ("Station001");
-  hid_t fileID;
-  hid_t groupID;
-  herr_t h5error;
-  std::set<std::string> names;
-  std::set<std::string>::iterator it;
+  int nofFailedTests    = 0;
+  std::string groupname = "Station001";
 
-  // Open/Create HDF5 file _________________________________
-
-  cout << "-- Opening file " << filename << "  ..." << endl;
-  
-  fileID = H5Fcreate (filename.c_str(),
-		      H5F_ACC_TRUNC,
-		      H5P_DEFAULT,
-		      H5P_DEFAULT);
-  
-  if (fileID < 0) {
-    cerr << "ERROR : Failed to open/create file." << endl;
-    return -1;
-  }
-  
-  // Open/create group _____________________________________
-
-  if (fileID > 0) {
-    names.clear();
-    DAL::h5get_names (names,fileID,H5G_GROUP);
-    //
-    if (names.size() > 0) {
-      it        = names.begin();
-      groupname = *it;
-      groupID   = H5Gopen (fileID,
-			   groupname.c_str(),
-			   H5P_DEFAULT);
-    } else {
-      groupID   = H5Gcreate (fileID,
-			     groupname.c_str(),
-			     H5P_DEFAULT,
-			     H5P_DEFAULT,
-			     H5P_DEFAULT);
-    }
-  } else {
-    cerr << "Skipping tests - unable to open file." << endl;
-    return -1;
-  }
-  
-  if (groupID < 0) {
-    cerr << "ERROR : Failed to open/create group." << endl;
-    return -1;
-  }
-  
   // Perform the tests _____________________________________
   
-  cout << "[1] Testing default constructor ..." << endl;
+  cout << "[1] Testing TBB_DipoleDataset() ..." << endl;
   try {
     TBB_DipoleDataset dataset;
     dataset.summary();
@@ -122,86 +69,6 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing construction with location and dataset name ..." << endl;
-  try {
-    TBB_DipoleDataset dataset (fileID,"DipoleDataset");
-    dataset.summary();
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[3] Testing construction with IDs ..." << endl;
-  try {
-    std::string name;
-    std::vector<hsize_t> shape (1,1024);
-    //
-    station = 0;
-    rsp     = 0;
-    for (rcu=0; rcu<5; ++rcu) {
-      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
-      TBB_DipoleDataset data (fileID,station,rsp,rcu,shape);
-      cout << "-- created dataset " << name << endl;
-    }
-    //
-    station = 1;
-    for (rsp=0; rsp<5; ++rsp) {
-      for (rcu=0; rcu<5; ++rcu) {
-	name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
-	TBB_DipoleDataset data (groupID,station,rsp,rcu,shape);
-	cout << "-- created dataset " << name << endl;
-      }
-    }
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[4] Reopening previously created datasets ..." << endl;
-  try {
-    std::string name;
-    //
-    station = 0;
-    rsp     = 0;
-    for (rcu=0; rcu<5; ++rcu) {
-      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
-      TBB_DipoleDataset data (fileID,station,rsp,rcu);
-      cout << "-- opened dataset " << name << endl;
-    }
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  cout << "[5] Testing copy constructor ..." << endl;
-  try {
-    std::string name;
-    //
-    station = 0;
-    rsp     = 0;
-    for (rcu=0; rcu<5; ++rcu) {
-      // convert IDs to name
-      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
-      // create original object
-      TBB_DipoleDataset data (fileID,station,rsp,rcu);
-      cout << "-- Channel name (original) = " << data.dipoleName() << endl;
-      // create copy 
-      TBB_DipoleDataset dataCopy (data);
-      cout << "-- Channel name (copy)     = " << dataCopy.dipoleName() << endl;
-    }
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  // release HDF5 object identifiers _______________________
-
-  h5error = H5Gclose (groupID);
-  h5error = H5Fclose (fileID);
-  
-  // Test access to the attributes _________________________
-
-  nofFailedTests += test_attributes (filename);
   
   return nofFailedTests;
 }
@@ -224,7 +91,6 @@ int test_constructors (std::string const &filename)
   int nofFailedTests (0);
   hid_t fileID;
   hid_t groupID;
-  herr_t h5error;
   std::set<std::string> names;
   std::set<std::string>::iterator it;
 
@@ -303,8 +169,8 @@ int test_constructors (std::string const &filename)
   
   // Release HDF5 object identifiers _______________________
   
-  h5error = H5Fclose (fileID);
-  h5error = H5Gclose (groupID);
+  H5Fclose (fileID);
+  H5Gclose (groupID);
 
   return nofFailedTests;
 }
@@ -542,9 +408,10 @@ int test_data (std::string const &filename)
 
 int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
-  bool haveDataset (true);
-  std::string filename ("UNDEFINED");
+  int nofFailedTests   = 0;
+  hid_t fileID         = 0;
+  bool haveDataset     = false;
+  std::string filename = "tTBB_DipoleDataset.h5";
   
   //________________________________________________________
   // Process parameters from the command line
@@ -557,22 +424,48 @@ int main (int argc, char *argv[])
   }
 
   //________________________________________________________
-  // Run the tests
-
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  // Open/Create HDF5 file to work with
 
   if (haveDataset) {
-    // Test for the constructor(s)
-    nofFailedTests += test_constructors (filename);
-    // Test access to the attributes attached to the dataset
-    nofFailedTests += test_attributes (filename);
-    // Test access to the data
-    nofFailedTests += test_data (filename);
+    fileID = H5Fopen (filename.c_str(),
+                      H5F_ACC_RDWR,
+                      H5P_DEFAULT);
   } else {
-    cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
-	 << endl;
+    fileID = H5Fcreate (filename.c_str(),
+                        H5F_ACC_TRUNC,
+                        H5P_DEFAULT,
+                        H5P_DEFAULT);
+  }
+
+  //________________________________________________________
+  // Run the tests
+
+  if (H5Iis_valid(fileID)) {
+    
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+    
+    if (haveDataset) {
+      // Test for the constructor(s)
+      nofFailedTests += test_constructors (filename);
+      // Test access to the attributes attached to the dataset
+      nofFailedTests += test_attributes (filename);
+      // Test access to the data
+      nofFailedTests += test_data (filename);
+    } else {
+      cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
+	   << endl;
+    }
+    
+  } else {
+    cerr << "[tTBB_DipoleDataset] Failed to open file " << filename << endl;
+    return -1;
   }
   
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose(fileID);
+
   return nofFailedTests;
 }
