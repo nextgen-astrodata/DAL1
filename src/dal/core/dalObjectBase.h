@@ -25,6 +25,7 @@
 #include <iostream>
 #include <string>
 
+#include <core/dalCommon.h>
 #include <core/dalFileType.h>
 #include <core/IO_Mode.h>
 
