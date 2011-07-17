@@ -40,6 +40,7 @@ foreach (_test
     tdalCommon
     tdalCommon_operators
     tdalConversions
+    tdalObjectBase
     tdalData
     tdalDataset
     tdalFileType

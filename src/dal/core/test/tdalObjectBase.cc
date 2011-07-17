@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars Baehren (<mail>)                                                     *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include <core/dalObjectBase.h>
+#include <core/dalFileType.h>
+#include <core/IO_Mode.h>
 
 // Namespace usage
 using DAL::dalObjectBase;
@@ -31,7 +33,7 @@ using DAL::dalObjectBase;
 
   \brief A collection of test routines for the DAL::dalObjectBase class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2011-07-11
 */
@@ -51,15 +53,54 @@ int test_constructors ()
 
   int nofFailedTests (0);
   
-  // std::cout << "[1] Testing default constructor ..." << std::endl;
-  // try {
-  //   dalObjectBase newObject;
-  //   //
-  //   newObject.summary(); 
-  // } catch (std::string message) {
-  //   std::cerr << message << std::endl;
-  //   nofFailedTests++;
-  // }
+  std::cout << "[1] Testing dalObjectBase() ..." << std::endl;
+  try {
+    dalObjectBase newObject;
+    //
+    newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing dalObjectBase(string) ..." << std::endl;
+  try {
+    std::string name ("NewObject");
+    //
+    dalObjectBase newObject (name);
+    //
+    newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Testing dalObjectBase(string,dalFileType) ..." << std::endl;
+  try {
+    std::string name ("NewObject");
+    DAL::dalFileType filetype (DAL::dalFileType::HDF5);
+    //
+    dalObjectBase newObject (name, filetype);
+    //
+    newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[4] Testing dalObjectBase(string,dalFileType,IO_Mode) ..." << std::endl;
+  try {
+    std::string name ("NewObject");
+    DAL::dalFileType filetype (DAL::dalFileType::HDF5);
+    DAL::IO_Mode flags (DAL::IO_Mode::Open);
+    //
+    dalObjectBase newObject (name, filetype,flags);
+    //
+    newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
   
   return nofFailedTests;
 }
