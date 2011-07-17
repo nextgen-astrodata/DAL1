@@ -93,7 +93,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Destruction ==========================================================
 
     //! Destructor
-    ~dalObjectBase ();
+    virtual ~dalObjectBase ();
     
     // === Operators ============================================================
     
