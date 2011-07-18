@@ -61,7 +61,7 @@ int test_constructors (std::string const &filename)
     nofFailedTests++;
   }
   
-  std::cout << "[1] Testing MS_Table(string) ..." << std::endl;
+  std::cout << "[2] Testing MS_Table(string) ..." << std::endl;
   try {
     MS_Table ms (filename);
     //

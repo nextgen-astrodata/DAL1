@@ -123,14 +123,44 @@ namespace DAL { // Namespace DAL -- begin
   void MS_Table::summary (std::ostream &os)
   {
     casa::TableDesc tableDesc = tableDescription();
+    unsigned int nofRows      = itsTable.nrow();
+    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
 
-    os << "[MS_Table] Summary of internal parameters."    << std::endl;
-    os << "-- File type       = " << itsFiletype.name()   << std::endl;
-    os << "-- I/O mode flags  = " << itsFlags.names()     << std::endl;
-    os << "-- Object name     = " << itsName              << std::endl;
-    os << "-- Table name      = " << itsTable.tableName() << std::endl;
-    os << "-- nof. table rows = " << itsTable.nrow()      << std::endl;
-    os << "-- Column names    = " << tableDesc.columnNames() << std::endl;
+    os << "[MS_Table] Summary of internal parameters."           << std::endl;
+    os << "-- File type           = " << itsFiletype.name()      << std::endl;
+    os << "-- I/O mode flags      = " << itsFlags.names()        << std::endl;
+    os << "-- Object name         = " << itsName                 << std::endl;
+    os << "-- Table name          = " << itsTable.tableName()    << std::endl;
+    os << "-- nof. table rows     = " << nofRows                 << std::endl;
+    os << "-- nof. table columns  = " << columnNames.nelements() << std::endl;
+    
+    if (columnNames.nelements()>0) {
+      os << "-- Column descriptions :" << std::endl;
+      std::cout << std::setw(5)  << "#"
+		<< std::setw(25) << "name"
+		<< std::setw(10)  << "ndim"
+		<< std::setw(10) << "data"
+		<< std::setw(10) << "scalar"
+		<< std::setw(10) << "array"
+		<< std::setw(10) << "table"
+		<< std::setw(10) << "shape"
+		<< std::endl;
+      for (unsigned int n=0; n<columnNames.nelements(); ++n) {
+	// Get column description
+	casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
+	// Display column properties
+	std::cout << std::setw(5)  << n 
+		  << std::setw(25) << columnDesc.name()
+		  << std::setw(10)  << columnDesc.ndim()
+		  << std::setw(10) << columnDesc.dataType()
+		  << std::setw(10) << columnDesc.isScalar()
+		  << std::setw(10) << columnDesc.isArray()
+		  << std::setw(10) << columnDesc.isTable()
+		  << std::setw(10) << columnDesc.shape()
+		  << std::endl;
+      }
+    }
+
   }
   
   // ============================================================================
@@ -152,6 +182,7 @@ namespace DAL { // Namespace DAL -- begin
     
     casa::Table table (absoluteName);
     itsTable = casa::Table (table);
+    itsFlags = flags;
     
     return status;
   }

@@ -23,6 +23,7 @@
 
 // Standard library header files
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,7 @@
 #include <core/dalObjectBase.h>
 
 #ifdef DAL_WITH_CASA
+#include <ms/MeasurementSets.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableDesc.h>
 #endif
@@ -129,6 +131,46 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the names of the table columns
     std::vector<std::string> columnNames ();
+
+    /*!
+      \retval data   -- Array returning the data stored inside the designated
+              table \e column.
+      \param column  -- Name of the \e column from which to read the \e data.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool readData (casa::Array<T> &data,
+		     std::string const &column)
+      {
+	bool status = true;
+	casa::TableDesc tableDesc   = itsTable.tableDesc ();
+	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+
+	/*
+	  Get the shape of the colum in order to resize the array returning
+	  the data.
+	*/
+	data.resize(columnDesc.shape());
+	
+	if (columnDesc.isScalar()) {
+	  // Set up reader object for the column ...
+	  casa::ROScalarColumn<T> columReader (itsTable, column);
+	  // .... and retrieve the data
+	  data = columReader.getColumn();
+	} else if (columnDesc.isArray()) {
+	  // Set up reader object for the column ...
+	  casa::ROArrayColumn<T> columReader (itsTable, column);
+	  // .... and retrieve the data
+	  data = columReader.getColumn();
+	} else {
+	  std::cerr << "[MS_Table::readData] Unsupported type of column data!"
+		    << std::endl;
+	  status = false;
+	}
+
+	return status;
+      }
 
     // === Static methods =======================================================
     
