@@ -51,7 +51,7 @@ int test_constructors ()
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing <newClass>() ..." << std::endl;
   try {
     <newClass> newObject;
     //
