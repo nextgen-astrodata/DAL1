@@ -119,8 +119,10 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param os -- Output stream to which the summary is written.
+    \param showColumns -- Also show summary of the table columns?
   */
-  void MS_Table::summary (std::ostream &os)
+  void MS_Table::summary (std::ostream &os,
+			  bool const &showColumns)
   {
     casa::TableDesc tableDesc = tableDescription();
     unsigned int nofRows      = itsTable.nrow();
@@ -134,7 +136,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- nof. table rows     = " << nofRows                 << std::endl;
     os << "-- nof. table columns  = " << columnNames.nelements() << std::endl;
     
-    if (columnNames.nelements()>0) {
+    if ((columnNames.nelements()>0) && showColumns) {
       os << "-- Column descriptions :" << std::endl;
       std::cout << std::setw(5)  << "#"
 		<< std::setw(25) << "name"

@@ -42,6 +42,7 @@ using DAL::MS_Table;
 /*!
   \brief Test constructors for a new MS_Table object
 
+  \param filename -- Name of the MeasurementSet to work with.
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
@@ -75,6 +76,29 @@ int test_constructors (std::string const &filename)
 }
 
 //_______________________________________________________________________________
+//                                                                  test_readData
+
+/*!
+  \brief Test reading data from MS table columns.
+
+  \param filename -- Name of the MeasurementSet to work with.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_readData (std::string const &filename)
+{
+  std::cout << "\n[tMS_Table::test_readData]\n" << std::endl;
+
+  int nofFailedTests (0);
+  
+  // Open MS to work with
+  MS_Table ms (filename);
+  ms.summary(false); 
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -104,6 +128,8 @@ int main (int argc, char *argv[])
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
+  // Test reading data from MS table columns.
+  nofFailedTests += test_readData (filename);
 
   return nofFailedTests;
 }

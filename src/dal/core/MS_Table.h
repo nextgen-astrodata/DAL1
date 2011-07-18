@@ -105,12 +105,13 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Provide a summary of the object's internal parameters and status
-    inline void summary () {
-      summary (std::cout);
+    inline void summary (bool const &showColumns=true) {
+      summary (std::cout,showColumns);
     }
 
     //! Provide a summary of the object's internal parameters and status
-    void summary (std::ostream &os);    
+    void summary (std::ostream &os,
+		  bool const &showColumns=true);    
 
     // === Public methods =======================================================
     
