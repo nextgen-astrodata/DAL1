@@ -196,6 +196,8 @@ int test_open (std::string const &filename)
   std::cout << "\n[2] Use generic Table classes to access data ..." << std::endl;
 
   try {
+    casa::Vector<casa::Double> tmp;
+
     // Open table
     casa::Table table (absoluteName);
     // Retrieve table description
@@ -206,7 +208,7 @@ int test_open (std::string const &filename)
     // Provide basic overview of table properties
     cout << "-- Name of the table   = " << table.tableName()  << endl;
     cout << "-- nof. table rows     = " << table.nrow()       << endl;
-
+    cout << "-- Column descriptions : " << std::endl;
     // Loop through the columns and get their properties
     for (unsigned int n=0; n<columnNames.nelements(); ++n) {
       // Get column description
@@ -221,6 +223,33 @@ int test_open (std::string const &filename)
 		<< std::setw(10) << columnDesc.isTable()
 		<< std::setw(10) << columnDesc.shape()
 		<< std::endl;
+    }
+
+    // Access contents of the 'TIME' column
+    casa::ROScalarColumn<casa::Double> timeColumn (table , "TIME");
+    // Get the times for the entire column
+    casa::Vector<casa::Double> timeColumnData = timeColumn.getColumn();
+
+    std::cout << "-- Column 'TIME' : " << std::endl;
+    std::cout << "   nof. elements = " << timeColumnData.nelements() << std::endl;
+    std::cout << "   Minimum value = " << min(timeColumnData) << std::endl;
+    std::cout << "   Maximum value = " << max(timeColumnData) << std::endl;
+
+    // Access contents of the 'UVW' column
+    casa::ROArrayColumn<casa::Double> uvwColumn (table , "UVW");
+    // Get the times for the entire column
+    casa::Array<casa::Double> uvwColumnData = uvwColumn.getColumn();
+
+    std::cout << "-- Column 'UVW' : " << std::endl;
+    std::cout << "   nof. elements = " << uvwColumnData.nelements() << std::endl;
+    std::cout << "   shape(data)   = " << uvwColumnData.shape()     << std::endl;
+
+    for (int col=0; col<10; ++col) {
+
+      tmp = uvwColumnData(casa::Slicer(casa::IPosition(2,0,col),
+				       casa::IPosition(2,casa::Slicer::MimicSource,1)));
+	
+      std::cout << "   uvw(," << col << ")       = " << tmp << std::endl;
     }
     
   } catch (casa::AipsError x) {
