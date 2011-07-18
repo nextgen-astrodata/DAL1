@@ -39,6 +39,35 @@
 
   // ============================================================================
   //
+  //  Conversion routines between different array types
+  //
+  // ============================================================================
+
+namespace DAL {   //   BEGIN -- namespace DAL
+
+  //! Convert array to Boost.Python numeric array
+  template <class T>
+    boost::python::numeric::array toNumericArray (T *data,
+						  unsigned int const &nelem)
+    {
+      std::vector<int> mydims (1,nelem);
+      boost::python::numeric::array narray = num_util::makeNum (data, mydims );
+      return narray;
+    }
+  
+  //! Convert std::vector<T> to Boost.Python numeric array
+  template <class T>
+    boost::python::numeric::array toNumericArray (std::vector<T> const &data)
+    {
+      std::vector<int> mydims (1,data.size());
+      boost::python::numeric::array narray = num_util::makeNum (&data[0], mydims );
+      return narray;
+    }
+
+};   //   END -- namespace DAL
+
+  // ============================================================================
+  //
   //  [core] Core classes
   //
   // ============================================================================

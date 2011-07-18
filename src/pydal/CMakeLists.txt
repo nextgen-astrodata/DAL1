@@ -11,7 +11,6 @@
 set (pydal_sources
   num_util.cc
   pydal.cc
-  pydal_conversions.cc
   coordinates/pydal_Angle.cc
   coordinates/pydal_Coordinate.cc
   coordinates/pydal_RaDec.cc
