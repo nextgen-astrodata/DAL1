@@ -49,6 +49,7 @@ foreach (_test
     tdalGroup
     tDatabase
     tHDF5Hyperslab
+    tMS_Table
     test_std_cerr
     )
   add_test (${_test} ${_test})
@@ -98,6 +99,14 @@ if (dataset_beamformed)
 else (dataset_beamformed)
   add_test (tdalTable2 tdalTable)
 endif (dataset_beamformed)
+
+## tMS_Table _____________________________________
+
+if (TESTDATA_L20851_SB120)
+  add_test (tMS_Table tMS_Table ${TESTDATA_L20851_SB120})
+else (TESTDATA_L20851_SB120)
+  add_test (tMS_Table tMS_Table )
+endif (TESTDATA_L20851_SB120)
 
 ## test_CFITSIO __________________________________
 
