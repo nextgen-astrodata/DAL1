@@ -196,6 +196,7 @@ int test_open (std::string const &filename)
   std::cout << "\n[2] Use generic Table classes to access data ..." << std::endl;
 
   try {
+    casa::Vector<casa::String> columnNames;
     casa::Vector<casa::Double> tmp;
 
     // Open table
@@ -203,8 +204,8 @@ int test_open (std::string const &filename)
     // Retrieve table description
     casa::TableDesc tableDesc = table.tableDesc ();
     // Retrieve the names of the table columns
-    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
-
+    columnNames = tableDesc.columnNames();
+    
     // Provide basic overview of table properties
     cout << "-- Name of the table   = " << table.tableName()  << endl;
     cout << "-- nof. table rows     = " << table.nrow()       << endl;
@@ -244,14 +245,23 @@ int test_open (std::string const &filename)
     std::cout << "   nof. elements = " << uvwColumnData.nelements() << std::endl;
     std::cout << "   shape(data)   = " << uvwColumnData.shape()     << std::endl;
 
-    for (int col=0; col<10; ++col) {
+    for (int col=0; col<15; ++col) {
 
       tmp = uvwColumnData(casa::Slicer(casa::IPosition(2,0,col),
 				       casa::IPosition(2,casa::Slicer::MimicSource,1)));
 	
       std::cout << "   uvw(," << col << ")       = " << tmp << std::endl;
     }
-    
+
+    // Open 'ANTENNA' subtable
+    casa::Table antennaTable (table.keywordSet().asTable("ANTENNA"));
+    // Retrieve table description
+    casa::TableDesc antennaTableDesc = antennaTable.tableDesc ();
+
+    cout << "-- Name of the table   = " << antennaTable.tableName()  << endl;
+    cout << "-- nof. table rows     = " << antennaTable.nrow()       << endl;
+    cout << "-- Column names        = " << antennaTableDesc.columnNames() << endl;
+
   } catch (casa::AipsError x) {
     std::cerr << "ERROR: " << x.getMesg() << endl;
     ++nofFailedTests;
