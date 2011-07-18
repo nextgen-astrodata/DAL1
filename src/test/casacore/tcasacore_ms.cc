@@ -127,7 +127,7 @@ int test_open_create (std::string const &filename="tcasacore_ms.ms")
 
 int test_open (std::string const &filename)
 {
-  cout << "\n[tcasacore_ms::test_open]\n" << endl;
+  cout << "\n[tcasacore_ms::test_open]" << endl;
   
   int nofFailedTests = 0;
   std::string absoluteName;
@@ -159,7 +159,7 @@ int test_open (std::string const &filename)
     Use MS-specific classes to access data
   */
 
-  std::cout << "[1] Use MS-specific classes to access data ..." << std::endl;
+  std::cout << "\n[1] Use MS-specific classes to access data ..." << std::endl;
 
   try {
     // Create the MeasurementSet from an existing Table on disk
@@ -193,7 +193,7 @@ int test_open (std::string const &filename)
     Use generic Table classes to access data
   */
 
-  std::cout << "[2] Use generic Table classes to access data ..." << std::endl;
+  std::cout << "\n[2] Use generic Table classes to access data ..." << std::endl;
 
   try {
     // Open table
@@ -206,7 +206,6 @@ int test_open (std::string const &filename)
     // Provide basic overview of table properties
     cout << "-- Name of the table   = " << table.tableName()  << endl;
     cout << "-- nof. table rows     = " << table.nrow()       << endl;
-    cout << "-- Tables column names = " << columnNames        << endl;
 
     // Loop through the columns and get their properties
     for (unsigned int n=0; n<columnNames.nelements(); ++n) {
@@ -217,7 +216,9 @@ int test_open (std::string const &filename)
 		<< std::setw(25) << columnDesc.name()
 		<< std::setw(5)  << columnDesc.ndim()
 		<< std::setw(10) << columnDesc.dataType()
-		<< std::setw(5)  << columnDesc.isArray()
+		<< std::setw(10) << columnDesc.isScalar()
+		<< std::setw(10) << columnDesc.isArray()
+		<< std::setw(10) << columnDesc.isTable()
 		<< std::setw(10) << columnDesc.shape()
 		<< std::endl;
     }
