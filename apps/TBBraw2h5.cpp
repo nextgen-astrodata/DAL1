@@ -422,9 +422,15 @@ bool readFromSockets (std::vector<int> ports,
     float startTimeout,
     float readTimeout,
     bool verbose=false,
-    bool waitForAllPorts=false)
+    bool waitForAllPorts=false,
+    std::string outFileBase="",
+    int doCheckCRC=1,
+    int fixTransientTimes=2)
 {
   unsigned int i = 0;
+  char * bufferPointer;
+  time_t timestamp;
+  char timestamp_buffer[20];
 
   //________________________________________________________
   // initialize the buffer
@@ -491,7 +497,38 @@ bool readFromSockets (std::vector<int> ports,
     if (processingID >= input_buffer_size) {
       processingID -= input_buffer_size;
     };
-    tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
+
+    // Create new time stamped file if required
+    bufferPointer = inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE);
+    if (tbb == NULL)
+    {
+      // Get timestamp and convert to ISO 8601 format for filename
+      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M%S", gmtime ( &timestamp ));
+
+      // Generate filename
+      std::ostringstream outfile;
+      outfile << outFileBase << "-" << timestamp_buffer << ".h5";
+
+      // Create file
+      tbb = new DAL::TBBraw(outfile.str());
+      if ( !tbb->isConnected() )
+      {
+        cout << "[TBBraw2h5] Failed to open output file." << endl;
+        return 1;
+      };
+
+      // Set the options in the TBBraw object
+      if (doCheckCRC>0) {
+        tbb->doHeaderCRC(true);
+      }
+      else {
+        tbb->doHeaderCRC(false);
+      };
+      tbb->setFixTimes(fixTransientTimes);
+    }
+      
+    tbb->processTBBrawBlock(bufferPointer,
         UDP_PACKET_BUFFER_SIZE);
     inBufProcessID = processingID;
   };
@@ -974,13 +1011,36 @@ int main(int argc, char *argv[])
   };
 
   // -----------------------------------------------------------------
-  // Process data from multiple stations
-  // returns only in case of an error
+  // Process data from multiple stations, returns only in case of an error
+
   if (multipeStations) {
     readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, observer, project, observationID, filterSelection, antennaSet, verboseMode);
     return 1;
   };
+
   // -----------------------------------------------------------------
+  // Process data in socket mode
+
+  if (socketmode) {
+    // -----------------------------------------------------------------
+    // Begin of "keepRunning" loop
+    do 
+    {
+      tbb = NULL;
+
+      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll, outfile, doCheckCRC, fixTransientTimes);
+
+      // -----------------------------------------------------------------
+      // Finish up, print some statistics.
+      tbb->summary();
+
+      delete tbb;
+    } while (keepRunning);
+    return 0;
+  }
+
+  // -----------------------------------------------------------------
+  // Process data in file mode
 
   if (keepRunning) { 
     outfileOrig = outfile ; 
@@ -1021,12 +1081,7 @@ int main(int argc, char *argv[])
     // -----------------------------------------------------------------
     // call the conversion routines
 
-    if (socketmode) {
-      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll);
-    }
-    else {
-      readFromFile(infile, verboseMode);
-    };
+    readFromFile(infile, verboseMode);
 
     // -----------------------------------------------------------------
     //finish up, print some statistics.
