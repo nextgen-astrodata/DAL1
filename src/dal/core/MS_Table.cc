@@ -140,8 +140,8 @@ namespace DAL { // Namespace DAL -- begin
       os << "-- Column descriptions :" << std::endl;
       std::cout << std::setw(5)  << "#"
 		<< std::setw(25) << "name"
-		<< std::setw(10)  << "ndim"
-		<< std::setw(10) << "data"
+		<< std::setw(10) << "ndim"
+		<< std::setw(10) << "dtype"
 		<< std::setw(10) << "scalar"
 		<< std::setw(10) << "array"
 		<< std::setw(10) << "table"
@@ -153,7 +153,7 @@ namespace DAL { // Namespace DAL -- begin
 	// Display column properties
 	std::cout << std::setw(5)  << n 
 		  << std::setw(25) << columnDesc.name()
-		  << std::setw(10)  << columnDesc.ndim()
+		  << std::setw(10) << columnDesc.ndim()
 		  << std::setw(10) << columnDesc.dataType()
 		  << std::setw(10) << columnDesc.isScalar()
 		  << std::setw(10) << columnDesc.isArray()
