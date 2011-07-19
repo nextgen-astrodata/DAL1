@@ -104,7 +104,10 @@ namespace DAL { // Namespace DAL -- begin
       return "MS_Table";
     }
 
-    //! Provide a summary of the object's internal parameters and status
+    /*!
+      \brief Provide a summary of the object's internal parameters and status
+      \param showColumns -- Also show summary of the table columns?
+    */
     inline void summary (bool const &showColumns=true) {
       summary (std::cout,showColumns);
     }
@@ -144,15 +147,22 @@ namespace DAL { // Namespace DAL -- begin
       bool readData (casa::Array<T> &data,
 		     std::string const &column)
       {
-	bool status = true;
-	casa::TableDesc tableDesc   = itsTable.tableDesc ();
+	bool status                 = true;
+	casa::TableDesc tableDesc   = itsTable.tableDesc();
 	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+	casa::IPosition cellShape   = columnDesc.shape();
 
-	/*
-	  Get the shape of the colum in order to resize the array returning
-	  the data.
-	*/
-	data.resize(columnDesc.shape());
+	{
+	  unsigned int rank = cellShape.nelements()+1;
+	  casa::IPosition dataShape (rank,0);
+
+	  for (unsigned int n=0; n<(rank-1); ++n) {
+	    dataShape(n) = cellShape(n);
+	  }
+	  dataShape(rank-1) = itsTable.nrow();
+
+	  data.resize(dataShape);
+	}
 	
 	if (columnDesc.isScalar()) {
 	  // Set up reader object for the column ...

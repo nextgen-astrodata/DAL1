@@ -89,12 +89,64 @@ int test_readData (std::string const &filename)
 {
   std::cout << "\n[tMS_Table::test_readData]\n" << std::endl;
 
-  int nofFailedTests (0);
-  
+  int nofFailedTests = 0;
+  bool status        = true;
+
   // Open MS to work with
   MS_Table ms (filename);
   ms.summary(false); 
-
+  
+  /*________________________________________________________
+    Test 1: Read data from columns of type double
+  */
+  
+  std::cout << "[1] Read data from columns of type double ..." << std::endl;
+  try {
+    casa::Array<casa::Double> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("TIME");
+    columns.push_back("UVW");
+    columns.push_back("INTERVAL");
+    columns.push_back("EXPOSURE");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n]);
+      std::cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.shape()
+		<< std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 2: Read data from columns of type float
+  */
+  
+  std::cout << "[2] Read data from columns of type float ..." << std::endl;
+  try {
+    casa::Array<casa::Float> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("WEIGHT");
+    columns.push_back("SIGMA");
+    columns.push_back("WEIGHT_SPECTRUM");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n]);
+      std::cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.shape()
+		<< std::endl;
+    }  
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -109,7 +161,7 @@ int test_readData (std::string const &filename)
 */
 int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
+  int nofFailedTests   = 0;
   bool haveDataset     = false;
   std::string filename = "tMS_Table.ms";
 
