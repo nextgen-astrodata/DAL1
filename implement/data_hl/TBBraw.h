@@ -358,6 +358,17 @@ namespace DAL {  // Namespace DAL -- begin
       return ((TBB_Header*)inbuff)->time;
     };
 
+    /*!
+      \brief return the fractional part of the time stamp of the data-frame
+      
+      \param inbuff  -- pointer to one TBB data-frame (incl. header etc.)
+      
+      \return the time (fraction of second since time of data-frame)
+    */      
+    inline static double getDataTimeFraction (char *inbuff) {
+      return double(((TBB_Header*)inbuff)->sample_nr) / double(1.e6*((TBB_Header*)inbuff)->sample_freq);
+    };
+
   private:
     // ----------------------------------------------------------- Private Methods
 

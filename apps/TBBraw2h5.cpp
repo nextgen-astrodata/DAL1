@@ -430,6 +430,8 @@ bool readFromSockets (std::vector<int> ports,
   unsigned int i = 0;
   char * bufferPointer;
   time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
   char timestamp_buffer[20];
 
   //________________________________________________________
@@ -504,11 +506,13 @@ bool readFromSockets (std::vector<int> ports,
     {
       // Get timestamp and convert to ISO 8601 format for filename
       timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
-      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M%S", gmtime ( &timestamp ));
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << ".h5";
 
       // Create file
       tbb = new DAL::TBBraw(outfile.str());
@@ -605,6 +609,8 @@ bool readStationsFromSockets (std::vector<int> ports,
   unsigned int nofTBBfiles = 256;
   int lasttimes[nofTBBfiles];  
   time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
   char timestamp_buffer[20];
   
   DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
@@ -694,11 +700,14 @@ bool readStationsFromSockets (std::vector<int> ports,
 
       // Get timestamp and convert to ISO 8601 format for filename
       timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
-      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M%S", gmtime ( &timestamp ));
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << "-" << int(stationId) << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << int(stationId) << ".h5";
+
       
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str(), observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
