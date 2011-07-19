@@ -657,7 +657,7 @@ bool readStationsFromSockets (std::vector<int> ports,
 
       // Get timestamp and convert to ISO 8601 format for filename
       timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
-      strftime (timestamp_buffer, 20, "%Y-%m-%dT%H:%M:%S", gmtime ( &timestamp ));
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M%S", gmtime ( &timestamp ));
 
       // Generate filename
       std::ostringstream outfile;
