@@ -36,6 +36,8 @@ using DAL::MS_Table;
   \date 2011-07-18
 */
 
+#ifdef DAL_WITH_CASA
+
 //_______________________________________________________________________________
 //                                                              test_constructors
 
@@ -175,9 +177,9 @@ int main (int argc, char *argv[])
     haveDataset = true;
   }
   
-  std::cout << "[tHDF5Dataset] Output HDF5 file = " << filename << std::endl;
-
-
+  //________________________________________________________
+  // Run the tests
+  
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
   // Test reading data from MS table columns.
@@ -185,3 +187,27 @@ int main (int argc, char *argv[])
 
   return nofFailedTests;
 }
+
+#else 
+
+int main (int argc, char *argv[])
+{
+  int nofFailedTests = 0;
+
+  std::cout << "[tMS_Table] Testing MS_Table() ..."      << std::endl;
+  std::cout << "-- nof. command line args = " << argc    << std::endl;
+  std::cout << "-- Test program name      = " << argv[0] << std::endl;
+
+  try {
+    MS_Table ms;
+    //
+    ms.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
+  return nofFailedTests;
+}
+
+#endif
