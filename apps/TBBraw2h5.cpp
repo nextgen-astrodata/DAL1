@@ -422,9 +422,17 @@ bool readFromSockets (std::vector<int> ports,
     float startTimeout,
     float readTimeout,
     bool verbose=false,
-    bool waitForAllPorts=false)
+    bool waitForAllPorts=false,
+    std::string outFileBase="",
+    int doCheckCRC=1,
+    int fixTransientTimes=2)
 {
   unsigned int i = 0;
+  char * bufferPointer;
+  time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
+  char timestamp_buffer[20];
 
   //________________________________________________________
   // initialize the buffer
@@ -491,7 +499,40 @@ bool readFromSockets (std::vector<int> ports,
     if (processingID >= input_buffer_size) {
       processingID -= input_buffer_size;
     };
-    tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
+
+    // Create new time stamped file if required
+    bufferPointer = inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE);
+    if (tbb == NULL)
+    {
+      // Get timestamp and convert to ISO 8601 format for filename
+      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
+
+      // Generate filename
+      std::ostringstream outfile;
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << ".h5";
+
+      // Create file
+      tbb = new DAL::TBBraw(outfile.str());
+      if ( !tbb->isConnected() )
+      {
+        cout << "[TBBraw2h5] Failed to open output file." << endl;
+        return 1;
+      };
+
+      // Set the options in the TBBraw object
+      if (doCheckCRC>0) {
+        tbb->doHeaderCRC(true);
+      }
+      else {
+        tbb->doHeaderCRC(false);
+      };
+      tbb->setFixTimes(fixTransientTimes);
+    }
+      
+    tbb->processTBBrawBlock(bufferPointer,
         UDP_PACKET_BUFFER_SIZE);
     inBufProcessID = processingID;
   };
@@ -568,6 +609,8 @@ bool readStationsFromSockets (std::vector<int> ports,
   unsigned int nofTBBfiles = 256;
   int lasttimes[nofTBBfiles];  
   time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
   char timestamp_buffer[20];
   
   DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
@@ -657,11 +700,14 @@ bool readStationsFromSockets (std::vector<int> ports,
 
       // Get timestamp and convert to ISO 8601 format for filename
       timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
-      strftime (timestamp_buffer, 20, "%Y-%m-%dT%H:%M:%S", gmtime ( &timestamp ));
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << "-" << int(stationId) << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId) << ".h5";
+
       
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str(), observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
@@ -974,13 +1020,36 @@ int main(int argc, char *argv[])
   };
 
   // -----------------------------------------------------------------
-  // Process data from multiple stations
-  // returns only in case of an error
+  // Process data from multiple stations, returns only in case of an error
+
   if (multipeStations) {
     readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, observer, project, observationID, filterSelection, antennaSet, verboseMode);
     return 1;
   };
+
   // -----------------------------------------------------------------
+  // Process data in socket mode
+
+  if (socketmode) {
+    // -----------------------------------------------------------------
+    // Begin of "keepRunning" loop
+    do 
+    {
+      tbb = NULL;
+
+      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll, outfile, doCheckCRC, fixTransientTimes);
+
+      // -----------------------------------------------------------------
+      // Finish up, print some statistics.
+      tbb->summary();
+
+      delete tbb;
+    } while (keepRunning);
+    return 0;
+  }
+
+  // -----------------------------------------------------------------
+  // Process data in file mode
 
   if (keepRunning) { 
     outfileOrig = outfile ; 
@@ -1021,12 +1090,7 @@ int main(int argc, char *argv[])
     // -----------------------------------------------------------------
     // call the conversion routines
 
-    if (socketmode) {
-      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll);
-    }
-    else {
-      readFromFile(infile, verboseMode);
-    };
+    readFromFile(infile, verboseMode);
 
     // -----------------------------------------------------------------
     //finish up, print some statistics.
