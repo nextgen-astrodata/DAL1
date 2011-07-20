@@ -17,7 +17,6 @@ foreach (src
   target_link_libraries (${src}
     dal
     ${dal_link_libraries}
-    ${GFORTRAN_LIBRARIES}
     )
   
 endforeach (src)

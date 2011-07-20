@@ -52,7 +52,6 @@ set (_cmakeModules
   Casacore
   CFITSIO_DAL
   Doxygen
-  GFortran
   Git
   GSL_DAL
   HDF5_DAL

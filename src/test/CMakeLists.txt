@@ -51,11 +51,11 @@ endforeach (src)
 ## Test which require additional external libraries (and thereby should be
 ## considered optional)
 
-if (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
+if (CASACORE_FOUND AND LAPACK_LIBRARIES)
 
   add_subdirectory (casacore)
 
-endif (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
+endif (CASACORE_FOUND AND LAPACK_LIBRARIES)
 
 ## ==============================================================================
 ##
