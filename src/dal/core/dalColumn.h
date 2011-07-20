@@ -76,6 +76,7 @@ namespace DAL {
     std::string itsCasaDatatype;
     //! Column descriptor
     casa::ColumnDesc itsColumnDesc;
+    //! Readonly access to a table column.
     casa::ROTableColumn * itsROTableColumn;
     
     // COLUMNs
@@ -89,9 +90,6 @@ namespace DAL {
     casa::ROScalarColumn<double> * rosc_dbl;
     casa::ROScalarColumn< std::complex< float > > * rosc_comp;
     casa::ROScalarColumn<casa::String> * rosc_string;
-    
-    // VECTORs
-    vector< std::complex< float > > stl_vec_comp;
     
     bool deleteIt;
     
@@ -306,13 +304,14 @@ namespace DAL {
 	/* Determine type of column cell: scalar or array */
 
 	if (itsColumnDesc.isScalar()) {
-	  casa::ROScalarColumn<T> readOnlyColumn;
-	  casa::Vector<T> data = readOnlyColumn.getColumn();
+	  casa::ROScalarColumn<T> columnReader (itsROTableColumn);
+	  casa::Vector<T> data = columnReader.getColumn();
 	  columnData           = new T [data.nelements()];
 	  columnData           = (T *)data.getStorage(deleteIt);
 	} else if (itsColumnDesc.isArray()) {
-	  casa::ROArrayColumn<T> readOnlyColumn (*itsROTableColumn);
-	  casa::Array<T> data = readOnlyColumn.getColumn();
+	  casa::ROArrayColumn<T> columnReader (itsROTableColumn);
+	  casa::Array<T> data = columnReader.getColumn();
+	  columnData          = new T [data.nelements()];
 	  columnData          = (T *)data.getStorage(deleteIt);
 	} else {
 	  status = false;
