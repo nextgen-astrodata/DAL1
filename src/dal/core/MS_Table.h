@@ -134,7 +134,10 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the names of the table columns
-    std::vector<std::string> columnNames ();
+    bool columnNames (std::vector<std::string> &names);
+
+    //! Get column data-types
+    std::map<casa::String,casa::DataType> columnDataTypes ();
 
     /*!
       \retval data   -- Array returning the data stored inside the designated

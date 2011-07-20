@@ -171,6 +171,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                         open
+  
   bool MS_Table::open (std::string const &name,
 		       IO_Mode const &flags)
   {
@@ -187,6 +190,26 @@ namespace DAL { // Namespace DAL -- begin
     itsFlags = flags;
     
     return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                              columnDataTypes
+  
+  std::map<casa::String,casa::DataType> MS_Table::columnDataTypes ()
+  {
+    std::map<casa::String,casa::DataType> dataTypes;
+    
+    casa::TableDesc tableDesc = itsTable.tableDesc ();
+    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
+    std::string name;
+    
+    for (unsigned int n=0; n<columnNames.nelements(); ++n) {
+      casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
+      //
+      dataTypes[columnNames(n)] = columnDesc.dataType();
+      }
+
+    return dataTypes;
   }
   
   // ============================================================================
