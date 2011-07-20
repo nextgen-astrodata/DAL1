@@ -142,21 +142,6 @@ void export_BF_RootGroup ()
 	 openStokesDataset3,
 	 "Create a new Stokes dataset.")
     ;
-  
-  // Data access methods       
-   bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
-						DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
-   
-   bool ( BF_RootGroup::*openBeam1)(hid_t const &,
-				    const string &,
-				    DAL::IO_Mode const &) = &BF_RootGroup::open;
-   
-   bool ( BF_RootGroup::*openBeam2)(unsigned int const &,
-				    unsigned const int &,
-				    DAL::IO_Mode const &) = &BF_RootGroup::openBeam;
-   
-   BF_BeamGroup ( BF_RootGroup::*getBeamGroup)(unsigned int const &pointingID,
-					       unsigned int const &beamID);
 }
 
 // ==============================================================================
