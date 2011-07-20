@@ -161,7 +161,7 @@ namespace DAL
       */
       inline std::string groupName () const
         {
-          return group_p->getName();
+          return group_p->name();
         }
 
       // ------------------------------------------------------- Methods

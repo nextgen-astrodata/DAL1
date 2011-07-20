@@ -94,8 +94,8 @@ namespace DAL {
     bool deleteIt;
     
     std::string getCasaDataType();
-    dalData * CasaData_scalar( );
-    dalData * CasaData_array( );
+    dalData * CasaData_scalar ();
+    dalData * CasaData_array ();
 #endif
     
     dalData * H5data (int &start,
@@ -131,10 +131,6 @@ namespace DAL {
     //! Add a member to a compound column.
     void addMember (std::string const &member_name,
 		    std::string const &type);
-    //! Set the name of the column.
-    inline void setName(std::string const &colname) {
-      itsName = colname;
-    }
     //! Set the file type of the dataset containing the column.
     void setFiletype (std::string const &type);
     //! Set the file type of the dataset containing the column.

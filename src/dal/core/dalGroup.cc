@@ -54,7 +54,7 @@ namespace DAL {
     file            = lclfile;
     itsFileID         = *lclfile;  // get the file handle
 
-    groupname_p    = gname;
+    itsName    = gname;
     groupname_full = "/" + stringify(gname);
     if ( ( itsGroupID = H5Gcreate( itsFileID, groupname_full.c_str(),  H5P_DEFAULT,
                                  H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
@@ -103,9 +103,9 @@ namespace DAL {
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file            = lclfile;
     itsFileID         = *lclfile;  // get the file handle
-    groupname_p     = gname;
+    itsName     = gname;
 
-    groupname_full = "/" + groupname_p;
+    groupname_full = "/" + itsName;
     if ( ( itsGroupID = H5Gopen ( itsFileID, groupname_full.c_str(), H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
@@ -173,12 +173,12 @@ namespace DAL {
   void dalGroup::init () 
   {
     file           = NULL;
-    groupname_p    = "UNKNOWN";
+    itsName    = "UNKNOWN";
     groupname_full = "UNKNOWN";
     group          = NULL;
     filter         = NULL;
-    itsFileID        = 0;
-    itsGroupID       = 0;
+    itsFileID      = 0;
+    itsGroupID     = 0;
     status         = 0;
   }
   
@@ -194,7 +194,7 @@ namespace DAL {
     
     os << "-- File ID            = " << itsFileID     << std::endl;
     os << "-- Group ID           = " << itsGroupID    << std::endl;
-    os << "-- Group name         = " << groupname_p << std::endl;
+    os << "-- Group name         = " << itsName << std::endl;
     os << "-- Status             = " << status      << std::endl;
     
     std::vector<std::string> memberNames = getMemberNames();
@@ -266,28 +266,7 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                      setName
-  
-  /*!
-    Set the name of the group.
-
-    \param gname The name of the group.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalGroup::setName ( std::string gname )
-  {
-    if ( gname.length() > 0 ) {
-      groupname_p = gname;
-      return SUCCESS;
-    }
-    else {
-      std::cerr << "Error:  Group name must not be empty.\n";
-      return FAIL;
-    }
-  }
-  
-  
-  // ------------------------------------------------------- createShortArray
+  //                                                             createShortArray
   
   /*!
     Create an array of shorts with any dimensions.  This is usually
@@ -312,10 +291,9 @@ namespace DAL {
     return la;
   }
 
-
-
-// ------------------------------------------------------------ createIntArray
-
+  //_____________________________________________________________________________
+  //                                                               createIntArray
+  
   /*!
     \brief Create an array of integers within the group.
 
@@ -341,9 +319,9 @@ namespace DAL {
     return la;
   }
 
-
-// ------------------------------------------------------- createFloatArray
-
+  //_____________________________________________________________________________
+  //                                                             createFloatArray
+  
   /*!
     \brief Create an array of floating point values within the group.
 
@@ -369,9 +347,9 @@ namespace DAL {
     return la;
   }
 
-
-// ------------------------------------------------ createComplexFloatArray
-
+  //_____________________________________________________________________________
+  //                                                      createComplexFloatArray
+  
   /*!
     \brief Create an array of complex floating point values within the group.
 
@@ -398,9 +376,9 @@ namespace DAL {
     return la;
   }
 
-
-// ------------------------------------------------- createComplexShortArray
-
+  //_____________________________________________________________________________
+  //                                                      createComplexShortArray
+  
   /*!
     \brief Create an array of complex int16 values within the group.
 
@@ -427,21 +405,18 @@ namespace DAL {
     return la;
   }
 
-  // ---------------------------------------------------------- createGroup
+  //_____________________________________________________________________________
+  //                                                      createComplexShortArray
   
   /*!
-    \brief Create a new group.
-
-    Create a new group.
-
-    \param groupname
-    \return dalGroup
+    \param name      -- Name of the group to create.
+    \return dalGroup -- Object holding the newly created group.
   */
-  dalGroup * dalGroup::createGroup( const char * gname )
+  dalGroup * dalGroup::createGroup (const char * name)
   {
-    dalGroup * lg = NULL;
-    lg = new dalGroup( itsGroupID, gname );
-    return lg;
+    dalGroup * newGroup = NULL;
+    newGroup = new dalGroup (itsGroupID, name);
+    return newGroup;
   }
 
 } // end namespace DAL

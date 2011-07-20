@@ -23,6 +23,7 @@
 
 #include <vector>
 
+#include <core/dalObjectBase.h>
 #include <core/dalTable.h>
 #include <core/dalArray.h>
 #include <core/dalIntArray.h>
@@ -42,14 +43,12 @@ namespace DAL {
 
     \author Joseph Masters
   */
-  class dalGroup {
+  class dalGroup : public dalObjectBase {
     
   protected:
     
     //! File handler, can be HDF5File, FITS, MS
     void * file;
-    //! Name of the group
-    std::string groupname_p;
     //! Full name of the group
     std::string groupname_full;
     void * group;
@@ -79,12 +78,6 @@ namespace DAL {
 
     // === Parameter access =====================================================
     
-    //! Get the name of the group
-    inline std::string getName() const {
-      return groupname_p;
-    }
-    //! Set the name of the group
-    bool setName( std::string gname );
     //! Retrieve the identifier for the group.
     hid_t getId();
     
@@ -188,8 +181,8 @@ namespace DAL {
 				     data.size());
       }
     
-    //! Create new group \c gname
-    dalGroup * createGroup( const char * gname );
+    //! Create a new group pf given \e name
+    dalGroup * createGroup (const char * name);
     
     // === Boost.Python wrappers ================================================
 

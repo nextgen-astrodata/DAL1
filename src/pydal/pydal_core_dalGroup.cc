@@ -492,8 +492,6 @@ void export_dalGroup ()
 	  "Return a dalGroup uint attribute into a numpy array." )
     .def( "getAttribute_string", &dalGroup::getAttribute_string_boost,
 	  "Return a dalGroup string attribute into a numpy array." )
-    .def( "getName", &dalGroup::getName,
-	  "Return the group name." )
     .def( "setName", &dalGroup::setName,
 	  "Set the name of the group." )
     .def( "getId", &dalGroup::getId,

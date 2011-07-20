@@ -42,8 +42,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                     MS_Table
   
   /*!
-    \param 
-    \param 
+    \param name  -- Name of the MeasurementSet.
+    \param flags -- I/O mode flags.
   */
   MS_Table::MS_Table (std::string const &name,
 		      IO_Mode const &flags)

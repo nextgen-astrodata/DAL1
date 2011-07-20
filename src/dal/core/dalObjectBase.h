@@ -111,6 +111,16 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     /*!
+      \brief Set the name of the object (file, dataset, table, etc.)
+      \param name    -- Name of the object (file, dataset, table, etc.)
+      \return status -- Status of the operation.
+    */
+    virtual bool setName (std::string const &name) {
+      itsName = name;
+      return true;
+    }
+
+    /*!
       \brief Get the file type: CASA_MS, HDF5, FITS, etc.
       \return type -- File type: CASA_MS, HDF5, FITS, etc.
     */

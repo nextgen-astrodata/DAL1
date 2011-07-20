@@ -709,7 +709,7 @@ namespace DAL {
         if ( it_exists( dipoles, stringify(dipolestr)) )
           {
             // if the dipole array already exists, then open it
-            dipoleArray_p = dataset->openArray( dipolestr, stationGroup_p->getName() );
+            dipoleArray_p = dataset->openArray( dipolestr, stationGroup_p->name() );
           }
         else
           {

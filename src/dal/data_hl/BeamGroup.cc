@@ -237,7 +237,7 @@ namespace DAL {
     /* Get the list of Subband-tables contained in this group */
     std::vector<std::string> memberNames = group_p->getMemberNames();
     
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->name());
 
     return table;
   }
@@ -251,7 +251,7 @@ namespace DAL {
   {
     float ra = -1;
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == HDF5Attribute::read (group_p->getId(), "RA", ra ) )
           {
@@ -270,7 +270,7 @@ namespace DAL {
   {
     float dec = -1;
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(), "DEC", dec ) )
           {
@@ -304,7 +304,7 @@ namespace DAL {
   int BeamGroup::nofSubbands ()
   {
     int nofSubbands = -1;
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(),
 					       "NUMBER_OF_SUBBANDS",
@@ -329,7 +329,7 @@ namespace DAL {
   {
     std::vector<int> frequencies (1,0);
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         unsigned int nofSubbands = subbands_p.size();
         frequencies.resize(nofSubbands);
@@ -353,7 +353,7 @@ namespace DAL {
   {
     std::vector<hid_t> ids (1,0);
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         unsigned int nofSubbands = subbands_p.size();
         ids.resize(nofSubbands);
@@ -376,7 +376,7 @@ namespace DAL {
   {
     std::vector<hsize_t> nofFields (1,0);
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         unsigned int nofSubbands = subbands_p.size();
         nofFields.resize(nofSubbands);
@@ -399,7 +399,7 @@ namespace DAL {
   {
     std::vector<long> rows (1,0);
 
-    if (group_p->getName() != "UNDEFINED")
+    if (group_p->name() != "UNDEFINED")
       {
         unsigned int nofSubbands = subbands_p.size();
         rows.resize(nofSubbands);
@@ -475,7 +475,7 @@ namespace DAL {
     
     std::vector<std::string> memberNames = group_p->getMemberNames();
     
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->name());
     if ( !table ) {
       std::cerr << "[BeamGroup::getIntensity] Subband " << subband
 		<< " does not exist for this beam."
@@ -517,7 +517,7 @@ namespace DAL {
     
     std::vector<std::string> memberNames = group_p->getMemberNames();
     
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->name());
     if ( !table )
       {
 	printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -558,7 +558,7 @@ namespace DAL {
     dalData * data                       = NULL;
     std::vector<std::string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->name());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -602,7 +602,7 @@ namespace DAL {
     dalData * data                       = NULL;
     std::vector<std::string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->name());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
