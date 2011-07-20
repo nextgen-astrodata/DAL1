@@ -706,7 +706,7 @@ bool readStationsFromSockets (std::vector<int> ports,
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << int(stationId) << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId) << ".h5";
 
       
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str(), observer, project, observationID, filterSelection, "LOFAR", antennaSet);
