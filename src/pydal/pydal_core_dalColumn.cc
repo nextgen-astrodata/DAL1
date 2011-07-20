@@ -265,10 +265,6 @@ void export_dalColumn ()
     = &dalColumn::summary;
   void (dalColumn::*summary2)(std::ostream &) 
     = &dalColumn::summary;
-  void (dalColumn::*setFileType1)(std::string const &) 
-    = &dalColumn::setFiletype;
-  void (dalColumn::*setFileType2)(DAL::dalFileType const &) 
-    = &dalColumn::setFiletype;
   
   //________________________________________________________
   // Bindings for class and its methods
@@ -292,10 +288,6 @@ void export_dalColumn ()
 	  "individual column needs to contain an int, a float, and a short." )
     .def( "setName", &dalColumn::setName,
 	  "Set the name of the column." )
-    .def( "setFileType", setFileType1,
-	  "Set the file type of the dataset containing the column." )
-    .def( "setFileType", setFileType2,
-	  "Set the file type of the dataset containing the column." )
     .def( "name", &dalColumn::name,
 	  "Return the name of the column." )
     .def( "getSize", &dalColumn::getSize,

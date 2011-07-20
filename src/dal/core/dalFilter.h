@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include <core/dalFileType.h>
+#include <core/dalObjectBase.h>
 
 namespace DAL {
   
@@ -37,12 +37,10 @@ namespace DAL {
     \author Joseph Masters, Lars B&auml;hren
   */
   
-  class dalFilter {
+  class dalFilter : public dalObjectBase {
 
     //! Table filter std::string
     std::string itsFilterString;
-    //! File type: CASA_MS, HDF5, FITS, etc.
-    dalFileType itsFiletype;
     //! Book-keeping whether a filter is set or not.
     bool itsFilterIsSet;
     
@@ -79,17 +77,6 @@ namespace DAL {
     bool setFilter (std::string const &columns,
 		    std::string const &conditions);
     
-    //! Get the type of the file
-    inline std::string filetype () {
-      return itsFiletype.name();
-    }
-
-    //! Declare the type of the file
-    bool setFiletype (DAL::dalFileType const &type);
-
-    //! Declare the type of the file (i.e. "CASA_MS", "HDF5", etc.)
-    bool setFiletype (std::string const &type);
-
     //! Check to see if the filter is defined.
     inline bool isSet () const {
       return itsFilterIsSet;

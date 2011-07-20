@@ -386,28 +386,6 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                  setFileType
-
-  /*!
-    \param -- type The type of file.
-  */
-  void dalColumn::setFiletype (std::string const &type)
-  {
-    itsFiletype = dalFileType(type);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                  setFileType
-
-  /*!
-    \param -- type The type of file.
-  */
-  void dalColumn::setFiletype (dalFileType const &type)
-  {
-    itsFiletype = type;
-  }
-
-  //_____________________________________________________________________________
   //                                                                      nofRows
 
   /*!

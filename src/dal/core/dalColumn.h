@@ -131,10 +131,6 @@ namespace DAL {
     //! Add a member to a compound column.
     void addMember (std::string const &member_name,
 		    std::string const &type);
-    //! Set the file type of the dataset containing the column.
-    void setFiletype (std::string const &type);
-    //! Set the file type of the dataset containing the column.
-    void setFiletype (dalFileType const &filetype);
     //! Get the type of the data stored inside the column.
     std::string getDataType();
     int getSize();

@@ -124,7 +124,7 @@ namespace DAL { // Namespace DAL -- begin
       \brief Get the file type: CASA_MS, HDF5, FITS, etc.
       \return type -- File type: CASA_MS, HDF5, FITS, etc.
     */
-    inline DAL::dalFileType::Type filetype () {
+    virtual DAL::dalFileType::Type filetype () {
       return itsFiletype.type();
     }
     
@@ -132,10 +132,22 @@ namespace DAL { // Namespace DAL -- begin
       \brief Get the file type: CASA_MS, HDF5, FITS, etc.
       \return name -- File type name: CASA_MS, HDF5, FITS, etc.
     */
-    inline std::string filetypeName () {
+    virtual std::string filetypeName () {
       return itsFiletype.name();
     }
+
+    //! Set file type: CASA_MS, HDF5, FITS, etc.
+    virtual bool setFiletype (dalFileType const &filetype) {
+      itsFiletype = filetype;
+      return true;
+    }
     
+    //! Set file type: CASA_MS, HDF5, FITS, etc.
+    virtual bool setFiletype (std::string const &type) {
+      itsFiletype = dalFileType(type);
+      return true;
+    }
+  
     /*!
       \brief Get object I/O mode flags
       \return flags -- Object I/O mode flags.

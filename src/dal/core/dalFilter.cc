@@ -211,27 +211,6 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                  setFiletype
-  
-  /*!
-    \param type The type of the file (i.e. "CASA_MS", "HDF5", etc.)
-   */
-  bool dalFilter::setFiletype (std::string const &type)
-  {
-    itsFiletype = dalFileType (type);
-    return true;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                  setFiletype
-  
-  bool dalFilter::setFiletype (DAL::dalFileType const &type)
-  {
-    itsFiletype = type;
-    return true;
-  }
-
-  //_____________________________________________________________________________
   //                                                                      summary
   
   void dalFilter::summary (std::ostream &os)
