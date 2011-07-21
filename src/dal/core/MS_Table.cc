@@ -192,8 +192,14 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     casa::Table table (absoluteName);
-    itsTable = casa::Table (table);
-    itsFlags = flags;
+    // Check if the table is ok; if yes, then set internal variables
+    if (table.isNull()) {
+      status = false;
+    } else {
+      itsTable = casa::Table (table);
+      itsFlags = flags;
+      status   = true;
+    }
     
     return status;
   }
@@ -205,15 +211,17 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::map<casa::String,casa::DataType> dataTypes;
     
-    casa::TableDesc tableDesc = itsTable.tableDesc ();
-    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
-    std::string name;
-    
-    for (unsigned int n=0; n<columnNames.nelements(); ++n) {
-      casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
-      //
-      dataTypes[columnNames(n)] = columnDesc.dataType();
+    if (!itsTable.isNull()) {
+      casa::TableDesc tableDesc = itsTable.tableDesc ();
+      casa::Vector<casa::String> columnNames = tableDesc.columnNames();
+      std::string name;
+      
+      for (unsigned int n=0; n<columnNames.nelements(); ++n) {
+	casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
+	//
+	dataTypes[columnNames(n)] = columnDesc.dataType();
       }
+    }
 
     return dataTypes;
   }

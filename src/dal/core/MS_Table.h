@@ -150,6 +150,11 @@ namespace DAL { // Namespace DAL -- begin
       bool readData (casa::Array<T> &data,
 		     std::string const &column)
       {
+	// Check if table is ok
+	if (itsTable.isNull()) {
+	  return false;
+	}
+
 	bool status                 = true;
 	casa::TableDesc tableDesc   = itsTable.tableDesc();
 	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
