@@ -43,10 +43,10 @@ namespace DAL {
   /*!
     Create a new column with a complex floating point datatype.
 
-    \param complexcolname Name of the column you want to create.
+    \param name -- Name of the column you want to create.
   */
-  dalColumn::dalColumn (std::string const &complexcolname)
-    : dalObjectBase(complexcolname)
+  dalColumn::dalColumn (std::string const &name)
+    : dalObjectBase(name)
   {
     init ();
     itsDatatype = dal_COMPLEX;
@@ -56,13 +56,13 @@ namespace DAL {
   //                                                                    dalColumn
 
   /*!
-    \param colname The name of the column you want to create.
-    \param coltype The datatype of the column you want to craete (i.e.
+    \param name    -- The name of the column you want to create.
+    \param coltype -- The datatype of the column you want to craete (i.e.
     dalINT, dalFLOAT, dalSTRING, etc.)
   */
-  dalColumn::dalColumn (std::string const &colname,
+  dalColumn::dalColumn (std::string const &name,
 			std::string const &type)
-    : dalObjectBase(colname)
+    : dalObjectBase(name)
   {
     init ();
     itsDatatype = type;

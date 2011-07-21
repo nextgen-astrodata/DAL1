@@ -278,9 +278,9 @@ void export_dalColumn ()
     .def( boost::python::init<hid_t const &,
 			      hid_t const &,
 			      DAL::dalFileType const &,
-			      std::string const &,
-			      std::string const &,
-			      std::string const &>())
+			      string const &,
+			      string const &,
+			      string const &>())
     /* Public methods */
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"

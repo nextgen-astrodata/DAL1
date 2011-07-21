@@ -108,12 +108,12 @@ namespace DAL {
     //! Default constructor
     dalColumn();
     //! Create a new complex column.
-    dalColumn (std::string const &complexcolname);
+    dalColumn (std::string const &name);
     //! Argumented constructor for a new column object.
-    dalColumn (std::string const &colname,
+    dalColumn (std::string const &name,
 	       std::string const &coltype);
     //! Argumented constructor for a new column object.
-    dalColumn( hid_t const &fileid,
+    dalColumn (hid_t const &fileid,
 	       hid_t const &tableid,
 	       dalFileType const &filetype,
 	       std::string const &tablename,
