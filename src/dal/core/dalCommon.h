@@ -28,9 +28,10 @@
 #include <assert.h>
 #include <map>
 #include <set>
+#include <stdexcept>
+#include <typeinfo>
 #include <valarray>
 #include <vector>
-#include <stdexcept>
 
 using std::cerr;
 using std::cout;
