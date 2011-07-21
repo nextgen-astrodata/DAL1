@@ -191,6 +191,41 @@ namespace DAL { // Namespace DAL -- begin
 	return status;
       }
 
+        /*!
+      \retval data   -- Array returning the data stored inside the designated
+              table \e column.
+      \param column  -- Name of the \e column from which to read the \e data.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool readData (std::vector<T> &data,
+		     std::string const &column)
+      {
+	bool status = true;
+	
+	// Check if table is ok
+	if (itsTable.isNull()) {
+	  status = false;
+	} else {
+	  // casa::Array into which the column data are read initially
+	  casa::Array<T> buffer;
+	  // read column data
+	  if (readData (buffer,column)) {
+	    unsigned int nelem = buffer.nelements();
+	    // resize the array returning the data
+	    data.resize(nelem);
+	    // get the data from the buffer array
+	    data.assign(buffer.data(),buffer.data()+nelem);
+	  } else {
+	    data.clear();
+	    status = false;
+	  }
+	}
+	
+	return status;
+      }
+    
     // === Static methods =======================================================
     
     //! Resolve the \e name for the MS table
