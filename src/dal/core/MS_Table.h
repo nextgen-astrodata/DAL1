@@ -188,14 +188,12 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Static methods =======================================================
     
-    
+    //! Resolve the \e name for the MS table
+    static bool resolveName (std::string &absoluteName,
+			     std::string const &name);
     
   private:
-
-    //! Resolve the \e name for the MS table
-    bool resolveName (std::string &absoluteName,
-		      std::string const &name);
-
+    
     //! Unconditional copying
     void copy (MS_Table const &other);
     
