@@ -30,12 +30,12 @@
 #include <set>
 #include <valarray>
 #include <vector>
+#include <stdexcept>
 
 using std::cerr;
 using std::cout;
 using std::endl;
 
-#include <core/convert.h>
 #include <core/dalConversions.h>
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Dataspace.h>
@@ -112,10 +112,40 @@ namespace DAL {
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                BadConversion
+  
+  class BadConversion : public std::runtime_error {
+  public:
+  BadConversion(const std::string& s)
+    : std::runtime_error(s)
+      { }
+  };
+  
+  //_____________________________________________________________________________
+  //                                                                    stringify
+  
+  //! Convert array of elements to string
+  template<typename T>
+    inline std::string stringify(const T& x)
+    {
+      std::ostringstream o;
+      if (!(o << x))
+	throw BadConversion(std::string("stringify(")
+			    + typeid(x).name() + ")");
+      return o.str();
+    }
+  
+  //_____________________________________________________________________________
+  //                                                                    swapbytes
+  
   //! Byte swap routine
   void swapbytes (char *addr,
 		  int8_t nbytes);
   
+  //_____________________________________________________________________________
+  //                                                                        crc16
+
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,
 		  uint32_t length);
