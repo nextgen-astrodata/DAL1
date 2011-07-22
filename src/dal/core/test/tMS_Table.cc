@@ -168,7 +168,6 @@ int test_readData (std::string const &filename)
       status = ms.readData (data, columns[n]);
       std::cout << std::setw(15) << columns[n]
 		<< std::setw(15) << data.size()
-		<< std::setw(15) << data.size()
 		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
 		<< " "     << data[3] << " " << data[4] << " " << data[5]
 		<< " .. ]" 
@@ -206,7 +205,7 @@ int test_readData (std::string const &filename)
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
+
   return nofFailedTests;
 }
 

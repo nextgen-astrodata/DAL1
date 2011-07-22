@@ -190,8 +190,8 @@ namespace DAL { // Namespace DAL -- begin
 
 	return status;
       }
-
-        /*!
+    
+    /*!
       \retval data   -- Array returning the data stored inside the designated
               table \e column.
       \param column  -- Name of the \e column from which to read the \e data.

@@ -30,7 +30,7 @@
 #include <tables/Tables/SetupNewTab.h>
 
 /*!
-  \file tMeasurementSets.cc
+  \file tcasacore_ms.cc
 
   \ingroup DAL
 
@@ -38,7 +38,7 @@
 
   \author Lars B&auml;hren
 
-  \date 2007/08/13
+  \date 2007-08-13
 
   This test program contains a number of routines which make use of various
   modules and classes of the casacore libraries; rather than providing a full
@@ -52,11 +52,12 @@ using std::cout;
 using std::endl;
 
 //_______________________________________________________________________________
-//                                                                           main
+//                                                               test_open_create
 
 /*!
   \brief Test working with the classes in the CASA "ms" module
-  
+
+  \param filename       -- Name of the MeasurementSet to open and/or create.
   \return nofFaildTests -- The number of failed tests within this function
 */
 int test_open_create (std::string const &filename="tcasacore_ms.ms")

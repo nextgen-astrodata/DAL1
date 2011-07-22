@@ -160,14 +160,14 @@ namespace DAL {
       case dalFileType::CASA_MS:
 	{
 	  try {
-	    if ( isScalar() ) {
+	    if (itsColumnDesc.isScalar()) {
 	      return CasaData_scalar();
 	    }
-	    else if ( isArray() ) {
+	    else if (itsColumnDesc.isArray()) {
 	      return CasaData_array();
 	    }
 	    else {
-	      std::cerr << "dalColumn::data() Column is neither "
+	      std::cerr << "[dalColumn::data] Column is neither "
 			<< "scalar nor array.  "
 			<< "Do not know how to handle.\n";
 	      return NULL;
