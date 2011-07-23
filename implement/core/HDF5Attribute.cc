@@ -418,6 +418,10 @@ namespace DAL { // Namespace DAL -- begin
     hsize_t dims[1]   = { size };
     hsize_t *maxdims  = 0;
     herr_t h5err      = 0;
+
+    /* Check if asked to write an empty string, if so abort to avoid
+       zero size write error. */
+    if (size == 0) return false;
     
     /*________________________________________________________________
       Basic checks for reference location and attribute name.
