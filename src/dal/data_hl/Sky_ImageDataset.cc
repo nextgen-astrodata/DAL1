@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -34,8 +34,9 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   Sky_ImageDataset::Sky_ImageDataset (hid_t const &location,
-				      std::string const &name)
-    : HDF5DatasetBase(location,name)
+				      std::string const &name,
+				      IO_Mode const &flags)
+    : HDF5DatasetBase(location,name, flags)
   {
   }
 
@@ -109,6 +110,10 @@ namespace DAL { // Namespace DAL -- begin
   void Sky_ImageDataset::summary (std::ostream &os)
   {
     os << "[Sky_ImageDataset] Summary of internal parameters." << std::endl;
+    os << "-- Grouptype        = " << itsGroupType     << std::endl;
+    os << "-- I/O mode flags   = " << itsFlags.names() << std::endl;
+    os << "-- Attributes       = " << itsAttributes    << std::endl;
+    os << "-- Path to WCS info = " << itsWCSinfo       << std::endl;
   }
   
   // ============================================================================

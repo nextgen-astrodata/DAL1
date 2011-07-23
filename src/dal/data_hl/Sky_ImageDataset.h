@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -66,11 +66,15 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor to open existing dataset
     Sky_ImageDataset (hid_t const &location,
-		      std::string const &name);
+		     std::string const &name,
+		     IO_Mode const &flags=IO_Mode());
     
-    //! Argumented constructor to open existing dataset
+    //! Argumented constructor to create new dataset
     Sky_ImageDataset (hid_t const &location,
-		      unsigned int const &index);
+		      std::string const &name,
+		      std::vector< hsize_t > const &shape,
+		      hid_t const &datatype=H5T_NATIVE_DOUBLE,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Copy constructor
     Sky_ImageDataset (Sky_ImageDataset const &other);

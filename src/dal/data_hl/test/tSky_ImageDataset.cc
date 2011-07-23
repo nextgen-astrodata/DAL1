@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,17 +45,28 @@ using DAL::Sky_ImageDataset;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &fileID,
+		       bool const &haveDataset)
 {
   std::cout << "\n[tSky_ImageDataset::test_constructors]\n" << std::endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing Sky_ImageDataset() ..." << std::endl;
   try {
-    Sky_ImageDataset newObject;
+    Sky_ImageDataset sky;
     //
-    newObject.summary(); 
+    sky.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing Sky_ImageDataset() ..." << std::endl;
+  try {
+    Sky_ImageDataset sky;
+    //
+    sky.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -73,12 +84,42 @@ int test_constructors ()
   \return nofFailedTests -- The number of failed tests encountered within and
           identified by this test program.
 */
-int main ()
+int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
+  int nofFailedTests   = 0;
+  hid_t fileID         = 0;
+  bool haveDataset     = false;
+  std::string filename = "tSky_ImageDataset.h5";
 
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+  
+  //________________________________________________________
+  // Open/create HDF5 file to work with
+  
+  if (haveDataset) {
+    fileID = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  } else {
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+  }
+  
+  //________________________________________________________
+  // Run the tests
+  
   // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  nofFailedTests += test_constructors (fileID, haveDataset);
 
   return nofFailedTests;
 }
