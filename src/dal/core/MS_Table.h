@@ -61,6 +61,8 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
     
     <h3>Example(s)</h3>
+
+    \todo readData() for selected column rows -> ROArrayColumn::getColumnRange() method
     
   */  
   class MS_Table : public dalObjectBase {
