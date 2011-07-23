@@ -28,18 +28,53 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                             Sky_ImageDataset
+  
   Sky_ImageDataset::Sky_ImageDataset ()
     : HDF5DatasetBase()
   {
   }
   
+  //_____________________________________________________________________________
+  //                                                             Sky_ImageDataset
+  
+  /*!
+    \param location -- Object identifier for the location below which the
+           dataset \c name is to be found.
+    \param name     -- Name of the dataset.
+    \param flags    -- I/O mode flags.
+  */
   Sky_ImageDataset::Sky_ImageDataset (hid_t const &location,
 				      std::string const &name,
 				      IO_Mode const &flags)
-    : HDF5DatasetBase(location,name, flags)
+    : HDF5DatasetBase(location, name, flags)
   {
   }
 
+  //_____________________________________________________________________________
+  //                                                             Sky_ImageDataset
+  
+  /*!
+    \param location -- Identifier for the location at which the dataset is about
+           to be created.
+    \param name     -- Name of the dataset.
+    \param shape    -- Shape of the dataset.
+    \param datatype -- Datatype for the elements within the Dataset
+    \param flags    -- I/O mode flags.
+  */
+  Sky_ImageDataset::Sky_ImageDataset (hid_t const &location,
+				      std::string const &name,
+				      std::vector< hsize_t > const &shape,
+				      hid_t const &datatype,
+				      IO_Mode const &flags)
+    : HDF5DatasetBase(location, name, shape, datatype, flags)
+  {
+  }
+
+  //_____________________________________________________________________________
+  //                                                             Sky_ImageDataset
+  
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.

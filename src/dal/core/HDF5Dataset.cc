@@ -41,9 +41,10 @@ namespace DAL {
   //                                                                  HDF5Dataset
   
   /*!
-    \param location  -- Object identifier for the location below which the
+    \param location -- Object identifier for the location below which the
            dataset \c name is to be found.
-    \param name      -- Name of the dataset.
+    \param name     -- Name of the dataset.
+    \param flags    -- I/O mode flags.
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name,
@@ -57,11 +58,12 @@ namespace DAL {
   //                                                                  HDF5Dataset
   
   /*!
-    \param location  -- Identifier for the location at which the dataset is about
+    \param location -- Identifier for the location at which the dataset is about
            to be created.
-    \param name      -- Name of the dataset.
-    \param shape     -- Shape of the dataset.
-    \param datatype  -- Datatype for the elements within the Dataset
+    \param name     -- Name of the dataset.
+    \param shape    -- Shape of the dataset.
+    \param datatype -- Datatype for the elements within the Dataset
+    \param flags    -- I/O mode flags.
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name,
@@ -89,6 +91,7 @@ namespace DAL {
     \param shape     -- Shape of the dataset.
     \param chunksize -- Chunk size for extendible array
     \param datatype  -- Datatype for the elements within the Dataset
+    \param flags     -- I/O mode flags.
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name,
