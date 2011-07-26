@@ -1,3 +1,8 @@
+## Need to set PYTHONPATH environment to import pydal
+
+#<pre>
+set( ENV{PYTHONPATH} ${CMAKE_INSTALL_PREFIX}/lib )
+#</pre>
 
 ## List of test scripts
 

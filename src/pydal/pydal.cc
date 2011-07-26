@@ -95,6 +95,7 @@ BOOST_PYTHON_MODULE(pydal)
   export_BeamFormed ();
   export_BeamGroup ();
   export_BF_BeamGroup ();
+  export_BF_RootGroup ();
   export_TBB_Timeseries ();
   export_TBB_StationGroup ();
   export_TBB_DipoleDataset ();  

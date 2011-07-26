@@ -11,10 +11,12 @@
 set (pydal_sources
   num_util.cc
   pydal.cc
+#<<<<<<< HEAD
   coordinates/pydal_Angle.cc
   coordinates/pydal_Coordinate.cc
   coordinates/pydal_RaDec.cc
   coordinates/pydal_Stokes.cc
+  pydal_bf.cc
   pydal_core.cc
   pydal_core_dalArray.cc
   pydal_core_dalColumn.cc
