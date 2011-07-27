@@ -42,6 +42,9 @@
 #include <boost/program_options/cmdline.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/detail/cmdline.hpp>
+//other includes
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 namespace bpo = boost::program_options;
 //includes for setting the IO-priority
 #include <sys/types.h>
@@ -512,10 +515,20 @@ bool readFromSockets (std::vector<int> ports,
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
 
+      // Check if filename exists already and change it accordingly
+      if (boost::filesystem::exists(outfile.str()+".h5"))
+      {
+        int n = 0;
+        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+        {
+          ++n;
+        }
+        outfile << "-" << n;
+      }
       // Create file
-      tbb = new DAL::TBBraw(outfile.str());
+      tbb = new DAL::TBBraw(outfile.str()+".h5");
       if ( !tbb->isConnected() )
       {
         cout << "[TBBraw2h5] Failed to open output file." << endl;
@@ -706,10 +719,20 @@ bool readStationsFromSockets (std::vector<int> ports,
 
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId) << ".h5";
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
 
-      
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str(), observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+      // Check if filename exists already and change it accordingly
+      if (boost::filesystem::exists(outfile.str()+".h5"))
+      {
+        int n = 0;
+        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+        {
+          ++n;
+        }
+        outfile << "-" << n;
+      }
+
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
         cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
           << outfile.str() << endl;
