@@ -79,6 +79,8 @@ if (NOT BOOST_FOUND)
     program_options
     python
     thread
+    filesystem
+    system
     )
   
   ##_____________________________________________________________________________
