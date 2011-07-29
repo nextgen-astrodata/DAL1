@@ -74,12 +74,17 @@ void export_BF_RootGroup ()
 
   void (BF_RootGroup::*summary1)(bool const &) 
     = &BF_RootGroup::summary;
-  void (BF_RootGroup::*summary2)(std::ostream &, bool const &) 
+  void (BF_RootGroup::*summary2)(std::ostream &,
+				 bool const &) 
     = &BF_RootGroup::summary;
-
+  
+  bool (BF_RootGroup::*openSubArrayPointing1)(unsigned int const &,
+					      DAL::IO_Mode const &) 
+    = &BF_RootGroup::openSubArrayPointing;
+  
   //________________________________________________________
   // Bindings for class and its methods
-
+  
   boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const string>())
     // Construction
     .def( boost::python::init<DAL::Filename, bool>())
@@ -94,19 +99,24 @@ void export_BF_RootGroup ()
     .def("summary",
 	 summary2,
 	 "Summary of the object's internal parameters and status.")
-    .def( "className", &BF_RootGroup::className, 
+    .def( "className",
+	  &BF_RootGroup::className, 
 	  "Get name of the class" )
-    .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
+    .def( "CommonAttributes",
+	  &BF_RootGroup::commonAttributes, 
 	  "Get the common attributes of the class." )      
-    .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
+    .def( "nofSubArrayPointings",
+	  &BF_RootGroup::nofSubArrayPointings,
 	  "Get the number of SubArray pointings." )
-    .def( "open", &BF_RootGroup::open, 
-	  "Open the file containing the beamformed data." )      
+    .def( "open",
+	  &BF_RootGroup::open, 
+	  "Open the file containing the beamformed data." )
+    .def( "openSubArrayPointing",
+	  openSubArrayPointing1, 
+	  "Open a SubArrayPointing direction group." )      
     ;
   
-   // Data access methods       
-   bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
+   // Data access methods
 
    bool ( BF_RootGroup::*openBeam1)(hid_t const &,
             const string &,
