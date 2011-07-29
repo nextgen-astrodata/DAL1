@@ -132,8 +132,17 @@ void export_Stokes ()
 	 isCross1,
 	 "Is the combination of Stokes components cross?")
     .staticmethod("isCross")
+    .def("componentsMap",
+     &Stokes::componentsMap,
+     "Get map of component types and names")
     .staticmethod("componentsMap")
+    .def("componentsType",
+     &Stokes::componentsType,
+     "Get list of component types")
     .staticmethod("componentsType")
+    .def("componentsName",
+     &Stokes::componentsName,
+     "Get list of component names")
     .staticmethod("componentsName")
     ;
   
