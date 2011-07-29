@@ -69,29 +69,42 @@ void export_BF_BeamGroup ()
 
 void export_BF_RootGroup ()
 {
-   boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const string>())
-      // Argumented constructor 
-//      .def( boost::python::init<const string>())
-      .def( boost::python::init<DAL::Filename, bool>())
-      .def( boost::python::init<string const &>())
-      .def( boost::python::init<string &>())
-      .def( boost::python::init<DAL::CommonAttributes, bool>())     
-      // Access to internal parameters 
-      .def( "className", &BF_RootGroup::className, 
-      "Get name of the class" )
-      //void ( BF_RootGroup::*summary)() = &BF_RootGroup::summary)
-      .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
-      "Get the common attributes of the class." )      
-      
-      .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
-      "Get the number of SubArray pointings." )
-      ;
-      
-   // Data access methods       
-   bool ( BF_RootGroup::*open)(hid_t const &,
-            string const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::open;
+  //________________________________________________________
+  // Specialisation of overloaded methods
 
+  void (BF_RootGroup::*summary1)(bool const &) 
+    = &BF_RootGroup::summary;
+  void (BF_RootGroup::*summary2)(std::ostream &, bool const &) 
+    = &BF_RootGroup::summary;
+
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const string>())
+    // Construction
+    .def( boost::python::init<DAL::Filename, bool>())
+    .def( boost::python::init<string const &>())
+    .def( boost::python::init<string &>())
+    .def( boost::python::init<DAL::CommonAttributes, bool>())     
+    // Parameter access
+    // Public methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    .def( "className", &BF_RootGroup::className, 
+	  "Get name of the class" )
+    .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
+	  "Get the common attributes of the class." )      
+    .def( "nofSubArrayPointings", &BF_RootGroup::nofSubArrayPointings,
+	  "Get the number of SubArray pointings." )
+    .def( "open", &BF_RootGroup::open, 
+	  "Open the file containing the beamformed data." )      
+    ;
+  
+   // Data access methods       
    bool ( BF_RootGroup::*openSubArrayPointing)( unsigned int const &,
             DAL::IO_Mode const &) = &BF_RootGroup::openSubArrayPointing;
 
