@@ -77,7 +77,7 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
       dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
       )
     target_link_libraries (TBBraw2h5
-      dal ${Boost_LIBRARIES}
+      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
       )
     ## Installation instructions
     install (TARGETS tbb2h5 TBBraw2h5
