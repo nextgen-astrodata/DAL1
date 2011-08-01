@@ -217,12 +217,14 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Construction =========================================================
 
+    //! Argumented constructor
     HDF5GroupBase (IO_Mode const &flags=IO_Mode()) {
       itsFlags = flags;
     }
     
     // === Destruction ==========================================================
 
+    //! Default destructor
     virtual ~HDF5GroupBase () {
       attributes_p.clear();
       destroy();
