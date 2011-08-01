@@ -34,6 +34,7 @@
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Object.h>
+#include <core/IO_Mode.h>
 #include <data_common/CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -194,6 +195,8 @@ namespace DAL { // Namespace DAL -- begin
     std::set<std::string> attributes_p;
     //! Group type descriptor
     std::string itsGroupType;
+    //! I/O mode flags
+    IO_Mode itsFlags;
 
     /* === Protected functions which define basic interface === */
 
@@ -212,6 +215,12 @@ namespace DAL { // Namespace DAL -- begin
 
   public:
 
+    // === Construction =========================================================
+
+    HDF5GroupBase (IO_Mode const &flags=IO_Mode()) {
+      itsFlags = flags;
+    }
+    
     // === Destruction ==========================================================
 
     virtual ~HDF5GroupBase () {

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2009-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -24,7 +24,6 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_RootGroup;
 
@@ -135,7 +134,7 @@ int test_constructors ()
   
   cout << "[2] Testing BF_RootGroup(CommonAttributes) ..." << endl;
   try {
-    CommonAttributes commonAttr;
+    DAL::CommonAttributes commonAttr;
     commonAttr.setFilename (file);
     //
     BF_RootGroup dataset (commonAttr);
@@ -163,6 +162,24 @@ int test_constructors ()
     nofFailedTests++;
   }
   
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_attributes
+
+/*!
+  \brief Test access to the attributes attached to the root group.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_attributes ()
+{
+  cout << "\n[tBF_RootGroup::test_attributes]\n" << endl;
+
+  int nofFailedTests (0);
+
   return nofFailedTests;
 }
 
@@ -294,6 +311,8 @@ int main (int argc,
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test access to the attributes attached to the root group
+  nofFailedTests += test_attributes ();
   // // Test working with the embedded groups
   // nofFailedTests += test_subGroups ();
   // // Test the various methods 

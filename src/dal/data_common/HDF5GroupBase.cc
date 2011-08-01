@@ -302,8 +302,9 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5GroupBase::summary (std::ostream &os)
   {
     os << "[HDF5GroupBase] Summary of internal parameters." << std::endl;
-    os << "-- Location ID   = " << location_p               << std::endl;
-    os << "-- Group type ID = " << itsGroupType             << std::endl;
+    os << "-- Location ID    = " << location_p              << std::endl;
+    os << "-- Group type ID  = " << itsGroupType            << std::endl;
+    os << "-- I/O mode flags = " << itsFlags.names()        << std::endl;
   }
 
   // ============================================================================

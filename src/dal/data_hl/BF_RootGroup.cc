@@ -37,7 +37,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_RootGroup::BF_RootGroup (std::string const &filename)
     : HDF5GroupBase()
   {
-    if (!open (0,filename,IO_Mode(IO_Mode::Open))) {
+    if (!open (0,filename,IO_Mode(itsFlags))) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< filename
 		<< std::endl;
@@ -54,9 +54,9 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
 			      IO_Mode const &flags)
-    : HDF5GroupBase()
+    : HDF5GroupBase(flags)
   {
-    if (!open (0,infile.filename(),flags)) {
+    if (!open (0,infile.filename(),itsFlags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
@@ -73,8 +73,9 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_RootGroup::BF_RootGroup (CommonAttributes const &attributes,
 			      IO_Mode const &flags)
+    : HDF5GroupBase(flags)
   {
-    if (!open (0,attributes.filename(),flags)) {
+    if (!open (0,attributes.filename(),itsFlags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
@@ -158,6 +159,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
     os << "-- Filename                = " << itsFilename            << std::endl;
+    os << "-- I/O mode flags          = " << itsFlags.names()       << std::endl;
     os << "-- Location ID             = " << location_p             << std::endl;
     os << "-- nof. attributes         = " << attributes_p.size()    << std::endl;
     os << "-- nof. SysLog groups      = " << itsSystemLog.size()    << std::endl;
