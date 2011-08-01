@@ -81,6 +81,32 @@ void export_BF_RootGroup ()
   bool (BF_RootGroup::*openSubArrayPointing1)(unsigned int const &,
 					      DAL::IO_Mode const &) 
     = &BF_RootGroup::openSubArrayPointing;
+
+
+  bool (BF_RootGroup::*openStokesDataset1)(unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   DAL::IO_Mode const &)
+    = &BF_RootGroup::openStokesDataset;
+  bool (BF_RootGroup::*openStokesDataset2)(unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   DAL::Stokes::Component const &,
+					   hid_t const &,
+					   DAL::IO_Mode const &) 
+    = &BF_RootGroup::openStokesDataset;
+  bool (BF_RootGroup::*openStokesDataset3)(unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   unsigned int const &,
+					   std::vector<unsigned int> const &,
+					   DAL::Stokes::Component const &,
+					   hid_t const &,
+					   DAL::IO_Mode const &) 
+    = &BF_RootGroup::openStokesDataset;
   
   //________________________________________________________
   // Bindings for class and its methods
@@ -105,64 +131,32 @@ void export_BF_RootGroup ()
     .def( "CommonAttributes",
 	  &BF_RootGroup::commonAttributes, 
 	  "Get the common attributes of the class." )      
+    .def( "sysLog",
+	  &BF_RootGroup::sysLog, 
+	  "Get the SYS_LOG group object." )      
     .def( "nofSubArrayPointings",
 	  &BF_RootGroup::nofSubArrayPointings,
 	  "Get the number of SubArray pointings." )
     .def( "open",
 	  &BF_RootGroup::open, 
 	  "Open the file containing the beamformed data." )
+    .def( "openBeam",
+	  &BF_RootGroup::openBeam, 
+	  "Open a beam group." )
     .def( "openSubArrayPointing",
 	  openSubArrayPointing1, 
 	  "Open a SubArrayPointing direction group." )      
+    .def("openStokesDataset",
+	 openStokesDataset1,
+	 "Open a Stokes dataset.")
+    .def("openStokesDataset",
+	 openStokesDataset2,
+	 "Create a new Stokes dataset.")
+    .def("openStokesDataset",
+	 openStokesDataset3,
+	 "Create a new Stokes dataset.")
     ;
   
-   // Data access methods
-
-   bool ( BF_RootGroup::*openBeam1)(hid_t const &,
-            const string &,
-            DAL::IO_Mode const &) = &BF_RootGroup::open;
-      
-   bool ( BF_RootGroup::*openStokesDataset1)(unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
-
-   bool ( BF_RootGroup::*openBeam2)(unsigned int const &,
-               unsigned const int &,
-               DAL::IO_Mode const &) = &BF_RootGroup::openBeam;
-      
-   bool ( BF_RootGroup::*openStokesDataset2)(unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            unsigned int const &,
-            DAL::Stokes::Component const &,
-            hid_t const &,
-            DAL::IO_Mode const &) = &BF_RootGroup::openStokesDataset;
-
-   bool ( BF_RootGroup::*openStokesDataset3)(unsigned int const &pointingID,
-            unsigned int const &beamID,
-            unsigned int const &stokesID,
-            unsigned int const &nofSamples,
-            unsigned int const &nofSubbands,
-            unsigned int const &nofChannels,
-            DAL::Stokes::Component const &component,
-            hid_t const &datatype,
-            DAL::IO_Mode const &flags) = &BF_RootGroup::openStokesDataset;
-
-   bool ( BF_RootGroup::*openStokesDataset)(unsigned int const &pointingID,
-            unsigned int const &beamID,
-            unsigned int const &stokesID,
-            unsigned int const &nofSamples,
-            std::vector<unsigned int> const &nofChannels,
-            DAL::Stokes::Component const &component,
-            hid_t const &datatype,
-            DAL::IO_Mode const &flags) = &BF_RootGroup::openStokesDataset;
-
-   // Get the syslog object
-   DAL::SysLog (BF_RootGroup::*sysLog)(void) ;
-
    BF_BeamGroup ( BF_RootGroup::*getBeamGroup)(unsigned int const &pointingID,
 			       unsigned int const &beamID) = &BF_RootGroup::getBeamGroup;
 }
