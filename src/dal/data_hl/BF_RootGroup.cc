@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2009-2011                                               *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -147,7 +147,12 @@ namespace DAL { // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                                      summary
-  
+
+  /*!
+    \param os -- Output stream to which the summary is written.
+    \param showAttributes -- Show detailed information on the attributes attached
+           to the root group of the file?
+  */
   void BF_RootGroup::summary (std::ostream &os,
 			      bool const &showAttributes)
   {

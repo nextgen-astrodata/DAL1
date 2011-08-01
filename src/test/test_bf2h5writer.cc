@@ -62,8 +62,12 @@ using namespace std;
 using boost::format;
 
 //_______________________________________________________________________________
-//                                                            setCommonAttributes
+//                                                               commonAttributes
 
+/*!
+  \brief Get object holding collection of LOFAR common attributes.
+  \return attributes -- Object holding collection of LOFAR common attributes.
+*/
 DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 {
   DAL::CommonAttributes attributes (filename);
@@ -170,7 +174,7 @@ int main()
     std::string name = DAL::BF_SubArrayPointing::getName(subArrayID)
       + "/" + DAL::BF_BeamGroup::getName(beamID) 
       + "/" + DAL::BF_StokesDataset::getName(stokesID);
-
+    
     std::cout << "-- Opening Stokes dataset " << name << std::endl;
     
     DAL::BF_StokesDataset stokesDataset(fileID,
