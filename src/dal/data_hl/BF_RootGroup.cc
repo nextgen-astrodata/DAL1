@@ -243,6 +243,7 @@ namespace DAL { // Namespace DAL -- begin
 
     location_p  = location;
     itsFilename = name;
+    itsFlags    = flags;
     setAttributes();
     itsSubarrayPointings.clear();
     itsSystemLog.clear();
@@ -251,8 +252,8 @@ namespace DAL { // Namespace DAL -- begin
 
     bool fileTruncated = HDF5Object::openFile (location_p,
 					       name,
-					       flags);
-    
+					       itsFlags);
+
     // Set attributes ______________________________________
     
     if (fileTruncated) {
@@ -260,32 +261,35 @@ namespace DAL { // Namespace DAL -- begin
       /* Write the additional attributes attached to the root group */
       bool valBool          = true;
       float valFloat        = 0.0;
+      double valDouble      = 0.0;
       std::string undefined = "UNDEFINED";
       std::vector<float> vectF (1,valFloat);
       std::vector<double> vectD (1,0.0);
       //
-      HDF5Attribute::write (location_p,"FILENAME",                  name        );
-      HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     valBool     );
-      HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
-      HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
-      HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
-      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valFloat    );
-      HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
-      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valFloat    );
-      HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
-      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valFloat    );
-      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
-      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
-      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
-      HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
-      /* Read back in the common attributes after storing default values */
-      // itsCommonAttributes.h5read(location_p);
+      HDF5Attribute::write (location_p,"FILENAME",                  name       );
+      HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     valBool    );
+      HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined  );
+      HDF5Attribute::write (location_p,"BF_VERSION",                undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined  );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined  );
+      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valFloat   );
+      HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined  );
+      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valFloat   );
+      HDF5Attribute::write (location_p,"BANDWIDTH",                 valDouble  );
+      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valFloat   );
+      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF      );
+      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF      );
+      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF      );
+      HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)     );
     }
+
+    // Read common atributes _______________________________
+
+    itsCommonAttributes.h5read(location_p);
     
     // Open embedded groups ________________________________
 
