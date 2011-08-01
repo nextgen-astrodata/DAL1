@@ -183,6 +183,14 @@ advised work-flow is as follows:
 
   1. Create your own fork from the master repository of the project.
 
+     CAUTION: If you are planning to to actually development work, make sure you
+              fork from the 'master' branch, __not__ from 'release'. Following
+              common Git policy create a new branch on which to carry out the
+              development - this will make separation from other development 
+              activities easier and will enable more granularity in the selection
+              of new features into the main development branch or the preparation
+              of a new release version.
+
   2. Work on push changes you are working on - be it bug fixes or feature
      enhancements - back to your fork.
 
