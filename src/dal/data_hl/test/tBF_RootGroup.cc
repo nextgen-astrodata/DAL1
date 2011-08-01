@@ -178,7 +178,13 @@ int test_attributes ()
 {
   cout << "\n[tBF_RootGroup::test_attributes]\n" << endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
+  DAL::Filename file = getFilename();
+
+  // Open BF dataset
+  BF_RootGroup bf (file);
+  bf.summary();
+
 
   return nofFailedTests;
 }

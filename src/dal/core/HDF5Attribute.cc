@@ -662,6 +662,13 @@ namespace DAL { // Namespace DAL -- begin
 		<< std::endl;
       return false;
     }
+
+    if ( (size<1) || (data==NULL)) {
+      std::cerr << "[HDF5Attribute::write]"
+		<< " Attribute value needs to at least contain one element!"
+		<< std::endl;
+      return false;
+    }
     
     /*____________________________________________________________
       Check if attribute 'name' already exits at the given
