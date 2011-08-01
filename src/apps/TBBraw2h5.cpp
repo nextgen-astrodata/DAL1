@@ -41,6 +41,9 @@
 #include <boost/program_options/cmdline.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/detail/cmdline.hpp>
+//other includes
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 namespace bpo = boost::program_options;
 //includes for setting the IO-priority
 #include <sys/types.h>
@@ -402,13 +405,16 @@ void socketReaderThread (int port,
 /*!
   \brief Read the TBB-data from several udp sockets
 
-  \param ports           -- Vector with UDP port numbers to read data from
-  \param ip              -- Hostname (ip-address) to bind to (not used!)
-  \param startTimeout    -- Timeout when opening socket connection [in sec]
-  \param readTimeout     -- Timeout while reading from the socket [in sec]
-  \param verbose         -- Produce more output
-  \param waitForAllPorts -- Wait until all reader-threads have received some
+  \param ports             -- Vector with UDP port numbers to read data from
+  \param ip                -- Hostname (ip-address) to bind to (not used!)
+  \param startTimeout      -- Timeout when opening socket connection [in sec]
+  \param readTimeout       -- Timeout while reading from the socket [in sec]
+  \param verbose           -- Produce more output
+  \param waitForAllPorts   -- Wait until all reader-threads have received some
          data (Or kill the threads that got no data)
+  \param outFileBase       -- 
+  \param doCheckCRC        -- 
+  \param fixTransientTimes -- 
 
   \return status -- Returns \t true if successful, \e false in case an error
           was encountered.
@@ -418,9 +424,17 @@ bool readFromSockets (std::vector<int> ports,
 		      float startTimeout,
 		      float readTimeout,
 		      bool verbose=false,
-		      bool waitForAllPorts=false)
+		      bool waitForAllPorts=false,
+		      std::string outFileBase="",
+		      int doCheckCRC=1,
+		      int fixTransientTimes=2)
 {
   unsigned int i = 0;
+  char * bufferPointer;
+  time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
+  char timestamp_buffer[20];
 
   //________________________________________________________
   // initialize the buffer
@@ -487,8 +501,51 @@ bool readFromSockets (std::vector<int> ports,
     if (processingID >= input_buffer_size) {
       processingID -= input_buffer_size;
     };
-    tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
-			     UDP_PACKET_BUFFER_SIZE);
+
+    // Create new time stamped file if required
+    bufferPointer = inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE);
+    if (tbb == NULL)
+    {
+      // Get timestamp and convert to ISO 8601 format for filename
+      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
+
+      // Generate filename
+      std::ostringstream outfile;
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
+
+      // Check if filename exists already and change it accordingly
+      if (boost::filesystem::exists(outfile.str()+".h5"))
+      {
+        int n = 0;
+        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+        {
+          ++n;
+        }
+        outfile << "-" << n;
+      }
+      // Create file
+      tbb = new DAL::TBBraw(outfile.str()+".h5");
+      if ( !tbb->isConnected() )
+      {
+        cout << "[TBBraw2h5] Failed to open output file." << endl;
+        return 1;
+      };
+
+      // Set the options in the TBBraw object
+      if (doCheckCRC>0) {
+        tbb->doHeaderCRC(true);
+      }
+      else {
+        tbb->doHeaderCRC(false);
+      };
+      tbb->setFixTimes(fixTransientTimes);
+    }
+    
+    tbb->processTBBrawBlock(bufferPointer,
+			    UDP_PACKET_BUFFER_SIZE);
     inBufProcessID = processingID;
   };
   terminateThreads = true;
@@ -528,13 +585,18 @@ bool readStationsFromSockets (std::vector<int> ports,
 			      float startTimeout,
 			      float readTimeout,
 			      std::string outFileBase,
+			      std::string observer,
+			      std::string project,
+			      std::string observationID,
+			      std::string filterSelection,
+			      std::string antennaSet,
 			      bool verbose=false)
 {
   unsigned int i = 0;
-
+  
   //________________________________________________________
   // Initialize the buffer
-
+  
   terminateThreads = false;
   maxCachedFrames  = 0;
   maxWaitingFrames = 0;
@@ -559,6 +621,11 @@ bool readStationsFromSockets (std::vector<int> ports,
   unsigned int nofTBBfiles = 256;
   int lasttimes[nofTBBfiles];  
   int runnumbers[nofTBBfiles];  
+  time_t timestamp;
+  struct tm *timestamp_utc;
+  double timestamp_fraction;
+  char timestamp_buffer[20];
+  
   DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
 
   for (i=0; i<nofTBBfiles; i++) {
@@ -644,11 +711,29 @@ bool readStationsFromSockets (std::vector<int> ports,
 	delete TBBfiles[stationId];
 	TBBfiles[stationId] = NULL;
       };
-      //"outfile" needs to be empty when it is used. creating it here is an easy way to do so.
-      std::ostringstream outfile; 
-      outfile << outFileBase << "-" << int(stationId) << "-" << runnumbers[stationId] << ".h5";
-      runnumbers[stationId]++;
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
+
+      // Get timestamp and convert to ISO 8601 format for filename
+      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      timestamp_utc = gmtime( &timestamp );
+      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
+
+      // Generate filename
+      std::ostringstream outfile;
+      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
+
+      // Check if filename exists already and change it accordingly
+      if (boost::filesystem::exists(outfile.str()+".h5"))
+      {
+        int n = 0;
+        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+        {
+          ++n;
+        }
+        outfile << "-" << n;
+      }
+
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
 	cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
 	     << outfile.str() << endl;
@@ -732,7 +817,12 @@ int main(int argc, char *argv[])
   std::string infile;
   std::string outfileOrig;
   vector<int> ports;
-  std::string outfile   = "test-TBBraw";
+  std::string outfile   = "TBB";
+  std::string observer  = "UNDEFINED";
+  std::string project   = "UNDEFINED";
+  std::string observationID = "UNDEFINED";
+  std::string filterSelection = "UNDEFINED";
+  std::string antennaSet = "UNDEFINED";
   std::string ip        = "All Hosts";
   bool verboseMode      = false;
   float timeoutStart    = 0.0;
@@ -754,17 +844,15 @@ int main(int argc, char *argv[])
   // Define command line options
   
   desc.add_options ()
-    ("help,H",
-     "Show help messages")
-    ("outfile,O",
-     bpo::value<std::string>(),
-     "Name of the output dataset")
-    ("infile,I",
-     bpo::value<std::string>(),
-     "Name of the input file, Mutually exclusive to -P")
-    ("port,P",
-     bpo::value< vector<int> >(),
-     "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
+    ("help,H", "Show help messages")
+    ("observer", bpo::value<std::string>(), "Observer")
+    ("project", bpo::value<std::string>(), "Project")
+    ("observationID", bpo::value<std::string>(), "Observation ID")
+    ("filterSelection", bpo::value<std::string>(), "Filter selection")
+    ("antennaSet", bpo::value<std::string>(), "Antenna set")
+    ("outfile,O", bpo::value<std::string>(), "Name of the output dataset")
+    ("infile,I", bpo::value<std::string>(), "Name of the input file, Mutually exclusive to -P")
+    ("port,P", bpo::value< vector<int> >(), "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
     ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
     ("timeoutStart,S", bpo::value<float>(), "Time-out when opening socket connection, [sec].")
     ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
@@ -791,6 +879,31 @@ int main(int argc, char *argv[])
     {
       verboseMode=true;
     }
+
+  if (vm.count("observer"))
+  {
+    observer = vm["observer"].as<std::string>();
+  }
+
+  if (vm.count("project"))
+  {
+    project = vm["project"].as<std::string>();
+  }
+
+  if (vm.count("observationID"))
+  {
+    observationID = vm["observationID"].as<std::string>();
+  }
+
+  if (vm.count("filterSelection"))
+  {
+    filterSelection = vm["filterSelection"].as<std::string>();
+  }
+
+  if (vm.count("antennaSet"))
+  {
+    antennaSet = vm["antennaSet"].as<std::string>();
+  }
 
   if (vm.count("waitForAll"))
     {
@@ -895,30 +1008,28 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Feedback on the settings
 
-  if (verboseMode)
-    {
-      std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
-      std::cout << "-- Socket mode    = " << socketmode          << std::endl;
-      std::cout << "-- Output file    = " << outfile             << std::endl;
-      std::cout << "-- CRC checking   = " << doCheckCRC          << std::endl;
-      std::cout << "-- Fix Times      = " << fixTransientTimes   << std::endl;
-      std::cout << "-- Raise Priority = " << raiseIOprio         << std::endl;
-      if (socketmode) {
-	std::cout << "-- IP address      = " << ip             << std::endl;
-	//	std::cout << "-- Port number     = " << port           << std::endl;
-	std::cout << "-- Port numbers    = " << ports          << std::endl;
-	std::cout << "-- Timeout (start) = " << timeoutStart   << std::endl;
-	std::cout << "-- Timeout (read)  = " << timeoutRead    << std::endl;
-	std::cout << "-- Wait for ports  = " << waitForAll     << std::endl;
-	std::cout << "-- Keep Running    = " << keepRunning    << std::endl;
-	std::cout << "-- Multipe Stations= " << multipeStations    << std::endl;
-      }
-      else {
-	std::cout << "-- Input file   = " << infile  << std::endl;
-      }
+  if (verboseMode) {
+    std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
+    std::cout << "-- Socket mode    = " << socketmode          << std::endl;
+    std::cout << "-- Output file    = " << outfile             << std::endl;
+    std::cout << "-- CRC checking   = " << doCheckCRC          << std::endl;
+    std::cout << "-- Fix Times      = " << fixTransientTimes   << std::endl;
+    std::cout << "-- Raise Priority = " << raiseIOprio         << std::endl;
+    if (socketmode) {
+      std::cout << "-- IP address      = " << ip             << std::endl;
+      //	std::cout << "-- Port number     = " << port           << std::endl;
+      std::cout << "-- Port numbers    = " << ports          << std::endl;
+      std::cout << "-- Timeout (start) = " << timeoutStart   << std::endl;
+      std::cout << "-- Timeout (read)  = " << timeoutRead    << std::endl;
+      std::cout << "-- Wait for ports  = " << waitForAll     << std::endl;
+      std::cout << "-- Keep Running    = " << keepRunning    << std::endl;
+      std::cout << "-- Multipe Stations= " << multipeStations    << std::endl;
     }
+    else {
+      std::cout << "-- Input file   = " << infile  << std::endl;
+    }
+  }
   
-
   // -----------------------------------------------------------------
   // try to raise the IO priority if requested
   if (raiseIOprio) {
@@ -931,45 +1042,77 @@ int main(int argc, char *argv[])
   };
   
   // -----------------------------------------------------------------
-  // Process data from multiple stations
-  // returns only in case of an error
+  // Process data from multiple stations, returns only in case of an error
+
   if (multipeStations) {
-    readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, verboseMode);
+    readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, observer, project, observationID, filterSelection, antennaSet, verboseMode);
     return 1;
   };
-  // -----------------------------------------------------------------
 
+  // -----------------------------------------------------------------
+  // Process data in socket mode
+
+  if (socketmode) {
+    // -----------------------------------------------------------------
+    // Begin of "keepRunning" loop
+    do 
+    {
+      tbb = NULL;
+
+      readFromSockets (ports,
+		       ip,
+		       timeoutStart,
+		       timeoutRead,
+		       verboseMode,
+		       waitForAll,
+		       outfile,
+		       doCheckCRC,
+		       fixTransientTimes);
+      
+      // -----------------------------------------------------------------
+      // Finish up, print some statistics.
+      tbb->summary();
+      
+      delete tbb;
+    } while (keepRunning);
+    return 0;
+  }
+  
+  // -----------------------------------------------------------------
+  // Process data in file mode
+  
   if (keepRunning) { 
-      outfileOrig = outfile ; 
-    };
+    outfileOrig = outfile ; 
+  };
+
   // -----------------------------------------------------------------
   // Begin of "keepRunning" loop
   do 
     {
-    if (keepRunning) 
-      {
-	std::ostringstream temp;
-	temp << outfileOrig << "-" << runNumber << ".h5";
-	outfile = temp.str();
-	runNumber++;
-      };
-    
-    // -----------------------------------------------------------------
-    // Generate TBBraw object and open output file
-    
-    tbb = new DAL::TBBraw(outfile);
-    if ( !tbb->isConnected() )
-      {
-	cout << "[TBBraw2h5] Failed to open output file." << endl;
-	return 1;
-      };
-    
-    // -----------------------------------------------------------------
-    // Set the options in the TBBraw object
-    
-    if (doCheckCRC>0) {
-      tbb->doHeaderCRC(true);
-    }
+      if (keepRunning) 
+	{
+	  std::ostringstream temp;
+	  temp << outfileOrig << "-" << runNumber << ".h5";
+	  outfile = temp.str();
+	  runNumber++;
+	};
+      
+      // -----------------------------------------------------------------
+      // Generate TBBraw object and open output file
+      
+      tbb = new DAL::TBBraw(outfile);
+      if ( !tbb->isConnected() )
+	{
+	  cout << "[TBBraw2h5] Failed to open output file." << endl;
+	  return 1;
+	};
+      
+      // -----------------------------------------------------------------
+      // Set the options in the TBBraw object
+      
+      if (doCheckCRC>0) {
+	tbb->doHeaderCRC(true);
+      }
     else {
       tbb->doHeaderCRC(false);
     };
@@ -977,14 +1120,9 @@ int main(int argc, char *argv[])
     
     // -----------------------------------------------------------------
     // call the conversion routines
-    
-    if (socketmode) {
-      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll);
-    }
-    else {
-      readFromFile(infile, verboseMode);
-    };
-    
+
+    readFromFile(infile, verboseMode);
+
     // -----------------------------------------------------------------
     //finish up, print some statistics.
     tbb->summary();

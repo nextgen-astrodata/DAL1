@@ -201,11 +201,12 @@ namespace DAL {  // Namespace DAL -- begin
       \param telescope -- name of the telescope (usually "LOFAR")
     */
     TBBraw (std::string const &filename,
-	    string const &observer="John Doe",
+	    string const &observer="UNDEFINED",
 	    string const &project="UNDEFINED",
 	    string const &observation_id="UNDEFINED",
 	    string const &filterSelection="UNDEFINED",
-	    string const &telescope="LOFAR");
+	    string const &telescope="LOFAR",
+      string const &antenna_set="UNDEFINED");
 
     // === Destruction ==========================================================
     
@@ -299,7 +300,8 @@ namespace DAL {  // Namespace DAL -- begin
 		   string const &project="UNDEFINED",
 		   string const &observation_id="UNDEFINED",
 		   string const &filterSelection="UNDEFINED",
-		   string const &telescope="LOFAR");
+		   string const &telescope="LOFAR",
+       string const &antenna_set="UNDEFINED");
     
     /*!
       \brief Process one block of data and add it's contents to the output file
@@ -349,6 +351,17 @@ namespace DAL {  // Namespace DAL -- begin
     */      
     inline static Int32 getDataTime (char *inbuff) {
       return ((TBB_Header*)inbuff)->time;
+    };
+
+    /*!
+      \brief return the fractional part of the time stamp of the data-frame
+      
+      \param inbuff  -- pointer to one TBB data-frame (incl. header etc.)
+      
+      \return the time (fraction of second since time of data-frame)
+    */      
+    inline static double getDataTimeFraction (char *inbuff) {
+      return double(((TBB_Header*)inbuff)->sample_nr) / double(1.e6*((TBB_Header*)inbuff)->sample_freq);
     };
 
   private:

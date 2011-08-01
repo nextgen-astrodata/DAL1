@@ -77,7 +77,7 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
       dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
       )
     target_link_libraries (TBBraw2h5
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
+      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
       )
     ## Additional target properties
     set_target_properties (TBBraw2h5

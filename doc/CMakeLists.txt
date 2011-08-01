@@ -52,9 +52,9 @@ if (LATEX_EXECUTABLE)
   endif ()
   
 else (LATEX_EXECUTABLE)
-
+  
   set ( DOXYGEN_GENERATE_LATEX "NO" )
-
+  
 endif (LATEX_EXECUTABLE)
 
 ## ==============================================================================

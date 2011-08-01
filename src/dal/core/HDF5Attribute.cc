@@ -638,17 +638,6 @@ namespace DAL { // Namespace DAL -- begin
     hsize_t *maxdims  = NULL;
     herr_t  h5err     = 0;
  
-#ifdef DAL_DEBUGGING_MESSAGES   
-    std::cout << "[HDF5Attribute::write<string>()]" << std::endl;
-    std::cout << "-- location = " << location << std::endl;
-    std::cout << "-- name     = " << name     << std::endl;
-    std::cout << "-- data     = [";
-    for (unsigned int n=0; n<size; ++n) {
-      std::cout << " " << data[n];
-    }
-    std::cout << " ]" << std::endl;
-#endif
-    
     /*________________________________________________________________
       Basic checks for reference location and attribute name.
     */
@@ -663,7 +652,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
 
-    if ( (size<1) || (data==NULL)) {
+    if ( (size==0) || (data==NULL)) {
       std::cerr << "[HDF5Attribute::write]"
 		<< " Attribute value needs to at least contain one element!"
 		<< std::endl;

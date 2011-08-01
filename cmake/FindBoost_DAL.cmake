@@ -83,6 +83,8 @@ if (NOT BOOST_FOUND)
     date_time
     program_options
     thread
+    filesystem
+    system
     )
   
   if (DAL_PYTHON_BINDINGS)
