@@ -55,14 +55,43 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>casa::ROArrayColumn<T> - Readonly access to an array table column
+      with arbitrary data type.
+      <li>casa::ROScalarColumn<T> - Readonly access to a scalar table column
+      with arbitrary data type.
+      <li>casa::Slicer - Specify which elements to extract from an n-dimensional
+      array.
     </ul>
     
     <h3>Synopsis</h3>
+
+    Besides reading the complete contents of a table column, selective access via
+    a slicing operation is possible:
+    <ul>
+      <li>Get the data from a particular cell in the table column:
+      \code
+      // for a scalar-type table column
+      casa::ROScalarColumn<T>::get (uInt rownr, T &value);
+      
+      // for a array-type table column
+      casa::ROArrayColumn<T>::get (uInt rownr, Array<T> &array, Bool resize=False);
+      \endcode
+
+      <li>Get the data from a set of cells in the table column:
+      \code
+      // for a scalar-type table columm
+      void casa::ROScalarColumn<T>::getColumnRange (const Slicer &rowRange,
+                                                    Vector<T> &vec,
+                                                    Bool resize=False)
+
+      // for a array-type table column
+      void casa::ROArrayColumn< T >::getColumnRange (const Slicer &rowRange,
+                                                     Array<T> &arr,
+                                                     Bool resize = False)
+      \endcode
+    </ul>
     
     <h3>Example(s)</h3>
-
-    \todo readData() for selected column rows -> ROArrayColumn::getColumnRange() method
     
   */  
   class MS_Table : public dalObjectBase {
@@ -142,6 +171,7 @@ namespace DAL { // Namespace DAL -- begin
     std::map<casa::String,casa::DataType> columnDataTypes ();
 
     /*!
+      \brief Read data from a table column.
       \retval data   -- Array returning the data stored inside the designated
               table \e column.
       \param column  -- Name of the \e column from which to read the \e data.
@@ -192,8 +222,62 @@ namespace DAL { // Namespace DAL -- begin
 
 	return status;
       }
-    
+
+    template <class T>
+      bool readData (casa::Array<T> &data,
+		     std::string const &column,
+		     casa::Slicer const &selection)
+      {
+	// Check if table is ok
+	if (itsTable.isNull()) {
+	  return false;
+	}
+
+	bool status                 = true;
+	casa::TableDesc tableDesc   = itsTable.tableDesc();
+	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+
+	if (columnDesc.isScalar()) {
+	  // Set up reader object for the column ...
+	  casa::ROScalarColumn<T> columReader (itsTable, column);
+	  // .... and retrieve the data
+	  columReader.getColumnRange (selection, data, true);
+	} else if (columnDesc.isArray()) {
+	  // Set up reader object for the column ...
+	  casa::ROArrayColumn<T> columReader (itsTable, column);
+	  // .... and retrieve the data
+	  columReader.getColumnRange (selection, data, true);
+	} else {
+	  std::cerr << "[MS_Table::readData] Unsupported type of column data!"
+		    << std::endl;
+	  status = false;
+	}
+
+	return status;
+      }
+
     /*!
+      \brief Read data from a table column.
+      \retval data   -- Array returning the data stored inside the designated
+              table \e column.
+      \param column  -- Name of the \e column from which to read the \e data.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool readData (casa::Array<T> &data,
+		     std::string const &column,
+		     unsigned int const &start,
+		     unsigned int const &length=1)
+      {
+	casa::Slicer selection (casa::IPosition(1,start),
+				casa::IPosition(1,length),
+				casa::IPosition(1,1));
+	return readData (data, column, selection);
+      }
+
+    /*!
+      \brief Read data from a table column.
       \retval data   -- Array returning the data stored inside the designated
               table \e column.
       \param column  -- Name of the \e column from which to read the \e data.
