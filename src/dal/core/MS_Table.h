@@ -31,6 +31,7 @@
 #include <core/dalObjectBase.h>
 
 #ifdef DAL_WITH_CASA
+#include <casa/Arrays/Slicer.h>
 #include <ms/MeasurementSets.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableDesc.h>
@@ -223,6 +224,16 @@ namespace DAL { // Namespace DAL -- begin
 	return status;
       }
 
+    /*!
+      \brief Read data from a selected number of rows in a table column.
+      \retval data   -- Array returning the data stored inside the designated
+              table \e column.
+      \param column    -- Name of the \e column from which to read the \e data.
+      \param selection -- Specification of elements to selected from the table
+             column.
+      \return status   -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
     template <class T>
       bool readData (casa::Array<T> &data,
 		     std::string const &column,
@@ -236,12 +247,25 @@ namespace DAL { // Namespace DAL -- begin
 	bool status                 = true;
 	casa::TableDesc tableDesc   = itsTable.tableDesc();
 	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+	casa::IPosition cellShape   = columnDesc.shape();
 
+	{
+	  unsigned int rank = cellShape.nelements()+1;
+	  casa::IPosition dataShape (rank,0);
+
+	  for (unsigned int n=0; n<(rank-1); ++n) {
+	    dataShape(n) = cellShape(n);
+	  }
+	  dataShape(rank-1) = selection.length()(0);
+
+	  data.resize(dataShape);
+	}
+	
 	if (columnDesc.isScalar()) {
 	  // Set up reader object for the column ...
 	  casa::ROScalarColumn<T> columReader (itsTable, column);
 	  // .... and retrieve the data
-	  columReader.getColumnRange (selection, data, true);
+	  data = columReader.getColumnRange (selection);
 	} else if (columnDesc.isArray()) {
 	  // Set up reader object for the column ...
 	  casa::ROArrayColumn<T> columReader (itsTable, column);
@@ -257,10 +281,12 @@ namespace DAL { // Namespace DAL -- begin
       }
 
     /*!
-      \brief Read data from a table column.
+      \brief Read data from a selected number of rows in a table column.
       \retval data   -- Array returning the data stored inside the designated
               table \e column.
       \param column  -- Name of the \e column from which to read the \e data.
+      \param start   -- Index of the row from which to start reading.
+      \param nofRows -- Number of rows from which to read data.
       \return status -- Status of the operation; returns \e false in case an
               error was encountered.
     */
@@ -268,10 +294,10 @@ namespace DAL { // Namespace DAL -- begin
       bool readData (casa::Array<T> &data,
 		     std::string const &column,
 		     unsigned int const &start,
-		     unsigned int const &length=1)
+		     unsigned int const &nofRows=1)
       {
 	casa::Slicer selection (casa::IPosition(1,start),
-				casa::IPosition(1,length),
+				casa::IPosition(1,nofRows),
 				casa::IPosition(1,1));
 	return readData (data, column, selection);
       }
@@ -298,6 +324,46 @@ namespace DAL { // Namespace DAL -- begin
 	  casa::Array<T> buffer;
 	  // read column data
 	  if (readData (buffer,column)) {
+	    unsigned int nelem = buffer.nelements();
+	    // resize the array returning the data
+	    data.resize(nelem);
+	    // get the data from the buffer array
+	    data.assign(buffer.data(),buffer.data()+nelem);
+	  } else {
+	    data.clear();
+	    status = false;
+	  }
+	}
+	
+	return status;
+      }
+    
+    /*!
+      \brief Read data from a selected number of rows in a table column.
+      \retval data   -- Array returning the data stored inside the designated
+              table \e column.
+      \param column  -- Name of the \e column from which to read the \e data.
+      \param start   -- Index of the row from which to start reading.
+      \param nofRows -- Number of rows from which to read data.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool readData (std::vector<T> &data,
+		     std::string const &column,
+		     unsigned int const &start,
+		     unsigned int const &nofRows=1)
+      {
+	bool status = true;
+	
+	// Check if table is ok
+	if (itsTable.isNull()) {
+	  status = false;
+	} else {
+	  // casa::Array into which the column data are read initially
+	  casa::Array<T> buffer;
+	  // read column data
+	  if (readData (buffer,column,start,nofRows)) {
 	    unsigned int nelem = buffer.nelements();
 	    // resize the array returning the data
 	    data.resize(nelem);

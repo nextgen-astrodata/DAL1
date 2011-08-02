@@ -21,6 +21,8 @@
 #include <core/MS_Table.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::MS_Table;
 
 /*!
@@ -50,27 +52,27 @@ using DAL::MS_Table;
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tMS_Table::test_constructors]\n" << std::endl;
+  cout << "\n[tMS_Table::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing MS_Table() ..." << std::endl;
+  cout << "[1] Testing MS_Table() ..." << endl;
   try {
     MS_Table ms;
     //
     ms.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing MS_Table(string) ..." << std::endl;
+  cout << "[2] Testing MS_Table(string) ..." << endl;
   try {
     MS_Table ms (filename);
     //
     ms.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -89,7 +91,7 @@ int test_constructors (std::string const &filename)
 */
 int test_readData (std::string const &filename)
 {
-  std::cout << "\n[tMS_Table::test_readData]" << std::endl;
+  cout << "\n[tMS_Table::test_readData]" << endl;
 
   int nofFailedTests = 0;
   bool status        = true;
@@ -102,7 +104,7 @@ int test_readData (std::string const &filename)
     Test 1: Read data from columns of type double
   */
   
-  std::cout << "\n[1] Testing readData (Array<double>,string) ..." << std::endl;
+  cout << "\n[1] Testing readData (Array<double>,string) ..." << endl;
   try {
     casa::Array<casa::Double> data;
     // Define the colums from which to try reading data
@@ -115,20 +117,49 @@ int test_readData (std::string const &filename)
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
       status = ms.readData (data, columns[n]);
-      std::cout << std::setw(15) << columns[n]
+      cout << std::setw(15) << columns[n]
 		<< std::setw(15) << data.shape()
-		<< std::endl;
+		<< endl;
     }
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
   /*________________________________________________________
-    Test 2: Read data from columns of type float
+    Test 2: Read data from columns of type double for a
+            selected number of rows.
   */
   
-  std::cout << "\n[2] Testing readData (Array<float>,string) ..." << std::endl;
+  cout << "\n[2] Testing readData (Array<double>,string,uint,uint) ..." << endl;
+  try {
+    unsigned int start  = 0;
+    unsigned int length = 10;
+    casa::Array<casa::Double> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("TIME");
+    columns.push_back("UVW");
+    columns.push_back("INTERVAL");
+    columns.push_back("EXPOSURE");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n], start, length);
+      cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.shape()
+		<< endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 3: Read data from columns of type float.
+  */
+  
+  cout << "\n[3] Testing readData (Array<float>,string) ..." << endl;
   try {
     casa::Array<casa::Float> data;
     // Define the colums from which to try reading data
@@ -140,20 +171,48 @@ int test_readData (std::string const &filename)
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
       status = ms.readData (data, columns[n]);
-      std::cout << std::setw(15) << columns[n]
+      cout << std::setw(15) << columns[n]
 		<< std::setw(15) << data.shape()
-		<< std::endl;
+		<< endl;
     }  
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
   /*________________________________________________________
-    Test 3: Read data from columns of type double
+    Test 4: Read data from columns of type float for a
+            selected number of rows.
   */
   
-  std::cout << "\n[3] Testing readData (vector<double>,string) ..." << std::endl;
+  cout << "\n[4] Testing readData (Array<float>,string,uint,uint) ..." << endl;
+  try {
+    unsigned int start  = 0;
+    unsigned int length = 10;
+    casa::Array<casa::Float> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("WEIGHT");
+    columns.push_back("SIGMA");
+    columns.push_back("WEIGHT_SPECTRUM");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n], start, length);
+      cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.shape()
+		<< endl;
+    }  
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 5: Read data from columns of type double
+  */
+  
+  cout << "\n[5] Testing readData (vector<double>,string) ..." << endl;
   try {
     std::vector<double> data;
     // Define the colums from which to try reading data
@@ -166,23 +225,55 @@ int test_readData (std::string const &filename)
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
       status = ms.readData (data, columns[n]);
-      std::cout << std::setw(15) << columns[n]
+      cout << std::setw(15) << columns[n]
 		<< std::setw(15) << data.size()
 		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
 		<< " "     << data[3] << " " << data[4] << " " << data[5]
 		<< " .. ]" 
-		<< std::endl;
+		<< endl;
     }
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
   /*________________________________________________________
-    Test 4: Read data from columns of type float
+    Test 6: Read data from columns of type double from a 
+            selected number of rows.
   */
   
-  std::cout << "\n[4] Testing readData (vector<float>,string) ..." << std::endl;
+  cout << "\n[6] Testing readData (vector<double>,string,uint,uint) ..." << endl;
+  try {
+    unsigned int start  = 0;
+    unsigned int length = 10;
+    std::vector<double> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("TIME");
+    columns.push_back("UVW");
+    columns.push_back("INTERVAL");
+    columns.push_back("EXPOSURE");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n], start, length);
+      cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.size()
+		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
+		<< " "     << data[3] << " " << data[4] << " " << data[5]
+		<< " .. ]" 
+		<< endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 7: Read data from columns of type float
+  */
+  
+  cout << "\n[7] Testing readData (vector<float>,string) ..." << endl;
   try {
     std::vector<float> data;
     // Define the colums from which to try reading data
@@ -194,15 +285,46 @@ int test_readData (std::string const &filename)
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
       status = ms.readData (data, columns[n]);
-      std::cout << std::setw(15) << columns[n]
+      cout << std::setw(15) << columns[n]
 		<< std::setw(15) << data.size()
 		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
 		<< " "     << data[3] << " " << data[4] << " " << data[5]
 		<< " .. ]" 
-		<< std::endl;
+		<< endl;
     }
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*________________________________________________________
+    Test 8: Read data from columns of type float for a 
+            selected number of rows.
+  */
+  
+  cout << "\n[8] Testing readData (vector<float>,string,uint,uint) ..." << endl;
+  try {
+    unsigned int start  = 0;
+    unsigned int length = 10;
+    std::vector<float> data;
+    // Define the colums from which to try reading data
+    std::vector<std::string> columns;
+    columns.push_back("WEIGHT");
+    columns.push_back("SIGMA");
+    columns.push_back("WEIGHT_SPECTRUM");
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<columns.size(); ++n) {
+      status = ms.readData (data, columns[n], start, length);
+      cout << std::setw(15) << columns[n]
+		<< std::setw(15) << data.size()
+		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
+		<< " "     << data[3] << " " << data[4] << " " << data[5]
+		<< " .. ]" 
+		<< endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -251,16 +373,16 @@ int main (int argc, char *argv[])
 {
   int nofFailedTests = 0;
 
-  std::cout << "[tMS_Table] Testing MS_Table() ..."      << std::endl;
-  std::cout << "-- nof. command line args = " << argc    << std::endl;
-  std::cout << "-- Test program name      = " << argv[0] << std::endl;
+  cout << "[tMS_Table] Testing MS_Table() ..."      << endl;
+  cout << "-- nof. command line args = " << argc    << endl;
+  cout << "-- Test program name      = " << argv[0] << endl;
 
   try {
     MS_Table ms;
     //
     ms.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     ++nofFailedTests;
   }
   
