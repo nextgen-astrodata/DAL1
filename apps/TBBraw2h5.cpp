@@ -427,6 +427,11 @@ bool readFromSockets (std::vector<int> ports,
     bool verbose=false,
     bool waitForAllPorts=false,
     std::string outFileBase="",
+    std::string observer="UNDEFINED",
+    std::string project="UNDEFINED",
+    std::string observationID="UNDEFINED",
+    std::string filterSelection="UNDEFINED",
+    std::string antennaSet="UNDEFINED",
     int doCheckCRC=1,
     int fixTransientTimes=2)
 {
@@ -528,7 +533,7 @@ bool readFromSockets (std::vector<int> ports,
         outfile << "-" << n;
       }
       // Create file
-      tbb = new DAL::TBBraw(outfile.str()+".h5");
+      tbb = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !tbb->isConnected() )
       {
         cout << "[TBBraw2h5] Failed to open output file." << endl;
@@ -1060,7 +1065,7 @@ int main(int argc, char *argv[])
     {
       tbb = NULL;
 
-      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll, outfile, doCheckCRC, fixTransientTimes);
+      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll, outfile, observer, project, observationID, filterSelection, antennaSet, doCheckCRC, fixTransientTimes);
 
       // -----------------------------------------------------------------
       // Finish up, print some statistics.
