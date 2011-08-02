@@ -241,14 +241,14 @@ int increase_io_priority(bool verbose) {
 
 /*!
   \brief Thread that creates and then reads from a socket into the buffer
-
+  
   \param port -- UDP port number to read data from
   \param ip -- Hostname (ip-address) to bind to (not used)
   \param startTimeout -- Timeout when opening socket connection [in sec]
   \param readTimeout -- Timeout while reading from the socket [in sec] 
   \param verbose -- Produce more output
   \param stayConnected -- stay connected even after readTimeout ran out.
-
+  
   \return \t true if successful
 */
 void socketReaderThread (int port,
@@ -262,12 +262,12 @@ void socketReaderThread (int port,
   int main_socket = 0;
   fd_set readSet;
   struct timeval TimeoutWait, TimeoutRead, NullTimeout;
-
+  
   TimeoutRead.tv_sec  = floor(readTimeout);
   TimeoutRead.tv_usec = (readTimeout-TimeoutRead.tv_sec)*1e6;
   NullTimeout.tv_sec  = NullTimeout.tv_usec =0;
   main_socket         = socket(PF_INET, SOCK_DGRAM, 0);
-
+  
   if (main_socket<0) {
     cerr << "[TBBraw2h5::socketReaderThread] " << port
 	 << " : Failed to create the main socket."<<endl;
@@ -365,8 +365,12 @@ void socketReaderThread (int port,
                 newBufID = inBufStorID;
               };
             //perform the actual read
-            erg = recvfrom( main_socket, (inputBuffer_p + (newBufID*UDP_PACKET_BUFFER_SIZE)),
-                            UDP_PACKET_BUFFER_SIZE, 0, (sockaddr *) &incoming_addr, &socklen);
+            erg = recvfrom (main_socket,
+			    (inputBuffer_p + (newBufID*UDP_PACKET_BUFFER_SIZE)),
+                            UDP_PACKET_BUFFER_SIZE,
+			    0,
+			    (sockaddr *) &incoming_addr,
+			    &socklen);
             inBufStorID = newBufID;
           }
           ;// writeMutex lock is released here
@@ -426,6 +430,11 @@ bool readFromSockets (std::vector<int> ports,
 		      bool verbose=false,
 		      bool waitForAllPorts=false,
 		      std::string outFileBase="",
+		      std::string observer="UNDEFINED",
+		      std::string project="UNDEFINED",
+		      std::string observationID="UNDEFINED",
+		      std::string filterSelection="UNDEFINED",
+		      std::string antennaSet="UNDEFINED",
 		      int doCheckCRC=1,
 		      int fixTransientTimes=2)
 {
@@ -435,16 +444,16 @@ bool readFromSockets (std::vector<int> ports,
   struct tm *timestamp_utc;
   double timestamp_fraction;
   char timestamp_buffer[20];
-
+  
   //________________________________________________________
   // initialize the buffer
-
+  
   terminateThreads = false;
   maxCachedFrames  = maxWaitingFrames = 0;
   inBufProcessID   = inBufStorID =0;
   noRunning        = 0;
   inputBuffer_p    = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
-
+  
   if (inputBuffer_p == NULL) {
     cerr << "TBBraw2h5::readFromSockets: Failed to allocate input buffer!" <<endl;
     return false;
@@ -452,7 +461,7 @@ bool readFromSockets (std::vector<int> ports,
     cout << "TBBraw2h5::readFromSockets: Allocated " << input_buffer_size*UDP_PACKET_BUFFER_SIZE
 	 << " bytes for the input buffer." << endl;
   };
-
+  
   // start the reader-threads
   boost::thread **readerThreads;
   readerThreads = new boost::thread*[ports.size()];
@@ -501,48 +510,48 @@ bool readFromSockets (std::vector<int> ports,
     if (processingID >= input_buffer_size) {
       processingID -= input_buffer_size;
     };
-
+    
     // Create new time stamped file if required
     bufferPointer = inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE);
     if (tbb == NULL)
-    {
-      // Get timestamp and convert to ISO 8601 format for filename
-      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
-      timestamp_utc = gmtime( &timestamp );
-      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
-      strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
-
-      // Generate filename
-      std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
-
-      // Check if filename exists already and change it accordingly
-      if (boost::filesystem::exists(outfile.str()+".h5"))
       {
-        int n = 0;
-        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
-        {
-          ++n;
-        }
-        outfile << "-" << n;
+	// Get timestamp and convert to ISO 8601 format for filename
+	timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+	timestamp_utc = gmtime( &timestamp );
+	timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+	strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
+	
+	// Generate filename
+	std::ostringstream outfile;
+	outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
+	
+	// Check if filename exists already and change it accordingly
+	if (boost::filesystem::exists(outfile.str()+".h5"))
+	  {
+	    int n = 0;
+	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+	      {
+		++n;
+	      }
+	    outfile << "-" << n;
+	  }
+	// Create file
+	tbb = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+	if ( !tbb->isConnected() )
+	  {
+	    cout << "[TBBraw2h5] Failed to open output file." << endl;
+	    return 1;
+	  };
+	
+	// Set the options in the TBBraw object
+	if (doCheckCRC>0) {
+	  tbb->doHeaderCRC(true);
+	}
+	else {
+	  tbb->doHeaderCRC(false);
+	};
+	tbb->setFixTimes(fixTransientTimes);
       }
-      // Create file
-      tbb = new DAL::TBBraw(outfile.str()+".h5");
-      if ( !tbb->isConnected() )
-      {
-        cout << "[TBBraw2h5] Failed to open output file." << endl;
-        return 1;
-      };
-
-      // Set the options in the TBBraw object
-      if (doCheckCRC>0) {
-        tbb->doHeaderCRC(true);
-      }
-      else {
-        tbb->doHeaderCRC(false);
-      };
-      tbb->setFixTimes(fixTransientTimes);
-    }
     
     tbb->processTBBrawBlock(bufferPointer,
 			    UDP_PACKET_BUFFER_SIZE);
@@ -568,15 +577,15 @@ bool readFromSockets (std::vector<int> ports,
 
 /*!
   \brief Read the TBB-data of several stations and from several udp sockets
-
+  
   \param ports -- Vector with UDP port numbers to read data from
   \param ip -- Hostname (ip-address) to bind to (not used!)
   \param startTimeout -- Timeout when opening socket connection [in sec]
   \param readTimeout -- Timeout while reading from the socket [in sec]
   \param verbose -- Produce more output
-
+  
   \return \t false if something went wrong
-
+  
   Compared to \t readFromSockets() this function generates less (usefull)
   debug output. So the other (old) version should stay around.
 */
@@ -614,10 +623,10 @@ bool readStationsFromSockets (std::vector<int> ports,
 	 << input_buffer_size*UDP_PACKET_BUFFER_SIZE
 	 << " bytes for the input buffer." << endl;
   };
-
+  
   //________________________________________________________
   // Get and initialize memory for the TBB pointers
-
+  
   unsigned int nofTBBfiles = 256;
   int lasttimes[nofTBBfiles];  
   int runnumbers[nofTBBfiles];  
@@ -627,17 +636,17 @@ bool readStationsFromSockets (std::vector<int> ports,
   char timestamp_buffer[20];
   
   DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
-
+  
   for (i=0; i<nofTBBfiles; i++) {
     TBBfiles[i]   = NULL;
     runnumbers[i] = 0;
   }
-
+  
   //________________________________________________________
   // Start the reader-threads
-
+  
   boost::thread **readerThreads = new boost::thread*[ports.size()];
-
+  
   for (i=0; i < ports.size(); i++) {
     readerThreads[i] = new boost::thread (boost::bind(socketReaderThread,
 						      ports[i],
@@ -655,10 +664,10 @@ bool readStationsFromSockets (std::vector<int> ports,
       return false;
     };
   };
-
+  
   //________________________________________________________
   // Look for and process incoming data
-
+  
   int processingID = 0;
   int tmpint       = 0;
   int amWaiting    = 0;
@@ -711,28 +720,28 @@ bool readStationsFromSockets (std::vector<int> ports,
 	delete TBBfiles[stationId];
 	TBBfiles[stationId] = NULL;
       };
-
+      
       // Get timestamp and convert to ISO 8601 format for filename
       timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
       timestamp_utc = gmtime( &timestamp );
       timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
       strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
-
+      
       // Generate filename
       std::ostringstream outfile;
       outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
-
+      
       // Check if filename exists already and change it accordingly
       if (boost::filesystem::exists(outfile.str()+".h5"))
-      {
-        int n = 0;
-        while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
-        {
-          ++n;
-        }
-        outfile << "-" << n;
-      }
-
+	{
+	  int n = 0;
+	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+	    {
+	      ++n;
+	    }
+	  outfile << "-" << n;
+	}
+      
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
 	cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
@@ -745,12 +754,12 @@ bool readStationsFromSockets (std::vector<int> ports,
     };
     inBufProcessID = processingID;    
   };
-
+  
   // Release allocated memory
   delete [] TBBfiles;
-
+  
   terminateThreads = true;
-
+  
   return true;
 }
 
@@ -759,10 +768,10 @@ bool readStationsFromSockets (std::vector<int> ports,
 
 /*!
   \brief Read the TBB-data from a file
-
+  
   \param infile -- Path to the input file.
   \param verbose -- Produce more output
-
+  
   \return status -- Returns \e true if successful
 */
 bool readFromFile (string infile,
@@ -773,7 +782,7 @@ bool readFromFile (string infile,
   int size      = 0;
   struct stat filestat;
   char buffer[TBB_FRAME_SIZE];
-
+  
   stat(infile.c_str(), &filestat);
   numblocks = filestat.st_size / TBB_FRAME_SIZE;
   if (numblocks < 1)
@@ -817,29 +826,29 @@ int main(int argc, char *argv[])
   std::string infile;
   std::string outfileOrig;
   vector<int> ports;
-  std::string outfile   = "TBB";
-  std::string observer  = "UNDEFINED";
-  std::string project   = "UNDEFINED";
-  std::string observationID = "UNDEFINED";
+  std::string outfile         = "TBB";
+  std::string observer        = "UNDEFINED";
+  std::string project         = "UNDEFINED";
+  std::string observationID   = "UNDEFINED";
   std::string filterSelection = "UNDEFINED";
-  std::string antennaSet = "UNDEFINED";
-  std::string ip        = "All Hosts";
-  bool verboseMode      = false;
-  float timeoutStart    = 0.0;
-  float timeoutRead     = 0.5;
-  int fixTransientTimes = 2;
-  int doCheckCRC        = 1;
-  int socketmode        = -1;
-  bool keepRunning      = false;
-  bool waitForAll       = false;
-  bool multipeStations  = false;
-  bool raiseIOprio      = false;
-  int runNumber         = 0;
-
+  std::string antennaSet      = "UNDEFINED";
+  std::string ip              = "All Hosts";
+  bool verboseMode            = false;
+  float timeoutStart          = 0.0;
+  float timeoutRead           = 0.5;
+  int fixTransientTimes       = 2;
+  int doCheckCRC              = 1;
+  int socketmode              = -1;
+  bool keepRunning            = false;
+  bool waitForAll             = false;
+  bool multipeStations        = false;
+  bool raiseIOprio            = false;
+  int runNumber               = 0;
+  
   input_buffer_size = 50000;
-
+  
   bpo::options_description desc ("[TBBraw2h5] Available command line options");
-
+  
   //________________________________________________________
   // Define command line options
   
@@ -879,48 +888,48 @@ int main(int argc, char *argv[])
     {
       verboseMode=true;
     }
-
+  
   if (vm.count("observer"))
-  {
-    observer = vm["observer"].as<std::string>();
-  }
-
+    {
+      observer = vm["observer"].as<std::string>();
+    }
+  
   if (vm.count("project"))
-  {
-    project = vm["project"].as<std::string>();
-  }
-
+    {
+      project = vm["project"].as<std::string>();
+    }
+  
   if (vm.count("observationID"))
-  {
-    observationID = vm["observationID"].as<std::string>();
-  }
-
+    {
+      observationID = vm["observationID"].as<std::string>();
+    }
+  
   if (vm.count("filterSelection"))
-  {
-    filterSelection = vm["filterSelection"].as<std::string>();
-  }
-
+    {
+      filterSelection = vm["filterSelection"].as<std::string>();
+    }
+  
   if (vm.count("antennaSet"))
-  {
-    antennaSet = vm["antennaSet"].as<std::string>();
-  }
-
+    {
+      antennaSet = vm["antennaSet"].as<std::string>();
+    }
+  
   if (vm.count("waitForAll"))
     {
       waitForAll=true;
     }
-
+  
   if (vm.count("keepRunning"))
     {
       keepRunning=true;
     }
-
+  
   if (vm.count("multipeStations"))
     {
       multipeStations=true;
       keepRunning=true;
     }
-
+  
   if (vm.count("raiseIOprio"))
     {
       raiseIOprio=true;
@@ -931,17 +940,17 @@ int main(int argc, char *argv[])
       infile     = vm["infile"].as<std::string>();
       socketmode = 0;
     };
-
+  
   if (vm.count("outfile"))
     {
       outfile = vm["outfile"].as<std::string>();
     }
-
+  
   if (vm.count("ip"))
     {
       ip = vm["ip"].as<std::string>();
     }
-
+  
   if (vm.count("port"))
     {
       ports = vm["port"].as< vector<int> >();
@@ -949,22 +958,22 @@ int main(int argc, char *argv[])
       //      port = ports[0];
       cout << " specified ports: " << ports << endl;
     }
-
+  
   if (vm.count("timeoutStart"))
     {
       timeoutStart = vm["timeoutStart"].as<float>();
     }
-
+  
   if (vm.count("timeoutRead"))
     {
       timeoutRead = vm["timeoutRead"].as<float>();
     }
-
+  
   if (vm.count("fixTimes"))
     {
       fixTransientTimes = vm["fixTimes"].as<int>();
     }
-
+  
   if (vm.count("doCheckCRC"))
     {
       doCheckCRC = vm["doCheckCRC"].as<int>();
@@ -974,63 +983,61 @@ int main(int argc, char *argv[])
     {
       input_buffer_size = vm["bufferSize"].as<int>();
     }
-  
 
-  // -----------------------------------------------------------------
+  //________________________________________________________
   // Check the provided input
-
+  
   if (vm.count("infile") && vm.count("port"))
     {
       cout << "[TBBraw2h5] Both input file and port number given, chose one of the two!" << endl;
       cout << endl << desc << endl;
       return 1;
     };
-
+  
   if (socketmode == -1)
     {
       cout << "[TBBraw2h5] Neither input file nor port number given, chose one of the two!" << endl;
       cout << endl << desc << endl;
       return 1;
     };
-
+  
   if (input_buffer_size < 100) 
     {
       cout << "[TBBraw2h5] Buffer Size too small ("<< input_buffer_size << "<100), setting to default value" << endl;
       input_buffer_size = 50000;
     };
-
+  
   if (keepRunning && !socketmode)
     {
       cout << "[TBBraw2h5] KeepRunning only usefull in socketmode, option disabled!" << endl;
       keepRunning = false;
     };
-
-  // -----------------------------------------------------------------
+  
+  //________________________________________________________
   // Feedback on the settings
 
   if (verboseMode) {
     std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
-    std::cout << "-- Socket mode    = " << socketmode          << std::endl;
-    std::cout << "-- Output file    = " << outfile             << std::endl;
-    std::cout << "-- CRC checking   = " << doCheckCRC          << std::endl;
-    std::cout << "-- Fix Times      = " << fixTransientTimes   << std::endl;
-    std::cout << "-- Raise Priority = " << raiseIOprio         << std::endl;
+    std::cout << "-- Socket mode    = " << socketmode        << std::endl;
+    std::cout << "-- Output file    = " << outfile           << std::endl;
+    std::cout << "-- CRC checking   = " << doCheckCRC        << std::endl;
+    std::cout << "-- Fix Times      = " << fixTransientTimes << std::endl;
+    std::cout << "-- Raise Priority = " << raiseIOprio       << std::endl;
     if (socketmode) {
-      std::cout << "-- IP address      = " << ip             << std::endl;
-      //	std::cout << "-- Port number     = " << port           << std::endl;
-      std::cout << "-- Port numbers    = " << ports          << std::endl;
-      std::cout << "-- Timeout (start) = " << timeoutStart   << std::endl;
-      std::cout << "-- Timeout (read)  = " << timeoutRead    << std::endl;
-      std::cout << "-- Wait for ports  = " << waitForAll     << std::endl;
-      std::cout << "-- Keep Running    = " << keepRunning    << std::endl;
-      std::cout << "-- Multipe Stations= " << multipeStations    << std::endl;
+      std::cout << "-- IP address      = " << ip              << std::endl;
+      std::cout << "-- Port numbers    = " << ports           << std::endl;
+      std::cout << "-- Timeout (start) = " << timeoutStart    << std::endl;
+      std::cout << "-- Timeout (read)  = " << timeoutRead     << std::endl;
+      std::cout << "-- Wait for ports  = " << waitForAll      << std::endl;
+      std::cout << "-- Keep Running    = " << keepRunning     << std::endl;
+      std::cout << "-- Multipe Stations= " << multipeStations << std::endl;
     }
     else {
       std::cout << "-- Input file   = " << infile  << std::endl;
     }
   }
   
-  // -----------------------------------------------------------------
+  //________________________________________________________
   // try to raise the IO priority if requested
   if (raiseIOprio) {
 #if defined linux
@@ -1041,51 +1048,57 @@ int main(int argc, char *argv[])
 #endif
   };
   
-  // -----------------------------------------------------------------
-  // Process data from multiple stations, returns only in case of an error
-
+  /*________________________________________________________
+   * Process data from multiple stations, returns only in
+   * case of an error
+  */
   if (multipeStations) {
     readStationsFromSockets(ports, ip, timeoutStart, timeoutRead, outfile, observer, project, observationID, filterSelection, antennaSet, verboseMode);
     return 1;
   };
 
-  // -----------------------------------------------------------------
+  //________________________________________________________
   // Process data in socket mode
 
   if (socketmode) {
-    // -----------------------------------------------------------------
+    //______________________________________________________
     // Begin of "keepRunning" loop
     do 
-    {
-      tbb = NULL;
-
-      readFromSockets (ports,
-		       ip,
-		       timeoutStart,
-		       timeoutRead,
-		       verboseMode,
-		       waitForAll,
-		       outfile,
-		       doCheckCRC,
-		       fixTransientTimes);
-      
-      // -----------------------------------------------------------------
-      // Finish up, print some statistics.
-      tbb->summary();
-      
-      delete tbb;
-    } while (keepRunning);
+      {
+	tbb = NULL;
+	
+	readFromSockets (ports,
+			 ip,
+			 timeoutStart,
+			 timeoutRead,
+			 verboseMode,
+			 waitForAll, 
+			 outfile,
+			 observer,
+			 project,
+			 observationID,
+			 filterSelection,
+			 antennaSet,
+			 doCheckCRC,
+			 fixTransientTimes);
+	
+	//__________________________________________________
+	// Finish up, print some statistics.
+	tbb->summary();
+	
+	delete tbb;
+      } while (keepRunning);
     return 0;
   }
   
-  // -----------------------------------------------------------------
+  //________________________________________________________
   // Process data in file mode
   
   if (keepRunning) { 
     outfileOrig = outfile ; 
   };
 
-  // -----------------------------------------------------------------
+  //________________________________________________________
   // Begin of "keepRunning" loop
   do 
     {
@@ -1113,26 +1126,26 @@ int main(int argc, char *argv[])
       if (doCheckCRC>0) {
 	tbb->doHeaderCRC(true);
       }
-    else {
-      tbb->doHeaderCRC(false);
-    };
-    tbb->setFixTimes(fixTransientTimes);
-    
-    // -----------------------------------------------------------------
-    // call the conversion routines
-
-    readFromFile(infile, verboseMode);
-
-    // -----------------------------------------------------------------
-    //finish up, print some statistics.
-    tbb->summary();
-
-    // and free the memory:
-    delete tbb;
-
-    
-    // -----------------------------------------------------------------
-    // End of "keepRunning" loop
+      else {
+	tbb->doHeaderCRC(false);
+      };
+      tbb->setFixTimes(fixTransientTimes);
+      
+      // -----------------------------------------------------------------
+      // call the conversion routines
+      
+      readFromFile(infile, verboseMode);
+      
+      // -----------------------------------------------------------------
+      //finish up, print some statistics.
+      tbb->summary();
+      
+      // and free the memory:
+      delete tbb;
+      
+      
+      // -----------------------------------------------------------------
+      // End of "keepRunning" loop
     } 
   while (keepRunning);
   
