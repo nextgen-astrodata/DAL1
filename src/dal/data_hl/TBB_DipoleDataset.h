@@ -200,7 +200,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();
-    //! Get the ADC sample frequency as casa::Quantity
+    //! Set the antenna position from a measure
+    bool set_antenna_position (casa::MPosition &pos);
+    //! Get the ADC sample frequency as casa::Q1uantity
     bool sample_frequency (casa::Quantity &freq);
     //! Get the ADC sample frequency as casa::Measure
     bool sample_frequency (casa::MFrequency &freq);
