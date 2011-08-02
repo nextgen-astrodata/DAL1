@@ -72,6 +72,7 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
     ## compiler instructions
     add_executable (tbb2h5    tbb2h5.cpp   )
     add_executable (TBBraw2h5 TBBraw2h5.cpp)
+    add_executable (AddMetadata AddMetadata.cpp)
     ## linker instructions
     target_link_libraries (tbb2h5
       dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
@@ -79,8 +80,11 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
     target_link_libraries (TBBraw2h5
       dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
       )
+    target_link_libraries (AddMetadata
+      dal ${Boost_PROGRAM_OPTIONS_LIBRARY}
+      )
     ## Installation instructions
-    install (TARGETS tbb2h5 TBBraw2h5
+    install (TARGETS tbb2h5 TBBraw2h5 AddMetadata
       RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
       LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
       )
