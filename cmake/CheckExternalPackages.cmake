@@ -178,6 +178,13 @@ if (NOT DOXYGEN_FOUND)
   message (STATUS "Skip generating documentation - Doxygen not found!")
 endif (NOT DOXYGEN_FOUND)
 
+##____________________________________________________________________
+##                                              casacore Measures data
+
+if (CASACORE_DATADIR)
+  set (CASADATA ${CASACORE_DATADIR})
+endif (CASACORE_DATADIR)
+
 ## ==============================================================================
 ##
 ##  Configure file

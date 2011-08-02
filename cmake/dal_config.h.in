@@ -249,6 +249,7 @@ const int32_t MAX_COL_NAME_SIZE = 256;
 
 #ifdef DAL_WITH_CASACORE
 #define DAL_WITH_CASA
+#cmakedefine CASADATA "${CASADATA}"
 /* #define AIPS_STDLIB 1 */
 /* #define AIPS_AUTO_STL 1 */
 /* #define AIPS_NO_LEA_MALLOC 1 */
