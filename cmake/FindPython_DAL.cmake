@@ -30,93 +30,69 @@ if (NOT PYTHON_FOUND)
 
   ## Initialize variables
 
-  set (PYTHON_VERSION_MAJOR  0 )
-  set (PYTHON_VERSION_MINOR  0 )
-  set (PYTHON_VERSION_MICRO  0 )
-  set (PYTHON_API_VERSION    0 )
+  set (PYTHON_VERSION_MAJOR     0  )
+  set (PYTHON_VERSION_MINOR     0  )
+  set (PYTHON_VERSION_MICRO     0  )
+  set (PYTHON_API_VERSION       0  )
     
   if (NOT PYTHON_ROOT_DIR)
     set (PYTHON_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT PYTHON_ROOT_DIR)
   
   foreach (_pythonRelease 2.7 2.6 2.5 2.4)
-    
-    ##___________________________________________________________________________
-    ## Check for the header files
-    
-    find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
+
+    find_program (PYTHON_EXECUTABLE python python${_pythonRelease}
       HINTS ${PYTHON_ROOT_DIR}
       PATHS
       /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      include/python${_pythonRelease}
-      include/python
-      include
-      NO_DEFAULT_PATH
-      )
-    
-    ## include path for: Python.h
-    
-    find_path (PYTHON_PYTHON_H Python.h
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      include/python${_pythonRelease}
-      include/python
-      include
-      NO_DEFAULT_PATH
-      )
-    if (PYTHON_PYTHON_H)
-      list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
-    endif (PYTHON_PYTHON_H)
-    
-    ## clean up the list of include directories
-    
-    if (PYTHON_INCLUDES)
-      list (REMOVE_DUPLICATES PYTHON_INCLUDES)
-    endif (PYTHON_INCLUDES)
-    
-    ##___________________________________________________________________________
-    ## Check for the library
-    
-    find_library (PYTHON_LIBRARIES python${_pythonRelease} python
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES lib
-      NO_DEFAULT_PATH
-      )
-    
-    ##___________________________________________________________________________
-    ## Check for the executable
-    
-    find_program (PYTHON_EXECUTABLE python${_pythonRelease} python
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
+      /sw/Library/Frameworks/Python.framework/Versions/${_pythonRelease}
+      /opt/local/Library/Frameworks/Python.framework/Versions/${_pythonRelease}
       ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
       NO_DEFAULT_PATH
       )
 
-    ##___________________________________________________________________________
-    ## Python packages
-    
-    set (PYTHON_SITE_PACKAGES_DIR
-      /usr/lib/pyshared/python${_pythonRelease}
-      /sw/lib/python${_pythonRelease}/site-packages
-      ${CMAKE_INSTALL_PREFIX}/lib/python${_pythonRelease}/site-packages
-      )
+  endforeach (_pythonRelease 2.7 2.6 2.5 2.4)
 
-    set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
-    include (FindNumPy)
-    
-  endforeach (_pythonRelease)
-  
+  if (PYTHON_EXECUTABLE)
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_config_vars\(\)['prefix']
+      RESULT_VARIABLE PYTHON_PREFIX_ERROR
+      OUTPUT_VARIABLE PYTHON_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_python_version\(\)
+      RESULT_VARIABLE PYTHON_VER_ERROR
+      OUTPUT_VARIABLE PYTHON_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_python_inc\(\)
+      RESULT_VARIABLE PYTHON_INC_ERROR
+      OUTPUT_VARIABLE PYTHON_INCLUDES
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  endif (PYTHON_EXECUTABLE)
+
+  if (APPLE)
+    # When Python <= 2.6 is installed as a framework, then libpython isn't
+    # conveniently located in the directory given by Python as a prefix.
+    # Instead, try and guess the prefix based on the location of the
+    # executable.
+    get_filename_component (APPLE_PYTHON_PREFIX ${PYTHON_EXECUTABLE} PATH)
+    string (REPLACE "bin" "" APPLE_PYTHON_PREFIX ${APPLE_PYTHON_PREFIX})
+    set (PYTHON_PREFIX ${PYTHON_PREFIX} ${APPLE_PYTHON_PREFIX})
+  endif (APPLE)
+
+  if (PYTHON_PREFIX)
+    find_library (PYTHON_LIBRARIES python${PYTHON_VERSION} python
+      PATHS ${PYTHON_PREFIX}
+      PATH_SUFFIXES lib
+      NO_DEFAULT_PATH
+      )
+  endif (PYTHON_PREFIX)
+
   ##_____________________________________________________________________________
   ## Test Python library for:
   ##  - library version <major.minor.release>
@@ -160,7 +136,7 @@ if (NOT PYTHON_FOUND)
 
   ## Assemble full version of library
   set (PYTHON_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}.${PYTHON_VERSION_MICRO}")
-  
+
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
@@ -180,14 +156,14 @@ if (NOT PYTHON_FOUND)
   
   if (PYTHON_FOUND)
     if (NOT PYTHON_FIND_QUIETLY)
-      message (STATUS "Found components for PYTHON")
+      message (STATUS "[FindPython_DAL] Found components for Python.")
       message (STATUS "PYTHON_VERSION   = ${PYTHON_VERSION}"   )
       message (STATUS "PYTHON_INCLUDES  = ${PYTHON_INCLUDES}"  )
       message (STATUS "PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}" )
     endif (NOT PYTHON_FIND_QUIETLY)
   else (PYTHON_FOUND)
     if (PYTHON_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find PYTHON!")
+      message (FATAL_ERROR "[FindPython_DAL] Could not find Python!")
     endif (PYTHON_FIND_REQUIRED)
   endif (PYTHON_FOUND)
   
