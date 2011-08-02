@@ -215,6 +215,15 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the LOFAR common attributes for this dataset
     CommonAttributes commonAttributes ();
 
+    //! Set the LOFAR common attributes for this dataset
+    void setCommonAttributes (CommonAttributes &attr)
+    {
+      // write the LOFAR common attributes
+      if (location_p>0 && H5Iis_valid(location_p)) {
+        attr.h5write(location_p);
+      }
+    }
+
     //! Get the container for system-wide logs
     SysLog sysLog ();
     
@@ -277,6 +286,8 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::MDirection> beam_direction ();
     //! Get the antenna position of all selected datasets as casa::Measure
     casa::Vector<casa::MPosition> antenna_position ();
+    //! Set the antenna position of all selected datasets as casa::Measure
+    bool set_antenna_position (std::map<std::string, casa::MPosition> &pos);
 #else
     //! Get the type of trigger causing the dump of the TBB data
     std::vector<std::string> trigger_type ();

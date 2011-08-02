@@ -893,6 +893,37 @@ namespace DAL {  // Namespace DAL -- begin
     return positions;
   }
 
+  //_____________________________________________________________________________
+  //                                                              set_antenna_position
+
+  /*!
+    \param pos -- Map with (dipole name, MPosition pairs)
+  */
+  bool TBB_Timeseries::set_antenna_position (std::map<std::string, casa::MPosition> &pos)
+  {
+    std::map<std::string, casa::MPosition>::iterator pos_it;
+    std::map<std::string, iterDipoleDataset>::iterator ds_it;
+
+    bool status = true;
+
+    for (pos_it=pos.begin(); pos_it!=pos.end(); ++pos_it) {
+      ds_it = selectedDatasets_p.find(pos_it->first);
+      if (ds_it != selectedDatasets_p.end())
+      {
+        if ((ds_it->second)->second.set_antenna_position(pos_it->second) == false)
+        {
+          status = false;
+        }
+      }
+      else
+      {
+        status = false;
+      }
+    }
+
+    return status;
+  }
+
 #endif
 
   //_____________________________________________________________________________
