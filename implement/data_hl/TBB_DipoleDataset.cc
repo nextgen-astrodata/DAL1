@@ -869,6 +869,39 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                         set_antenna_position
+
+  /*!
+    \param pos -- The antenna position as a casa::Measure
+  */
+  bool TBB_DipoleDataset::set_antenna_position (casa::MPosition &pos)
+  {
+    if (location_p > 0) {
+      std::vector<double> value;
+      std::string unit = pos.getUnit().getName();
+      std::string frame (pos.getRefString());
+
+      // Use internal unit of meters if none given
+      if (unit == "") unit = "m";
+
+      // Append x,y,z positions to vector
+      value.push_back(static_cast<double>(pos.getValue()(0)));
+      value.push_back(static_cast<double>(pos.getValue()(1)));
+      value.push_back(static_cast<double>(pos.getValue()(2)));
+
+      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_VALUE", value);
+      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_UNIT", std::vector<std::string>(3, unit));
+      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_FRAME", frame);
+    } else {
+      std::cerr << "[TBB_DipoleDataset::set_antenna_position] Failed to write to group." << std::endl;
+
+      return false;
+    }
+
+    return true;
+  }
+
+  //_____________________________________________________________________________
   //                                                             sample_frequency
   
   bool TBB_DipoleDataset::sample_frequency (casa::Quantity &freq)
