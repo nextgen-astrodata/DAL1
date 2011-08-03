@@ -40,6 +40,8 @@ exec_program (${HOSTNAME_CMD} ARGS OUTPUT_VARIABLE CMAKE_SYSTEM_HOSTNAME)
 ## Handle option: testing mode
 
 if (DAL_ENABLE_TESTING)
+  get_filename_component (CMAKE_CXX_COMPILER_NAME ${CMAKE_CXX_COMPILER} NAME)
+  set(CTEST_BUILD_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_CXX_COMPILER_NAME}")
   ## Include CTest module
   include (CTest)
   enable_testing()
@@ -255,6 +257,9 @@ message (STATUS " .. C compiler                   = ${CMAKE_C_COMPILER}"        
 message (STATUS " Version control configuration:"                                  )
 message (STATUS " .. Git version                  = ${GIT_VERSION}"                )
 message (STATUS " .. ID for the remote origin     = ${GIT_REMOTE_ORIGIN}"          )
+message (STATUS " Testing configuration:"                                          )
+message (STATUS " .. CTEST_BUILD_NAME             = ${CTEST_BUILD_NAME}"           )
+message (STATUS " .. DART_TESTING_TIMEOUT         = ${DART_TESTING_TIMEOUT}"       )
 message (STATUS " Installation configuration:"                                     )
 message (STATUS " .. DAL_VERSION                  = ${DAL_VERSION}"                )
 message (STATUS " .. DAL_INSTALL_PREFIX           = ${DAL_INSTALL_PREFIX}"         )
