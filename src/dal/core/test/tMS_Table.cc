@@ -329,11 +329,11 @@ int test_readData (std::string const &filename)
   }
 
   /*________________________________________________________
-    Test 6: Read data from columns of type double from a 
-            selected number of rows.
+    Test 9: Read data from columns of type double for a
+            sequence of rows.
   */
   
-  cout << "\n[6] Testing readData (vector<double>,string,uint,uint) ..." << endl;
+  cout << "\n[9] Testing sequential reading from UVW column ..." << endl;
   try {
     unsigned int start   = 0;
     unsigned int nofRows = 10;
@@ -349,6 +349,37 @@ int test_readData (std::string const &filename)
 	   << std::setw(10) << start
 	   << std::setw(10) << data.size()
 	   << "   [ " << data[0] << " " << data[1] << " " << data[2] << " ]" 
+	   << endl;
+      // increment start position
+      ++start;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 10: Read data from columns of type double for a
+            sequence of rows.
+  */
+  
+  cout << "\n[10] Testing sequential reading from DATA column ..." << endl;
+  try {
+    unsigned int start   = 0;
+    unsigned int nofRows = 10;
+    std::string column  = "DATA";
+    std::vector<std::complex<float> > data;
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<nofRows; ++n) {
+      // read the data from the current start position onwards
+      status = ms.readData (data, column, start);
+      // display properties
+      cout << std::setw(15) << column
+	   << std::setw(10) << start
+	   << std::setw(10) << data.size()
+	   << "   [ " << data[0] << " " << data[1]
+	   << " " << data[2] << " " << data[3] << " ]" 
 	   << endl;
       // increment start position
       ++start;
