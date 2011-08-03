@@ -72,7 +72,7 @@ static void test_read_vl_string_attribute(void)
   if (type_class == H5T_STRING) printf ("File datatype has class H5T_STRING\n");
   size = H5Tget_size(ftype);
   
-  printf (" Size is of the file datatype returned by H5Tget_size %d \n This is a size of char pointer\n Use H5Tis_variable_str call instead \n", size);
+  printf (" Size is of the file datatype returned by H5Tget_size %zu \n This is a size of char pointer\n Use H5Tis_variable_str call instead \n", size);
   
   if((size_var = H5Tis_variable_str(ftype)) == 1)
     printf(" to find if string has variable size \n");
