@@ -32,9 +32,7 @@
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Slicer.h>
-#include <ms/MeasurementSets.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableDesc.h>
+#include <tables/Tables/TableColumn.h>
 #endif
 
 namespace DAL { // Namespace DAL -- begin
@@ -65,6 +63,9 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class MS_Column : public dalObjectBase {
+
+    //! Table column object
+    casa::TableColumn itsTableColumn;
     
   public:
     
