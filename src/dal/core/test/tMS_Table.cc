@@ -328,6 +328,36 @@ int test_readData (std::string const &filename)
     nofFailedTests++;
   }
 
+  /*________________________________________________________
+    Test 6: Read data from columns of type double from a 
+            selected number of rows.
+  */
+  
+  cout << "\n[6] Testing readData (vector<double>,string,uint,uint) ..." << endl;
+  try {
+    unsigned int start   = 0;
+    unsigned int nofRows = 10;
+    std::string column  = "UVW";
+    std::vector<double> data;
+    
+    // Read the data from the table columns and display their properties
+    for (unsigned int n=0; n<nofRows; ++n) {
+      // read the data from the current start position onwards
+      status = ms.readData (data, column, start);
+      // display properties
+      cout << std::setw(15) << column
+	   << std::setw(10) << start
+	   << std::setw(10) << data.size()
+	   << "   [ " << data[0] << " " << data[1] << " " << data[2] << " ]" 
+	   << endl;
+      // increment start position
+      ++start;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -357,12 +387,17 @@ int main (int argc, char *argv[])
   }
   
   //________________________________________________________
-  // Run the tests
+  // Run the tests (some of which actually require a dataset)
   
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
-  // Test reading data from MS table columns.
-  nofFailedTests += test_readData (filename);
+
+  if (haveDataset) {
+    
+    // Test reading data from MS table columns.
+    nofFailedTests += test_readData (filename);
+    
+  }
 
   return nofFailedTests;
 }

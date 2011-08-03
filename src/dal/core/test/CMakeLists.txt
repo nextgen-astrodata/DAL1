@@ -49,7 +49,6 @@ foreach (_test
     tdalGroup
     tDatabase
     tHDF5Hyperslab
-    tMS_Table
     test_std_cerr
     )
   add_test (${_test} ${_test})
