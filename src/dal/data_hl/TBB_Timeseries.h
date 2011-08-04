@@ -296,15 +296,14 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::MPosition> antenna_position ();
     //! Set the antenna position of all selected datasets as casa::Measure
     bool set_antenna_position (std::map<std::string, casa::MPosition> &pos);
+    //! Get the reference codes for the frame of the station positions
+    casa::Vector<casa::String> station_position_frame ();
 #else
     //! Get the type of trigger causing the dump of the TBB data
     std::vector<std::string> trigger_type ();
     //! Time offset from the trigger reference time
     std::vector<double> trigger_offset ();
     //! Get the reference codes for the frame of the station positions
-#ifdef DAL_WITH_CASA
-    casa::Vector<casa::String> station_position_frame ();
-#else
     std::vector<std::string> station_position_frame ();
 #endif
     

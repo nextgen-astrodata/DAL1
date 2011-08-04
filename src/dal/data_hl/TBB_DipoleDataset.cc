@@ -909,9 +909,9 @@ namespace DAL {  // Namespace DAL -- begin
       value.push_back(static_cast<double>(pos.getValue()(1)));
       value.push_back(static_cast<double>(pos.getValue()(2)));
 
-      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_VALUE", value);
-      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_UNIT", std::vector<std::string>(3, unit));
-      HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_FRAME", frame);
+      HDF5Attribute::write (location_p,"ANTENNA_POSITION_VALUE", value);
+      HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT", std::vector<std::string>(3, unit));
+      HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME", frame);
     } else {
       std::cerr << "[TBB_DipoleDataset::set_antenna_position] Failed to write to group." << std::endl;
 
