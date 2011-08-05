@@ -34,7 +34,8 @@ namespace DAL {
 
     \brief Class representing a filter that can be applied to a table.
 
-    \author Joseph Masters, Lars B&auml;hren
+    \author Joseph Masters
+    \author Lars B&auml;hren
   */
   
   class dalFilter : public dalObjectBase {
