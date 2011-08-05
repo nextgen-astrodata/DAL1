@@ -44,30 +44,13 @@ namespace DAL {
     \param columns A comma-separated list of the column names that you want to
            pass the filter (i.e. "TIME,DATA,ANTENNA").
    */
-  dalFilter::dalFilter (DAL::dalFileType const &type,
+  dalFilter::dalFilter (dalFileType const &type,
 			std::string columns)
   {
     init (type);
     setFilter (columns);
   }
 
-  //_____________________________________________________________________________
-  //                                                                    dalFilter
-  
-  /*!
-    \param type The type of file (i.e. CASA_MS, HDF5, FITS).
-    \param columns A comma-separated list of the column names that you
-                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
-
-    Restrict the opening of a table to particular columns.
-  */
-  dalFilter::dalFilter (std::string type,
-			std::string columns)
-  {
-    init (DAL::dalFileType(type));
-    setFilter (columns);
-  }
-  
   //_____________________________________________________________________________
   //                                                                    dalFilter
   
@@ -80,32 +63,12 @@ namespace DAL {
 
     Restrict the opening of a table to particular columns and conditions.
    */
-  dalFilter::dalFilter (DAL::dalFileType const &type,
-                        std::string cols,
+  dalFilter::dalFilter (dalFileType const &type,
+                        std::string columns,
                         std::string conditions )
   {
     init (type);
-    setFilter (cols,conditions);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                    dalFilter
-  
-  /*!
-    \param type The type of file (i.e. CASA_MS, HDF5, FITS).
-    \param columns A comma-separated list of the column names that you want to
-           pass the filter (i.e. "TIME,DATA,ANTENNA").
-    \param conditions A list of the conditions you want to apply.
-           (i.e. "ANTENNA1=1 AND ANTENNA2=10")
-
-    Restrict the opening of a table to particular columns and conditions.
-  */
-  dalFilter::dalFilter( std::string type,
-                        std::string cols,
-                        std::string conditions )
-  {
-    init (DAL::dalFileType(type));
-    setFilter (cols,conditions);
+    setFilter (columns,conditions);
   }
 
   // ============================================================================

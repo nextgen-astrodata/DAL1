@@ -84,6 +84,11 @@ namespace DAL { // Namespace DAL -- begin
 		    std::string const &name,
 		    IO_Mode const &flags=IO_Mode());
     
+    //! Argumented constructor
+    MS_TableColumn (std::string const &table,
+		    std::string const &column,
+		    IO_Mode const &flags=IO_Mode());
+    
     //! Copy constructor
     MS_TableColumn (MS_TableColumn const &other);
     

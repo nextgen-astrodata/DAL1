@@ -89,27 +89,7 @@ int test_constructors ()
     Test 3: Test argumented constructor
   */
   
-  std::cout << "\n[3] Testing dalFilter (string,string) ..." << std::endl;
-  try {
-    DAL::dalFilter filterHDF5 ("HDF5", columns);
-    filterHDF5.summary();
-    //
-    DAL::dalFilter filterFITS ("FITS", columns);
-    filterFITS.summary();
-    //
-    DAL::dalFilter filterMS ("CASA_MS", columns);
-    filterMS.summary();
-  }
-  catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-  /*__________________________________________________________________
-    Test 4: Test argumented constructor
-  */
-  
-  std::cout << "\n[4] Testing dalFilter(dalFileType,string,string) ..." << std::endl;
+  std::cout << "\n[3] Testing dalFilter(dalFileType,string,string) ..." << std::endl;
   try {
     DAL::dalFilter filterHDF5 (DAL::dalFileType::HDF5, columns, conditions);
     filterHDF5.summary();
