@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars Baehren (<mail>)                                                     *
+ *   Lars Baehren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,18 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/MS_Column.h>
+#include <core/MS_TableColumn.h>
 
 // Namespace usage
-using DAL::MS_Column;
+using DAL::MS_TableColumn;
 
 /*!
-  \file tMS_Column.cc
+  \file tMS_TableColumn.cc
 
   \ingroup DAL
   \ingroup core
 
-  \brief A collection of test routines for the DAL::MS_Column class
+  \brief A collection of test routines for the DAL::MS_TableColumn class
  
   \author Lars Baehren
  
@@ -40,20 +40,20 @@ using DAL::MS_Column;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new MS_Column object
+  \brief Test constructors for a new MS_TableColumn object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tMS_Column::test_constructors]\n" << std::endl;
+  std::cout << "\n[tMS_TableColumn::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing MS_Column() ..." << std::endl;
+  std::cout << "[1] Testing MS_TableColumn() ..." << std::endl;
   try {
-    MS_Column newObject;
+    MS_TableColumn newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {

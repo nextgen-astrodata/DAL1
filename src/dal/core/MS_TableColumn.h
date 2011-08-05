@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef MS_COLUMN_H
-#define MS_COLUMN_H
+#ifndef MS_TABLECOLUMN_H
+#define MS_TABLECOLUMN_H
 
 // Standard library header files
 #include <iostream>
@@ -28,7 +28,7 @@
 #include <vector>
 
 // DAL header files
-#include <core/dalObjectBase.h>
+#include <core/MS_Table.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Slicer.h>
@@ -36,20 +36,23 @@
 #endif
 
 namespace DAL { // Namespace DAL -- begin
+
+  /* Forward declaration of MS_Table class */
+  class MS_Table;
   
   /*!
-    \class MS_Column
+    \class MS_TableColumn
     
     \ingroup DAL
     \ingroup core
     
-    \brief Brief description for class DAL::MS_Column
+    \brief Brief description for class DAL::MS_TableColumn
     
     \author Lars B&auml;hren
 
     \date 2011-08-02
 
-    \test tMS_Column.cc
+    \test tMS_TableColumn.cc
     
     <h3>Prerequisite</h3>
     
@@ -62,7 +65,9 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class MS_Column : public dalObjectBase {
+  class MS_TableColumn : public dalObjectBase {
+
+#ifdef DAL_WITH_CASA
 
     //! Table column object
     casa::TableColumn itsTableColumn;
@@ -72,29 +77,34 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    MS_Column ();
+    MS_TableColumn ();
+    
+    //! Argumented constructor
+    MS_TableColumn (MS_Table const &table,
+		    std::string const &name,
+		    IO_Mode const &flags=IO_Mode());
     
     //! Copy constructor
-    MS_Column (MS_Column const &other);
+    MS_TableColumn (MS_TableColumn const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~MS_Column ();
+    ~MS_TableColumn ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    MS_Column& operator= (MS_Column const &other); 
+    MS_TableColumn& operator= (MS_TableColumn const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, MS_Column.
+      \return className -- The name of the class, MS_TableColumn.
     */
     inline std::string className () const {
-      return "MS_Column";
+      return "MS_TableColumn";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -116,14 +126,21 @@ namespace DAL { // Namespace DAL -- begin
   private:
     
     //! Unconditional copying
-    void copy (MS_Column const &other);
+    void copy (MS_TableColumn const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class MS_Column -- end
+#else 
+
+  public:
+    MS_TableColumn ();
+    
+#endif
+
+  }; // Class MS_TableColumn -- end
   
 } // Namespace DAL -- end
 
-#endif /* MS_COLUMN_H */
+#endif /* MS_TABLECOLUMN_H */
   

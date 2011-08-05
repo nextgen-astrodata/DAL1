@@ -29,7 +29,7 @@
 
 // DAL header files
 #include <core/dalObjectBase.h>
-#include <core/MS_Column.h>
+#include <core/MS_TableColumn.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Slicer.h>
@@ -63,6 +63,8 @@ namespace DAL { // Namespace DAL -- begin
       with arbitrary data type.
       <li>casa::Slicer - Specify which elements to extract from an n-dimensional
       array.
+      <li><a href="http://www.astron.nl/aips++/docs/notes/199">AIPS++ Note 
+      199</a>: Table Query Language
     </ul>
     
     <h3>Synopsis</h3>
@@ -110,7 +112,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     MS_Table ();
     
-    //! Default constructor
+    //! Argumented constructor
     MS_Table (std::string const &name,
 	      IO_Mode const &flags=IO_Mode());
     
@@ -118,7 +120,7 @@ namespace DAL { // Namespace DAL -- begin
     MS_Table (MS_Table const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~MS_Table ();
     

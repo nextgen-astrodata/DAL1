@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/MS_Column.h>
+#include <core/MS_TableColumn.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  MS_Column::MS_Column ()
+  MS_TableColumn::MS_TableColumn ()
   {;}
   
   /*!
-    \param other -- Another MS_Column object from which to create this new
+    \param other -- Another MS_TableColumn object from which to create this new
            one.
   */
-  MS_Column::MS_Column (MS_Column const &other)
+  MS_TableColumn::MS_TableColumn (MS_TableColumn const &other)
     : dalObjectBase (other)
   {
     copy (other);
@@ -47,12 +47,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  MS_Column::~MS_Column ()
+  MS_TableColumn::~MS_TableColumn ()
   {
     destroy();
   }
   
-  void MS_Column::destroy ()
+  void MS_TableColumn::destroy ()
   {;}
   
   // ============================================================================
@@ -65,9 +65,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another MS_Column object from which to make a copy.
+    \param other -- Another MS_TableColumn object from which to make a copy.
   */
-  MS_Column& MS_Column::operator= (MS_Column const &other)
+  MS_TableColumn& MS_TableColumn::operator= (MS_TableColumn const &other)
   {
     if (this != &other) {
       destroy ();
@@ -80,9 +80,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   /*!
-    \param other -- Another MS_Column object from which to make a copy.
+    \param other -- Another MS_TableColumn object from which to make a copy.
   */
-  void MS_Column::copy (MS_Column const &other)
+  void MS_TableColumn::copy (MS_TableColumn const &other)
   {;}
 
   // ============================================================================
@@ -97,9 +97,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void MS_Column::summary (std::ostream &os)
+  void MS_TableColumn::summary (std::ostream &os)
   {
-    os << "[MS_Column] Summary of internal parameters." << std::endl;
+    os << "[MS_TableColumn] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
