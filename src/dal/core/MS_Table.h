@@ -60,8 +60,24 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>\c casa::ROArrayColumn<T> - Readonly access to an array table column
       with arbitrary data type.
+      \code
+      // Get the data from a particular cell in the table column
+      casa::ROArrayColumn<T>::get (uInt rownr, Array<T> &array, Bool resize=False);
+      // Get the data from a set of cells in the table column
+      void casa::ROArrayColumn< T >::getColumnRange (const Slicer &rowRange,
+                                                     Array<T> &arr,
+                                                     Bool resize = False)
+      \endcode
       <li>\c casa::ROScalarColumn<T> - Readonly access to a scalar table column
       with arbitrary data type.
+      \code
+      // Get the data from a particular cell in the table column
+      casa::ROScalarColumn<T>::get (uInt rownr, T &value);
+      // Get the data from a set of cells in the table column
+      void casa::ROScalarColumn<T>::getColumnRange (const Slicer &rowRange,
+                                                    Vector<T> &vec,
+                                                    Bool resize=False)
+      \endcode
       <li>\c casa::Slicer - Specify which elements to extract from an n-dimensional
       array.
       <li><a href="http://www.astron.nl/aips++/docs/notes/199">AIPS++ Note 
@@ -70,31 +86,55 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
 
-    Besides reading the complete contents of a table column, selective access via
-    a slicing operation is possible:
-    <ul>
-      <li>Get the data from a particular cell in the table column:
-      \code
-      // for a scalar-type table column
-      casa::ROScalarColumn<T>::get (uInt rownr, T &value);
-      
-      // for a array-type table column
-      casa::ROArrayColumn<T>::get (uInt rownr, Array<T> &array, Bool resize=False);
-      \endcode
+    The MAIN table of the MS contains the bulk of all data. For each interferometer
+    and for each sample time. The ordering is usually time-baseline, i.e. the MAIN
+    table is divided in subsequent time-blocks and within each time block there is
+    an ordering based on the interferometer antenna pair. Each interferometer pair
+    will appear only once per sample time. Auto- and crosscorrelations are usually
+    mixed. The MAIN table links directly to many other tables through index numbers
+    in several of its columns.
 
-      <li>Get the data from a set of cells in the table column:
-      \code
-      // for a scalar-type table columm
-      void casa::ROScalarColumn<T>::getColumnRange (const Slicer &rowRange,
-                                                    Vector<T> &vec,
-                                                    Bool resize=False)
-
-      // for a array-type table column
-      void casa::ROArrayColumn< T >::getColumnRange (const Slicer &rowRange,
-                                                     Array<T> &arr,
-                                                     Bool resize = False)
-      \endcode
-    </ul>
+    \verbatim
+    /  MAIN                        Table     Data of all samples for individual interferometers
+    |-- UVW                        Column
+    |-- FLAG_CATEGORY              Column
+    |-- WEIGHT                     Column
+    |-- SIGMA                      Column
+    |
+    |-- ANTENNA                    Table     Antenna information
+    |-- DATA_DESCRIPTION           Table
+    |  |-- SPECTRAL_WINDOW_ID
+    |  |-- POLARIZATION_ID
+    |  `-- FLAG_ROW
+    |-- FEED                       Table     Feed (Frontend) related information
+    |-- FLAG_CMD                   Table     Flag information
+    |-- FIELD                      Table     Information on observed positions
+    |-- HISTORY                    Table     History log of MS
+    |-- OBSERVATION                Table     General observation information
+    |-- POINTING                   Table     Antenna pointing information
+    |-- POLARIZATION               Table     Polarization information description
+    |   |-- NUM_CORR
+    |   |-- CORR_TYPE
+    |   |-- CORR_PRODUCT
+    |   `-- FLAG_ROW
+    |-- PROCESSOR                  Table     Correlator information
+    |-- SPECTRAL_WINDOW            Table     Frequency/IF information
+    |   |-- NUM_CHAN
+    |   |-- NAME
+    |   |-- REF_FREQUENCY
+    |   |-- CHAN_FREQ
+    |   |-- CHAN_WIDTH
+    |   |-- MEAS_FREQ_REF
+    |   |-- EFFECTIVE_BW
+    |   |-- RESOLUTION
+    |   |-- TOTAL_BANDWIDTH
+    |   |-- NET_SIDEBAND
+    |   |-- IF_CONV_CHAIN
+    |   |-- FREQ_GROUP
+    |   |-- FREQ_GROUP_NAME
+    |   `-- FLAG_ROW
+    `-- STATE
+    \endverbatim
     
     <h3>Example(s)</h3>
     
