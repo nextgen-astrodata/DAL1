@@ -36,6 +36,7 @@
 #include <ms/MeasurementSets.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableDesc.h>
+#include <tables/Tables/TableRecord.h>
 #endif
 
 namespace DAL { // Namespace DAL -- begin
@@ -46,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup core
     
-    \brief Brief description for class DAL::MS_Table
+    \brief Interface to MeasurementSet table
     
     \author Lars B&auml;hren
 
@@ -57,11 +58,11 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>casa::ROArrayColumn<T> - Readonly access to an array table column
+      <li>\c casa::ROArrayColumn<T> - Readonly access to an array table column
       with arbitrary data type.
-      <li>casa::ROScalarColumn<T> - Readonly access to a scalar table column
+      <li>\c casa::ROScalarColumn<T> - Readonly access to a scalar table column
       with arbitrary data type.
-      <li>casa::Slicer - Specify which elements to extract from an n-dimensional
+      <li>\c casa::Slicer - Specify which elements to extract from an n-dimensional
       array.
       <li><a href="http://www.astron.nl/aips++/docs/notes/199">AIPS++ Note 
       199</a>: Table Query Language
@@ -162,6 +163,10 @@ namespace DAL { // Namespace DAL -- begin
 	       std::string const &name,
 	       IO_Mode const &flags=IO_Mode());
     
+    //! Test if the table is the root table
+    bool isRootTable () {
+      return itsTable.isRootTable();
+    }
 
     //! Get a table description object for the table
     inline casa::TableDesc tableDescription () {
@@ -169,7 +174,10 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the names of the table columns
-    bool columnNames (std::vector<std::string> &names);
+    std::vector<std::string> columnNames ();
+
+    //! Get the names of the sub-tables
+    std::vector<std::string> tableNames ();
 
     //! Get column data-types
     std::map<casa::String,casa::DataType> columnDataTypes ();

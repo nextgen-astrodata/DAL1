@@ -130,19 +130,19 @@ namespace DAL { // Namespace DAL -- begin
   void MS_Table::summary (std::ostream &os,
 			  bool const &showColumns)
   {
-    casa::TableDesc tableDesc = tableDescription();
-    unsigned int nofRows      = itsTable.nrow();
-    casa::Vector<casa::String> columnNames = tableDesc.columnNames();
+    casa::TableDesc tableDesc          = tableDescription();
+    unsigned int nofRows               = itsTable.nrow();
+    casa::Vector<casa::String> columns = tableDesc.columnNames();
 
-    os << "[MS_Table] Summary of internal parameters."           << std::endl;
-    os << "-- File type           = " << itsFiletype.name()      << std::endl;
-    os << "-- I/O mode flags      = " << itsFlags.names()        << std::endl;
-    os << "-- Object name         = " << itsName                 << std::endl;
-    os << "-- Table name          = " << itsTable.tableName()    << std::endl;
-    os << "-- nof. table rows     = " << nofRows                 << std::endl;
-    os << "-- nof. table columns  = " << columnNames.nelements() << std::endl;
+    os << "[MS_Table] Summary of internal parameters."        << std::endl;
+    os << "-- File type           = " << itsFiletype.name()   << std::endl;
+    os << "-- I/O mode flags      = " << itsFlags.names()     << std::endl;
+    os << "-- Table name          = " << itsName              << std::endl;
+    os << "-- Sub-tables          = " << tableNames()         << std::endl;
+    os << "-- nof. table rows     = " << nofRows              << std::endl;
+    os << "-- nof. table columns  = " << tableDesc.ncolumn()  << std::endl;
     
-    if ((columnNames.nelements()>0) && showColumns) {
+    if ((columns.nelements()>0) && showColumns) {
       os << "-- Column descriptions :" << std::endl;
       std::cout << std::setw(5)  << "#"
 		<< std::setw(25) << "name"
@@ -153,9 +153,9 @@ namespace DAL { // Namespace DAL -- begin
 		<< std::setw(10) << "table"
 		<< std::setw(10) << "shape"
 		<< std::endl;
-      for (unsigned int n=0; n<columnNames.nelements(); ++n) {
+      for (unsigned int n=0; n<columns.nelements(); ++n) {
 	// Get column description
-	casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
+	casa::ColumnDesc columnDesc = tableDesc.columnDesc(columns(n));
 	// Display column properties
 	std::cout << std::setw(5)  << n 
 		  << std::setw(25) << columnDesc.name()
@@ -168,7 +168,6 @@ namespace DAL { // Namespace DAL -- begin
 		  << std::endl;
       }
     }
-
   }
   
   // ============================================================================
@@ -197,6 +196,7 @@ namespace DAL { // Namespace DAL -- begin
       status = false;
     } else {
       itsTable = casa::Table (table);
+      itsName  = itsTable.tableName();
       itsFlags = flags;
       status   = true;
     }
@@ -204,6 +204,51 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                                  columnNames
+  
+  /*!
+    \return names -- Names of the table columns; returns empty vector in case no 
+            columns are found or the object is not connected to a valid table.
+  */
+  std::vector<std::string> MS_Table::columnNames ()
+  {
+    casa::TableDesc tableDesc         = tableDescription();
+    casa::Vector<casa::String> buffer = tableDesc.columnNames();
+    unsigned int nelem                = buffer.nelements();
+    std::vector<std::string> names (nelem);
+    
+    names.assign(buffer.data(),buffer.data()+nelem);
+    
+    return names;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   tableNames
+  
+  /*!
+    \return names -- Names of the sub-tables; returns empty vector in case no 
+            sub-tables are found or the object is not connected to a valid table.
+  */
+  std::vector<std::string> MS_Table::tableNames ()
+  {
+    std::vector<std::string> names;
+    
+    if (!itsTable.isNull()) {
+      casa::TableRecord rec    = itsTable.keywordSet();
+      casa::RecordDesc recDesc = rec.description();
+      unsigned int nofFields   = recDesc.nfields();
+
+      for (unsigned int n=0; n<nofFields; ++n) {
+	if (recDesc.isTable (n)) {
+	  names.push_back(recDesc.name (n));
+	}
+      }
+    }
+    
+    return names;
+  }
+  
   //_____________________________________________________________________________
   //                                                              columnDataTypes
   

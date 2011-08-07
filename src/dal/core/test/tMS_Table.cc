@@ -337,7 +337,7 @@ int test_readData (std::string const &filename)
   try {
     unsigned int start   = 0;
     unsigned int nofRows = 10;
-    std::string column  = "UVW";
+    std::string column   = "UVW";
     std::vector<double> data;
     
     // Read the data from the table columns and display their properties
@@ -367,7 +367,7 @@ int test_readData (std::string const &filename)
   try {
     unsigned int start   = 0;
     unsigned int nofRows = 10;
-    std::string column  = "DATA";
+    std::string column   = "DATA";
     std::vector<std::complex<float> > data;
     
     // Read the data from the table columns and display their properties
