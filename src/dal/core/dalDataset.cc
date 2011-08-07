@@ -33,6 +33,7 @@ namespace DAL {
   //                                                                   dalDataset
   
   dalDataset::dalDataset()
+    : dalObjectBase()
   {
     init();
   }
@@ -50,9 +51,10 @@ namespace DAL {
   dalDataset::dalDataset (std::string const &filename,
 			  dalFileType const &filetype,
 			  IO_Mode const &flags)
+    : dalObjectBase()
   {
     /* Initialize internal parameters ... */
-    init (name.c_str(),
+    init (itsName.c_str(),
 	  filetype,
 	  flags);
     /* ... and try to open the file. */
@@ -73,9 +75,10 @@ namespace DAL {
   dalDataset::dalDataset (std::string const &filename,
 			  dalFileType::Type const &filetype,
 			  IO_Mode const &flags)
+    : dalObjectBase()
   {
     /* Initialize internal parameters ... */
-    init (name.c_str(),
+    init (itsName.c_str(),
 	  dalFileType(filetype),
 	  flags);
     /* ... and try to open the file. */
@@ -96,6 +99,7 @@ namespace DAL {
   dalDataset::dalDataset (std::string const &filename,
                           std::string filetype,
 			  IO_Mode const &flags)
+    : dalObjectBase()
   {
     init (filename,
 	  filetype,
@@ -132,8 +136,8 @@ namespace DAL {
 
     /* Release generic file pointer */
 
-    if (itsFilePointer != NULL) {
-      itsFilePointer = NULL;
+    if (itsObjectHandler != NULL) {
+      itsObjectHandler = NULL;
     }
 
     return status;
@@ -150,10 +154,6 @@ namespace DAL {
   
   void dalDataset::init()
   {
-    itsFilePointer = NULL;
-    itsFiletype    = dalFileType();
-    name           = "UNDEFINED";
-    itsFlags       = IO_Mode();
     itsFilter      = dalFilter();
     h5fh_p         = 0;
 #ifdef DAL_WITH_CASA
@@ -178,7 +178,7 @@ namespace DAL {
     /* Initialize internal data with default values */
     init ();
 
-    name        = filename;
+    itsName     = filename;
     itsFiletype = filetype;
     itsFlags    = flags;
   }
@@ -194,7 +194,7 @@ namespace DAL {
     os << "[dalDataset] Summary of object properties" << std::endl;
 
     os << "-- Dataset type     = " << itsFiletype.name()       << std::endl;
-    os << "-- Dataset name     = " << getName()                << std::endl;
+    os << "-- Dataset name     = " << itsName                  << std::endl;
     os << "-- HDF5 file handle = " << getFileHandle()          << std::endl;
     os << "-- HDF5 group ID    = " << getId()                  << std::endl;
     os << "-- I/O mode flags   = " << itsFlags.names()         << std::endl;
@@ -205,7 +205,7 @@ namespace DAL {
       is connected to a dataset.
      */
 
-    if (getName() != "UNDEFINED") {
+    if (itsName != "UNDEFINED") {
       std::vector<std::string> groupNames = getGroupNames();
       
       os << "-- Group names      = [";
@@ -239,9 +239,9 @@ namespace DAL {
     /* Check the HDF5 objec identifier; if it is ok, do internal book-keeping */
     if (H5Iis_valid(h5fh_p)) {
       itsFiletype.setType (dalFileType::HDF5);
-      itsFilePointer = &h5fh_p;
-      name           = filename;
-      fileIsOpen     = true;
+      itsObjectHandler = &h5fh_p;
+      itsName          = filename;
+      fileIsOpen       = true;
     } else {
       fileIsOpen = false;
     }
@@ -422,9 +422,9 @@ namespace DAL {
     }
     
     if (itsMS.validate()) {
-      fileIsOpen     = true;
-      name           = filename;
-      itsFilePointer = &itsMS;
+      fileIsOpen       = true;
+      itsName          = filename;
+      itsObjectHandler = &itsMS;
       itsFiletype.setType (dalFileType::CASA_MS);
     } else {
       fileIsOpen     = false;
@@ -936,7 +936,7 @@ namespace DAL {
       {
 	if (H5Iis_valid(h5fh_p)) {
 	  dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
-	  lt->createTable( itsFilePointer, tablename, "/" );
+	  lt->createTable( itsObjectHandler, tablename, "/" );
 	  return lt;
 	} else {
 	  std::cerr << "[dalDataset::createTable]"
@@ -977,7 +977,7 @@ namespace DAL {
       {
 	if (H5Iis_valid(h5fh_p)) {
 	  dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
-	  lt->createTable( itsFilePointer, tablename, groupname );
+	  lt->createTable( itsObjectHandler, tablename, groupname );
 	  return lt;
 	} else {
 	  std::cerr << "[dalDataset::createTable]"
@@ -1028,7 +1028,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
         dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
-        lt->openTable( itsFilePointer, tablename, "/" );
+        lt->openTable( itsObjectHandler, tablename, "/" );
         return lt;
       }
       break;
@@ -1060,7 +1060,7 @@ namespace DAL {
       {
         dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
         try {
-	  lt->openTable( itsFilePointer, tablename, '/' + groupname );
+	  lt->openTable( itsObjectHandler, tablename, '/' + groupname );
 	}
         catch (std::string message) {
 	  std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
@@ -1093,7 +1093,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
         dalArray * la = new dalArray;
-        la->open( itsFilePointer, arrayname );
+        la->open( itsObjectHandler, arrayname );
         return la;
       }
       break;
@@ -1124,7 +1124,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	dalArray * la = new dalArray;
-	la->open( itsFilePointer, '/' + groupname + '/' + arrayname );
+	la->open( itsObjectHandler, '/' + groupname + '/' + arrayname );
 	return la;
       }
       break;
@@ -1213,7 +1213,7 @@ namespace DAL {
       {
         dalGroup * group = new dalGroup;
         //cerr << "Trying to open group " << groupname << endl;
-        int retval = group->open( itsFilePointer, groupname );
+        int retval = group->open( itsObjectHandler, groupname );
         if ( retval < 0 ) {
           return NULL;
 	} else {

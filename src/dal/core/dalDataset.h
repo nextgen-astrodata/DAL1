@@ -22,6 +22,7 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
+#include <core/dalObjectBase.h>
 #include <core/dalGroup.h>
 #include <core/dalIntArray.h>
 #include <core/HDF5Attribute.h>
@@ -101,16 +102,8 @@ namespace DAL {
     </ol>
   */
 
-  class dalDataset {
+  class dalDataset : public dalObjectBase {
     
-    //! File pointer (can be HDF5, FITS or CASA MS)
-    void * itsFilePointer;
-    //! File type: CASA_MS, HDF5, FITS, etc.
-    dalFileType itsFiletype;
-    //! Dataset name
-    std::string name;
-    //! I/O mode flags
-    IO_Mode itsFlags;
     //! Dataset filter
     dalFilter itsFilter;
     //! HDF5 file handle
@@ -295,13 +288,6 @@ namespace DAL {
     */
     inline std::string getType() {
       return itsFiletype.name();
-    }
-    /*!
-      \brief Retrieve the name of the data set.
-      \return name -- A string holding the name of the data set.
-    */
-    inline std::string getName () const {
-      return name;
     }
     /*!
       \brief Get the HDF5 file handle identifier.

@@ -657,7 +657,7 @@ namespace DAL {
   double BeamFormed::total_integration_time ()
   {
     double integration_time = 0.0;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "TOTAL_INTEGRATION_TIME",
              integration_time ) )
@@ -700,7 +700,7 @@ namespace DAL {
   int BeamFormed::dispersion_measure ()
   {
     int dispersion_measure = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "DISPERSION_MEASURE",
              dispersion_measure ) )
@@ -721,7 +721,7 @@ namespace DAL {
   int BeamFormed::number_of_samples ()
   {
     int number_of_samples = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_SAMPLES",
              number_of_samples ) )
@@ -742,7 +742,7 @@ namespace DAL {
   double BeamFormed::sampling_time ()
   {
     double sampling_time = -1.0;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "SAMPLING_TIME",
              sampling_time ) )
@@ -763,7 +763,7 @@ namespace DAL {
   int BeamFormed::number_of_beams ()
   {
     int number_of_beams = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_BEAMS",
              number_of_beams ) )
@@ -784,7 +784,7 @@ namespace DAL {
   int BeamFormed::sub_beam_diameter ()
   {
     int sub_beam_diameter = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "SUB_BEAM_DIAMETER",
              sub_beam_diameter ) )
@@ -805,7 +805,7 @@ namespace DAL {
   int BeamFormed::weather_temperature ()
   {
     int weather_temperature = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_TEMPERATURE",
              weather_temperature ) )
@@ -826,7 +826,7 @@ namespace DAL {
   int BeamFormed::weather_humidity ()
   {
     int weather_humidity = -1;
-    if (dataset_p->getName() != "UNDEFINED")
+    if (dataset_p->name() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_HUMIDITY",
              weather_humidity ) )
