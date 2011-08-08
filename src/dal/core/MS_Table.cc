@@ -181,6 +181,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         open
   
+  /*!
+    \param name  -- Name of the MeasurementSet.
+    \param flags -- I/O mode flags.
+  */
   bool MS_Table::open (std::string const &name,
 		       IO_Mode const &flags)
   {
