@@ -13,8 +13,9 @@ project (DAL)
 
 ## Project release version
 set (DAL_VERSION_MAJOR 0)
-set (DAL_VERSION_MINOR 1)
-set (DAL_VERSION_PATCH 10)
+set (DAL_VERSION_MINOR 2)
+set (DAL_VERSION_PATCH 0)
+set (DAL_VERSION_MICRO pre)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## ==============================================================================
