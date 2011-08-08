@@ -466,7 +466,7 @@ boost::python::numeric::array dalDataset::getAttribute_long_boost ( std::string 
   boost::python::list dalDataset::getAttribute_string_boost ( std::string attrname )
   {
      boost::python::list data;
-     std::vector<string> value;
+     std::vector<std::string> value;
      HDF5Attribute::read (h5fh_p, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;

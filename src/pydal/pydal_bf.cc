@@ -48,6 +48,9 @@ using DAL::BF_RootGroup;
 
 void export_BF_BeamGroup ()
 {
+  void (BF_BeamGroup::*summary1)(void)            = BF_BeamGroup::summary;
+  void (BF_BeamGroup::*summary2)(std::ostream &)  = BF_BeamGroup::summary;
+
   boost::python::class_<BF_BeamGroup>("BF_BeamGroup")
     // Construction
     .def( boost::python::init<>())
@@ -57,6 +60,12 @@ void export_BF_BeamGroup ()
 	  "Get the object identifier for the data file." )
     .def( "className", &BF_BeamGroup::className,
 	  "Get name of the class." )
+    .def("summary",
+	        summary1,
+	        "Summary of the object's internal parameters and status.")
+    .def("summary",
+	        summary2,
+      	 "Summary of the object's internal parameters and status.")
     ;
 }
 

@@ -53,7 +53,7 @@ void export_CommonAttributes ()
   boost::python::class_<CommonAttributes>("CommonAttributes")
     .def( boost::python::init<>())
     .def( boost::python::init<Filename>())
-    .def( boost::python::init<Filename,string>())
+    .def( boost::python::init<Filename,std::string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,
@@ -180,7 +180,7 @@ void export_Filename ()
   boost::python::class_<Filename>("Filename")
     // Construction
     .def( boost::python::init<>())
-    .def( boost::python::init<string,string,Filename::Type,Filename::Extension>())
+    .def( boost::python::init<std::string,std::string,Filename::Type,Filename::Extension>())
     // Parameters
     .def( "observationID", &Filename::observationID,
 	  "Get the unique observation ID.")
@@ -317,11 +317,11 @@ void export_HDF5Quantity ()
   
   boost::python::class_<HDF5Quantity>("HDF5Quantity")
     .def( boost::python::init<>())
-    .def( boost::python::init<string>())
-    .def( boost::python::init<string,string,string,string>())
-    .def( boost::python::init<string,double,string>())
-    .def( boost::python::init<string,vector<double>,string>())
-    .def( boost::python::init<string,vector<double>,vector<string> >())
+    .def( boost::python::init<std::string>())
+    .def( boost::python::init<std::string,std::string,std::string,std::string>())
+    .def( boost::python::init<std::string,double,std::string>())
+    .def( boost::python::init<std::string,std::vector<double>,std::string>())
+    .def( boost::python::init<std::string,std::vector<double>,std::vector<std::string> >())
     .def( boost::python::init<HDF5Quantity>())
     .def( "className", &HDF5Quantity::className,
 	  "Get the name of the class.")
@@ -374,12 +374,12 @@ void export_HDF5Measure ()
 
   boost::python::class_<HDF5Measure>("HDF5Measure")
     .def( boost::python::init<>())
-    .def( boost::python::init<string>())
-    .def( boost::python::init<string,string,string,string,string>())
-    .def( boost::python::init<string,double,string,string>())
-    .def( boost::python::init<string,vector<double>,string,string>())
-    .def( boost::python::init<string,vector<double>,vector<string>,string>())
-    .def( boost::python::init<HDF5Quantity,string>())
+    .def( boost::python::init<std::string>())
+    .def( boost::python::init<std::string,std::string,std::string,std::string,std::string>())
+    .def( boost::python::init<std::string,double,std::string,std::string>())
+    .def( boost::python::init<std::string,std::vector<double>,std::string,std::string>())
+    .def( boost::python::init<std::string,std::vector<double>,std::vector<std::string>,std::string>())
+    .def( boost::python::init<HDF5Quantity,std::string>())
     .def( boost::python::init<HDF5Measure>())
     /* Parameter access */
     .def( "frame", &HDF5Measure::frame,

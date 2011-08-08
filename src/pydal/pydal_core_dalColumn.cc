@@ -272,15 +272,15 @@ void export_dalColumn ()
   boost::python::class_<dalColumn>("dalColumn")
     /* Construction */
     .def( boost::python::init<>())
-    .def( boost::python::init<string const &>())
-    .def( boost::python::init<string const &,
-			      string const &>())
+    .def( boost::python::init<std::string const &>())
+    .def( boost::python::init<std::string const &,
+			      std::string const &>())
     .def( boost::python::init<hid_t const &,
 			      hid_t const &,
 			      DAL::dalFileType const &,
-			      string const &,
-			      string const &,
-			      string const &>())
+			      std::string const &,
+			      std::string const &,
+			      std::string const &>())
     /* Public methods */
     .def( "addMember", &dalColumn::addMember,
 	  "This method is useful for hdf5 files when creating a column \n"
