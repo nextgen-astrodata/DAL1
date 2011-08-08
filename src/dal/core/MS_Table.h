@@ -58,6 +58,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
+      <li>\c casa::Table - Main interface class to a read/write table.
       <li>\c casa::ROArrayColumn<T> - Readonly access to an array table column
       with arbitrary data type.
       \code
