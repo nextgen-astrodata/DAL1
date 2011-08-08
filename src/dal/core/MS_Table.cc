@@ -133,12 +133,14 @@ namespace DAL { // Namespace DAL -- begin
     casa::TableDesc tableDesc          = tableDescription();
     unsigned int nofRows               = itsTable.nrow();
     casa::Vector<casa::String> columns = tableDesc.columnNames();
+    std::vector<std::string> tables    = tableNames();
 
     os << "[MS_Table] Summary of internal parameters."        << std::endl;
     os << "-- File type           = " << itsFiletype.name()   << std::endl;
     os << "-- I/O mode flags      = " << itsFlags.names()     << std::endl;
     os << "-- Table name          = " << itsName              << std::endl;
-    os << "-- Sub-tables          = " << tableNames()         << std::endl;
+    os << "-- nof. sub-tables     = " << tables.size()        << std::endl;
+    os << "-- Sub-table names     = " << tables               << std::endl;
     os << "-- nof. table rows     = " << nofRows              << std::endl;
     os << "-- nof. table columns  = " << tableDesc.ncolumn()  << std::endl;
     

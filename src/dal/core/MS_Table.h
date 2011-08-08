@@ -96,12 +96,29 @@ namespace DAL { // Namespace DAL -- begin
 
     \verbatim
     /  MAIN                        Table     Data of all samples for individual interferometers
-    |-- UVW                        Column
-    |-- FLAG_CATEGORY              Column
-    |-- WEIGHT                     Column
-    |-- SIGMA                      Column
+    |-- UVW                        Column    
+    |-- FLAG_CATEGORY              Column    
+    |-- WEIGHT                     Column    
+    |-- SIGMA                      Column    
+    |-- ANTENNA1                   Column    
+    |-- ANTENNA2                   Column    
+    |-- ARRAY_ID                   Column    
+    |-- DATA_DESC_ID               Column    
+    |-- EXPOSURE                   Column    
     |
     |-- ANTENNA                    Table     Antenna information
+    |   |-- ANTENNA_ID             Column
+    |   |-- FEED_ID                Column
+    |   |-- SPECTRAL_WINDOW_ID     Column
+    |   |-- TIME                   Column
+    |   |-- NUM_RECEPTORS          Column
+    |   |-- BEAM_ID                Column
+    |   |-- BEAM_OFFSET            Column
+    |   |-- POLARIZATION_TYPE      Column
+    |   |-- POL_RESPONSE           Column
+    |   |-- POSITION               Column
+    |   `-- RECEPTOR_ANGLE         Column
+    |
     |-- DATA_DESCRIPTION           Table
     |  |-- SPECTRAL_WINDOW_ID
     |  |-- POLARIZATION_ID
