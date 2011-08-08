@@ -22,6 +22,8 @@
 
 namespace DAL { // Namespace DAL -- begin
   
+#ifdef DAL_WITH_CASA
+
   // ============================================================================
   //
   //  Construction
@@ -117,5 +119,13 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   
+#else
+
+  MS_TableColumn::MS_TableColumn ()
+    : dalObjectBase ()
+  {
+  }
+
+#endif  
 
 } // Namespace DAL -- end

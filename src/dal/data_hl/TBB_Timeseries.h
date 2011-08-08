@@ -299,10 +299,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the reference codes for the frame of the station positions
     casa::Vector<casa::String> station_position_frame ();
 #else
-    //! Get the type of trigger causing the dump of the TBB data
-    std::vector<std::string> trigger_type ();
-    //! Time offset from the trigger reference time
-    std::vector<double> trigger_offset ();
     //! Get the reference codes for the frame of the station positions
     std::vector<std::string> station_position_frame ();
 #endif
