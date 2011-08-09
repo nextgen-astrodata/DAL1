@@ -56,9 +56,10 @@ namespace DAL {  // Namespace DAL -- begin
            opened.
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
-                                      std::string const &group)
+                                      std::string const &group,
+                                      IO_Mode const &flags)
   {
-    open (location, group, false);
+    open (location, group, flags);
   }
 
   //_____________________________________________________________________________
@@ -66,10 +67,10 @@ namespace DAL {  // Namespace DAL -- begin
   
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
 				      unsigned int const &stationID,
-				      bool const &create)
+              IO_Mode const &flags)
   {
     std::string name = getName (stationID);
-    open (location, name, create);
+    open (location, name, flags);
   }
   
   //_____________________________________________________________________________
@@ -185,24 +186,31 @@ namespace DAL {  // Namespace DAL -- begin
     herr_t h5error;
     std::string filename;
     std::string dataset;
+    hid_t fileID;
+    IO_Mode flags = IO_Mode();
     
     // Get name of file and dataset ________________________
     
     status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location,absolutePath);
+    status *= DAL::h5get_name (dataset, location, absolutePath);
 
     if (status) {
-      // open the file
-      hid_t fileID = H5Fopen (filename.c_str(),
-			      H5F_ACC_RDWR,
-			      H5P_DEFAULT);
-      if (fileID<0) {
-	fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDONLY,
-			  H5P_DEFAULT);
+
+      h5get_flags(flags, location);
+
+      if (flags.flags() & IO_Mode::ReadOnly) {
+        fileID = H5Fopen (filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
       }
-      // open the dataset
-      status = open (fileID,dataset,false);
+      else {
+        fileID = H5Fopen (filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+
+        /* If opening the the file failed, this might have been due to wrong
+           access permissions; check if the file can be opened as read-only. */
+        if (fileID<0) { fileID = H5Fopen (filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+        }
+      }
+        // open the dataset
+      status = open (fileID,dataset,flags);
       // release file handler
       h5error = H5Fclose (fileID);
     }
@@ -272,15 +280,19 @@ namespace DAL {  // Namespace DAL -- begin
  	  HDF5Attribute::write (location_p,"TRIGGERED_ANTENNAS",       triggered   );
 	  HDF5Attribute::write (location_p,"NOF_DIPOLES",              uint(0)     );
 	} else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	  std::cerr << "[TBB_StationGroup::open] Failed to create group "
 		    << name
 		    << std::endl;
+#endif
 	  status = false;
 	}
       } else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cerr << "[TBB_StationGroup::open] Failed to open group "
 		  << name
 		  << std::endl;
+#endif
 	status = false;
       }
     }
@@ -288,10 +300,13 @@ namespace DAL {  // Namespace DAL -- begin
     // Open embedded groups
     if (status) {
       status = openEmbedded (flags);
-    } else {
+    }
+#ifdef DAL_DEBUGGING_MESSAGES
+    else {
       std::cerr << "[TBB_StationGroup::open] Skip opening embedded groups!"
 		<< std::endl;
     }
+#endif
  
     return status;
   }
@@ -326,7 +341,7 @@ namespace DAL {  // Namespace DAL -- begin
       if (datasets.size() > 0) {
 	datasets_p.clear();
 	for (it=datasets.begin(); it!=datasets.end(); ++it) {
-	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it);
+	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it,flags);
 	}
       } else {
 	status = false;

@@ -49,11 +49,12 @@ namespace DAL {  // Namespace DAL -- begin
     \param dataset  -- Name of the dataset.
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
-                                        std::string const &name)
+                                        std::string const &name,
+                                        IO_Mode const &flags)
     : HDF5GroupBase ()
   {
     init ();
-    open (location,name,false);
+    open (location,name,flags);
   }
 
   //_____________________________________________________________________________
@@ -275,26 +276,31 @@ namespace DAL {  // Namespace DAL -- begin
     herr_t h5error;
     std::string filename;
     std::string dataset;
+    hid_t fileID;
+    IO_Mode flags = IO_Mode();
     
     // Get name of file and dataset ________________________
     
     status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location,absolutePath);
+    status *= DAL::h5get_name (dataset, location, absolutePath);
 
     if (status) {
-      // open the file
-      hid_t fileID = H5Fopen (filename.c_str(),
-			      H5F_ACC_RDWR,
-			      H5P_DEFAULT);
-      /* If opening the the file failed, this might have been due to wrong
-	 access permissions; check if the file can be opened as read-only. */
-      if (fileID<0) {
-	fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDONLY,
-			  H5P_DEFAULT);
+
+      h5get_flags(flags, location);
+
+      if (flags.flags() & IO_Mode::ReadOnly) {
+        fileID = H5Fopen (filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+      }
+      else {
+        fileID = H5Fopen (filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+
+        /* If opening the the file failed, this might have been due to wrong
+           access permissions; check if the file can be opened as read-only. */
+        if (fileID<0) { fileID = H5Fopen (filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+        }
       }
         // open the dataset
-      status = open (fileID,dataset,false);
+      status = open (fileID,dataset,flags);
       // release file handler
       h5error = H5Fclose (fileID);
     }
@@ -320,107 +326,114 @@ namespace DAL {  // Namespace DAL -- begin
 
     /* Set up the list of attributes */
     setAttributes();
-    
+
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Dopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+          name.c_str(),
+          H5P_DEFAULT);
     }
     else {
       location_p = 0;
     }
-    
+
     if (location_p > 0) {
       datatype_p  = H5Dget_type (location_p);
       dataspace_p = H5Dget_space (location_p);
       int rank    = H5Sget_simple_extent_ndims (dataspace_p);
       if (rank>0) {
-	itsShape.resize(rank);
-	hsize_t * dims    = new hsize_t[rank];
-	hsize_t * maxdims = new hsize_t[rank];
-	rank              = H5Sget_simple_extent_dims (dataspace_p, dims, maxdims);
-	for (int n(0); n<rank; ++n) {
-	  itsShape[n] = dims[n];
-	}
-	// release allocated memory
-	delete [] dims;
-	delete [] maxdims;
+        itsShape.resize(rank);
+        hsize_t * dims    = new hsize_t[rank];
+        hsize_t * maxdims = new hsize_t[rank];
+        rank              = H5Sget_simple_extent_dims (dataspace_p, dims, maxdims);
+        for (int n(0); n<rank; ++n) {
+          itsShape[n] = dims[n];
+        }
+        // release allocated memory
+        delete [] dims;
+        delete [] maxdims;
       }
       // update status
       status = true;
     } else {
       /* Check conditions to enable creation of a new dataset */
       if (datatype_p<0) {
-	std::cerr << "[TBB_DipoleDataset::open] Skipping creation of dataset"
-		  << " - datatype undefined."
-		  << std::endl;
-	ok = false;
+        std::cerr << "[TBB_DipoleDataset::open] Skipping creation of dataset"
+          << " - datatype undefined."
+          << std::endl;
+        ok = false;
       }
       /* If failed to open the group, check if we are supposed to create one */
       if ( (flags.flags() & IO_Mode::Create) ||
-	   (flags.flags() & IO_Mode::CreateNew) ) {
-	// Create Dataspace
-	int rank = itsShape.size();
-	hsize_t dimensions [rank];
-	for (int n(0); n<rank; ++n) {
-	  dimensions[n] = itsShape[n];
-	}
-	dataspace_p = H5Screate_simple (rank,dimensions,NULL);
-	/* Create the dataset */
-	location_p = H5Dcreate (location,
-				name.c_str(),
-				datatype_p,
-				dataspace_p,
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  std::string grouptype ("DipoleDataset");
-	  std::string undefined ("UNDEFINED");
-	  std::vector<double> vectDouble (3,0.0);
-	  std::vector<std::string> vectString (3,undefined);
-	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",                 grouptype   );
-	  HDF5Attribute::write (location_p,"STATION_ID",                uint (0)    );
-	  HDF5Attribute::write (location_p,"RSP_ID",                    uint (0)    );
-	  HDF5Attribute::write (location_p,"RCU_ID",                    uint (0)    );
-	  HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_VALUE",    double(0.0) );
-	  HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_UNIT",     undefined   );
-	  HDF5Attribute::write (location_p,"TIME",                      uint(0)     );
-	  HDF5Attribute::write (location_p,"SAMPLE_NUMBER",             uint(0)     );
-	  HDF5Attribute::write (location_p,"SAMPLES_PER_FRAME",         uint(0)     );
-	  HDF5Attribute::write (location_p,"DATA_LENGTH",               uint(0)     );
-	  HDF5Attribute::write (location_p,"NYQUIST_ZONE",              uint(0)     );
-	  HDF5Attribute::write (location_p,"FEED",                      undefined   );
-	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_VALUE",    vectDouble  );
-	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT",     vectString  );
-	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME",    undefined   );
-	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_VALUE", vectDouble  );
-	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_UNIT",  vectString  );
-	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_FRAME", undefined   );
-	} else {
-	  std::cerr << "[TBB_DipoleDataset::open] Failed to create group "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
+          (flags.flags() & IO_Mode::CreateNew) ) {
+        // Create Dataspace
+        int rank = itsShape.size();
+        hsize_t dimensions [rank];
+        for (int n(0); n<rank; ++n) {
+          dimensions[n] = itsShape[n];
+        }
+        dataspace_p = H5Screate_simple (rank,dimensions,NULL);
+        /* Create the dataset */
+        location_p = H5Dcreate (location,
+            name.c_str(),
+            datatype_p,
+            dataspace_p,
+            H5P_DEFAULT,
+            H5P_DEFAULT,
+            H5P_DEFAULT);
+        /* If creation was sucessful, add attributes with default values */
+        if (location_p > 0) {
+          std::string grouptype ("DipoleDataset");
+          std::string undefined ("UNDEFINED");
+          std::vector<double> vectDouble (3,0.0);
+          std::vector<std::string> vectString (3,undefined);
+          // write the attributes
+          HDF5Attribute::write (location_p,"GROUPTYPE",                 grouptype   );
+          HDF5Attribute::write (location_p,"STATION_ID",                uint (0)    );
+          HDF5Attribute::write (location_p,"RSP_ID",                    uint (0)    );
+          HDF5Attribute::write (location_p,"RCU_ID",                    uint (0)    );
+          HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_VALUE",    double(0.0) );
+          HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_UNIT",     undefined   );
+          HDF5Attribute::write (location_p,"TIME",                      uint(0)     );
+          HDF5Attribute::write (location_p,"SAMPLE_NUMBER",             uint(0)     );
+          HDF5Attribute::write (location_p,"SAMPLES_PER_FRAME",         uint(0)     );
+          HDF5Attribute::write (location_p,"DATA_LENGTH",               uint(0)     );
+          HDF5Attribute::write (location_p,"NYQUIST_ZONE",              uint(0)     );
+          HDF5Attribute::write (location_p,"FEED",                      undefined   );
+          HDF5Attribute::write (location_p,"ANTENNA_POSITION_VALUE",    vectDouble  );
+          HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT",     vectString  );
+          HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME",    undefined   );
+          HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_VALUE", vectDouble  );
+          HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_UNIT",  vectString  );
+          HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_FRAME", undefined   );
+        } else {
+#ifdef DAL_DEBUGGING_MESSAGES
+          std::cerr << "[TBB_DipoleDataset::open] Failed to create group "
+            << name
+            << std::endl;
+#endif
+          status = false;
+        }
       } else {
-	std::cerr << "[TBB_DipoleDataset::open] Failed to open dataset "
-		  << name
-		  << std::endl;
-	status = false;
+#ifdef DAL_DEBUGGING_MESSAGES
+        std::cerr << "[TBB_DipoleDataset::open] Failed to open dataset "
+          << name
+          << std::endl;
+#endif
+        status = false;
       }
     }
 
     // Open embedded groups
     if (status) {
-      status = openEmbedded ();
-    } else {
-      std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
-		<< std::endl;
+      status = openEmbedded (flags);
     }
- 
+#ifdef DAL_DEBUGGING_MESSAGES
+    else {
+      std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
+        << std::endl;
+    }
+#endif
+
     return status;
   }
   
@@ -485,10 +498,10 @@ namespace DAL {  // Namespace DAL -- begin
     
     status = HDF5Dataspace::shape (location_p,shape);
 
-    if (status && shape.size() > 0) {
+    if (status && shape.size() > 0 && !(flags.flags() & IO_Mode::ReadOnly)) {
       status *= setAttribute("DATA_LENGTH",shape[0]);
     }
-    
+
     return status;
   }
   
@@ -913,7 +926,9 @@ namespace DAL {  // Namespace DAL -- begin
       HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT", std::vector<std::string>(3, unit));
       HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME", frame);
     } else {
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cerr << "[TBB_DipoleDataset::set_antenna_position] Failed to write to group." << std::endl;
+#endif
 
       return false;
     }

@@ -122,12 +122,13 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Argumented constructor
     TBB_StationGroup (hid_t const &location,
-		      std::string const &group);
+		      std::string const &group,
+          IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     TBB_StationGroup (hid_t const &location,
 		      unsigned int const &stationID,
-		      bool const &create=true);
+          IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     TBB_StationGroup (hid_t const &groupID);
