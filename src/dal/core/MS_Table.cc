@@ -144,30 +144,32 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- nof. table rows     = " << nofRows              << std::endl;
     os << "-- nof. table columns  = " << tableDesc.ncolumn()  << std::endl;
     
-    if ((columns.nelements()>0) && showColumns) {
-      os << "-- Column descriptions :" << std::endl;
-      std::cout << std::setw(5)  << "#"
-		<< std::setw(25) << "name"
-		<< std::setw(10) << "ndim"
-		<< std::setw(10) << "dtype"
-		<< std::setw(10) << "scalar"
-		<< std::setw(10) << "array"
-		<< std::setw(10) << "table"
-		<< std::setw(10) << "shape"
-		<< std::endl;
-      for (unsigned int n=0; n<columns.nelements(); ++n) {
-	// Get column description
-	casa::ColumnDesc columnDesc = tableDesc.columnDesc(columns(n));
-	// Display column properties
-	std::cout << std::setw(5)  << n 
-		  << std::setw(25) << columnDesc.name()
-		  << std::setw(10) << columnDesc.ndim()
-		  << std::setw(10) << columnDesc.dataType()
-		  << std::setw(10) << columnDesc.isScalar()
-		  << std::setw(10) << columnDesc.isArray()
-		  << std::setw(10) << columnDesc.isTable()
-		  << std::setw(10) << columnDesc.shape()
+    if (!itsTable.isNull()) {
+      if ((columns.nelements()>0) && showColumns) {
+	os << "-- Column descriptions :" << std::endl;
+	std::cout << std::setw(5)  << "#"
+		  << std::setw(25) << "name"
+		  << std::setw(10) << "ndim"
+		  << std::setw(10) << "dtype"
+		  << std::setw(10) << "scalar"
+		  << std::setw(10) << "array"
+		  << std::setw(10) << "table"
+		  << std::setw(10) << "shape"
 		  << std::endl;
+	for (unsigned int n=0; n<columns.nelements(); ++n) {
+	  // Get column description
+	  casa::ColumnDesc columnDesc = tableDesc.columnDesc(columns(n));
+	  // Display column properties
+	  std::cout << std::setw(5)  << n 
+		    << std::setw(25) << columnDesc.name()
+		    << std::setw(10) << columnDesc.ndim()
+		    << std::setw(10) << columnDesc.dataType()
+		    << std::setw(10) << columnDesc.isScalar()
+		    << std::setw(10) << columnDesc.isArray()
+		    << std::setw(10) << columnDesc.isTable()
+		    << std::setw(10) << columnDesc.shape()
+		    << std::endl;
+	}
       }
     }
   }
@@ -196,37 +198,46 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
     
-    casa::Table table (absoluteName);
-    // Check if the table is ok; if yes, then set internal variables
-    if (table.isNull()) {
+    try {
+      casa::Table table (absoluteName);
+      // Check if the table is ok; if yes, then set internal variables
+      if (table.isNull()) {
+	status = false;
+      } else {
+	itsTable = casa::Table (table);
+	itsName  = itsTable.tableName();
+	itsFlags = flags;
+	status   = true;
+      }
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
       status = false;
-    } else {
-      itsTable = casa::Table (table);
-      itsName  = itsTable.tableName();
-      itsFlags = flags;
-      status   = true;
     }
     
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                  columnNames
   
   /*!
     \return names -- Names of the table columns; returns empty vector in case no 
-            columns are found or the object is not connected to a valid table.
+    columns are found or the object is not connected to a valid table.
   */
   std::vector<std::string> MS_Table::columnNames ()
   {
-    casa::TableDesc tableDesc         = tableDescription();
-    casa::Vector<casa::String> buffer = tableDesc.columnNames();
-    unsigned int nelem                = buffer.nelements();
-    std::vector<std::string> names (nelem);
-    
-    names.assign(buffer.data(),buffer.data()+nelem);
-    
-    return names;
+    if (itsTable.isNull()) {
+      return std::vector<std::string>();
+    } else {
+      casa::TableDesc tableDesc         = tableDescription();
+      casa::Vector<casa::String> buffer = tableDesc.columnNames();
+      unsigned int nelem                = buffer.nelements();
+      std::vector<std::string> names (nelem);
+      
+      names.assign(buffer.data(),buffer.data()+nelem);
+      
+      return names;
+    }
   }
 
   //_____________________________________________________________________________

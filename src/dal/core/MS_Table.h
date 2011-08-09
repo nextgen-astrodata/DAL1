@@ -222,10 +222,14 @@ namespace DAL { // Namespace DAL -- begin
 	       IO_Mode const &flags=IO_Mode());
     
     //! Test if the table is the root table
-    bool isRootTable () {
-      return itsTable.isRootTable();
+    inline bool isRootTable () {
+      try {
+	return itsTable.isRootTable();
+      } catch (casa::AipsError x) {
+	return false;
+      }
     }
-
+    
     //! Get a table description object for the table
     inline casa::TableDesc tableDescription () {
       return itsTable.tableDesc ();
@@ -252,47 +256,47 @@ namespace DAL { // Namespace DAL -- begin
       bool readData (casa::Array<T> &data,
 		     std::string const &column)
       {
-	// Check if table is ok
-	if (itsTable.isNull()) {
-	  return false;
-	}
-
-	bool status                 = true;
-	casa::TableDesc tableDesc   = itsTable.tableDesc();
-	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
-	casa::IPosition cellShape   = columnDesc.shape();
-
-	{
-	  unsigned int rank = cellShape.nelements()+1;
-	  casa::IPosition dataShape (rank,0);
-
-	  for (unsigned int n=0; n<(rank-1); ++n) {
-	    dataShape(n) = cellShape(n);
-	  }
-	  dataShape(rank-1) = itsTable.nrow();
-
-	  data.resize(dataShape);
-	}
+	bool status = true;
 	
-	if (columnDesc.isScalar()) {
-	  // Set up reader object for the column ...
-	  casa::ROScalarColumn<T> columReader (itsTable, column);
-	  // .... and retrieve the data
-	  data = columReader.getColumn();
-	} else if (columnDesc.isArray()) {
-	  // Set up reader object for the column ...
-	  casa::ROArrayColumn<T> columReader (itsTable, column);
-	  // .... and retrieve the data
-	  data = columReader.getColumn();
-	} else {
-	  std::cerr << "[MS_Table::readData] Unsupported type of column data!"
-		    << std::endl;
+	try {
+	  casa::TableDesc tableDesc   = itsTable.tableDesc();
+	  casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+	  casa::IPosition cellShape   = columnDesc.shape();
+	  
+	  {
+	    unsigned int rank = cellShape.nelements()+1;
+	    casa::IPosition dataShape (rank,0);
+	    
+	    for (unsigned int n=0; n<(rank-1); ++n) {
+	      dataShape(n) = cellShape(n);
+	    }
+	    dataShape(rank-1) = itsTable.nrow();
+	    
+	    data.resize(dataShape);
+	  }
+	
+	  if (columnDesc.isScalar()) {
+	    // Set up reader object for the column ...
+	    casa::ROScalarColumn<T> columReader (itsTable, column);
+	    // .... and retrieve the data
+	    data = columReader.getColumn();
+	  } else if (columnDesc.isArray()) {
+	    // Set up reader object for the column ...
+	    casa::ROArrayColumn<T> columReader (itsTable, column);
+	    // .... and retrieve the data
+	    data = columReader.getColumn();
+	  } else {
+	    std::cerr << "[MS_Table::readData] Unsupported type of column data!"
+		      << std::endl;
+	    status = false;
+	  }
+	} catch (casa::AipsError x) {
+	  std::cerr << "[MSTable::readData] " << x.getMesg() << std::endl;
 	  status = false;
 	}
-
 	return status;
       }
-
+    
     /*!
       \brief Read data from a selected number of rows in a table column.
       \retval data   -- Array returning the data stored inside the designated
@@ -308,47 +312,47 @@ namespace DAL { // Namespace DAL -- begin
 		     std::string const &column,
 		     casa::Slicer const &selection)
       {
-	// Check if table is ok
-	if (itsTable.isNull()) {
-	  return false;
-	}
-
-	bool status                 = true;
-	casa::TableDesc tableDesc   = itsTable.tableDesc();
-	casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
-	casa::IPosition cellShape   = columnDesc.shape();
-
-	{
-	  unsigned int rank = cellShape.nelements()+1;
-	  casa::IPosition dataShape (rank,0);
-
-	  for (unsigned int n=0; n<(rank-1); ++n) {
-	    dataShape(n) = cellShape(n);
-	  }
-	  dataShape(rank-1) = selection.length()(0);
-
-	  data.resize(dataShape);
-	}
+	bool status = true;
 	
-	if (columnDesc.isScalar()) {
-	  // Set up reader object for the column ...
-	  casa::ROScalarColumn<T> columReader (itsTable, column);
-	  // .... and retrieve the data
-	  data = columReader.getColumnRange (selection);
-	} else if (columnDesc.isArray()) {
-	  // Set up reader object for the column ...
-	  casa::ROArrayColumn<T> columReader (itsTable, column);
-	  // .... and retrieve the data
-	  columReader.getColumnRange (selection, data, true);
-	} else {
-	  std::cerr << "[MS_Table::readData] Unsupported type of column data!"
-		    << std::endl;
+	try {
+	  casa::TableDesc tableDesc   = itsTable.tableDesc();
+	  casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
+	  casa::IPosition cellShape   = columnDesc.shape();
+	  
+	  {
+	    unsigned int rank = cellShape.nelements()+1;
+	    casa::IPosition dataShape (rank,0);
+	    
+	    for (unsigned int n=0; n<(rank-1); ++n) {
+	      dataShape(n) = cellShape(n);
+	    }
+	    dataShape(rank-1) = selection.length()(0);
+	    
+	    data.resize(dataShape);
+	  }
+	  
+	  if (columnDesc.isScalar()) {
+	    // Set up reader object for the column ...
+	    casa::ROScalarColumn<T> columReader (itsTable, column);
+	    // .... and retrieve the data
+	    data = columReader.getColumnRange (selection);
+	  } else if (columnDesc.isArray()) {
+	    // Set up reader object for the column ...
+	    casa::ROArrayColumn<T> columReader (itsTable, column);
+	    // .... and retrieve the data
+	    columReader.getColumnRange (selection, data, true);
+	  } else {
+	    std::cerr << "[MS_Table::readData] Unsupported type of column data!"
+		      << std::endl;
+	    status = false;
+	  }
+	} catch (casa::AipsError x) {
+	  std::cerr << "[MSTable::readData] " << x.getMesg() << std::endl;
 	  status = false;
 	}
-
 	return status;
       }
-
+    
     /*!
       \brief Read data from a selected number of rows in a table column.
       \retval data   -- Array returning the data stored inside the designated
@@ -365,12 +369,23 @@ namespace DAL { // Namespace DAL -- begin
 		     unsigned int const &start,
 		     unsigned int const &nofRows=1)
       {
-	casa::Slicer selection (casa::IPosition(1,start),
-				casa::IPosition(1,nofRows),
-				casa::IPosition(1,1));
-	return readData (data, column, selection);
+	bool status = true;
+	
+	try {
+	  // Define slicer
+	  casa::Slicer selection (casa::IPosition(1,start),
+				  casa::IPosition(1,nofRows),
+				  casa::IPosition(1,1));
+	  // Read data from table column
+	  status = readData (data, column, selection);
+	} catch (casa::AipsError x) {
+	  std::cerr << "[MSTable::readData] " << x.getMesg() << std::endl;
+	  status = false;
+	}
+	
+	return status;
       }
-
+    
     /*!
       \brief Read data from a table column.
       \retval data   -- Array returning the data stored inside the designated
@@ -384,24 +399,27 @@ namespace DAL { // Namespace DAL -- begin
 		     std::string const &column)
       {
 	bool status = true;
-	
-	// Check if table is ok
-	if (itsTable.isNull()) {
-	  status = false;
-	} else {
+
+	try {
 	  // casa::Array into which the column data are read initially
 	  casa::Array<T> buffer;
 	  // read column data
 	  if (readData (buffer,column)) {
 	    unsigned int nelem = buffer.nelements();
-	    // resize the array returning the data
-	    data.resize(nelem);
-	    // get the data from the buffer array
-	    data.assign(buffer.data(),buffer.data()+nelem);
+	    if (nelem) {
+	      // resize the array returning the data
+	      data.resize(nelem);
+	      // get the data from the buffer array
+	      data.assign(buffer.data(),buffer.data()+nelem);
+	    } else {
+	      status = false;
+	    }
 	  } else {
-	    data.clear();
 	    status = false;
 	  }
+	} catch (casa::AipsError x) {
+	  std::cerr << "[MSTable::readData] " << x.getMesg() << std::endl;
+	  status = false;
 	}
 	
 	return status;
@@ -423,28 +441,25 @@ namespace DAL { // Namespace DAL -- begin
 		     unsigned int const &start,
 		     unsigned int const &nofRows=1)
       {
-	bool status = true;
-	
 	// Check if table is ok
 	if (itsTable.isNull()) {
-	  status = false;
+	  return false;
+	}
+
+	casa::Array<T> buffer;
+	// read column data
+	if (readData (buffer,column,start,nofRows)) {
+	  unsigned int nelem = buffer.nelements();
+	  // resize the array returning the data
+	  data.resize(nelem);
+	  // get the data from the buffer array
+	  data.assign(buffer.data(),buffer.data()+nelem);
 	} else {
-	  // casa::Array into which the column data are read initially
-	  casa::Array<T> buffer;
-	  // read column data
-	  if (readData (buffer,column,start,nofRows)) {
-	    unsigned int nelem = buffer.nelements();
-	    // resize the array returning the data
-	    data.resize(nelem);
-	    // get the data from the buffer array
-	    data.assign(buffer.data(),buffer.data()+nelem);
-	  } else {
-	    data.clear();
-	    status = false;
-	  }
+	  data.clear();
+	  return false;
 	}
 	
-	return status;
+	return true;
       }
     
     // === Static methods =======================================================
