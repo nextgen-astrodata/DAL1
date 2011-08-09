@@ -213,15 +213,19 @@ namespace DAL { // Namespace DAL -- begin
 	  HDF5Attribute::write (location_p, "PULSE_POWER_POST",           vecInt        );
 	  HDF5Attribute::write (location_p, "NOF_MISSED_TRIGGERS",        vecInt        );
 	} else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	  std::cerr << "[TBB_StationTrigger::open] Failed to create group "
 		    << name
 		    << std::endl;
+#endif
 	  status = false;
 	}
       } else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cerr << "[TBB_StationTrigger::open] Failed to open group "
 		  << name
 		  << std::endl;
+#endif
 	status = false;
       }
     }
@@ -229,10 +233,13 @@ namespace DAL { // Namespace DAL -- begin
     // Open embedded groups
     if (status) {
       status = openEmbedded ();
-    } else {
+    }
+#ifdef DAL_DEBUGGING_MESSAGES
+    else {
       std::cerr << "[TBB_StationTrigger::open] Skip opening embedded groups!"
 		<< std::endl;
     }
+#endif
  
     return status;
   }

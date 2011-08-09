@@ -280,15 +280,19 @@ namespace DAL {  // Namespace DAL -- begin
  	  HDF5Attribute::write (location_p,"TRIGGERED_ANTENNAS",       triggered   );
 	  HDF5Attribute::write (location_p,"NOF_DIPOLES",              uint(0)     );
 	} else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	  std::cerr << "[TBB_StationGroup::open] Failed to create group "
 		    << name
 		    << std::endl;
+#endif
 	  status = false;
 	}
       } else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cerr << "[TBB_StationGroup::open] Failed to open group "
 		  << name
 		  << std::endl;
+#endif
 	status = false;
       }
     }
@@ -296,10 +300,13 @@ namespace DAL {  // Namespace DAL -- begin
     // Open embedded groups
     if (status) {
       status = openEmbedded (flags);
-    } else {
+    }
+#ifdef DAL_DEBUGGING_MESSAGES
+    else {
       std::cerr << "[TBB_StationGroup::open] Skip opening embedded groups!"
 		<< std::endl;
     }
+#endif
  
     return status;
   }

@@ -166,15 +166,19 @@ namespace DAL { // Namespace DAL -- begin
 	  // write the attributes
 	  HDF5Attribute::write (location_p, "GROUPTYPE", groupName);
 	} else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	  std::cerr << "[SysLog::open] Failed to create group "
 		    << name
 		    << std::endl;
+#endif
 	  status = false;
 	}
       } else {
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cerr << "[SysLog::open] Failed to open group "
 		  << name
 		  << std::endl;
+#endif
 	status = false;
       }
     }

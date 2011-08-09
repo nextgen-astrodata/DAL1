@@ -406,15 +406,19 @@ namespace DAL {  // Namespace DAL -- begin
           HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_UNIT",  vectString  );
           HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_FRAME", undefined   );
         } else {
+#ifdef DAL_DEBUGGING_MESSAGES
           std::cerr << "[TBB_DipoleDataset::open] Failed to create group "
             << name
             << std::endl;
+#endif
           status = false;
         }
       } else {
+#ifdef DAL_DEBUGGING_MESSAGES
         std::cerr << "[TBB_DipoleDataset::open] Failed to open dataset "
           << name
           << std::endl;
+#endif
         status = false;
       }
     }
@@ -422,10 +426,13 @@ namespace DAL {  // Namespace DAL -- begin
     // Open embedded groups
     if (status) {
       status = openEmbedded (flags);
-    } else {
+    }
+#ifdef DAL_DEBUGGING_MESSAGES
+    else {
       std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
         << std::endl;
     }
+#endif
 
     return status;
   }
@@ -919,7 +926,9 @@ namespace DAL {  // Namespace DAL -- begin
       HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT", std::vector<std::string>(3, unit));
       HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME", frame);
     } else {
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cerr << "[TBB_DipoleDataset::set_antenna_position] Failed to write to group." << std::endl;
+#endif
 
       return false;
     }
