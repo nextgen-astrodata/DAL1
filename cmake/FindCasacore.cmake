@@ -1,6 +1,6 @@
 # +-----------------------------------------------------------------------------+
-# |   Copyright (C) 2007                                                        |
-# |   Lars B"ahren (bahren@astron.nl)                                           |
+# |   Copyright (C) 2007-2011                                                   |
+# |   Lars B"ahren (lbaehren@gmail.com)                                         |
 # |                                                                             |
 # |   This program is free software; you can redistribute it and/or modify      |
 # |   it under the terms of the GNU General Public License as published by      |
@@ -24,7 +24,6 @@
 #  CASACORE_FOUND      = Set to true, if all components of CASACORE have been found.
 #  CASACORE_INCLUDES   = Include path for the header files of CASACORE
 #  CASACORE_LIBRARIES  = Link these to use CASACORE
-#  CASACORE_LFLAGS     = Linker flags (optional)
 
 if (NOT CASACORE_FOUND)
 
@@ -109,47 +108,6 @@ if (NOT CASACORE_FOUND)
     PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES share/casacore share/casacore/data
     )
-  
-  ##_____________________________________________________________________________
-  ## Compiler flags
-  
-  IF (UNIX)
-    IF (APPLE)
-      set (CASACORE_COMPILE_FLAGS "${CASACORE_COMPILE_FLAGS} -DAIPS_DARWIN")
-    else (APPLE)
-      set (CASACORE_COMPILE_FLAGS "${CASACORE_COMPILE_FLAGS} -DAIPS_LINUX")
-    endif (APPLE)
-    ##
-    ## Platform test Big/Little Endian ------------------------------------
-    ##
-    if (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
-      add_definitions (-DAIPS_BIG_ENDIAN)
-      set (CMAKE_SYSTEM_BIG_ENDIAN 1)
-      set (CASACORE_COMPILE_FLAGS "${CASACORE_COMPILE_FLAGS} -DAIPS_BIG_ENDIAN")
-    else (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
-      add_definitions (-DAIPS_LITTLE_ENDIAN)
-      set (CMAKE_SYSTEM_BIG_ENDIAN 0)
-    endif (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
-    
-    ##
-    ## Platform test 32/64 bit ------------------------------
-    ##
-    set (CMAKE_SYSTEM_64BIT 0)
-    if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i386)
-      if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i686)
-	if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
-          set (CMAKE_SYSTEM_64BIT 1)
-          add_definitions (-DAIPS_64B)
-	endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
-      endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i686)
-    endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i386)
-    if (APPLE)
-      if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
-	set (CMAKE_SYSTEM_64BIT 1)
-	add_definitions (-DAIPS_64B)
-      endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
-    endif (APPLE)
-  ENDIF (UNIX)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
