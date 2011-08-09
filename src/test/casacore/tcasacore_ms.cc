@@ -109,10 +109,10 @@ int test_open_create (std::string const &filename="tcasacore_ms.ms")
     
   }
   
-    /*____________________________________________
-      Summary of created MeasurementSet
-    */
-    
+  /*____________________________________________
+    Summary of created MeasurementSet
+  */
+  
   cout << "-- Filename            = " << filename                   << endl;
   cout << "-- File exists         = " << fileExists                 << endl;
   cout << "-- Absolute filename   = " << absoluteName               << endl;
@@ -160,7 +160,7 @@ int test_open (std::string const &filename)
     Use MS-specific classes to access data
   */
 
-  std::cout << "\n[1] Use MS-specific classes to access data ..." << std::endl;
+  std::cout << "\n[1] Use MS-specific classes to access data ..." << endl;
 
   try {
     // Create the MeasurementSet from an existing Table on disk
@@ -194,7 +194,7 @@ int test_open (std::string const &filename)
     Use generic Table classes to access data
   */
 
-  std::cout << "\n[2] Use generic Table classes to access data ..." << std::endl;
+  std::cout << "\n[2] Use generic Table classes to access data ..." << endl;
 
   try {
     casa::Vector<casa::String> columnNames;
@@ -210,7 +210,7 @@ int test_open (std::string const &filename)
     // Provide basic overview of table properties
     cout << "-- Name of the table   = " << table.tableName()  << endl;
     cout << "-- nof. table rows     = " << table.nrow()       << endl;
-    cout << "-- Column descriptions : " << std::endl;
+    cout << "-- Column descriptions : " << endl;
     // Loop through the columns and get their properties
     for (unsigned int n=0; n<columnNames.nelements(); ++n) {
       // Get column description
@@ -224,45 +224,79 @@ int test_open (std::string const &filename)
 		<< std::setw(10) << columnDesc.isArray()
 		<< std::setw(10) << columnDesc.isTable()
 		<< std::setw(10) << columnDesc.shape()
-		<< std::endl;
+		<< endl;
     }
 
-    // Access contents of the 'TIME' column
-    casa::ROScalarColumn<casa::Double> timeColumn (table , "TIME");
-    // Get the times for the entire column
-    casa::Vector<casa::Double> timeColumnData = timeColumn.getColumn();
-
-    std::cout << "-- Column 'TIME' : " << std::endl;
-    std::cout << "   nof. elements = " << timeColumnData.nelements() << std::endl;
-    std::cout << "   Minimum value = " << min(timeColumnData) << std::endl;
-    std::cout << "   Maximum value = " << max(timeColumnData) << std::endl;
-
-    // Access contents of the 'UVW' column
-    casa::ROArrayColumn<casa::Double> uvwColumn (table , "UVW");
-    // Get the times for the entire column
-    casa::Array<casa::Double> uvwColumnData = uvwColumn.getColumn();
-
-    std::cout << "-- Column 'UVW' : " << std::endl;
-    std::cout << "   nof. elements = " << uvwColumnData.nelements() << std::endl;
-    std::cout << "   shape(data)   = " << uvwColumnData.shape()     << std::endl;
-
-    for (int col=0; col<15; ++col) {
-
-      tmp = uvwColumnData(casa::Slicer(casa::IPosition(2,0,col),
-				       casa::IPosition(2,casa::Slicer::MimicSource,1)));
+    /*______________________________________________________
+      Access contents of the 'TIME' column
+    */
+    try {
+      casa::ROScalarColumn<casa::Double> timeColumn (table , "TIME");
+      // Get the times for the entire column
+      casa::Vector<casa::Double> timeColumnData = timeColumn.getColumn();
+      
+      std::cout << "-- Column 'TIME' : " << endl;
+      std::cout << "   nof. elements = " << timeColumnData.nelements() << endl;
+      std::cout << "   Minimum value = " << min(timeColumnData) << endl;
+      std::cout << "   Maximum value = " << max(timeColumnData) << endl;
+      
+      // Access contents of the 'UVW' column
+      casa::ROArrayColumn<casa::Double> uvwColumn (table , "UVW");
+      // Get the times for the entire column
+      casa::Array<casa::Double> uvwColumnData = uvwColumn.getColumn();
+      
+      std::cout << "-- Column 'UVW' : " << endl;
+      std::cout << "   nof. elements = " << uvwColumnData.nelements() << endl;
+      std::cout << "   shape(data)   = " << uvwColumnData.shape()     << endl;
+      
+      for (int col=0; col<15; ++col) {
 	
-      std::cout << "   uvw(," << col << ")       = " << tmp << std::endl;
+	tmp = uvwColumnData(casa::Slicer(casa::IPosition(2,0,col),
+					 casa::IPosition(2,casa::Slicer::MimicSource,1)));
+	
+	std::cout << "   uvw(," << col << ")       = " << tmp << endl;
+      }
+    } catch (casa::AipsError x) {
+      std::cerr << "ERROR: " << x.getMesg() << endl;
+      ++nofFailedTests;
     }
-
-    // Open 'ANTENNA' subtable
-    casa::Table antennaTable (table.keywordSet().asTable("ANTENNA"));
-    // Retrieve table description
-    casa::TableDesc antennaTableDesc = antennaTable.tableDesc ();
-
-    cout << "-- Name of the table   = " << antennaTable.tableName()  << endl;
-    cout << "-- nof. table rows     = " << antennaTable.nrow()       << endl;
-    cout << "-- Column names        = " << antennaTableDesc.columnNames() << endl;
-
+    
+    /*______________________________________________________
+      Open 'ANTENNA' subtable
+    */
+    
+    try {
+      casa::Table subtable (table.keywordSet().asTable("ANTENNA"));
+      // Retrieve table description
+      casa::TableDesc subtableDesc = subtable.tableDesc ();
+      
+      cout << "-- Sub-table 'ANTENNA':" << endl;
+      cout << "   Name of the table   = " << subtable.tableName()       << endl;
+      cout << "   nof. table rows     = " << subtable.nrow()            << endl;
+      cout << "   Column names        = " << subtableDesc.columnNames() << endl;
+    } catch (casa::AipsError x) {
+      std::cerr << "ERROR: " << x.getMesg() << endl;
+      ++nofFailedTests;
+    }
+    
+    /*______________________________________________________
+      Open 'SPECTRAL_WINDOW' subtable
+    */
+    
+    try {
+      casa::Table subtable (table.keywordSet().asTable("SPECTRAL_WINDOW"));
+      // Retrieve table description
+      casa::TableDesc subtableDesc = subtable.tableDesc ();
+      
+      cout << "-- Sub-table 'SPECTRAL_WINDOW':" << endl;
+      cout << "   Name of the table   = " << subtable.tableName()  << endl;
+      cout << "   nof. table rows     = " << subtable.nrow()       << endl;
+      cout << "   Column names        = " << subtableDesc.columnNames() << endl;
+    } catch (casa::AipsError x) {
+      std::cerr << "ERROR: " << x.getMesg() << endl;
+      ++nofFailedTests;
+    }
+    
   } catch (casa::AipsError x) {
     std::cerr << "ERROR: " << x.getMesg() << endl;
     ++nofFailedTests;
