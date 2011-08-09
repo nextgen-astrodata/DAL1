@@ -106,7 +106,8 @@ namespace DAL {  // Namespace DAL -- begin
     TBB_DipoleDataset ();
     //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
-		       std::string const &name);
+		                   std::string const &name,
+                       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
 		       uint const &stationID,
