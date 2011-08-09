@@ -55,7 +55,19 @@ namespace DAL {  // Namespace DAL -- begin
   {
     open (0,filename,true);
   }
-  
+
+  //_____________________________________________________________________________
+  //                                                               TBB_Timeseries
+
+  /*!
+    \param filename -- Name of the data file;
+    \param flags  -- I/O mode flags.
+  */
+  TBB_Timeseries::TBB_Timeseries (std::string const &filename, IO_Mode const &flags)
+  {
+    open (0,filename,flags);
+  }
+
   //_____________________________________________________________________________
   //                                                               TBB_Timeseries
 
@@ -230,12 +242,12 @@ namespace DAL {  // Namespace DAL -- begin
 			     IO_Mode const &flags)
   {
     bool status (true);
-    
+
     /* Initialize private variables*/
     location_p = location;
     filename_p = name;
     setAttributes ();
-    
+
     // Try to open the file ________________________________
 
     std::ifstream infile;
@@ -244,53 +256,60 @@ namespace DAL {  // Namespace DAL -- begin
     if (infile.is_open() && infile.good()) {
       // If the file already exists, close it ...
       infile.close();
-      // ... and open it as HDF5 file
-      location_p = H5Fopen (name.c_str(),
-			    H5F_ACC_RDWR,
-			    H5P_DEFAULT);
-      /* If opening the the file failed, this might have been due to wrong
-	 access permissions; check if the file can be opened as read-only. */
-      if (location_p<0) {
-	location_p = H5Fopen (name.c_str(),
-			      H5F_ACC_RDONLY,
-			      H5P_DEFAULT);
+
+      // and open as HDF5 file
+      if ( (flags.flags() & IO_Mode::ReadOnly) ) {
+        // Open read-only
+        location_p = H5Fopen (name.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+      }
+      else {
+        // Open read-write
+        location_p = H5Fopen (name.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+
+        /* If opening the the file failed, this might have been due to wrong
+           access permissions; check if the file can be opened as read-only. */
+        /* This is ugly behaviour, it should just raise an error allowing the user
+           to explicitly retry with read only. (Pim) */
+        if (location_p<0) {
+          location_p = H5Fopen (name.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+        }
       }
     } else {
       infile.close();
       location_p = 0;
     }
-    
+
     if (location_p > 0) {
       status = true;
     } else {
       /* If failed to open file, check if we are supposed to create one */
       if ( (flags.flags() & IO_Mode::Create) ||
-	   (flags.flags() & IO_Mode::OpenOrCreate) ) {
-	location_p = H5Fcreate (name.c_str(),
-				H5F_ACC_TRUNC,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* Write the common attributes attached to the root group */
-	CommonAttributes attr;
-	attr.h5write(location_p);
-	//
-	HDF5Attribute::write (location_p, "FILENAME", name );
+          (flags.flags() & IO_Mode::OpenOrCreate) ) {
+        location_p = H5Fcreate (name.c_str(),
+            H5F_ACC_TRUNC,
+            H5P_DEFAULT,
+            H5P_DEFAULT);
+        /* Write the common attributes attached to the root group */
+        CommonAttributes attr;
+        attr.h5write(location_p);
+        //
+        HDF5Attribute::write (location_p, "FILENAME", name );
       } else {
-	std::cerr << "[TBB_Timeseries::open] Failed to open file "
-		  << name
-		  << std::endl;
-	status = false;
+        std::cerr << "[TBB_Timeseries::open] Failed to open file "
+          << name
+          << std::endl;
+        status = false;
       }
     }
-    
+
     // Open embedded groups
     if (status) {
       status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_Timeseries::open] Skip opening embedded groups!"
-		<< std::endl;
+        << std::endl;
     }
- 
+
     return status;
   }
   
@@ -305,7 +324,7 @@ namespace DAL {  // Namespace DAL -- begin
     status *= openSysLog (flags);
 
     // Open the station groups ___________________
-    status *= openStationGroups();
+    status *= openStationGroups (flags);
 
     return status;
   }
@@ -330,7 +349,7 @@ namespace DAL {  // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool TBB_Timeseries::openStationGroups ()
+  bool TBB_Timeseries::openStationGroups (IO_Mode const &flags)
   {
     /* Check minimal condition for operations below. */
     if (location_p < 1){
@@ -360,7 +379,7 @@ namespace DAL {  // Namespace DAL -- begin
       std::set<std::string>::iterator it;
       for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
 	stationGroups_p[*it] = DAL::TBB_StationGroup (location_p,
-						      *it);
+						      *it, flags);
       }
     } else {
       std::cerr << "[TBB_Timeseries::openStationGroups]"

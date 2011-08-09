@@ -368,4 +368,44 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
   
+  //_____________________________________________________________________________
+  //                                                                      IO_Mode
+  
+#ifdef DAL_WITH_HDF5
+  bool h5get_flags(IO_Mode &flags, hid_t const &object_id)
+  {
+    bool status (false);
+    unsigned int intent;
+    hid_t file_id;
+    H5I_type_t objectType;
+
+    //________________________________________________________________
+    // Basic check for the provided object ID
+
+    if (H5Iis_valid(object_id)) {
+      objectType = H5Iget_type(object_id);
+
+      if (objectType == H5I_FILE) {
+        H5Fget_intent(object_id, &intent);
+      }
+      else {
+        file_id = H5Iget_file_id (object_id);
+
+        H5Fget_intent(file_id, &intent);
+
+        H5Fclose (file_id);
+      }
+
+      if (intent == H5F_ACC_RDWR) {
+        flags.setFlag(IO_Mode::ReadWrite);
+      }
+      else {
+        flags.setFlag(IO_Mode::ReadOnly);
+      }
+    }
+
+    return status;
+  }
+#endif
+
 } // Namespace DAL -- end

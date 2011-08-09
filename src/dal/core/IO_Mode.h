@@ -595,6 +595,11 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class IO_Mode -- end
   
+#ifdef DAL_WITH_HDF5
+    //! Return flags of currently open HDF5 file
+    bool h5get_flags(IO_Mode &flags, hid_t const &object_id);
+#endif
+
 } // Namespace DAL -- end
 
 #endif /* IO_MODE_H */
