@@ -18,7 +18,7 @@
 //
 // ==============================================================================
 
-//! DAL version number/string
+//! The full version of the DAL in major.minor.patch[-id] format.
 #define DAL_VERSION "${DAL_VERSION}"
 //! DAL major version
 #define DAL_VERSION_MAJOR ${DAL_VERSION_MAJOR}
