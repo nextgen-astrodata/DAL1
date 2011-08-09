@@ -166,8 +166,10 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Default constructor
     TBB_Timeseries ();
-    //! Argumented constructor
+    //! Open or create file
     TBB_Timeseries (std::string const &filename);
+    //! Open file with IO_Mode flags
+    TBB_Timeseries (std::string const &filename, IO_Mode const &flags);
     //! Create a new dataset from LOFAR common attributes
     TBB_Timeseries (CommonAttributes const &attributes);
     //! Copy constructor
@@ -409,7 +411,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Open the group acting as a container for system-wide logs
     bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Locate and register the station groups contained within the file
-    bool openStationGroups ();
+    bool openStationGroups (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set local map used for book-keeping on selected dipole datasets
     bool setSelectedDatasets ();
     //! Unconditional copying
