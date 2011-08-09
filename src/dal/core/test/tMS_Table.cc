@@ -224,13 +224,14 @@ int test_readData (std::string const &filename)
     
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
-      status = ms.readData (data, columns[n]);
-      cout << std::setw(15) << columns[n]
-		<< std::setw(15) << data.size()
-		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
-		<< " "     << data[3] << " " << data[4] << " " << data[5]
-		<< " .. ]" 
-		<< endl;
+      if (ms.readData (data, columns[n])) {
+	cout << std::setw(15) << columns[n]
+	     << std::setw(15) << data.size()
+	     << "   [ " << data[0] << " " << data[1] << " " << data[2]
+	     << " "     << data[3] << " " << data[4] << " " << data[5]
+	     << " .. ]" 
+	     << endl;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -256,13 +257,14 @@ int test_readData (std::string const &filename)
     
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
-      status = ms.readData (data, columns[n], start, length);
-      cout << std::setw(15) << columns[n]
-		<< std::setw(15) << data.size()
-		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
-		<< " "     << data[3] << " " << data[4] << " " << data[5]
-		<< " .. ]" 
-		<< endl;
+      if (ms.readData (data, columns[n], start, length)) {
+	cout << std::setw(15) << columns[n]
+	     << std::setw(15) << data.size()
+	     << "   [ " << data[0] << " " << data[1] << " " << data[2]
+	     << " "     << data[3] << " " << data[4] << " " << data[5]
+	     << " .. ]" 
+	     << endl;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -284,13 +286,14 @@ int test_readData (std::string const &filename)
     
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
-      status = ms.readData (data, columns[n]);
-      cout << std::setw(15) << columns[n]
-		<< std::setw(15) << data.size()
-		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
-		<< " "     << data[3] << " " << data[4] << " " << data[5]
-		<< " .. ]" 
-		<< endl;
+      if ( ms.readData (data, columns[n]) ) {
+	cout << std::setw(15) << columns[n]
+	     << std::setw(15) << data.size()
+	     << "   [ " << data[0] << " " << data[1] << " " << data[2]
+	     << " "     << data[3] << " " << data[4] << " " << data[5]
+	     << " .. ]" 
+	     << endl;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -315,13 +318,14 @@ int test_readData (std::string const &filename)
     
     // Read the data from the table columns and display their properties
     for (unsigned int n=0; n<columns.size(); ++n) {
-      status = ms.readData (data, columns[n], start, length);
-      cout << std::setw(15) << columns[n]
-		<< std::setw(15) << data.size()
-		<< "   [ " << data[0] << " " << data[1] << " " << data[2]
-		<< " "     << data[3] << " " << data[4] << " " << data[5]
-		<< " .. ]" 
-		<< endl;
+      if ( ms.readData (data, columns[n], start, length) ) {
+	cout << std::setw(15) << columns[n]
+	     << std::setw(15) << data.size()
+	     << "   [ " << data[0] << " " << data[1] << " " << data[2]
+	     << " "     << data[3] << " " << data[4] << " " << data[5]
+	     << " .. ]" 
+	     << endl;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -339,19 +343,21 @@ int test_readData (std::string const &filename)
     unsigned int nofRows = 10;
     std::string column   = "UVW";
     std::vector<double> data;
-    
-    // Read the data from the table columns and display their properties
-    for (unsigned int n=0; n<nofRows; ++n) {
-      // read the data from the current start position onwards
-      status = ms.readData (data, column, start);
-      // display properties
-      cout << std::setw(15) << column
-	   << std::setw(10) << start
-	   << std::setw(10) << data.size()
-	   << "   [ " << data[0] << " " << data[1] << " " << data[2] << " ]" 
-	   << endl;
-      // increment start position
-      ++start;
+
+    if (ms.hasColumn(column)) {
+      // Read the data from the table columns and display their properties
+      for (unsigned int n=0; n<nofRows; ++n) {
+	// read the data from the current start position onwards
+	status = ms.readData (data, column, start);
+	// display properties
+	cout << std::setw(15) << column
+	     << std::setw(10) << start
+	     << std::setw(10) << data.size()
+	     << "   [ " << data[0] << " " << data[1] << " " << data[2] << " ]" 
+	     << endl;
+	// increment start position
+	++start;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -369,20 +375,22 @@ int test_readData (std::string const &filename)
     unsigned int nofRows = 10;
     std::string column   = "DATA";
     std::vector<std::complex<float> > data;
-    
-    // Read the data from the table columns and display their properties
-    for (unsigned int n=0; n<nofRows; ++n) {
-      // read the data from the current start position onwards
-      status = ms.readData (data, column, start);
-      // display properties
-      cout << std::setw(15) << column
-	   << std::setw(10) << start
-	   << std::setw(10) << data.size()
-	   << "   [ " << data[0] << " " << data[1]
-	   << " " << data[2] << " " << data[3] << " ]" 
-	   << endl;
-      // increment start position
-      ++start;
+   
+    if (ms.hasColumn(column)) {
+      // Read the data from the table columns and display their properties
+      for (unsigned int n=0; n<nofRows; ++n) {
+	// read the data from the current start position onwards
+	status = ms.readData (data, column, start);
+	// display properties
+	cout << std::setw(15) << column
+	     << std::setw(10) << start
+	     << std::setw(10) << data.size()
+	     << "   [ " << data[0] << " " << data[1]
+	     << " " << data[2] << " " << data[3] << " ]" 
+	     << endl;
+	// increment start position
+	++start;
+      }
     }
   } catch (std::string message) {
     std::cerr << message << endl;

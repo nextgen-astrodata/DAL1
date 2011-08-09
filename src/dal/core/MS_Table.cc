@@ -73,7 +73,11 @@ namespace DAL { // Namespace DAL -- begin
   
   MS_Table::~MS_Table ()
   {
-    destroy();
+    try {
+      destroy();
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::~MS_Table]" << x.getMesg() << std::endl;
+    }
   }
   
   //_____________________________________________________________________________
@@ -215,6 +219,20 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                    hasColumn
+  
+  bool MS_Table::hasColumn (std::string const &name)
+  {
+    try {
+      casa::TableDesc desc = itsTable.tableDesc ();
+      return desc.isColumn(name);
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::hasColumn] " << x.getMesg() << std::endl;
+      return false;
+    }
   }
   
   //_____________________________________________________________________________
