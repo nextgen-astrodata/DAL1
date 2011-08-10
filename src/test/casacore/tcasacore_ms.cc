@@ -280,6 +280,24 @@ int test_open (std::string const &filename)
     }
     
     /*______________________________________________________
+      Open 'DATA_DESCRIPTION' subtable
+    */
+    
+    try {
+      casa::Table subtable (table.keywordSet().asTable("DATA_DESCRIPTION"));
+      // Retrieve table description
+      casa::TableDesc subtableDesc = subtable.tableDesc ();
+      
+      cout << "-- Sub-table 'DATA_DESCRIPTION':" << endl;
+      cout << "   Name of the table   = " << subtable.tableName()  << endl;
+      cout << "   nof. table rows     = " << subtable.nrow()       << endl;
+      cout << "   Column names        = " << subtableDesc.columnNames() << endl;
+    } catch (casa::AipsError x) {
+      std::cerr << "ERROR: " << x.getMesg() << endl;
+      ++nofFailedTests;
+    }
+    
+    /*______________________________________________________
       Open 'SPECTRAL_WINDOW' subtable
     */
     
