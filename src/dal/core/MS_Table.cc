@@ -51,6 +51,20 @@ namespace DAL { // Namespace DAL -- begin
   {
     open (name,flags);
   }
+
+  //_____________________________________________________________________________
+  //                                                                     MS_Table
+  
+  MS_Table::MS_Table (casa::Table const &table,
+		      std::string const &subtable,
+		      IO_Mode const &flags)
+    : dalObjectBase (dalFileType::CASA_MS)
+  {
+    open (table, subtable, flags);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     MS_Table
   
   /*!
     \param other -- Another MS_Table object from which to create this new
@@ -219,6 +233,35 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param table    -- Name of the host table.
+    \param subtable -- Name of the sub-table to be opened.
+    \param flags    -- I/O mode flags.
+   */
+  bool MS_Table::open (casa::Table const &table,
+		       std::string const &subtable,
+		       IO_Mode const &flags)
+  {
+    try {
+      casa::Table tab (table.keywordSet().asTable(subtable));
+      // Check if the table is ok; if yes, then set internal variables
+      if (tab.isNull()) {
+	return false;
+      } else {
+	itsTable = casa::Table (tab);
+	itsName  = itsTable.tableName();
+	itsFlags = flags;
+	return false;
+      }
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
+      return false;
+    }
   }
   
   //_____________________________________________________________________________

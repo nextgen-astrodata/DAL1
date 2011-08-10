@@ -175,6 +175,11 @@ namespace DAL { // Namespace DAL -- begin
     MS_Table (std::string const &name,
 	      IO_Mode const &flags=IO_Mode());
     
+    //! Argumented constructor
+    MS_Table (casa::Table const &table,
+	      std::string const &subtable,
+	      IO_Mode const &flags=IO_Mode());
+    
     //! Copy constructor
     MS_Table (MS_Table const &other);
     
@@ -217,8 +222,8 @@ namespace DAL { // Namespace DAL -- begin
 	       IO_Mode const &flags=IO_Mode());
     
     //! Open sub-table by \e name
-    bool open (MS_Table &table,
-	       std::string const &name,
+    bool open (casa::Table const &table,
+	       std::string const &subtable,
 	       IO_Mode const &flags=IO_Mode());
     
     //! Test if the table is the root table
