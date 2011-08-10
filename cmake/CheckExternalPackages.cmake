@@ -9,11 +9,11 @@
 ## Locations to search for required external components
 
 set (DAL_FIND_PATHS
-  /sw
   /usr
   /usr/local
   /opt
   /opt/local
+  /sw
   ${CMAKE_INSTALL_PREFIX}
 )
 

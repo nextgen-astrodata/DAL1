@@ -39,7 +39,7 @@ if (NOT GSL_FOUND)
   
   find_path (GSL_INCLUDES gsl/gsl_version.h gsl/gsl_sys.h gsl/gsl_nan.h
     HINTS ${GSL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/gsl
     )
   

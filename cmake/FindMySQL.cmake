@@ -41,13 +41,13 @@ if (NOT MYSQL_FOUND)
   
   find_path (MYSQL_INCLUDES mysql.h
     HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/mysql
     )
   
   ##_____________________________________________________________________________
   ## Check for the library
-
+  
   set (MYSQL_LIBRARIES "")
 
   ## libmysqlclient

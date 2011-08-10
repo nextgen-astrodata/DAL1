@@ -59,7 +59,7 @@ if (NOT DAL_FOUND)
   
   find_path (DAL_INCLUDES dal_config.h
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/dal
     )
   
@@ -67,7 +67,7 @@ if (NOT DAL_FOUND)
   
   find_path (DAL_DALDATASET_H core/dalDataset.h
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/dal
     )
   if (DAL_DALDATASET_H)
@@ -78,7 +78,7 @@ if (NOT DAL_FOUND)
   
   find_path (DAL_COORDINATE_H coordinates/Coordinate.h
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/dal
     )
   if (DAL_COORDINATE_H)
@@ -98,7 +98,7 @@ if (NOT DAL_FOUND)
   
   find_library (DAL_DAL_LIBRARY dal
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib lib/dal
     )
   if (DAL_DAL_LIBRARY)
@@ -119,7 +119,7 @@ if (NOT DAL_FOUND)
     ## try to locate the executable
     find_program (DAL_${_dal_executable}_EXECUTABLE ${_dal_executable}
       HINTS ${DAL_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin bin/dal
       )
     
