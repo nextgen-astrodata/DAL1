@@ -54,14 +54,14 @@ if (NOT BOOST_FOUND)
   
   ## Initialization: Version and multithreading ____________
   
-  set (BOOST_VERSION_MAJOR  0      )
-  set (BOOST_VERSION_MINOR  0      )
-  set (BOOST_VERSION_PATCH  0      )
-  set (Boost_BASE_VERSION   "1.40" )
-
-  set (Boost_NO_SYSTEM_PATHS    YES )
-  set (Boost_USE_MULTITHREADED  YES )
-  set (Boost_USE_STATIC_RUNTIME YES )
+  set (BOOST_VERSION_MAJOR       0       )
+  set (BOOST_VERSION_MINOR       0       )
+  set (BOOST_VERSION_PATCH       0       )
+  set (Boost_BASE_VERSION        "1.40"  )
+  set (Boost_ADDITIONAL_VERSIONS "1.47.0")
+  set (Boost_NO_SYSTEM_PATHS     YES     )
+  set (Boost_USE_MULTITHREADED   YES     )
+  set (Boost_USE_STATIC_RUNTIME  YES     )
   
   if (APPLE)
     set (Boost_USE_STATIC_LIBS YES )
