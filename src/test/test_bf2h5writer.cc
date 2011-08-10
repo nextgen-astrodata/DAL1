@@ -55,11 +55,13 @@
 #include <data_hl/BF_StokesDataset.h>
 
 #include <iostream>
+using namespace std;
+
+#ifdef DAL_WITH_BOOST
 #include <boost/format.hpp>
 #include <boost/multi_array.hpp>
-
-using namespace std;
 using boost::format;
+#endif
 
 //_______________________________________________________________________________
 //                                                               commonAttributes
@@ -181,6 +183,7 @@ int main()
 					name);
     stokesDataset.summary();
     
+#ifdef DAL_WITH_BOOST
     cout << "-- Creating sample multiarray of [ 1" 
 	 << " x " << SUBBANDS
 	 << " x " << CHANNELS << " ]" << endl;
@@ -217,6 +220,7 @@ int main()
       stokesDataset.writeData( samples.origin(), start, block );
       
     } // END for (unsigned int t=0; t<10; ++t)
+#endif
 
   }
   
