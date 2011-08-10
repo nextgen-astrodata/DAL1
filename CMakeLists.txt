@@ -65,6 +65,13 @@ add_definitions (
   -fPIC
   )
 
+##__________________________________________________________
+## Build architectures for OSX
+
+set (CMAKE_OSX_ARCHITECTURES "${CMAKE_SYSTEM_PROCESSOR}" CACHE STRING
+  "Build architectures for OSX."
+  )
+
 ## =============================================================================
 ##
 ##  - Installation settings
