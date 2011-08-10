@@ -56,6 +56,10 @@ int test_constructors (std::string const &filename)
 
   int nofFailedTests (0);
   
+  /*________________________________________________________
+    Test 1 : Test default constructor.
+  */
+  
   cout << "[1] Testing MS_Table() ..." << endl;
   try {
     MS_Table ms;
@@ -65,6 +69,11 @@ int test_constructors (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+  
+  /*________________________________________________________
+    Test 2 : Test simple argumented constructor, taking name 
+             of the table as input.
+  */
   
   cout << "[2] Testing MS_Table(string) ..." << endl;
   try {

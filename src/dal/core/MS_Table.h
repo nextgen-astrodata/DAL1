@@ -135,22 +135,22 @@ namespace DAL { // Namespace DAL -- begin
     |   |-- CORR_TYPE
     |   |-- CORR_PRODUCT
     |   `-- FLAG_ROW
-    |-- PROCESSOR                  Table     Correlator information
-    |-- SPECTRAL_WINDOW            Table     Frequency/IF information
-    |   |-- NUM_CHAN
-    |   |-- NAME
-    |   |-- REF_FREQUENCY
-    |   |-- CHAN_FREQ
-    |   |-- CHAN_WIDTH
-    |   |-- MEAS_FREQ_REF
-    |   |-- EFFECTIVE_BW
-    |   |-- RESOLUTION
-    |   |-- TOTAL_BANDWIDTH
-    |   |-- NET_SIDEBAND
-    |   |-- IF_CONV_CHAIN
-    |   |-- FREQ_GROUP
-    |   |-- FREQ_GROUP_NAME
-    |   `-- FLAG_ROW
+    |-- PROCESSOR                  Table with Correlator information
+    |-- SPECTRAL_WINDOW            Table with Frequency/IF information
+    |   |-- NUM_CHAN               Column    int
+    |   |-- NAME                   Column    string
+    |   |-- REF_FREQUENCY          Column    double
+    |   |-- CHAN_FREQ              Column    array<double,1>
+    |   |-- CHAN_WIDTH             Column    array<double,1>
+    |   |-- MEAS_FREQ_REF          Column    int
+    |   |-- EFFECTIVE_BW           Column    array<double,1>
+    |   |-- RESOLUTION             Column    array<double,1>
+    |   |-- TOTAL_BANDWIDTH        Column    double
+    |   |-- NET_SIDEBAND           Column    int
+    |   |-- IF_CONV_CHAIN          Column    int
+    |   |-- FREQ_GROUP             Column    int
+    |   |-- FREQ_GROUP_NAME        Column    string
+    |   `-- FLAG_ROW               Column    bool
     `-- STATE
     \endverbatim
     
@@ -171,11 +171,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     MS_Table ();
     
-    //! Argumented constructor
+    //! Argumented constructor to open table of given \e name
     MS_Table (std::string const &name,
 	      IO_Mode const &flags=IO_Mode());
     
-    //! Argumented constructor
+    //! Argumented constructor to open sub-table contained within \e table
     MS_Table (casa::Table const &table,
 	      std::string const &subtable,
 	      IO_Mode const &flags=IO_Mode());

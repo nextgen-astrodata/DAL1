@@ -55,6 +55,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                     MS_Table
   
+  /*!
+    \param table    -- Name of the host table.
+    \param subtable -- Name of the sub-table to be opened.
+    \param flags    -- I/O mode flags.
+  */
   MS_Table::MS_Table (casa::Table const &table,
 		      std::string const &subtable,
 		      IO_Mode const &flags)
@@ -242,7 +247,7 @@ namespace DAL { // Namespace DAL -- begin
     \param table    -- Name of the host table.
     \param subtable -- Name of the sub-table to be opened.
     \param flags    -- I/O mode flags.
-   */
+  */
   bool MS_Table::open (casa::Table const &table,
 		       std::string const &subtable,
 		       IO_Mode const &flags)
