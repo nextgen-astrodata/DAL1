@@ -17,7 +17,6 @@ foreach (src
   ## linker instructions
   target_link_libraries (${src}
     dal
-    ${dal_link_libraries}
     )
   
 endforeach (src)

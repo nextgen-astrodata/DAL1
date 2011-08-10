@@ -37,9 +37,7 @@ foreach (src ${tests})
   ## libraries against which to link
   if (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src}
-      ${CASA_LIBRARIES}
       dal
-      ${CASA_LIBRARIES}
       ${dal_link_libraries}
       )
   else (CASA_FOUND OR CASACORE_FOUND)

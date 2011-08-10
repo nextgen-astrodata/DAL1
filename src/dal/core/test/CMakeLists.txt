@@ -14,15 +14,13 @@ foreach (src ${tests_core})
   add_executable(${src} ${src}.cc)
   ## linker instructions
   target_link_libraries(${src}
-    ${CASA_LIBRARIES}
     dal
-    ${CASA_LIBRARIES}
     ${dal_link_libraries}
     )
   set_target_properties(${src}
-                        PROPERTIES
-			LINKER_LANGUAGE CXX
-			)
+    PROPERTIES
+    LINKER_LANGUAGE CXX
+    )
   ## installation instructions
   install (TARGETS ${src}
     RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
