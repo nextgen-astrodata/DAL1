@@ -36,6 +36,8 @@ namespace DAL { // Namespace DAL -- begin
   MS_Table::MS_Table ()
     : dalObjectBase (dalFileType::CASA_MS)
   {
+    itsColumns.clear();
+    itsTables.clear();
   }
 
   //_____________________________________________________________________________
@@ -49,6 +51,8 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
+    itsColumns.clear();
+    itsTables.clear();
     open (name,flags);
   }
 
@@ -65,6 +69,9 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
+    itsColumns.clear();
+    itsTables.clear();
+
     try {
       // open the root table
       casa::Table tab (table);
@@ -87,6 +94,8 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
+    itsColumns.clear();
+    itsTables.clear();
     open (table, subtable, flags);
   }
   
@@ -156,7 +165,8 @@ namespace DAL { // Namespace DAL -- begin
   */
   void MS_Table::copy (MS_Table const &other)
   {
-    itsTable = casa::Table (other.itsTable);
+    itsTable   = casa::Table (other.itsTable);
+    itsColumns = other.itsColumns;
   }
 
   // ============================================================================
@@ -178,14 +188,13 @@ namespace DAL { // Namespace DAL -- begin
     casa::TableDesc tableDesc          = tableDescription();
     unsigned int nofRows               = itsTable.nrow();
     casa::Vector<casa::String> columns = tableDesc.columnNames();
-    std::vector<std::string> tables    = tableNames();
 
     os << "[MS_Table] Summary of internal parameters."        << std::endl;
     os << "-- File type           = " << itsFiletype.name()   << std::endl;
     os << "-- I/O mode flags      = " << itsFlags.names()     << std::endl;
     os << "-- Table name          = " << itsName              << std::endl;
-    os << "-- nof. sub-tables     = " << tables.size()        << std::endl;
-    os << "-- Sub-table names     = " << tables               << std::endl;
+    os << "-- nof. sub-tables     = " << itsTables.size()     << std::endl;
+    os << "-- Sub-table names     = " << itsTables            << std::endl;
     os << "-- nof. table rows     = " << nofRows              << std::endl;
     os << "-- nof. table columns  = " << tableDesc.ncolumn()  << std::endl;
     
@@ -249,10 +258,12 @@ namespace DAL { // Namespace DAL -- begin
       if (table.isNull()) {
 	status = false;
       } else {
+	// Set internal variables
 	itsTable = casa::Table (table);
 	itsName  = itsTable.tableName();
 	itsFlags = flags;
-	status   = true;
+	// Scan for embedded objects
+	status = open_embedded();
       }
     } catch (casa::AipsError x) {
       std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
@@ -274,26 +285,37 @@ namespace DAL { // Namespace DAL -- begin
 		       std::string const &subtable,
 		       IO_Mode const &flags)
   {
+    bool status = true;
+
     try {
       casa::Table tab (table.keywordSet().asTable(subtable));
       // Check if the table is ok; if yes, then set internal variables
       if (tab.isNull()) {
-	return false;
+	status = false;
       } else {
+	// Set internal variables
 	itsTable = casa::Table (tab);
 	itsName  = itsTable.tableName();
 	itsFlags = flags;
-	return false;
+	// Scan for embedded objects
+	status = open_embedded();
       }
     } catch (casa::AipsError x) {
       std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
-      return false;
+      status = false;
     }
+
+    return status;
   }
   
   //_____________________________________________________________________________
   //                                                                    hasColumn
   
+  /*!
+    \param name       -- Name of the table column.
+    \return hasColumn -- Returns \e true if the table contains a column of the 
+            given \e name.
+   */
   bool MS_Table::hasColumn (std::string const &name)
   {
     try {
@@ -303,55 +325,6 @@ namespace DAL { // Namespace DAL -- begin
       std::cerr << "[MS_Table::hasColumn] " << x.getMesg() << std::endl;
       return false;
     }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                  columnNames
-  
-  /*!
-    \return names -- Names of the table columns; returns empty vector in case no 
-    columns are found or the object is not connected to a valid table.
-  */
-  std::vector<std::string> MS_Table::columnNames ()
-  {
-    if (itsTable.isNull()) {
-      return std::vector<std::string>();
-    } else {
-      casa::TableDesc tableDesc         = tableDescription();
-      casa::Vector<casa::String> buffer = tableDesc.columnNames();
-      unsigned int nelem                = buffer.nelements();
-      std::vector<std::string> names (nelem);
-      
-      names.assign(buffer.data(),buffer.data()+nelem);
-      
-      return names;
-    }
-  }
-
-  //_____________________________________________________________________________
-  //                                                                   tableNames
-  
-  /*!
-    \return names -- Names of the sub-tables; returns empty vector in case no 
-            sub-tables are found or the object is not connected to a valid table.
-  */
-  std::vector<std::string> MS_Table::tableNames ()
-  {
-    std::vector<std::string> names;
-    
-    if (!itsTable.isNull()) {
-      casa::TableRecord rec    = itsTable.keywordSet();
-      casa::RecordDesc recDesc = rec.description();
-      unsigned int nofFields   = recDesc.nfields();
-
-      for (unsigned int n=0; n<nofFields; ++n) {
-	if (recDesc.isTable (n)) {
-	  names.push_back(recDesc.name (n));
-	}
-      }
-    }
-    
-    return names;
   }
   
   //_____________________________________________________________________________
@@ -427,6 +400,39 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  bool MS_Table::open_embedded ()
+  {
+    // Initialize interal variables
+    if (!itsColumns.empty()) {
+      itsColumns.clear();
+    }
+
+    try {
+      // Get table description
+      casa::TableDesc desc               = itsTable.tableDesc ();
+      casa::TableRecord rec              = itsTable.keywordSet();
+      casa::Vector<casa::String> columns = desc.columnNames();
+      casa::RecordDesc recDesc = rec.description();
+
+      // Store column names
+      for (unsigned int n=0; n<columns.nelements(); ++n) {
+	itsColumns.insert(columns[n]);
+      }
+
+      // Store sub-table names
+      for (unsigned int n=0; n<recDesc.nfields(); ++n) {
+	if (recDesc.isTable (n)) {
+	  itsTables.insert(recDesc.name(n));
+	}
+      }
+
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::open_embedded] " << x.getMesg() << std::endl;
+      return false;
+    }
+
+    return true;
+  }
   
 #else
 

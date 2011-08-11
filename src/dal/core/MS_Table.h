@@ -24,6 +24,7 @@
 // Standard library header files
 #include <iostream>
 #include <iomanip>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -105,24 +106,8 @@ namespace DAL { // Namespace DAL -- begin
     |-- ARRAY_ID                   Column    
     |-- DATA_DESC_ID               Column    
     |-- EXPOSURE                   Column    
-    |
     |-- ANTENNA                    Table     Antenna information
-    |   |-- ANTENNA_ID             Column
-    |   |-- FEED_ID                Column
-    |   |-- SPECTRAL_WINDOW_ID     Column
-    |   |-- TIME                   Column
-    |   |-- NUM_RECEPTORS          Column
-    |   |-- BEAM_ID                Column
-    |   |-- BEAM_OFFSET            Column
-    |   |-- POLARIZATION_TYPE      Column
-    |   |-- POL_RESPONSE           Column
-    |   |-- POSITION               Column
-    |   `-- RECEPTOR_ANGLE         Column
-    |
     |-- DATA_DESCRIPTION           Table
-    |  |-- SPECTRAL_WINDOW_ID
-    |  |-- POLARIZATION_ID
-    |  `-- FLAG_ROW
     |-- FEED                       Table     Feed (Frontend) related information
     |-- FLAG_CMD                   Table     Flag information
     |-- FIELD                      Table     Information on observed positions
@@ -130,26 +115,8 @@ namespace DAL { // Namespace DAL -- begin
     |-- OBSERVATION                Table     General observation information
     |-- POINTING                   Table     Antenna pointing information
     |-- POLARIZATION               Table     Polarization information description
-    |   |-- NUM_CORR
-    |   |-- CORR_TYPE
-    |   |-- CORR_PRODUCT
-    |   `-- FLAG_ROW
-    |-- PROCESSOR                  Table with Correlator information
-    |-- SPECTRAL_WINDOW            Table with Frequency/IF information
-    |   |-- NUM_CHAN               Column    int
-    |   |-- NAME                   Column    string
-    |   |-- REF_FREQUENCY          Column    double
-    |   |-- CHAN_FREQ              Column    array<double,1>
-    |   |-- CHAN_WIDTH             Column    array<double,1>
-    |   |-- MEAS_FREQ_REF          Column    int
-    |   |-- EFFECTIVE_BW           Column    array<double,1>
-    |   |-- RESOLUTION             Column    array<double,1>
-    |   |-- TOTAL_BANDWIDTH        Column    double
-    |   |-- NET_SIDEBAND           Column    int
-    |   |-- IF_CONV_CHAIN          Column    int
-    |   |-- FREQ_GROUP             Column    int
-    |   |-- FREQ_GROUP_NAME        Column    string
-    |   `-- FLAG_ROW               Column    bool
+    |-- PROCESSOR                  Table     Correlator information
+    |-- SPECTRAL_WINDOW            Table     Frequency/IF information
     `-- STATE
     \endverbatim
     
@@ -160,8 +127,14 @@ namespace DAL { // Namespace DAL -- begin
 
 #ifdef DAL_WITH_CASA
 
+  protected:
+
     //! Table object
     casa::Table itsTable;
+    //! Name of the columns within this table
+    std::set<std::string> itsColumns;
+    //! Name of the sub-tables within this table
+    std::set<std::string> itsTables;
 
   public:
     
@@ -244,14 +217,21 @@ namespace DAL { // Namespace DAL -- begin
       return itsTable.tableDesc ();
     }
 
+    //! Get the names of the table columns
+    inline std::set<std::string> columnNames () {
+      return itsColumns;
+    }
+
+    //! Get the names of the sub-tables
+    inline std::set<std::string> tableNames () {
+      return itsTables;
+    }
+
     //! Test if a column with this \e name exists. 
     bool hasColumn (std::string const &name);
 
-    //! Get the names of the table columns
-    std::vector<std::string> columnNames ();
-
-    //! Get the names of the sub-tables
-    std::vector<std::string> tableNames ();
+    //! Test if a sub-table with this \e name exists. 
+    bool hasTable (std::string const &name);
 
     //! Get column data-types
     std::map<casa::String,casa::DataType> columnDataTypes ();
@@ -479,6 +459,9 @@ namespace DAL { // Namespace DAL -- begin
 			     std::string const &name);
     
   private:
+
+    //! Open embedded structures
+    bool open_embedded ();
     
     //! Unconditional copying
     void copy (MS_Table const &other);
