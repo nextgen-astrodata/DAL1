@@ -31,7 +31,7 @@ using DAL::Sky_ImageDataset;
 
   \brief A collection of test routines for the Sky_ImageDataset class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2011/02/01
 */
@@ -46,7 +46,7 @@ using DAL::Sky_ImageDataset;
           function.
 */
 int test_constructors (hid_t const &fileID,
-		       bool const &haveDataset)
+		       std::string const &nameDataset)
 {
   std::cout << "\n[tSky_ImageDataset::test_constructors]\n" << std::endl;
 
@@ -64,7 +64,7 @@ int test_constructors (hid_t const &fileID,
   
   std::cout << "[2] Testing Sky_ImageDataset() ..." << std::endl;
   try {
-    Sky_ImageDataset sky;
+    Sky_ImageDataset sky (fileID,nameDataset);
     //
     sky.summary(); 
   } catch (std::string message) {
@@ -90,6 +90,7 @@ int main (int argc, char *argv[])
   hid_t fileID         = 0;
   bool haveDataset     = false;
   std::string filename = "tSky_ImageDataset.h5";
+  std::string nameDataset = "IMAGE_000";
 
   //________________________________________________________
   // Process parameters from the command line
@@ -119,7 +120,8 @@ int main (int argc, char *argv[])
   // Run the tests
   
   // Test for the constructor(s)
-  nofFailedTests += test_constructors (fileID, haveDataset);
+  nofFailedTests += test_constructors (fileID,
+				       nameDataset);
 
   return nofFailedTests;
 }

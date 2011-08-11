@@ -106,7 +106,7 @@ namespace DAL { // Namespace DAL -- begin
       \brief Get the name of the object (file, dataset, table, etc.)
       \return name -- Name of the object (file, dataset, table, etc.)
     */
-    virtual std::string name () {
+    virtual std::string name () const {
       return itsName;
     }
     
