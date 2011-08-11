@@ -56,7 +56,29 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                     MS_Table
   
   /*!
-    \param table    -- Name of the host table.
+    \param table    -- Host table within which the other is contained.
+    \param subtable -- Name of the sub-table to be opened.
+    \param flags    -- I/O mode flags.
+  */
+  MS_Table::MS_Table (std::string const &table,
+		      std::string const &subtable,
+		      IO_Mode const &flags)
+    : dalObjectBase (dalFileType::CASA_MS)
+  {
+    try {
+      // open the root table
+      casa::Table tab (table);
+      open (tab, subtable, flags);
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::MS_Table] " << x.getMesg() << endl;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     MS_Table
+  
+  /*!
+    \param table    -- Host table within which the other is contained.
     \param subtable -- Name of the sub-table to be opened.
     \param flags    -- I/O mode flags.
   */

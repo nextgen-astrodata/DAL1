@@ -52,7 +52,7 @@ using DAL::MS_Table;
 */
 int test_constructors (std::string const &filename)
 {
-  cout << "\n[tMS_Table::test_constructors]\n" << endl;
+  cout << "\n[tMS_Table::test_constructors]" << endl;
 
   int nofFailedTests (0);
   
@@ -60,14 +60,14 @@ int test_constructors (std::string const &filename)
     Test 1 : Test default constructor.
   */
   
-  cout << "[1] Testing MS_Table() ..." << endl;
+  cout << "\n[1] Testing MS_Table() ..." << endl;
   try {
     MS_Table ms;
     //
     ms.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
   }
   
   /*________________________________________________________
@@ -75,16 +75,51 @@ int test_constructors (std::string const &filename)
              of the table as input.
   */
   
-  cout << "[2] Testing MS_Table(string) ..." << endl;
+  cout << "\n[2] Testing MS_Table(string) ..." << endl;
   try {
     MS_Table ms (filename);
     //
     ms.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
   }
+
+  /*________________________________________________________
+    Test 3 : Open sub-table contained within another one.
+  */
   
+  cout << "\n[3] Testing MS_Table(string,string) ..." << endl;
+  try {
+    std::string subtable = "ANTENNA";
+    //
+    MS_Table ms (filename, subtable);
+    //
+    ms.summary(); 
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+
+  /*________________________________________________________
+    Test 4 : Open sub-table contained within another already
+             opened casa::Table.
+  */
+  
+  cout << "\n[4] Testing MS_Table(Table,string) ..." << endl;
+  try {
+    std::string subtable = "OBSERVATION";
+    // Open root table
+    casa::Table table (filename);
+    //
+    MS_Table ms (table, subtable);
+    //
+    ms.summary(); 
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+
   return nofFailedTests;
 }
 

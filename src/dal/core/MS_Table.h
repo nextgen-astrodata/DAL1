@@ -176,6 +176,11 @@ namespace DAL { // Namespace DAL -- begin
 	      IO_Mode const &flags=IO_Mode());
     
     //! Argumented constructor to open sub-table contained within \e table
+    MS_Table (std::string const &table,
+	      std::string const &subtable,
+	      IO_Mode const &flags=IO_Mode());
+    
+    //! Argumented constructor to open sub-table contained within \e table
     MS_Table (casa::Table const &table,
 	      std::string const &subtable,
 	      IO_Mode const &flags=IO_Mode());
