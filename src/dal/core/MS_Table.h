@@ -29,7 +29,6 @@
 
 // DAL header files
 #include <core/dalObjectBase.h>
-#include <core/MS_TableColumn.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Slicer.h>
