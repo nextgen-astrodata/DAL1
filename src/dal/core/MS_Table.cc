@@ -189,14 +189,14 @@ namespace DAL { // Namespace DAL -- begin
     unsigned int nofRows               = itsTable.nrow();
     casa::Vector<casa::String> columns = tableDesc.columnNames();
 
-    os << "[MS_Table] Summary of internal parameters."        << std::endl;
-    os << "-- File type           = " << itsFiletype.name()   << std::endl;
-    os << "-- I/O mode flags      = " << itsFlags.names()     << std::endl;
-    os << "-- Table name          = " << itsName              << std::endl;
-    os << "-- nof. sub-tables     = " << itsTables.size()     << std::endl;
-    os << "-- Sub-table names     = " << itsTables            << std::endl;
-    os << "-- nof. table rows     = " << nofRows              << std::endl;
-    os << "-- nof. table columns  = " << tableDesc.ncolumn()  << std::endl;
+    os << "[MS_Table] Summary of internal parameters."      << std::endl;
+    os << "-- File type           = " << itsFiletype.name() << std::endl;
+    os << "-- I/O mode flags      = " << itsFlags.names()   << std::endl;
+    os << "-- Table name          = " << itsName            << std::endl;
+    os << "-- nof. sub-tables     = " << itsTables.size()   << std::endl;
+    os << "-- Sub-table names     = " << itsTables          << std::endl;
+    os << "-- nof. table rows     = " << nofRows            << std::endl;
+    os << "-- nof. table columns  = " << itsColumns.size()  << std::endl;
     
     if (!itsTable.isNull()) {
       if ((columns.nelements()>0) && showColumns) {
@@ -318,12 +318,31 @@ namespace DAL { // Namespace DAL -- begin
    */
   bool MS_Table::hasColumn (std::string const &name)
   {
-    try {
-      casa::TableDesc desc = itsTable.tableDesc ();
-      return desc.isColumn(name);
-    } catch (casa::AipsError x) {
-      std::cerr << "[MS_Table::hasColumn] " << x.getMesg() << std::endl;
+    std::set<std::string>::iterator it = itsColumns.find(name);
+
+    if (it==itsColumns.end()) {
       return false;
+    } else {
+      return true;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     hasTable
+  
+  /*!
+    \param name       -- Name of the sub-table.
+    \return hasColumn -- Returns \e true if the table contains a column of the 
+            given \e name.
+   */
+  bool MS_Table::hasTable (std::string const &name)
+  {
+    std::set<std::string>::iterator it = itsTables.find(name);
+
+    if (it==itsTables.end()) {
+      return false;
+    } else {
+      return true;
     }
   }
   

@@ -142,11 +142,12 @@ int test_public_functions (std::string const &filename)
   MS_Table ms (filename);
 
   try {
-    std::cout << "-- Class name      = " << ms.className()   << std::endl;
-    std::cout << "-- Is root table   = " << ms.isRootTable() << std::endl;
-    std::cout << "-- Column names    = " << ms.columnNames() << std::endl;
-    std::cout << "-- Sub-table names = " << ms.tableNames()  << std::endl;
-    std::cout << "-- Has column DATA = " << ms.hasColumn("DATA") << std::endl;
+    std::cout << "-- Class name         = " << ms.className()       << std::endl;
+    std::cout << "-- Is root table      = " << ms.isRootTable()     << std::endl;
+    std::cout << "-- Column names       = " << ms.columnNames()     << std::endl;
+    std::cout << "-- Sub-table names    = " << ms.tableNames()      << std::endl;
+    std::cout << "-- Has column DATA    = " << ms.hasColumn("DATA") << std::endl;
+    std::cout << "-- Has sub-table FEED = " << ms.hasTable("FEED")  << std::endl;
   } catch (casa::AipsError x) {
     std::cerr << x.getMesg() << endl;
     ++nofFailedTests;
