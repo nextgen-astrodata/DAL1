@@ -121,6 +121,18 @@ namespace DAL { // Namespace DAL -- begin
     \endverbatim
     
     <h3>Example(s)</h3>
+
+    <ol>
+      <li>Simple argumented constructor, taking name of the table as input:
+      \code
+      MS_Table ms (table);
+      \endcode
+      <li>Argumented constructor, allowing to directly open up sub-table
+      (\e subtable) below the root table (\e table):
+      \code
+      MS_Table ms (table, subtable);
+      \endcode
+    </ol>
     
   */  
   class MS_Table : public dalObjectBase {
