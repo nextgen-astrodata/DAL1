@@ -17,6 +17,13 @@ set (DAL_FIND_PATHS
   ${CMAKE_INSTALL_PREFIX}
 )
 
+## Path used for searching by 'find_file()' and 'find_path()'
+set (CMAKE_INCLUDE_PATH ${DAL_FIND_PATHS} )
+## Path used for searching by 'find_library()'.
+set (CMAKE_LIBRARY_PATH ${DAL_FIND_PATHS} )
+## Path used for searching by 'find_program()'.
+set (CMAKE_PROGRAM_PATH ${DAL_FIND_PATHS} )
+
 ##____________________________________________________________________
 ##                                          System libraries and tools
 
@@ -28,7 +35,6 @@ foreach (_syslib dl m pthread util z)
 
   find_library (${_syslibVar}_LIBRARY
     NAMES ${_syslib}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib
     )
   

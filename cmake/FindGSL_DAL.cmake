@@ -39,7 +39,6 @@ if (NOT GSL_FOUND)
   
   find_path (GSL_INCLUDES gsl/gsl_version.h gsl/gsl_sys.h gsl/gsl_nan.h
     HINTS ${GSL_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/gsl
     )
   
@@ -52,7 +51,6 @@ if (NOT GSL_FOUND)
   
   find_library (GSL_GSL_LIBRARY gsl
     HINTS ${GSL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -64,7 +62,6 @@ if (NOT GSL_FOUND)
   
   find_library (GSL_GSLCBLAS_LIBRARY gslcblas
     HINTS ${GSL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/gsl
     )
   
@@ -77,7 +74,6 @@ if (NOT GSL_FOUND)
   
   find_program (GSL_CONFIG_EXECUTABLE gsl-config
     HINTS ${GSL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin bin/gsl
     )
   

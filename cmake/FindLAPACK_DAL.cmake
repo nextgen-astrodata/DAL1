@@ -39,7 +39,6 @@ if (NOT LAPACK_FOUND)
 
   find_path (LAPACK_CLAPACK_H clapack.h
     HINTS ${LAPACK_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include
     )
 
@@ -60,7 +59,6 @@ if (NOT LAPACK_FOUND)
     ## Search for the library
     find_library (LAPACK_${_lapack_var}_LIBRARY ${_lapack_lib}
       HINTS ${LAPACK_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib
       )
     

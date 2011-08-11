@@ -37,7 +37,6 @@ if (NOT CFITSIO_FOUND)
   
   find_path (CFITSIO_INCLUDES fitsio.h fitsio2.h
     HINTS ${CFITSIO_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/fitsio include/cfitsio
     )
   
@@ -46,7 +45,6 @@ if (NOT CFITSIO_FOUND)
   
   find_library (CFITSIO_LIBRARIES cfitsio
     HINTS ${CFITSIO_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib
     )
   

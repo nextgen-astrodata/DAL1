@@ -67,7 +67,6 @@ if (NOT CASACORE_FOUND)
   
   find_path (CASACORE_INCLUDES ${CASACORE_HEADERS}
     HINTS ${CASACORE_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include include/casacore
     )
 
@@ -85,7 +84,6 @@ if (NOT CASACORE_FOUND)
     find_library (CASACORE_${_casacore_var}_LIBRARY
       NAMES casa_${_casacore_lib} ${_casacore_lib}
       HINTS ${CASACORE_ROOT_DIR}
-      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES lib
       )
     
@@ -105,7 +103,6 @@ if (NOT CASACORE_FOUND)
   
   find_path (CASACORE_DATADIR ephemerides geodetic
     HINTS ${CASACORE_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES share/casacore share/casacore/data
     )
   

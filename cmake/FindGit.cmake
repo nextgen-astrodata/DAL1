@@ -40,7 +40,6 @@ if (NOT GIT_FOUND)
   
   find_program (GIT_EXECUTABLE git
     HINTS ${GIT_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES bin
     )
   

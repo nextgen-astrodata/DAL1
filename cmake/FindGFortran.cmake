@@ -37,7 +37,6 @@ if (NOT GFORTRAN_FOUND)
   
   find_path (GFORTRAN_INCLUDES gfortran.h
     HINTS ${GFORTRAN_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include
     )
   
@@ -46,7 +45,6 @@ if (NOT GFORTRAN_FOUND)
   
   find_library (GFORTRAN_LIBRARIES gfortran
     HINTS ${GFORTRAN_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib
     )
   
@@ -55,7 +53,6 @@ if (NOT GFORTRAN_FOUND)
   
   find_program (GFORTRAN_EXECUTABLE gfortran
     HINTS ${GFORTRAN_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES bin
     )
   

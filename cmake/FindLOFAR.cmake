@@ -39,7 +39,6 @@ if (NOT LOFAR_FOUND)
   
   find_path (LOFAR_INCLUDES Interface/Parset.h
     HINTS ${LOFAR_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include lofar/include
     )
   
@@ -56,7 +55,6 @@ if (NOT LOFAR_FOUND)
     ## Search for the library
     find_library (LOFAR_${_lofar_var}_LIBRARY ${_lofar_lib}
       HINTS ${LOFAR_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib lofar/lib
       )
     

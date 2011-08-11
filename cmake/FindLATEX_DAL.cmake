@@ -55,7 +55,6 @@ if (NOT LATEX_FOUND)
     
     find_program (${_latexExecutableVar}_EXECUTABLE ${_latexExecutable}
       HINTS ${LATEX_ROOT_DIR}
-      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
       )
     
