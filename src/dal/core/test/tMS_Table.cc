@@ -123,6 +123,38 @@ int test_constructors (std::string const &filename)
   return nofFailedTests;
 }
 
+
+//_______________________________________________________________________________
+//                                                          test_public_functions
+
+/*!
+  \brief Test public member functions
+
+  \param filename -- Name of the MeasurementSet to work with.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_public_functions (std::string const &filename)
+{
+  cout << "\n[tMS_Table::test_public_functions]" << endl;
+
+  int nofFailedTests (0);
+  MS_Table ms (filename);
+
+  try {
+    std::cout << "-- Class name      = " << ms.className()   << std::endl;
+    std::cout << "-- Is root table   = " << ms.isRootTable() << std::endl;
+    std::cout << "-- Column names    = " << ms.columnNames() << std::endl;
+    std::cout << "-- Sub-table names = " << ms.tableNames()  << std::endl;
+    std::cout << "-- Has column DATA = " << ms.hasColumn("DATA") << std::endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+
+  return nofFailedTests;
+}
+
 //_______________________________________________________________________________
 //                                                                  test_readData
 
@@ -474,6 +506,8 @@ int main (int argc, char *argv[])
   
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
+  // Test public member functions
+  nofFailedTests += test_public_functions (filename);
 
   if (haveDataset) {
     
