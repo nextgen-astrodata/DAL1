@@ -25,6 +25,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <algorithm>
 
 #include <core/MS_Table.h>
 
@@ -180,13 +181,17 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
+    //! Open MeasurementSet of given \e name.
+    bool open (std::string const &name,
+	       IO_Mode const &flags=IO_Mode());
+    
     //! Get the values from 'EXPOSURE' column
     bool exposureValues (std::vector<double> &data);
     //! Get the values from 'TIME' column
     bool timeValues (std::vector<double> &data);
     //! Get the values from 'UVW' column
     bool uvwValues (std::vector<double> &data);
-
+    
     //! Get the values from 'CHAN_FREQ' column of the 'SPECTRAL_WINDOW' table
     bool channelFrequencyValues (std::vector<double> &data);
     //! Get the values from 'CHAN_WIDTH' column of the 'SPECTRAL_WINDOW' table

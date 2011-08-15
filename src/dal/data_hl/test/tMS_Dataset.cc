@@ -414,11 +414,11 @@ int test_readData (std::string const &filename)
   }
   
   /*________________________________________________________
-    Test 11 : Test high-level interface to read data from 
+    Test 12 : Test high-level interface to read data from 
               'EXPOSURE' column.
   */
 
-  cout << "\n[12] Testing exposureValues(vector<double>) ..." << endl;
+  cout << "\n[13] Testing exposureValues(vector<double>) ..." << endl;
   {
     std::vector<double> data;
 
@@ -427,6 +427,44 @@ int test_readData (std::string const &filename)
 	   << data[data.size()-1] << " ]" << endl;
     } else {
       std::cerr << "Failed to read EXPOSURE data!" << std::endl;
+    }
+  }
+  
+  /*________________________________________________________
+    Test 13 : Test high-level interface to read data from
+              the 'FREQ_CHAN' column of the 'SPECTRAL_WINDOWS'
+	      table
+  */
+
+  cout << "\n[13] Testing channelFrequencyValues(vector<double>) ..." << endl;
+  {
+    std::vector<double> data;
+
+    if (ms.channelFrequencyValues(data)) {
+      cout << "-- nof. channels     = " << data.size() << endl;
+      cout << "-- Frequncy channels = [ " << data[0] << " " << data[1] << " .. "
+	   << data[data.size()-1] << " ]" << endl;
+    } else {
+      std::cerr << "Failed to read FREQ_CHAN data!" << std::endl;
+    }
+  }
+  
+  /*________________________________________________________
+    Test 14 : Test high-level interface to read data from
+              the 'FREQ_WIDTH' column of the 'SPECTRAL_WINDOWS'
+	      table
+  */
+
+  cout << "\n[14] Testing channelFrequencyValues(vector<double>) ..." << endl;
+  {
+    std::vector<double> data;
+
+    if (ms.channelWidthValues(data)) {
+      cout << "-- nof. channels     = " << data.size() << endl;
+      cout << "-- Frequncy channels = [ " << data[0] << " " << data[1] << " .. "
+	   << data[data.size()-1] << " ]" << endl;
+    } else {
+      std::cerr << "Failed to read FREQ_WIDTH data!" << std::endl;
     }
   }
   

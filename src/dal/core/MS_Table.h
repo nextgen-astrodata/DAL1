@@ -81,8 +81,8 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
       <li>\c casa::Slicer - Specify which elements to extract from an n-dimensional
       array.
-      <li><a href="http://casa.nrao.edu/Memos/msselection/index.html">MS selection</a>
-      (CASA Memo)
+      <li><a href="http://casa.nrao.edu/Memos/msselection/index.html">MeasurementSet
+      Selection Syntax</a> (CASA Memo)
       <li><a href="http://www.astron.nl/aips++/docs/notes/199">AIPS++ Note 
       199</a>: Table Query Language
     </ul>
@@ -209,13 +209,13 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
     
     //! Open table by \e name
-    bool open (std::string const &name,
-	       IO_Mode const &flags=IO_Mode());
+    virtual bool open (std::string const &name,
+		       IO_Mode const &flags=IO_Mode());
     
     //! Open sub-table by \e name
-    bool open (casa::Table const &table,
-	       std::string const &subtable,
-	       IO_Mode const &flags=IO_Mode());
+    virtual bool open (casa::Table const &table,
+		       std::string const &subtable,
+		       IO_Mode const &flags=IO_Mode());
     
     //! Test if the table is the root table
     inline bool isRootTable () {
@@ -231,6 +231,9 @@ namespace DAL { // Namespace DAL -- begin
       return itsTable.tableDesc ();
     }
 
+    //! Test if a column with this \e name exists. 
+    bool hasColumn (std::string const &name);
+
     //! Get the names of the table columns
     inline std::set<std::string> columnNames () {
       return itsColumnNames;
@@ -240,9 +243,6 @@ namespace DAL { // Namespace DAL -- begin
     inline std::set<std::string> tableNames () {
       return itsTableNames;
     }
-
-    //! Test if a column with this \e name exists. 
-    bool hasColumn (std::string const &name);
 
     //! Test if a sub-table with this \e name exists. 
     bool hasTable (std::string const &name);

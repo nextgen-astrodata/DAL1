@@ -40,8 +40,9 @@ namespace DAL { // Namespace DAL -- begin
   
   MS_Dataset::MS_Dataset (std::string const &name,
 			  IO_Mode const &flags)
-    : MS_Table (name, flags)
+    : MS_Table ()
   {
+    open (name, flags);
   }
     
   //_____________________________________________________________________________
@@ -127,6 +128,18 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- nof. table columns  = " << itsColumnNames.size() << std::endl;
     os << "-- Column names        = " << itsColumnNames        << std::endl;
     os << "-- nof. table rows     = " << nofRows               << std::endl;
+
+    {
+      std::vector<double> data;
+      std::vector<double>::iterator itMin;
+      std::vector<double>::iterator itMax;
+      if (channelFrequencyValues(data)) {
+	itMin = min_element (data.begin(), data.end());
+	itMax = max_element (data.begin(), data.end());
+	os << "-- Spectral window     = " << *itMin << " .. " << *itMax << std::endl;
+      }
+    }
+    
   }
   
   // ============================================================================
@@ -136,11 +149,40 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param name  -- Name of the MeasurementSet.
+    \param flags -- I/O mode flags.
+  */
+  bool MS_Dataset::open (std::string const &name,
+			 IO_Mode const &flags)
+  {
+    bool status = MS_Table::open(name,flags);
+    
+    if (status) {
+      /* Open the sub-tables */
+      if (!itsTableNames.empty()) {
+	std::set<std::string>::iterator it;
+	for (it=itsTableNames.begin(); it!=itsTableNames.end(); ++it) {
+	  itsSubtables[*it] = MS_Table(itsName,*it,flags);
+	}
+      }
+    } else {
+      status = false;
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
   //                                                               exposureValues
   
-  /*
-    \return data -- Values contained within the 'EXPOSURE' column of the MS 'MAIN'
-            table; returns \e false in case an error was encountered.
+  /*!
+    \retval data -- Values contained within the 'EXPOSURE' column of the MS 'MAIN'
+            table.
+    \return status -- Status of the operation; returns \e false in case anerror
+            was encountered.
   */
   bool MS_Dataset::exposureValues (std::vector<double> &data)
   {
@@ -150,9 +192,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   timeValues
   
-  /*
-    \return data -- Values contained within the 'TIME' column of the MS 'MAIN'
-            table; returns \e false in case an error was encountered.
+  /*!
+    \retval data -- Values contained within the 'TIME' column of the MS 'MAIN'
+            table.
+    \return status -- Status of the operation; returns \e false in case anerror
+            was encountered.
   */
   bool MS_Dataset::timeValues (std::vector<double> &data)
   {
@@ -162,21 +206,75 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    uvwValues
   
-  /*
-    \return data -- Values contained within the 'UVW' column of the MS 'MAIN'
-            table; returns \e false in case an error was encountered.
+  /*!
+    \retval data -- Values contained within the 'UVW' column of the MS 'MAIN'
+            table.
+    \return status -- Status of the operation; returns \e false in case anerror
+            was encountered.
   */
   bool MS_Dataset::uvwValues (std::vector<double> &data)
   {
     return readData(data, "UVW");
   }
 
-  // ============================================================================
-  //
-  //  Static methods
-  //
-  // ============================================================================
+  //_____________________________________________________________________________
+  //                                                       channelFrequencyValues
   
-  
+  /*!
+    \retval data -- Values contained within the 'CHAN_FREQ' column of the MS
+            'SPECTRAL_WINDOW' table.
+    \return status -- Status of the operation; returns \e false in case anerror
+            was encountered.
+  */
+  bool MS_Dataset::channelFrequencyValues (std::vector<double> &data)
+  {
+    bool status      = true;
+    std::string name = "SPECTRAL_WINDOW";
+    std::map<std::string,MS_Table>::iterator it = itsSubtables.find(name);
 
+    if (it==itsSubtables.end()) {
+      std::cerr << "[MS_Dataset::channelFrequencyValues]"
+		<< " Failed to acces sub-table '" << name << "'!"
+		<< std::endl;
+      status = false;
+    } else {
+      status = it->second.readData (data,"CHAN_FREQ");
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                           channelWidthValues
+  
+  /*!
+    \retval data -- Values contained within the 'CHAN_WIDTH' column of the MS
+            'SPECTRAL_WINDOW' table.
+    \return status -- Status of the operation; returns \e false in case anerror
+            was encountered.
+  */
+  bool MS_Dataset::channelWidthValues (std::vector<double> &data)
+  {
+    bool status      = true;
+    std::string name = "SPECTRAL_WINDOW";
+    std::map<std::string,MS_Table>::iterator it = itsSubtables.find(name);
+
+    if (it==itsSubtables.end()) {
+      std::cerr << "[MS_Dataset::channelWidthValues]"
+		<< " Failed to acces sub-table '" << name << "'!"
+		<< std::endl;
+      status = false;
+    } else {
+      status = it->second.readData (data,"CHAN_WIDTH");
+    }
+    
+    return status;
+  }
+  
+  // ============================================================================
+  //
+  //  Private methods
+  //
+  // ============================================================================
+  
 } // Namespace DAL -- end
