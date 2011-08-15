@@ -100,7 +100,9 @@ namespace DAL { // Namespace DAL -- begin
     \param other -- Another MS_Dataset object from which to make a copy.
   */
   void MS_Dataset::copy (MS_Dataset const &other)
-  {;}
+  {
+    MS_Table::copy (other);
+  }
 
   // ============================================================================
   //

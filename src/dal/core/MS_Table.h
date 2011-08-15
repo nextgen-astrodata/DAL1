@@ -471,14 +471,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Resolve the \e name for the MS table
     static bool resolveName (std::string &absoluteName,
 			     std::string const &name);
+
+  protected:
+    
+    //! Unconditional copying
+    void copy (MS_Table const &other);
     
   private:
 
     //! Open embedded structures
     bool open_embedded ();
-    
-    //! Unconditional copying
-    void copy (MS_Table const &other);
     
     //! Unconditional deletion 
     void destroy(void);
