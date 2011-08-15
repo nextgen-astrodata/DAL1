@@ -26,6 +26,8 @@
 #include <casa/OS/SymLink.h>
 #include <ms/MeasurementSets.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
+#include <ms/MeasurementSets/MSSelection.h>
+#include <tables/Tables/ExprNode.h>
 #include <tables/Tables/TableDesc.h>
 #include <tables/Tables/SetupNewTab.h>
 
@@ -126,6 +128,9 @@ int test_open_create (std::string const &filename="tcasacore_ms.ms")
 //_______________________________________________________________________________
 //                                                                      test_open
 
+/*!
+  \param filename -- Name of the MeasurementSet to open 
+*/
 int test_open (std::string const &filename)
 {
   cout << "\n[tcasacore_ms::test_open]" << endl;
@@ -160,7 +165,7 @@ int test_open (std::string const &filename)
     Use MS-specific classes to access data
   */
 
-  std::cout << "\n[1] Use MS-specific classes to access data ..." << endl;
+  cout << "\n[1] Use MS-specific classes to access data ..." << endl;
 
   try {
     // Create the MeasurementSet from an existing Table on disk
@@ -194,7 +199,7 @@ int test_open (std::string const &filename)
     Use generic Table classes to access data
   */
 
-  std::cout << "\n[2] Use generic Table classes to access data ..." << endl;
+  cout << "\n[2] Use generic Table classes to access data ..." << endl;
 
   try {
     casa::Vector<casa::String> columnNames;
@@ -216,7 +221,7 @@ int test_open (std::string const &filename)
       // Get column description
       casa::ColumnDesc columnDesc = tableDesc.columnDesc(columnNames(n));
       // Display column properties
-      std::cout << std::setw(5)  << n 
+      cout << std::setw(5)  << n 
 		<< std::setw(25) << columnDesc.name()
 		<< std::setw(5)  << columnDesc.ndim()
 		<< std::setw(10) << columnDesc.dataType()
@@ -235,26 +240,26 @@ int test_open (std::string const &filename)
       // Get the times for the entire column
       casa::Vector<casa::Double> timeColumnData = timeColumn.getColumn();
       
-      std::cout << "-- Column 'TIME' : " << endl;
-      std::cout << "   nof. elements = " << timeColumnData.nelements() << endl;
-      std::cout << "   Minimum value = " << min(timeColumnData) << endl;
-      std::cout << "   Maximum value = " << max(timeColumnData) << endl;
+      cout << "-- Column 'TIME' : " << endl;
+      cout << "   nof. elements = " << timeColumnData.nelements() << endl;
+      cout << "   Minimum value = " << min(timeColumnData) << endl;
+      cout << "   Maximum value = " << max(timeColumnData) << endl;
       
       // Access contents of the 'UVW' column
       casa::ROArrayColumn<casa::Double> uvwColumn (table , "UVW");
       // Get the times for the entire column
       casa::Array<casa::Double> uvwColumnData = uvwColumn.getColumn();
       
-      std::cout << "-- Column 'UVW' : " << endl;
-      std::cout << "   nof. elements = " << uvwColumnData.nelements() << endl;
-      std::cout << "   shape(data)   = " << uvwColumnData.shape()     << endl;
+      cout << "-- Column 'UVW' : " << endl;
+      cout << "   nof. elements = " << uvwColumnData.nelements() << endl;
+      cout << "   shape(data)   = " << uvwColumnData.shape()     << endl;
       
       for (int col=0; col<15; ++col) {
 	
 	tmp = uvwColumnData(casa::Slicer(casa::IPosition(2,0,col),
 					 casa::IPosition(2,casa::Slicer::MimicSource,1)));
 	
-	std::cout << "   uvw(," << col << ")       = " << tmp << endl;
+	cout << "   uvw(," << col << ")       = " << tmp << endl;
       }
     } catch (casa::AipsError x) {
       std::cerr << "ERROR: " << x.getMesg() << endl;
@@ -324,6 +329,133 @@ int test_open (std::string const &filename)
 }
 
 //_______________________________________________________________________________
+//                                                                  test_readData
+
+/*!
+  \param filename -- Name of the MeasurementSet to open 
+*/
+int test_readData (std::string const &filename)
+{
+  cout << "\n[tcasacore_ms::test_readData]" << endl;
+  
+  int nofFailedTests = 0;
+  double freqMean    = 0;
+
+  /*________________________________________________________
+    Open MS to work with
+  */
+
+  casa::MeasurementSet ms (filename);
+
+  /*________________________________________________________
+    Access 'DATA' column
+  */
+
+  cout << "\n[1] Accessing 'DATA' column ..." << endl;
+  
+  try {
+    casa::ROArrayColumn<casa::Complex> dataColumn (ms, "DATA");
+    casa::Array<casa::Complex> dataValues = dataColumn.getColumn();
+    //
+    cout << "-- Shape of column     = " << dataValues.shape()     << endl;
+    cout << "-- nof. column entries = " << dataValues.nelements() << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Access 'TIME' column
+  */
+  
+  cout << "\n[1] Accessing 'TIME' column ..." << endl;
+  
+  try {
+    casa::ROScalarColumn<casa::Double> timeColumn (ms, "TIME");
+    casa::Vector<casa::Double> timeValues = timeColumn.getColumn();
+    //
+    cout << "-- Shape of column = " << timeValues.shape() << endl;
+    cout << "-- Range of values = " << min(timeValues)
+	 << " .. " << max(timeValues) << endl;
+    cout << "-- Mean TIME value = " << mean(timeValues) << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Access 'CHAN_FREQ' column of 'SPECTRAL_WINDOW' table
+  */
+  
+  cout << "\n[3] Accessing 'CHAN_FREQ' column of 'SPECTRAL_WINDOW' table ..." << endl;
+  
+  try {
+    casa::String nameColumn ("CHAN_FREQ");
+    casa::Table tab (ms.keywordSet().asTable("SPECTRAL_WINDOW"));
+    casa::TableDesc tabDesc = tab.tableDesc();
+
+    if (tabDesc.isColumn(nameColumn)) {
+      casa::ROArrayColumn<casa::Double> spectralColumn (tab, nameColumn);
+      casa::Array<casa::Double> data = spectralColumn.getColumn();
+      //
+      cout << "-- Shape of column      = " << data.shape()     << std::endl;
+      cout << "-- nof. column entries  = " << data.nelements() << std::endl;
+      cout << "-- Range of values      = " << min(data) << " .. " << max(data) << endl;
+      cout << "-- Mean CHAN_FREQ value = " << mean(data) << endl;
+      //
+      freqMean = mean(data);
+    }
+
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Read visibilities for auto-correlation products
+  */
+
+  cout << "\n[4] Read visibilities for auto-correlation products ..." << endl;
+
+  try {
+    casa::Table dataSelection = ms ( ms.col("ANTENNA1") == ms.col("ANTENNA2") );
+    //
+    casa::ROArrayColumn<casa::Complex> dataColumn (dataSelection, "DATA");
+    casa::Array<casa::Complex> dataValues = dataColumn.getColumn();
+    //
+    cout << "-- Shape of column     = " << dataValues.shape()     << endl;
+    cout << "-- nof. column entries = " << dataValues.nelements() << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Read visibilities for selected frequency channels
+  */
+
+  cout << "\n[5] Read visibilities for selected frequency channels ..." << endl;
+
+  try {
+    /* Open sub-table containing spectral window information */
+    casa::Table tab (ms.keywordSet().asTable("SPECTRAL_WINDOW"));
+    /* Select frequency channels */
+    // casa::Table dataSelection = ms ( tab.col("CHAN_FREQ") > 0 );
+    //
+    // casa::ROArrayColumn<casa::Complex> dataColumn (dataSelection, "DATA");
+    // casa::Array<casa::Complex> dataValues = dataColumn.getColumn();
+    //
+    // cout << "-- Shape of column     = " << dataValues.shape()     << endl;
+    // cout << "-- nof. column entries = " << dataValues.nelements() << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -350,7 +482,10 @@ int main (int argc, char *argv[])
   // Run the tests
 
   if (haveDataset) {
+    /* Test opening MS and its sub-tables */
     nofFailedTests += test_open (filename);
+    /* Test reading data from MS */
+    nofFailedTests += test_readData (filename);
   }
 
   nofFailedTests += test_open_create ();
