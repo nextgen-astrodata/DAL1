@@ -62,6 +62,7 @@ foreach (_test
   add_test (${_test} ${_test})
 endforeach (_test)
 
+##__________________________________________________________
 ## Tests using TBB datasets
 
 if (dataset_tbb)
@@ -76,6 +77,7 @@ else (dataset_tbb)
   add_test (tTBB_Timeseries tTBB_Timeseries)
 endif (dataset_tbb)
 
+##__________________________________________________________
 ## Tests using BF datasets
 
 if (dataset_beamformed)
@@ -90,6 +92,14 @@ else (dataset_its)
   add_test (tITS_ExperimentMeta tITS_ExperimentMeta)
 endif (dataset_its)
 
+##__________________________________________________________
+## Tests using MS datasets
+
+if (TESTDATA_L20851_SB120)
+  add_test (tMS_Dataset tMS_Dataset ${TESTDATA_L20851_SB120})
+endif (TESTDATA_L20851_SB120)
+
+##__________________________________________________________
 ## Tests working on the generated test datasets
 
 if (H5DUMP_EXECUTABLE)

@@ -175,7 +175,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Destruction ==========================================================
     
     //! Destructor
-    ~MS_Table ();
+    virtual ~MS_Table ();
     
     // === Operators ============================================================
     
@@ -188,7 +188,7 @@ namespace DAL { // Namespace DAL -- begin
       \brief Get the name of the class
       \return className -- The name of the class, MS_Table.
     */
-    inline std::string className () const {
+    virtual inline std::string className () const {
       return "MS_Table";
     }
 
@@ -196,14 +196,14 @@ namespace DAL { // Namespace DAL -- begin
       \brief Provide a summary of the object's internal parameters and status
       \param showColumns -- Also show summary of the table columns?
     */
-    inline void summary (bool const &showColumns=true) {
+    virtual inline void summary (bool const &showColumns=true) {
       summary (std::cout,showColumns);
     }
-
+    
     //! Provide a summary of the object's internal parameters and status
-    void summary (std::ostream &os,
-		  bool const &showColumns=true);    
-
+    virtual void summary (std::ostream &os,
+			  bool const &showColumns=true);    
+    
     // === Public methods =======================================================
     
     //! Open table by \e name
