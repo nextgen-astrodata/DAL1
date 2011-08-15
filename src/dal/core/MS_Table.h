@@ -146,9 +146,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Table object
     casa::Table itsTable;
     //! Name of the columns within this table
-    std::set<std::string> itsColumns;
+    std::set<std::string> itsColumnNames;
     //! Name of the sub-tables within this table
-    std::set<std::string> itsTables;
+    std::set<std::string> itsTableNames;
 
   public:
     
@@ -233,12 +233,12 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the names of the table columns
     inline std::set<std::string> columnNames () {
-      return itsColumns;
+      return itsColumnNames;
     }
 
     //! Get the names of the sub-tables
     inline std::set<std::string> tableNames () {
-      return itsTables;
+      return itsTableNames;
     }
 
     //! Test if a column with this \e name exists. 

@@ -36,8 +36,8 @@ namespace DAL { // Namespace DAL -- begin
   MS_Table::MS_Table ()
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumns.clear();
-    itsTables.clear();
+    itsColumnNames.clear();
+    itsTableNames.clear();
   }
 
   //_____________________________________________________________________________
@@ -51,8 +51,8 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumns.clear();
-    itsTables.clear();
+    itsColumnNames.clear();
+    itsTableNames.clear();
     open (name,flags);
   }
 
@@ -69,8 +69,8 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumns.clear();
-    itsTables.clear();
+    itsColumnNames.clear();
+    itsTableNames.clear();
 
     try {
       // open the root table
@@ -94,8 +94,8 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumns.clear();
-    itsTables.clear();
+    itsColumnNames.clear();
+    itsTableNames.clear();
     open (table, subtable, flags);
   }
   
@@ -166,7 +166,7 @@ namespace DAL { // Namespace DAL -- begin
   void MS_Table::copy (MS_Table const &other)
   {
     itsTable   = casa::Table (other.itsTable);
-    itsColumns = other.itsColumns;
+    itsColumnNames = other.itsColumnNames;
   }
 
   // ============================================================================
@@ -189,14 +189,14 @@ namespace DAL { // Namespace DAL -- begin
     unsigned int nofRows               = itsTable.nrow();
     casa::Vector<casa::String> columns = tableDesc.columnNames();
 
-    os << "[MS_Table] Summary of internal parameters."      << std::endl;
-    os << "-- File type           = " << itsFiletype.name() << std::endl;
-    os << "-- I/O mode flags      = " << itsFlags.names()   << std::endl;
-    os << "-- Table name          = " << itsName            << std::endl;
-    os << "-- nof. sub-tables     = " << itsTables.size()   << std::endl;
-    os << "-- Sub-table names     = " << itsTables          << std::endl;
-    os << "-- nof. table rows     = " << nofRows            << std::endl;
-    os << "-- nof. table columns  = " << itsColumns.size()  << std::endl;
+    os << "[MS_Table] Summary of internal parameters."         << std::endl;
+    os << "-- File type           = " << itsFiletype.name()    << std::endl;
+    os << "-- I/O mode flags      = " << itsFlags.names()      << std::endl;
+    os << "-- Table name          = " << itsName               << std::endl;
+    os << "-- nof. sub-tables     = " << itsTableNames.size()  << std::endl;
+    os << "-- Sub-table names     = " << itsTableNames         << std::endl;
+    os << "-- nof. table rows     = " << nofRows               << std::endl;
+    os << "-- nof. table columns  = " << itsColumnNames.size() << std::endl;
     
     if (!itsTable.isNull()) {
       if ((columns.nelements()>0) && showColumns) {
@@ -318,9 +318,9 @@ namespace DAL { // Namespace DAL -- begin
    */
   bool MS_Table::hasColumn (std::string const &name)
   {
-    std::set<std::string>::iterator it = itsColumns.find(name);
+    std::set<std::string>::iterator it = itsColumnNames.find(name);
 
-    if (it==itsColumns.end()) {
+    if (it==itsColumnNames.end()) {
       return false;
     } else {
       return true;
@@ -337,9 +337,9 @@ namespace DAL { // Namespace DAL -- begin
    */
   bool MS_Table::hasTable (std::string const &name)
   {
-    std::set<std::string>::iterator it = itsTables.find(name);
+    std::set<std::string>::iterator it = itsTableNames.find(name);
 
-    if (it==itsTables.end()) {
+    if (it==itsTableNames.end()) {
       return false;
     } else {
       return true;
@@ -422,8 +422,8 @@ namespace DAL { // Namespace DAL -- begin
   bool MS_Table::open_embedded ()
   {
     // Initialize interal variables
-    if (!itsColumns.empty()) {
-      itsColumns.clear();
+    if (!itsColumnNames.empty()) {
+      itsColumnNames.clear();
     }
 
     try {
@@ -435,13 +435,13 @@ namespace DAL { // Namespace DAL -- begin
 
       // Store column names
       for (unsigned int n=0; n<columns.nelements(); ++n) {
-	itsColumns.insert(columns[n]);
+	itsColumnNames.insert(columns[n]);
       }
 
       // Store sub-table names
       for (unsigned int n=0; n<recDesc.nfields(); ++n) {
 	if (recDesc.isTable (n)) {
-	  itsTables.insert(recDesc.name(n));
+	  itsTableNames.insert(recDesc.name(n));
 	}
       }
 

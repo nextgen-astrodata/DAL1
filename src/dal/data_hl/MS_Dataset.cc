@@ -118,15 +118,15 @@ namespace DAL { // Namespace DAL -- begin
     casa::TableDesc tableDesc = itsTable.tableDesc();
     unsigned int nofRows      = itsTable.nrow();
 
-    os << "[MS_Dataset] Summary of internal parameters." << std::endl;
-    os << "-- File type           = " << itsFiletype.name() << std::endl;
-    os << "-- I/O mode flags      = " << itsFlags.names()   << std::endl;
-    os << "-- Table name          = " << itsName            << std::endl;
-    os << "-- nof. sub-tables     = " << itsTables.size()   << std::endl;
-    os << "-- Sub-table names     = " << itsTables          << std::endl;
-    os << "-- nof. table columns  = " << itsColumns.size()  << std::endl;
-    os << "-- Column names        = " << itsColumns         << std::endl;
-    os << "-- nof. table rows     = " << nofRows            << std::endl;
+    os << "[MS_Dataset] Summary of internal parameters."       << std::endl;
+    os << "-- File type           = " << itsFiletype.name()    << std::endl;
+    os << "-- I/O mode flags      = " << itsFlags.names()      << std::endl;
+    os << "-- Table name          = " << itsName               << std::endl;
+    os << "-- nof. sub-tables     = " << itsTableNames.size()  << std::endl;
+    os << "-- Sub-table names     = " << itsTableNames         << std::endl;
+    os << "-- nof. table columns  = " << itsColumnNames.size() << std::endl;
+    os << "-- Column names        = " << itsColumnNames        << std::endl;
+    os << "-- nof. table rows     = " << nofRows               << std::endl;
   }
   
   // ============================================================================
