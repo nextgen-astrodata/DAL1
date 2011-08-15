@@ -81,6 +81,8 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
       <li>\c casa::Slicer - Specify which elements to extract from an n-dimensional
       array.
+      <li><a href="http://casa.nrao.edu/Memos/msselection/index.html">MS selection</a>
+      (CASA Memo)
       <li><a href="http://www.astron.nl/aips++/docs/notes/199">AIPS++ Note 
       199</a>: Table Query Language
     </ul>
