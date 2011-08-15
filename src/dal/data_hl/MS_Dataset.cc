@@ -135,6 +135,21 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                               exposureValues
+  
+  /*
+    \return data -- Values contained within the 'EXPOSURE' column of the MS 'MAIN'
+            table; returns \e false in case an error was encountered.
+  */
+  bool MS_Dataset::exposureValues (std::vector<double> &data)
+  {
+    return readData(data, "EXPOSURE");
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   timeValues
+  
   /*
     \return data -- Values contained within the 'TIME' column of the MS 'MAIN'
             table; returns \e false in case an error was encountered.
@@ -144,13 +159,16 @@ namespace DAL { // Namespace DAL -- begin
     return readData(data, "TIME");
   }
 
+  //_____________________________________________________________________________
+  //                                                                    uvwValues
+  
   /*
-    \return data -- Values contained within the 'EXPOSURE' column of the MS 'MAIN'
+    \return data -- Values contained within the 'UVW' column of the MS 'MAIN'
             table; returns \e false in case an error was encountered.
   */
-  bool MS_Dataset::exposureValues (std::vector<double> &data)
+  bool MS_Dataset::uvwValues (std::vector<double> &data)
   {
-    return readData(data, "EXPOSURE");
+    return readData(data, "UVW");
   }
 
   // ============================================================================

@@ -163,10 +163,12 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
-    //! Get the values contained in the 'TIME' column
-    bool timeValues (std::vector<double> &data);
     //! Get the values contained in the 'EXPOSURE' column
     bool exposureValues (std::vector<double> &data);
+    //! Get the values contained in the 'TIME' column
+    bool timeValues (std::vector<double> &data);
+    //! Get the values contained in the 'UVW' column
+    bool uvwValues (std::vector<double> &data);
     
     // === Static methods =======================================================
     
