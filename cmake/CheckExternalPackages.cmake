@@ -27,7 +27,7 @@ set (CMAKE_PROGRAM_PATH ${DAL_FIND_PATHS} )
 ##____________________________________________________________________
 ##                                          System libraries and tools
 
-foreach (_syslib dl m pthread util z)
+foreach (_syslib dl m pthread util)
   
   message (STATUS "Checking for ${_syslib} library ...")
 

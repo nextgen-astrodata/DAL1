@@ -21,11 +21,6 @@ foreach (src ${tests_data_hl})
   else (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src} dal)
   endif (CASA_FOUND OR CASACORE_FOUND)
-  ## installation instructions
-  install (TARGETS ${src}
-    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
-    )
 endforeach (src)
 
 ##_______________________________________________________________________________

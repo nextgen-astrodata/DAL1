@@ -86,10 +86,6 @@ include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 
 set (dal_link_libraries "")
 
-if (Z_LIBRARY)
-  list (APPEND dal_link_libraries ${Z_LIBRARY})
-endif (Z_LIBRARY)
-
 if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
 endif (CASA_LIBRARIES)
