@@ -36,8 +36,7 @@ namespace DAL { // Namespace DAL -- begin
   MS_Table::MS_Table ()
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumnNames.clear();
-    itsTableNames.clear();
+    init ();
   }
 
   //_____________________________________________________________________________
@@ -51,8 +50,7 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumnNames.clear();
-    itsTableNames.clear();
+    init();
     open (name,flags);
   }
 
@@ -69,8 +67,7 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumnNames.clear();
-    itsTableNames.clear();
+    init();
 
     try {
       // open the root table
@@ -94,8 +91,7 @@ namespace DAL { // Namespace DAL -- begin
 		      IO_Mode const &flags)
     : dalObjectBase (dalFileType::CASA_MS)
   {
-    itsColumnNames.clear();
-    itsTableNames.clear();
+    init();
     open (table, subtable, flags);
   }
   
@@ -165,10 +161,19 @@ namespace DAL { // Namespace DAL -- begin
   */
   void MS_Table::copy (MS_Table const &other)
   {
-    itsTable   = casa::Table (other.itsTable);
-    itsColumnNames = other.itsColumnNames;
-  }
+    itsTable          = casa::Table (other.itsTable);
+    itsColumnNames    = other.itsColumnNames;
+    itsTableNames     = other.itsTableNames;
+    itsExpressionNode = other.itsExpressionNode;
 
+    if (!other.itsExpressionNode.isNull()) {
+      itsTableSelection = itsTable (itsExpressionNode);
+    } else {
+      itsTableSelection = casa::Table();
+    }
+    
+  }
+  
   // ============================================================================
   //
   //  Parameters
@@ -263,7 +268,7 @@ namespace DAL { // Namespace DAL -- begin
 	itsName  = itsTable.tableName();
 	itsFlags = flags;
 	// Scan for embedded objects
-	status = open_embedded();
+	status = openEmbedded();
       }
     } catch (casa::AipsError x) {
       std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
@@ -298,7 +303,7 @@ namespace DAL { // Namespace DAL -- begin
 	itsName  = itsTable.tableName();
 	itsFlags = flags;
 	// Scan for embedded objects
-	status = open_embedded();
+	status = openEmbedded();
       }
     } catch (casa::AipsError x) {
       std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
@@ -419,7 +424,20 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
-  bool MS_Table::open_embedded ()
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  void MS_Table::init ()
+  {
+    itsColumnNames.clear();
+    itsTableNames.clear();
+    itsExpressionNode = casa::TableExprNode();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool MS_Table::openEmbedded ()
   {
     // Initialize interal variables
     if (!itsColumnNames.empty()) {
@@ -446,7 +464,7 @@ namespace DAL { // Namespace DAL -- begin
       }
 
     } catch (casa::AipsError x) {
-      std::cerr << "[MS_Table::open_embedded] " << x.getMesg() << std::endl;
+      std::cerr << "[MS_Table::openEmbedded] " << x.getMesg() << std::endl;
       return false;
     }
 

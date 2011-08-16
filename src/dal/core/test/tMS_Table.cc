@@ -478,6 +478,63 @@ int test_readData (std::string const &filename)
 }
 
 //_______________________________________________________________________________
+//                                                           test_expressionNodes
+
+/*!
+  \brief Test usage of table expression nodes to select table entries.
+
+  \param filename -- Name of the MeasurementSet to work with.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_expressionNodes (std::string const &filename)
+{
+  cout << "\n[tMS_Table::test_expressionNodes]" << endl;
+
+  int nofFailedTests = 0;
+  /* Open the table to work with */
+  casa::Table ms (filename);
+
+  cout << "\n[1] Get all values of 'TIME' and 'UVW' column ..." << endl;
+  try {
+    // TIME
+    casa::ROScalarColumn<casa::Double> timeColumn (ms, "TIME");
+    casa::Vector<casa::Double> timeValues = timeColumn.getColumn();
+    // UVW
+    casa::ROArrayColumn<casa::Double> uvwColumn (ms, "UVW");
+    casa::Array<casa::Double> uvwValues = uvwColumn.getColumn();
+    // show results
+    cout << "-- shape(TIME) = " << timeValues.shape() << endl;
+    cout << "-- shape(UVW)  = " << uvwValues.shape()  << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << std::endl;
+    ++nofFailedTests;
+  }
+
+  cout << "\n[2] Get 'TIME' and 'UVW' values for selected antenna ..." << endl;
+  try {
+    // Define selection
+    casa::TableExprNode exprNode (ms.col("ANTENNA1") == 1);
+    // Apply selection to table
+    casa::Table selection = ms (exprNode);
+    // TIME
+    casa::ROScalarColumn<casa::Double> timeColumn (selection, "TIME");
+    casa::Vector<casa::Double> timeValues = timeColumn.getColumn();
+    // UVW
+    casa::ROArrayColumn<casa::Double> uvwColumn (selection, "UVW");
+    casa::Array<casa::Double> uvwValues = uvwColumn.getColumn();
+    // show results
+    cout << "-- shape(TIME) = " << timeValues.shape() << endl;
+    cout << "-- shape(UVW)  = " << uvwValues.shape()  << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << std::endl;
+    ++nofFailedTests;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -504,7 +561,7 @@ int main (int argc, char *argv[])
   
   //________________________________________________________
   // Run the tests (some of which actually require a dataset)
-  
+
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
   // Test public member functions
@@ -514,9 +571,11 @@ int main (int argc, char *argv[])
     
     // Test reading data from MS table columns.
     nofFailedTests += test_readData (filename);
+    // Test working with table expression nodes
+    nofFailedTests += test_expressionNodes (filename);
     
   }
-
+  
   return nofFailedTests;
 }
 

@@ -37,6 +37,7 @@
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableDesc.h>
 #include <tables/Tables/TableRecord.h>
+#include <tables/Tables/ExprNode.h>
 #endif
 
 namespace DAL { // Namespace DAL -- begin
@@ -121,6 +122,10 @@ namespace DAL { // Namespace DAL -- begin
     |-- SPECTRAL_WINDOW            Table     Frequency/IF information
     `-- STATE
     \endverbatim
+
+    <b>Selection of columns and column rows.</b> casacore, through the Table
+    Query Language (TaQL), provides the means to perform SQL-like selections on
+    the contents of a table.
     
     <h3>Example(s)</h3>
 
@@ -149,6 +154,10 @@ namespace DAL { // Namespace DAL -- begin
     std::set<std::string> itsColumnNames;
     //! Name of the sub-tables within this table
     std::set<std::string> itsTableNames;
+    //! Table expression node for selection
+    casa::TableExprNode itsExpressionNode;
+    //! Table selection (reference into the original table)
+    casa::Table itsTableSelection;
 
   public:
     
@@ -185,7 +194,7 @@ namespace DAL { // Namespace DAL -- begin
     MS_Table& operator= (MS_Table const &other); 
     
     // === Parameter access =====================================================
-    
+
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, MS_Table.
@@ -479,9 +488,10 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
 
+    //! Initialize internal parameters
+    void init ();
     //! Open embedded structures
-    bool open_embedded ();
-    
+    bool openEmbedded ();
     //! Unconditional deletion 
     void destroy(void);
     
