@@ -372,9 +372,39 @@ namespace DAL { // Namespace DAL -- begin
 
     return dataTypes;
   }
+
+  //_____________________________________________________________________________
+  //                                                                 addSelection
+  
+  /*!
+    \param selection -- Table expression node to be added to already existing 
+           selection from the table.
+    \return status   -- Status of the operation; returns \e false in case an
+            error was encountered, such as e.g. the file does not exist.
+  */
+  bool MS_Table::addSelection (casa::TableExprNode const &selection)
+  {
+    try {
+      /* Update the table expression node */
+      if (itsExpressionNode.isNull()) {
+	itsExpressionNode = selection;
+      } else {
+	itsExpressionNode && selection;
+      }
+      /* Update reference table based on selection */
+      if (!itsExpressionNode.isNull()) {
+	itsTableSelection = itsTable (itsExpressionNode);
+      }
+      /* Return status */
+      return true;
+    } catch (casa::AipsError x) {
+      std::cout << "" << x.getMesg() << std::endl;
+      return false;
+    }
+  }
   
   //_____________________________________________________________________________
-  //                                                              columnDataTypes
+  //                                                               clearSelection
   
   /*!
     \return status -- Status of the operation; returns \e false in case an

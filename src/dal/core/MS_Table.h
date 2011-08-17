@@ -264,6 +264,9 @@ namespace DAL { // Namespace DAL -- begin
       return itsExpressionNode;
     }
 
+    //! Add expression node to table selection
+    bool addSelection (casa::TableExprNode const &selection);
+
     //! Clear previously applied selection to the table contents
     bool clearSelection ();
 
