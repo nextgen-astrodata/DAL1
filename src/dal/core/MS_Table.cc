@@ -373,6 +373,27 @@ namespace DAL { // Namespace DAL -- begin
     return dataTypes;
   }
   
+  //_____________________________________________________________________________
+  //                                                              columnDataTypes
+  
+  /*!
+    \return status -- Status of the operation; returns \e false in case an
+            error was encountered, such as e.g. the file does not exist.
+  */
+  bool MS_Table::clearSelection ()
+  {
+    bool status = true;
+
+    try {
+      itsExpressionNode = casa::TableExprNode();
+      itsTableSelection = casa::Table();
+    } catch (casa::AipsError x) {
+      status = false;
+    }
+    
+    return status;
+  }
+  
   // ============================================================================
   //
   //  Static methods
@@ -431,7 +452,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     itsColumnNames.clear();
     itsTableNames.clear();
+    itsTable          = casa::Table();
     itsExpressionNode = casa::TableExprNode();
+    itsTableSelection = casa::Table();
   }
   
   //_____________________________________________________________________________

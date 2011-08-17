@@ -259,6 +259,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Get column data-types
     std::map<casa::String,casa::DataType> columnDataTypes ();
 
+    //! Get the table expression node used for selection of table contents
+    inline casa::TableExprNode expressionNode () const {
+      return itsExpressionNode;
+    }
+
+    //! Clear previously applied selection to the table contents
+    bool clearSelection ();
+
     /*!
       \brief Read data from a table column.
       \retval data   -- Array returning the data stored inside the designated

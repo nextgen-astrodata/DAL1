@@ -495,6 +495,11 @@ int test_expressionNodes (std::string const &filename)
   /* Open the table to work with */
   casa::Table ms (filename);
 
+  /*________________________________________________________
+    Test 1 : Get all values from within the 'TIME' and 'UVW'
+             column
+  */
+
   cout << "\n[1] Get all values of 'TIME' and 'UVW' column ..." << endl;
   try {
     // TIME
@@ -511,6 +516,11 @@ int test_expressionNodes (std::string const &filename)
     ++nofFailedTests;
   }
 
+  /*________________________________________________________
+    Test 2 : Get values from 'TIME' and 'UVW' columns for
+             selected antenna.
+  */
+
   cout << "\n[2] Get 'TIME' and 'UVW' values for selected antenna ..." << endl;
   try {
     // Define selection
@@ -526,6 +536,33 @@ int test_expressionNodes (std::string const &filename)
     // show results
     cout << "-- shape(TIME) = " << timeValues.shape() << endl;
     cout << "-- shape(UVW)  = " << uvwValues.shape()  << endl;
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << std::endl;
+    ++nofFailedTests;
+  }
+
+  /*________________________________________________________
+    Test 3 : Combine multiple table expression nodes.
+  */
+
+  cout << "\n[3] Test combining expression nodes ..." << endl;
+  try {
+    casa::TableExprNode ant1 (ms.col("ANTENNA1") == 1);
+    casa::TableExprNode ant2 (ms.col("ANTENNA2") == 2);
+    casa::TableExprNode time1 (ms.col("TIME") > 0);
+    casa::TableExprNode time2 (ms.col("TIME") < 100);
+
+    // Combine antenna selections
+    casa::TableExprNode selAntenna (ant1 && ant2);
+
+    // Combine time selections
+    casa::TableExprNode selTime (time1 && time2);
+
+    // Concatenate selections
+    casa::TableExprNode sel = ant1;
+    sel && ant2;
+    sel && time1;
+
   } catch (casa::AipsError x) {
     std::cerr << x.getMesg() << std::endl;
     ++nofFailedTests;
