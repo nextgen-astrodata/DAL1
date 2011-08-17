@@ -528,7 +528,7 @@ bool readFromSockets (std::vector<int> ports,
 	// Check if filename exists already and change it accordingly
 	if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
 	  {
-	    int n = 0;
+	    int n = 1;
 	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
 	      {
 		++n;
@@ -734,7 +734,7 @@ bool readStationsFromSockets (std::vector<int> ports,
       // Check if filename exists already and change it accordingly
       if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
 	{
-	  int n = 0;
+	  int n = 1;
 	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
 	    {
 	      ++n;
