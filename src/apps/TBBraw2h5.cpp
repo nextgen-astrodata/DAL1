@@ -429,7 +429,7 @@ bool readFromSockets (std::vector<int> ports,
 		      float readTimeout,
 		      bool verbose=false,
 		      bool waitForAllPorts=false,
-		      std::string outFileBase="",
+		      std::string outFileBase="L",
 		      std::string observer="UNDEFINED",
 		      std::string project="UNDEFINED",
 		      std::string observationID="UNDEFINED",
@@ -523,20 +523,20 @@ bool readFromSockets (std::vector<int> ports,
 	
 	// Generate filename
 	std::ostringstream outfile;
-	outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
+	outfile << outFileBase << observationID << "_" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
 	
 	// Check if filename exists already and change it accordingly
-	if (boost::filesystem::exists(outfile.str()+".h5"))
+	if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
 	  {
-	    int n = 0;
-	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+	    int n = 1;
+	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
 	      {
 		++n;
 	      }
 	    outfile << "-" << n;
 	  }
 	// Create file
-	tbb = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+	tbb = new DAL::TBBraw(outfile.str()+".tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
 	if ( !tbb->isConnected() )
 	  {
 	    cout << "[TBBraw2h5] Failed to open output file." << endl;
@@ -729,20 +729,20 @@ bool readStationsFromSockets (std::vector<int> ports,
       
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << "-" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
+      outfile << outFileBase << observationID << "_" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
       
       // Check if filename exists already and change it accordingly
-      if (boost::filesystem::exists(outfile.str()+".h5"))
+      if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
 	{
-	  int n = 0;
-	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".h5"))
+	  int n = 1;
+	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
 	    {
 	      ++n;
 	    }
 	  outfile << "-" << n;
 	}
       
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
 	cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
 	     << outfile.str() << endl;
@@ -826,10 +826,10 @@ int main(int argc, char *argv[])
   std::string infile;
   std::string outfileOrig;
   vector<int> ports;
-  std::string outfile         = "TBB";
+  std::string outfile         = "L";
   std::string observer        = "UNDEFINED";
   std::string project         = "UNDEFINED";
-  std::string observationID   = "UNDEFINED";
+  std::string observationID   = "";
   std::string filterSelection = "UNDEFINED";
   std::string antennaSet      = "UNDEFINED";
   std::string ip              = "All Hosts";
@@ -859,7 +859,7 @@ int main(int argc, char *argv[])
     ("observationID", bpo::value<std::string>(), "Observation ID")
     ("filterSelection", bpo::value<std::string>(), "Filter selection")
     ("antennaSet", bpo::value<std::string>(), "Antenna set")
-    ("outfile,O", bpo::value<std::string>(), "Name of the output dataset")
+    ("outfile,O", bpo::value<std::string>(), "Prefix name of the output dataset")
     ("infile,I", bpo::value<std::string>(), "Name of the input file, Mutually exclusive to -P")
     ("port,P", bpo::value< vector<int> >(), "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
     ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
@@ -1105,7 +1105,7 @@ int main(int argc, char *argv[])
       if (keepRunning) 
 	{
 	  std::ostringstream temp;
-	  temp << outfileOrig << "-" << runNumber << ".h5";
+	  temp << outfileOrig << "-" << runNumber << ".tbb.h5";
 	  outfile = temp.str();
 	  runNumber++;
 	};
