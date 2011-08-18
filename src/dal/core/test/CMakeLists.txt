@@ -35,6 +35,7 @@ endforeach (src)
 
 foreach (_test
     tIO_Mode
+    tOperator
     tdalCommon
     tdalCommon_operators
     tdalConversions

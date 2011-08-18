@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars Baehren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,6 +30,7 @@
 
 // DAL header files
 #include <core/dalObjectBase.h>
+#include <core/Operator.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Slicer.h>
@@ -60,6 +61,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>\c casa::Table - Main interface class to a read/write table.
+      <li>\c casa::TableExprNode - Handle class for a table column expression tree.
       <li>\c casa::ROArrayColumn<T> - Readonly access to an array table column
       with arbitrary data type.
       \code
@@ -274,10 +276,53 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set expression node for selection of table contents
     bool setSelection (casa::TableExprNode const &selection=casa::TableExprNode());
-
+    
+    /*!
+      \brief Set expression node for selection of table contents
+      \param column -- Name of the column, to which the selection will be applied.
+      \param op     -- Operator definition the condition for the application of the
+             \e value.
+      \param value  -- Selection value.
+    */
+    template <class T>
+      bool setSelection (std::string const &column,
+			 DAL::Operator::Types const &op,
+			 T const &value)
+      {
+	casa::TableExprNode selection;
+	
+	switch (op) {
+	case Operator::Equal:
+	  selection = casa::TableExprNode (itsTable.col(column) == value);
+	  break;
+	case Operator::Not:
+	  selection = casa::TableExprNode (itsTable.col(column) != value);
+	  break;
+	case Operator::Greater:
+	  selection = casa::TableExprNode (itsTable.col(column) > value);
+	  break;
+	case Operator::GreaterEqual:
+	  selection = casa::TableExprNode (itsTable.col(column) >= value);
+	  break;
+	case Operator::Lesser:
+	  selection = casa::TableExprNode (itsTable.col(column) < value);
+	  break;
+	case Operator::LesserEqual:
+	  selection = casa::TableExprNode (itsTable.col(column) <= value);
+	  break;
+	default:
+	  std::cerr << "[MS_Table::setSelection] Unsupported operator type!"
+		    << std::endl;
+	  return false;
+	  break;
+	};
+	
+	return setSelection (selection);
+      }
+    
     //! Add expression node for selection of table contents
     bool addSelection (casa::TableExprNode const &selection);
-
+    
     /*!
       \brief Read data from a table column.
       \retval data   -- Array returning the data stored inside the designated

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars Baehren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -576,10 +576,8 @@ int test_expressionNodes (std::string const &filename)
   try {
     /* Open the table to work with */
     DAL::MS_Table tab (filename);
-    // Define selection
-    casa::TableExprNode selAntenna (ms.col("ANTENNA1") == 1);
     // Apply selection to table
-    tab.setSelection(selAntenna);
+    tab.setSelection("ANTENNA1",DAL::Operator::Equal,int(1));
     /* Read data from table selection */
     std::vector<double> data;
     tab.readData (data, "TIME");
