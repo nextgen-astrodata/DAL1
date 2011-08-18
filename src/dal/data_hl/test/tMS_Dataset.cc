@@ -49,7 +49,7 @@ int test_constructors (std::string const &filename)
 {
   std::cout << "\n[tMS_Dataset::test_constructors]\n" << std::endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
   
   /*________________________________________________________
     Test 1 : Default constructor.
@@ -502,6 +502,9 @@ int main (int argc, char *argv[])
     nofFailedTests += test_constructors (filename);
     // Test reading data from MS table columns.
     nofFailedTests += test_readData (filename);
+  } else {
+    std::cerr << "[tMS_Dataset] No dataset provided - skipping tests!"
+	      << std::endl;
   }
   
   return nofFailedTests;

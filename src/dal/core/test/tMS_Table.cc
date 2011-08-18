@@ -91,7 +91,7 @@ int test_constructors (std::string const &filename)
   
   cout << "\n[3] Testing MS_Table(string,string) ..." << endl;
   try {
-    std::string subtable = "ANTENNA";
+    std::string subtable = "SPECTRAL_WINDOW";
     //
     MS_Table ms (filename, subtable);
     //
@@ -115,6 +115,23 @@ int test_constructors (std::string const &filename)
     MS_Table ms (table, subtable);
     //
     ms.summary(); 
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+
+  /*________________________________________________________
+    Test 5 : Test copy constructor.
+  */
+  
+  cout << "\n[5] Testing MS_Table(MS_Table) ..." << endl;
+  try {
+    // create original object
+    MS_Table ms (filename);
+    // create copy
+    MS_Table msCopy (ms);
+    //
+    msCopy.summary(); 
   } catch (casa::AipsError x) {
     std::cerr << x.getMesg() << endl;
     ++nofFailedTests;

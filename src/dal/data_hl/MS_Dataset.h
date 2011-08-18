@@ -215,7 +215,6 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Unconditional copying
     void copy (MS_Dataset const &other);
-    
     //! Unconditional deletion 
     void destroy(void);
     

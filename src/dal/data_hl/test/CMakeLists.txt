@@ -97,6 +97,8 @@ endif (dataset_its)
 
 if (TESTDATA_L20851_SB120)
   add_test (tMS_Dataset tMS_Dataset ${TESTDATA_L20851_SB120})
+else (TESTDATA_L20851_SB120)
+  add_test (tMS_Dataset tMS_Dataset )
 endif (TESTDATA_L20851_SB120)
 
 ##__________________________________________________________

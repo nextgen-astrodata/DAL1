@@ -38,6 +38,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   MS_Dataset
   
+  /*!
+    \param name  -- Name of the MeasurementSet.
+    \param flags -- I/O mode flags.
+  */
   MS_Dataset::MS_Dataset (std::string const &name,
 			  IO_Mode const &flags)
     : MS_Table ()
@@ -131,7 +135,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Column names        = " << itsColumnNames        << std::endl;
     os << "-- nof. table rows     = " << nofRows               << std::endl;
 
-    {
+    if (!itsSubtables.empty()) {
       std::vector<double> data;
       std::vector<double>::iterator itMin;
       std::vector<double>::iterator itMax;
@@ -160,17 +164,37 @@ namespace DAL { // Namespace DAL -- begin
   bool MS_Dataset::open (std::string const &name,
 			 IO_Mode const &flags)
   {
+    /*______________________________________________________
+      Open the root table of the MeasurementSet.
+    */
+    
     bool status = MS_Table::open(name,flags);
+    
+    /*______________________________________________________
+      Open sub-tables.
+    */
     
     if (status) {
       /* Open the sub-tables */
-      if (!itsTableNames.empty()) {
+      if (itsTableNames.empty()) {
+	std::cerr << "[MS_Dataset::open] Empty list of sub-table names!" << std::endl;
+	status = false;
+      } else {
 	std::set<std::string>::iterator it;
+	/* Try opening the sub-tables */
 	for (it=itsTableNames.begin(); it!=itsTableNames.end(); ++it) {
-	  itsSubtables[*it] = MS_Table(itsName,*it,flags);
+	  try {
+	    itsSubtables[*it] = MS_Table (MS_Table::name(), *it, flags);
+	  } catch (casa::AipsError x) {
+	    std::cerr << "[MS_Dataset::open] Failed open open sub-table "
+		      << *it
+		      << std::endl;
+	    std::cerr << x.getMesg() << std::endl;
+	  }
 	}
       }
     } else {
+      std::cerr << "[MS_Dataset::open] Failed to open table " << name << std::endl;
       status = false;
     }
 
@@ -277,7 +301,12 @@ namespace DAL { // Namespace DAL -- begin
     std::string name = "SPECTRAL_WINDOW";
     std::map<std::string,MS_Table>::iterator it = itsSubtables.find(name);
 
-    if (it==itsSubtables.end()) {
+    if (itsSubtables.empty()) {
+      std::cerr << "[MS_Dataset::channelFrequencyValues]"
+		<< " Empty list of sub-tables - unable to access data!"
+		<< std::endl;
+      status = false;
+    } else if (it==itsSubtables.end()) {
       std::cerr << "[MS_Dataset::channelFrequencyValues]"
 		<< " Failed to acces sub-table '" << name << "'!"
 		<< std::endl;

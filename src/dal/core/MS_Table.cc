@@ -72,7 +72,11 @@ namespace DAL { // Namespace DAL -- begin
     try {
       // open the root table
       casa::Table tab (table);
-      open (tab, subtable, flags);
+      if (tab.isNull()) {
+	std::cerr << "[MS_Table::MS_Table] Failed to open table " << table << endl;
+      } else {
+	open (tab, subtable, flags);
+      }
     } catch (casa::AipsError x) {
       std::cerr << "[MS_Table::MS_Table] " << x.getMesg() << endl;
     }
@@ -161,11 +165,15 @@ namespace DAL { // Namespace DAL -- begin
   */
   void MS_Table::copy (MS_Table const &other)
   {
-    itsTable          = casa::Table (other.itsTable);
-    itsColumnNames    = other.itsColumnNames;
-    itsTableNames     = other.itsTableNames;
-    itsExpressionNode = other.itsExpressionNode;
-    itsTableSelection = itsTable (itsExpressionNode);
+    if (other.itsTable.isNull()) {
+      init();
+    } else {
+      itsTable          = casa::Table (other.itsTable);
+      itsColumnNames    = other.itsColumnNames;
+      itsTableNames     = other.itsTableNames;
+      itsExpressionNode = other.itsExpressionNode;
+      itsTableSelection = itsTable (itsExpressionNode);
+    }
   }
   
   // ============================================================================
@@ -287,24 +295,23 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status = true;
 
-    try {
-      casa::Table tab (table.keywordSet().asTable(subtable));
-      // Check if the table is ok; if yes, then set internal variables
-      if (tab.isNull()) {
-	status = false;
-      } else {
+    if (table.isNull()) {
+      std::cerr << "[MS_Table::open] Master table is Null object!" << std::endl;
+      return false;
+    } else {
+      try {
 	// Set internal variables
-	itsTable = casa::Table (tab);
+	itsTable = casa::Table (table.keywordSet().asTable(subtable));
 	itsName  = itsTable.tableName();
 	itsFlags = flags;
 	// Scan for embedded objects
 	status = openEmbedded();
+      } catch (casa::AipsError x) {
+	std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
+	status = false;
       }
-    } catch (casa::AipsError x) {
-      std::cerr << "[MS_Table::open] " << x.getMesg() << std::endl;
-      status = false;
     }
-
+    
     return status;
   }
   
