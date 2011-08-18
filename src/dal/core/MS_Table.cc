@@ -165,13 +165,7 @@ namespace DAL { // Namespace DAL -- begin
     itsColumnNames    = other.itsColumnNames;
     itsTableNames     = other.itsTableNames;
     itsExpressionNode = other.itsExpressionNode;
-
-    if (!other.itsExpressionNode.isNull()) {
-      itsTableSelection = itsTable (itsExpressionNode);
-    } else {
-      itsTableSelection = casa::Table();
-    }
-    
+    itsTableSelection = itsTable (itsExpressionNode);
   }
   
   // ============================================================================
@@ -191,19 +185,20 @@ namespace DAL { // Namespace DAL -- begin
 			  bool const &showColumns)
   {
     casa::TableDesc tableDesc          = tableDescription();
-    unsigned int nofRows               = itsTable.nrow();
+    unsigned int nofRows               = itsTableSelection.nrow();
     casa::Vector<casa::String> columns = tableDesc.columnNames();
 
     os << "[MS_Table] Summary of internal parameters."         << std::endl;
     os << "-- File type           = " << itsFiletype.name()    << std::endl;
     os << "-- I/O mode flags      = " << itsFlags.names()      << std::endl;
+    os << "-- Selection is active = " << hasSelection()        << std::endl;
     os << "-- Table name          = " << itsName               << std::endl;
     os << "-- nof. sub-tables     = " << itsTableNames.size()  << std::endl;
     os << "-- Sub-table names     = " << itsTableNames         << std::endl;
     os << "-- nof. table rows     = " << nofRows               << std::endl;
     os << "-- nof. table columns  = " << itsColumnNames.size() << std::endl;
     
-    if (!itsTable.isNull()) {
+    if (!itsTableSelection.isNull()) {
       if ((columns.nelements()>0) && showColumns) {
 	os << "-- Column descriptions :" << std::endl;
 	std::cout << std::setw(5)  << "#"
@@ -358,8 +353,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::map<casa::String,casa::DataType> dataTypes;
     
-    if (!itsTable.isNull()) {
-      casa::TableDesc tableDesc = itsTable.tableDesc ();
+    if (!itsTableSelection.isNull()) {
+      casa::TableDesc tableDesc = itsTableSelection.tableDesc ();
       casa::Vector<casa::String> columnNames = tableDesc.columnNames();
       std::string name;
       
@@ -373,6 +368,48 @@ namespace DAL { // Namespace DAL -- begin
     return dataTypes;
   }
 
+  //_____________________________________________________________________________
+  //                                                                 hasSelection
+
+  /*!
+    \return hasSelection -- Returns \e true in case there is an active selection
+            applied to the table.
+  */
+  bool MS_Table::hasSelection ()
+  {
+    if (itsExpressionNode.isNull()) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 setSelection
+  
+  /*!
+    \param selection -- Table expression node to be apllied to the table; if
+            provided with an empty/null expression node, all selections are
+	    being cleared and the complete table is selected.
+    \return status   -- Status of the operation; returns \e false in case an
+            error was encountered, such as e.g. the file does not exist.
+  */
+  bool MS_Table::setSelection (casa::TableExprNode const &selection)
+  {
+    bool status = true;
+
+    try {
+      itsExpressionNode = selection;
+      itsTableSelection = itsTable(itsExpressionNode);
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::setSelection] Failed to set expression node!"
+		<< std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                 addSelection
   
@@ -401,27 +438,6 @@ namespace DAL { // Namespace DAL -- begin
       std::cout << "" << x.getMesg() << std::endl;
       return false;
     }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                               clearSelection
-  
-  /*!
-    \return status -- Status of the operation; returns \e false in case an
-            error was encountered, such as e.g. the file does not exist.
-  */
-  bool MS_Table::clearSelection ()
-  {
-    bool status = true;
-
-    try {
-      itsExpressionNode = casa::TableExprNode();
-      itsTableSelection = casa::Table();
-    } catch (casa::AipsError x) {
-      status = false;
-    }
-    
-    return status;
   }
   
   // ============================================================================
@@ -490,20 +506,25 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
+  /*!
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered while opening embedded objects (columns and
+	    sub-tables).
+  */
   bool MS_Table::openEmbedded ()
   {
     // Initialize interal variables
-    if (!itsColumnNames.empty()) {
-      itsColumnNames.clear();
-    }
-
+    itsColumnNames.clear();
+    itsTableNames.clear();
+    setSelection();
+    
     try {
       // Get table description
-      casa::TableDesc desc               = itsTable.tableDesc ();
-      casa::TableRecord rec              = itsTable.keywordSet();
+      casa::TableDesc desc               = itsTableSelection.tableDesc ();
+      casa::TableRecord rec              = itsTableSelection.keywordSet();
       casa::Vector<casa::String> columns = desc.columnNames();
-      casa::RecordDesc recDesc = rec.description();
-
+      casa::RecordDesc recDesc           = rec.description();
+      
       // Store column names
       for (unsigned int n=0; n<columns.nelements(); ++n) {
 	itsColumnNames.insert(columns[n]);

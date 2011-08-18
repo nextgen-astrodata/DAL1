@@ -139,6 +139,11 @@ namespace DAL { // Namespace DAL -- begin
       \code
       MS_Table ms (table, subtable);
       \endcode
+      <li>Select table entries for baselines including a specific antenna:
+      \code
+      casa::TableExprNode sel (ms.col("ANTENNA1") == 1);
+      ms.setSelection (sel);
+      \endcode
     </ol>
     
   */  
@@ -150,14 +155,14 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Table object
     casa::Table itsTable;
-    //! Name of the columns within this table
-    std::set<std::string> itsColumnNames;
-    //! Name of the sub-tables within this table
-    std::set<std::string> itsTableNames;
     //! Table expression node for selection
     casa::TableExprNode itsExpressionNode;
     //! Table selection (reference into the original table)
     casa::Table itsTableSelection;
+    //! Name of the columns within this table
+    std::set<std::string> itsColumnNames;
+    //! Name of the sub-tables within this table
+    std::set<std::string> itsTableNames;
 
   public:
     
@@ -237,7 +242,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get a table description object for the table
     inline casa::TableDesc tableDescription () {
-      return itsTable.tableDesc ();
+      return itsTableSelection.tableDesc ();
     }
 
     //! Test if a column with this \e name exists. 
@@ -264,11 +269,14 @@ namespace DAL { // Namespace DAL -- begin
       return itsExpressionNode;
     }
 
-    //! Add expression node to table selection
-    bool addSelection (casa::TableExprNode const &selection);
+    //! Does the table have an active selection applied to it?
+    bool hasSelection ();
 
-    //! Clear previously applied selection to the table contents
-    bool clearSelection ();
+    //! Set expression node for selection of table contents
+    bool setSelection (casa::TableExprNode const &selection=casa::TableExprNode());
+
+    //! Add expression node for selection of table contents
+    bool addSelection (casa::TableExprNode const &selection);
 
     /*!
       \brief Read data from a table column.
@@ -288,7 +296,7 @@ namespace DAL { // Namespace DAL -- begin
 	if (hasColumn(column)) {
 
 	  // Get column description
-	  casa::TableDesc tableDesc   = itsTable.tableDesc();
+	  casa::TableDesc tableDesc   = itsTableSelection.tableDesc();
 	  casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
 	  casa::IPosition cellShape   = columnDesc.shape();
 
@@ -300,17 +308,17 @@ namespace DAL { // Namespace DAL -- begin
 	    for (unsigned int n=0; n<(rank-1); ++n) {
 	      dataShape(n) = cellShape(n);
 	    }
-	    dataShape(rank-1) = itsTable.nrow();
+	    dataShape(rank-1) = itsTableSelection.nrow();
 	    
 	    data.resize(dataShape);
 	  }
 	  
 	  // Set up reader object for the column and retrieve the data
 	  if (columnDesc.isScalar()) {
-	    casa::ROScalarColumn<T> columReader (itsTable, column);
+	    casa::ROScalarColumn<T> columReader (itsTableSelection, column);
 	    data = columReader.getColumn();
 	  } else if (columnDesc.isArray()) {
-	    casa::ROArrayColumn<T> columReader (itsTable, column);
+	    casa::ROArrayColumn<T> columReader (itsTableSelection, column);
 	    data = columReader.getColumn();
 	  } else {
 	    std::cerr << "[MS_Table::readData] Unsupported type of column data!"
@@ -345,7 +353,7 @@ namespace DAL { // Namespace DAL -- begin
 	bool status = true;
 	
 	try {
-	  casa::TableDesc tableDesc   = itsTable.tableDesc();
+	  casa::TableDesc tableDesc   = itsTableSelection.tableDesc();
 	  casa::ColumnDesc columnDesc = tableDesc.columnDesc(column);
 	  casa::IPosition cellShape   = columnDesc.shape();
 	  
@@ -363,12 +371,12 @@ namespace DAL { // Namespace DAL -- begin
 	  
 	  if (columnDesc.isScalar()) {
 	    // Set up reader object for the column ...
-	    casa::ROScalarColumn<T> columReader (itsTable, column);
+	    casa::ROScalarColumn<T> columReader (itsTableSelection, column);
 	    // .... and retrieve the data
 	    data = columReader.getColumnRange (selection);
 	  } else if (columnDesc.isArray()) {
 	    // Set up reader object for the column ...
-	    casa::ROArrayColumn<T> columReader (itsTable, column);
+	    casa::ROArrayColumn<T> columReader (itsTableSelection, column);
 	    // .... and retrieve the data
 	    columReader.getColumnRange (selection, data, true);
 	  } else {
@@ -466,7 +474,7 @@ namespace DAL { // Namespace DAL -- begin
 		     unsigned int const &nofRows=1)
       {
 	// Check if table is ok
-	if (itsTable.isNull()) {
+	if (itsTableSelection.isNull()) {
 	  return false;
 	}
 
