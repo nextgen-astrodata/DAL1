@@ -51,6 +51,7 @@ void export_BF_BeamGroup ()
   void (BF_BeamGroup::*summary1)(void)            = BF_BeamGroup::summary;
   void (BF_BeamGroup::*summary2)(std::ostream &)  = BF_BeamGroup::summary;
 
+
   boost::python::class_<BF_BeamGroup>("BF_BeamGroup")
     // Construction
     .def( boost::python::init<>())
