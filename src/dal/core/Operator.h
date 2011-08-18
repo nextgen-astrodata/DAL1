@@ -157,6 +157,16 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
+    //! Get the type of the operator
+    inline Operator::Types type () const {
+      return itsType;
+    }
+
+    //! Get the name of the operator
+    inline std::string name () {
+      return name(itsType);
+    }
+
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, Operator.

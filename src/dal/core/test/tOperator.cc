@@ -48,16 +48,27 @@ using DAL::Operator;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tOperator::test_constructors]\n" << std::endl;
+  std::cout << "\n[tOperator::test_constructors]" << std::endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing Operator(Operator::Types) ..." << std::endl;
+  std::cout << "\n[1] Testing Operator(Operator::Types) ..." << std::endl;
   try {
     Operator opAnd   (Operator::And);
     Operator opOr    (Operator::Or);
+    Operator opXor   (Operator::Xor);
     Operator opNot   (Operator::Not);
     Operator opEqual (Operator::Equal);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "\n[2] Testing Operator(Operator) ..." << std::endl;
+  try {
+    Operator opAnd (Operator::And);
+    //
+    Operator copy (opAnd);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

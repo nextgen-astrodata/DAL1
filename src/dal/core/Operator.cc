@@ -117,6 +117,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 operatorsMap
   
+  /*!
+    \return types -- Map with the available operator types and their
+            corresponding names.
+  */
   std::map<Operator::Types,std::string> Operator::operatorsMap ()
   {
     std::map<Operator::Types,std::string> types;
