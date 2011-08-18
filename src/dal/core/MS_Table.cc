@@ -385,24 +385,21 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                 setSelection
+  //                                                               clearSelection
   
   /*!
-    \param selection -- Table expression node to be apllied to the table; if
-            provided with an empty/null expression node, all selections are
-	    being cleared and the complete table is selected.
     \return status   -- Status of the operation; returns \e false in case an
             error was encountered, such as e.g. the file does not exist.
   */
-  bool MS_Table::setSelection (casa::TableExprNode const &selection)
+  bool MS_Table::clearSelection ()
   {
     bool status = true;
-
+    
     try {
-      itsExpressionNode = selection;
+      itsExpressionNode = casa::TableExprNode();
       itsTableSelection = itsTable(itsExpressionNode);
     } catch (casa::AipsError x) {
-      std::cerr << "[MS_Table::setSelection] Failed to set expression node!"
+      std::cerr << "[MS_Table::clearSelection] Error clearing previous selection!"
 		<< std::endl;
       status = false;
     }
@@ -410,36 +407,6 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
-  //_____________________________________________________________________________
-  //                                                                 addSelection
-  
-  /*!
-    \param selection -- Table expression node to be added to already existing 
-           selection from the table.
-    \return status   -- Status of the operation; returns \e false in case an
-            error was encountered, such as e.g. the file does not exist.
-  */
-  bool MS_Table::addSelection (casa::TableExprNode const &selection)
-  {
-    try {
-      /* Update the table expression node */
-      if (itsExpressionNode.isNull()) {
-	itsExpressionNode = selection;
-      } else {
-	itsExpressionNode && selection;
-      }
-      /* Update reference table based on selection */
-      if (!itsExpressionNode.isNull()) {
-	itsTableSelection = itsTable (itsExpressionNode);
-      }
-      /* Return status */
-      return true;
-    } catch (casa::AipsError x) {
-      std::cout << "" << x.getMesg() << std::endl;
-      return false;
-    }
-  }
-  
   // ============================================================================
   //
   //  Static methods
@@ -473,7 +440,6 @@ namespace DAL { // Namespace DAL -- begin
       /*____________________________________________________
 	Resolve file name
       */
-
       if (msfile.isSymLink()) {
 	casa::SymLink link (msfile);
 	casa::Path realFileName = link.followSymLink();
@@ -516,9 +482,12 @@ namespace DAL { // Namespace DAL -- begin
     // Initialize interal variables
     itsColumnNames.clear();
     itsTableNames.clear();
-    setSelection();
     
     try {
+      // Set table selection
+      itsExpressionNode = casa::TableExprNode();
+      itsTableSelection = itsTable(itsExpressionNode);
+
       // Get table description
       casa::TableDesc desc               = itsTableSelection.tableDesc ();
       casa::TableRecord rec              = itsTableSelection.keywordSet();
@@ -544,9 +513,40 @@ namespace DAL { // Namespace DAL -- begin
 
     return true;
   }
+
+  //_____________________________________________________________________________
+  //                                                                 setSelection
+  
+  /*!
+    \brief Set expression node for selection of table contents
+    \param selection -- Table expression node for table selection.
+    \param overwrite -- Overwrite existing selection? If set \e true, any
+           previously existing table selection will be cleared; by dedault the
+	   new selection is being appended to the already existing one.
+  */
+  bool MS_Table::setSelection (casa::TableExprNode const &exprNode,
+			       bool const &overwrite)
+  {    
+    // Update table expression node defining selection
+    if (overwrite || itsExpressionNode.isNull()) {
+      itsExpressionNode = exprNode;
+    } else {
+      itsExpressionNode && exprNode;
+    }
+    
+    // Apply selection to table
+    try {
+      itsTableSelection = itsTable(itsExpressionNode);
+    } catch (casa::AipsError x) {
+      std::cerr << "[MS_Table::setSelection] " << x.getMesg() << std::endl;
+      return false;
+    }
+    
+    return true;
+  }
   
 #else
-
+  
   MS_Table::MS_Table ()
     : dalObjectBase ()
   {

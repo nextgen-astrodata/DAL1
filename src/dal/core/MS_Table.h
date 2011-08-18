@@ -143,8 +143,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
       <li>Select table entries for baselines including a specific antenna:
       \code
-      casa::TableExprNode sel (ms.col("ANTENNA1") == 1);
-      ms.setSelection (sel);
+      ms.setSelection ("ANTENNA1", DAL::Operator::Equal, 1);
       \endcode
     </ol>
     
@@ -274,41 +273,49 @@ namespace DAL { // Namespace DAL -- begin
     //! Does the table have an active selection applied to it?
     bool hasSelection ();
 
-    //! Set expression node for selection of table contents
-    bool setSelection (casa::TableExprNode const &selection=casa::TableExprNode());
-    
     /*!
       \brief Set expression node for selection of table contents
       \param column -- Name of the column, to which the selection will be applied.
       \param op     -- Operator definition the condition for the application of the
              \e value.
       \param value  -- Selection value.
+      \param overwrite -- Overwrite existing selection? If set \e true, any
+             previously existing table selection will be cleared; by dedault the
+	     new selection is being appended to the already existing one.
     */
     template <class T>
       bool setSelection (std::string const &column,
 			 DAL::Operator::Types const &op,
-			 T const &value)
+			 T const &value,
+			 bool const &overwrite=false)
       {
-	casa::TableExprNode selection;
+	if (!hasColumn(column)) {
+	  std::cerr << "[MS_Table::setSelection] No such column " << column
+		    << " - unable to perform selection!" 
+		    << std::endl;
+	  return false;
+	}
+
+	casa::TableExprNode sel;
 	
 	switch (op) {
 	case Operator::Equal:
-	  selection = casa::TableExprNode (itsTable.col(column) == value);
+	  sel = casa::TableExprNode (itsTable.col(column) == value);
 	  break;
 	case Operator::Not:
-	  selection = casa::TableExprNode (itsTable.col(column) != value);
+	  sel = casa::TableExprNode (itsTable.col(column) != value);
 	  break;
 	case Operator::Greater:
-	  selection = casa::TableExprNode (itsTable.col(column) > value);
+	  sel = casa::TableExprNode (itsTable.col(column) > value);
 	  break;
 	case Operator::GreaterEqual:
-	  selection = casa::TableExprNode (itsTable.col(column) >= value);
+	  sel = casa::TableExprNode (itsTable.col(column) >= value);
 	  break;
 	case Operator::Lesser:
-	  selection = casa::TableExprNode (itsTable.col(column) < value);
+	  sel = casa::TableExprNode (itsTable.col(column) < value);
 	  break;
 	case Operator::LesserEqual:
-	  selection = casa::TableExprNode (itsTable.col(column) <= value);
+	  sel = casa::TableExprNode (itsTable.col(column) <= value);
 	  break;
 	default:
 	  std::cerr << "[MS_Table::setSelection] Unsupported operator type!"
@@ -316,12 +323,12 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	  break;
 	};
-	
-	return setSelection (selection);
+
+	return setSelection (sel, overwrite);
       }
     
-    //! Add expression node for selection of table contents
-    bool addSelection (casa::TableExprNode const &selection);
+    //! Set expression node for selection of table contents
+    bool clearSelection ();
     
     /*!
       \brief Read data from a table column.
@@ -556,11 +563,14 @@ namespace DAL { // Namespace DAL -- begin
     void init ();
     //! Open embedded structures
     bool openEmbedded ();
+    //! Set table selection
+    bool setSelection (casa::TableExprNode const &exprNode,
+		       bool const &overwrite=false);
     //! Unconditional deletion 
     void destroy(void);
     
 #else 
-
+    
   public:
     MS_Table ();
     
@@ -571,4 +581,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* MS_TABLE_H */
-  
+

@@ -492,8 +492,6 @@ int test_expressionNodes (std::string const &filename)
   cout << "\n[tMS_Table::test_expressionNodes]" << endl;
 
   int nofFailedTests = 0;
-  /* Open the table to work with */
-  casa::Table ms (filename);
 
   /*________________________________________________________
     Test 1 : Get all values from within the 'TIME' and 'UVW'
@@ -502,6 +500,8 @@ int test_expressionNodes (std::string const &filename)
 
   cout << "\n[1] Get all values of 'TIME' and 'UVW' column ..." << endl;
   try {
+    /* Open the table to work with */
+    casa::Table ms (filename);
     // TIME
     casa::ROScalarColumn<casa::Double> timeColumn (ms, "TIME");
     casa::Vector<casa::Double> timeValues = timeColumn.getColumn();
@@ -523,6 +523,8 @@ int test_expressionNodes (std::string const &filename)
 
   cout << "\n[2] Get 'TIME' and 'UVW' values for selected antenna ..." << endl;
   try {
+    /* Open the table to work with */
+    casa::Table ms (filename);
     // Define selection
     casa::TableExprNode exprNode (ms.col("ANTENNA1") == 1);
     // Apply selection to table
@@ -547,10 +549,20 @@ int test_expressionNodes (std::string const &filename)
 
   cout << "\n[3] Test combining expression nodes ..." << endl;
   try {
+    /* Open the table to work with */
+    casa::Table ms (filename);
+
+    /* Selections on table */
     casa::TableExprNode ant1 (ms.col("ANTENNA1") == 1);
     casa::TableExprNode ant2 (ms.col("ANTENNA2") == 2);
     casa::TableExprNode time1 (ms.col("TIME") > 0);
     casa::TableExprNode time2 (ms.col("TIME") < 100);
+
+    cout << "-- Individual expression nodes:" << std::endl;
+    cout << "--> isNull(ant1)  = " << ant1.isNull()  << endl;
+    cout << "--> isNull(ant2)  = " << ant2.isNull()  << endl;
+    cout << "--> isNull(time1) = " << time1.isNull() << endl;
+    cout << "--> isNull(time2) = " << time2.isNull() << endl;
 
     // Combine antenna selections
     casa::TableExprNode selAntenna (ant1 && ant2);
@@ -560,8 +572,11 @@ int test_expressionNodes (std::string const &filename)
 
     // Concatenate selections
     casa::TableExprNode sel = ant1;
+    cout << "--> isNull(sel) = " << sel.isNull() << endl;
     sel && ant2;
+    cout << "--> isNull(sel) = " << sel.isNull() << endl;
     sel && time1;
+    cout << "--> isNull(sel) = " << sel.isNull() << endl;
 
   } catch (casa::AipsError x) {
     std::cerr << x.getMesg() << std::endl;
@@ -574,16 +589,15 @@ int test_expressionNodes (std::string const &filename)
 
   cout << "\n[4] Read data from table with active selection ..." << endl;
   try {
-    /* Open the table to work with */
     DAL::MS_Table tab (filename);
+    std::string column = "ANTENNA1";
+    int antenna        = 1;
     // Apply selection to table
-    tab.setSelection("ANTENNA1",DAL::Operator::Equal,int(1));
+    tab.setSelection(column, DAL::Operator::Equal, antenna);
     /* Read data from table selection */
     std::vector<double> data;
     tab.readData (data, "TIME");
     std::cout << "-- shape(TIME) = " << data.size() << std::endl;
-    // Summary
-    tab.summary();
   } catch (casa::AipsError x) {
     std::cerr << x.getMesg() << std::endl;
     ++nofFailedTests;

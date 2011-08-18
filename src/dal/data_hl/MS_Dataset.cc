@@ -176,6 +176,48 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                                selectAntenna
+  
+  /*!
+    \param antenna -- ID of the antenna to select; this corresponds to 
+           \c selectBaseline(antenna1==antenna2).
+   */
+  bool MS_Dataset::selectAntenna (unsigned int const &antenna)
+  {
+    return selectBaseline (antenna, antenna);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               selectBaseline
+  
+  /*!
+    \param antenna -- ID of the antenna to be part of the baseline.
+   */
+  bool MS_Dataset::selectBaseline (unsigned int const &antenna)
+  {
+    return setSelection ("ANTENNA1", Operator::Equal, antenna);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               selectBaseline
+  
+  /*!
+    \param antenna1 -- ID of the first antenna forming the baseline.
+    \param antenna2 -- ID of the second antenna forming the baseline.
+  */
+  bool MS_Dataset::selectBaseline (unsigned int const &antenna1,
+				   unsigned int const &antenna2)
+  {
+    bool status = true;
+    
+    status *= setSelection ("ANTENNA1", Operator::Equal, antenna1);
+    status *= setSelection ("ANTENNA2", Operator::Equal, antenna2);
+    
+    return status;
+  }
+  
   
   //_____________________________________________________________________________
   //                                                               exposureValues
