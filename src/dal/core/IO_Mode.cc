@@ -378,6 +378,7 @@ namespace DAL { // Namespace DAL -- begin
     unsigned int intent;
     hid_t file_id;
     H5I_type_t objectType;
+    herr_t h5error;
 
     //________________________________________________________________
     // Basic check for the provided object ID
@@ -386,12 +387,12 @@ namespace DAL { // Namespace DAL -- begin
       objectType = H5Iget_type(object_id);
 
       if (objectType == H5I_FILE) {
-        H5Fget_intent(object_id, &intent);
+        h5error = H5Fget_intent(object_id, &intent);
       }
       else {
         file_id = H5Iget_file_id (object_id);
 
-        H5Fget_intent(file_id, &intent);
+        h5error = H5Fget_intent(file_id, &intent);
 
         H5Fclose (file_id);
       }
@@ -402,6 +403,9 @@ namespace DAL { // Namespace DAL -- begin
       else {
         flags.setFlag(IO_Mode::ReadOnly);
       }
+
+      // H5Fget_intent returns negative value in case of failure
+      if (h5error >= 0) status = true;
     }
 
     return status;
