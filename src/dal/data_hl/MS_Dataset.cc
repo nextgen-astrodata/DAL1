@@ -197,7 +197,7 @@ namespace DAL { // Namespace DAL -- begin
    */
   bool MS_Dataset::selectBaseline (unsigned int const &antenna)
   {
-    return setSelection ("ANTENNA1", Operator::Equal, antenna);
+    return setSelection ("ANTENNA1", Operator::Equal, antenna, true);
   }
   
   //_____________________________________________________________________________
@@ -212,12 +212,13 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status = true;
     
-    status *= setSelection ("ANTENNA1", Operator::Equal, antenna1);
+    /* New selection: first call needs to ensure previous selection is
+       overwritten. */
+    status *= setSelection ("ANTENNA1", Operator::Equal, antenna1, true);
     status *= setSelection ("ANTENNA2", Operator::Equal, antenna2);
     
     return status;
   }
-  
   
   //_____________________________________________________________________________
   //                                                               exposureValues
