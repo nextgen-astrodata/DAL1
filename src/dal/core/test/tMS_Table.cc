@@ -568,6 +568,29 @@ int test_expressionNodes (std::string const &filename)
     ++nofFailedTests;
   }
 
+  /*________________________________________________________
+    Test 4 : Read data from table with active selection.
+  */
+
+  cout << "\n[4] Read data from table with active selection ..." << endl;
+  try {
+    /* Open the table to work with */
+    DAL::MS_Table tab (filename);
+    // Define selection
+    casa::TableExprNode selAntenna (ms.col("ANTENNA1") == 1);
+    // Apply selection to table
+    tab.setSelection(selAntenna);
+    /* Read data from table selection */
+    std::vector<double> data;
+    tab.readData (data, "TIME");
+    std::cout << "-- shape(TIME) = " << data.size() << std::endl;
+    // Summary
+    tab.summary();
+  } catch (casa::AipsError x) {
+    std::cerr << x.getMesg() << std::endl;
+    ++nofFailedTests;
+  }
+
   return nofFailedTests;
 }
 
