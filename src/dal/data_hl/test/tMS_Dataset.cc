@@ -519,11 +519,14 @@ int test_selection (std::string const &filename)
     
     // Get all entries in the ANTENNA1 column where ANTENNA1=ANTENNA2=1
     {
+      // open table
       casa::Table tab (filename);
-      casa::TableExprNode ant1 (tab.col("ANTENNA1") == 1);
-      casa::TableExprNode ant2 (tab.col("ANTENNA2") == 1);
-      casa::TableExprNode exprNode (ant1&&ant2);
-      casa::Table selection = tab(exprNode);
+      // define selection
+      casa::TableExprNode exprNode1 (tab.col("ANTENNA1") == 1);
+      casa::TableExprNode exprNode2 (tab.col("ANTENNA2") == 1);
+      // apply selection
+      casa::Table selection = tab(exprNode1&&exprNode2);
+      // open column
       casa::ROArrayColumn<double> col (selection, "UVW");
       casa::Array<double> data = col.getColumn();
       std::cout << "-- ANTENNA1=1 && ANTENNA2=1 = " << data.shape() << std::endl;
@@ -531,15 +534,19 @@ int test_selection (std::string const &filename)
     
     // Get all entries in the ANTENNA1 column where ANTENNA1=1, ANTENNA2=2
     {
+      // open table
       casa::Table tab (filename);
-      casa::TableExprNode ant1 (tab.col("ANTENNA1") == 1);
-      casa::TableExprNode ant2 (tab.col("ANTENNA2") == 2);
-      casa::TableExprNode exprNode (ant1&&ant2);
-      casa::Table selection = tab(exprNode);
+      // define selection
+      casa::TableExprNode exprNode1 (tab.col("ANTENNA1") == 1);
+      casa::TableExprNode exprNode2 (tab.col("ANTENNA2") == 2);
+      // apply selection
+      casa::Table selection = tab(exprNode1&&exprNode2);
+      // open column
       casa::ROArrayColumn<double> col (selection, "UVW");
       casa::Array<double> data = col.getColumn();
       std::cout << "-- ANTENNA1=1 && ANTENNA2=2 = " << data.shape() << std::endl;
     }
+
   } catch (casa::AipsError x) {
     cerr << x.getMesg() << endl;
     ++nofFailedTests;

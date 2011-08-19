@@ -538,7 +538,8 @@ namespace DAL { // Namespace DAL -- begin
     if (overwrite || itsExpressionNode.isNull()) {
       itsExpressionNode = exprNode;
     } else {
-      itsExpressionNode && exprNode;
+      casa::TableExprNode tmp (itsExpressionNode && exprNode);
+      itsExpressionNode = tmp;
     }
     
     // Apply selection to table
