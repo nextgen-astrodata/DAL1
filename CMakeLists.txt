@@ -15,8 +15,13 @@ project (DAL)
 set (DAL_VERSION_MAJOR 0   )
 set (DAL_VERSION_MINOR 2   )
 set (DAL_VERSION_PATCH 0   )
-set (DAL_VERSION_ID    pre )
-set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}-${DAL_VERSION_ID}")
+set (DAL_VERSION_ID    "" )
+
+set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
+
+if (DAL_VERSION_ID)
+  set (DAL_VERSION "${DAL_VERSION}-${DAL_VERSION_ID}")
+endif (DAL_VERSION_ID)
 
 ## ==============================================================================
 ##
