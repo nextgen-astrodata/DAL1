@@ -207,7 +207,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param antenna -- ID of the antenna to select; this corresponds to 
            \c selectBaseline(antenna1==antenna2).
-   */
+  */
   bool MS_Dataset::selectAntenna (unsigned int const &antenna)
   {
     return selectBaseline (antenna, antenna);
@@ -218,10 +218,13 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param antenna -- ID of the antenna to be part of the baseline.
-   */
+  */
   bool MS_Dataset::selectBaseline (unsigned int const &antenna)
   {
-    return setSelection ("ANTENNA1", Operator::Equal, antenna, true);
+    return setSelection ("ANTENNA1",
+			 Operator::Equal,
+			 antenna,
+			 true);
   }
   
   //_____________________________________________________________________________

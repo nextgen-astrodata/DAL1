@@ -187,10 +187,10 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Select data from a specific antenna
     bool selectAntenna (unsigned int const &antenna);
-
+    
     //! Select data from baselines including a specific antenna
     bool selectBaseline (unsigned int const &antenna);
-
+    
     //! Select data from a specific baseline
     bool selectBaseline (unsigned int const &antenna1,
 			 unsigned int const &antenna2);

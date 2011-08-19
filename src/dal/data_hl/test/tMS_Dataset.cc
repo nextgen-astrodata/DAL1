@@ -21,6 +21,9 @@
 #include <data_hl/MS_Dataset.h>
 
 // Namespace usage
+using std::cerr;
+using std::cout;
+using std::endl;
 using DAL::MS_Dataset;
 
 /*!
@@ -47,7 +50,7 @@ using DAL::MS_Dataset;
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tMS_Dataset::test_constructors]\n" << std::endl;
+  cout << "\n[tMS_Dataset::test_constructors]\n" << endl;
 
   int nofFailedTests = 0;
   
@@ -55,13 +58,13 @@ int test_constructors (std::string const &filename)
     Test 1 : Default constructor.
   */
   
-  std::cout << "[1] Testing MS_Dataset() ..." << std::endl;
+  cout << "[1] Testing MS_Dataset() ..." << endl;
   try {
     MS_Dataset ms;
     //
     ms.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -69,13 +72,13 @@ int test_constructors (std::string const &filename)
     Test 2 : Argumented constructor to open existing MS.
   */
   
-  std::cout << "[2] Testing MS_Dataset(string) ..." << std::endl;
+  cout << "[2] Testing MS_Dataset(string) ..." << endl;
   try {
     MS_Dataset ms (filename);
     //
     ms.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -124,7 +127,7 @@ int test_readData (std::string const &filename)
 		<< endl;
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -153,7 +156,7 @@ int test_readData (std::string const &filename)
 		<< endl;
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -178,7 +181,7 @@ int test_readData (std::string const &filename)
 		<< endl;
     }  
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -206,7 +209,7 @@ int test_readData (std::string const &filename)
 		<< endl;
     }  
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -236,7 +239,7 @@ int test_readData (std::string const &filename)
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -269,7 +272,7 @@ int test_readData (std::string const &filename)
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -298,7 +301,7 @@ int test_readData (std::string const &filename)
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -330,7 +333,7 @@ int test_readData (std::string const &filename)
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -362,7 +365,7 @@ int test_readData (std::string const &filename)
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -409,7 +412,7 @@ int test_readData (std::string const &filename)
       cout << "-- TIME = [ " << data[0] << " " << data[1] << " .. "
 	   << data[data.size()-1] << " ]" << endl;
     } else {
-      std::cerr << "Failed to read TIME data!" << std::endl;
+      cerr << "Failed to read TIME data!" << endl;
     }
   }
   
@@ -426,7 +429,7 @@ int test_readData (std::string const &filename)
       cout << "-- EXPOSURE = [ " << data[0] << " " << data[1] << " .. "
 	   << data[data.size()-1] << " ]" << endl;
     } else {
-      std::cerr << "Failed to read EXPOSURE data!" << std::endl;
+      cerr << "Failed to read EXPOSURE data!" << endl;
     }
   }
   
@@ -445,7 +448,7 @@ int test_readData (std::string const &filename)
       cout << "-- Frequncy channels = [ " << data[0] << " " << data[1] << " .. "
 	   << data[data.size()-1] << " ]" << endl;
     } else {
-      std::cerr << "Failed to read FREQ_CHAN data!" << std::endl;
+      cerr << "Failed to read FREQ_CHAN data!" << endl;
     }
   }
   
@@ -464,8 +467,153 @@ int test_readData (std::string const &filename)
       cout << "-- Frequncy channels = [ " << data[0] << " " << data[1] << " .. "
 	   << data[data.size()-1] << " ]" << endl;
     } else {
-      std::cerr << "Failed to read FREQ_WIDTH data!" << std::endl;
+      cerr << "Failed to read FREQ_WIDTH data!" << endl;
     }
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                 test_selection
+
+/*!
+  \brief Test applying selections to the table data
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_selection (std::string const &filename)
+{
+  cout << "\n[tMS_Dataset::test_selection]" << endl;
+
+  int nofFailedTests = 0;
+
+  /* Open MeasurementSet to work with */
+  DAL::MS_Dataset ms (filename);
+  ms.summary();
+
+  /*________________________________________________________
+    Test 0 : Perform selection using basic casacore table
+             routines.
+  */
+  
+  cout << "\n[0] Direct selection on table ..." << endl;
+  try {
+    // Get all entries in the UVW column
+    {
+      casa::Table tab (filename);
+      casa::ROArrayColumn<double> col (tab, "UVW");
+      casa::Array<double> data = col.getColumn();
+      std::cout << "-- ANTENNA1 (all)           = " << data.shape() << std::endl;
+    }
+    
+    // Get all entries in the ANTENNA1 column where ANTENNA1=1
+    {
+      casa::Table tab (filename);
+      casa::Table selection = tab(tab.col("ANTENNA1") == 1);
+      casa::ROArrayColumn<double> col (selection, "UVW");
+      casa::Array<double> data = col.getColumn();
+      std::cout << "-- ANTENNA1=1               = " << data.shape() << std::endl;
+    }
+    
+    // Get all entries in the ANTENNA1 column where ANTENNA1=ANTENNA2=1
+    {
+      casa::Table tab (filename);
+      casa::TableExprNode ant1 (tab.col("ANTENNA1") == 1);
+      casa::TableExprNode ant2 (tab.col("ANTENNA2") == 1);
+      casa::TableExprNode exprNode (ant1&&ant2);
+      casa::Table selection = tab(exprNode);
+      casa::ROArrayColumn<double> col (selection, "UVW");
+      casa::Array<double> data = col.getColumn();
+      std::cout << "-- ANTENNA1=1 && ANTENNA2=1 = " << data.shape() << std::endl;
+    }
+    
+    // Get all entries in the ANTENNA1 column where ANTENNA1=1, ANTENNA2=2
+    {
+      casa::Table tab (filename);
+      casa::TableExprNode ant1 (tab.col("ANTENNA1") == 1);
+      casa::TableExprNode ant2 (tab.col("ANTENNA2") == 2);
+      casa::TableExprNode exprNode (ant1&&ant2);
+      casa::Table selection = tab(exprNode);
+      casa::ROArrayColumn<double> col (selection, "UVW");
+      casa::Array<double> data = col.getColumn();
+      std::cout << "-- ANTENNA1=1 && ANTENNA2=2 = " << data.shape() << std::endl;
+    }
+  } catch (casa::AipsError x) {
+    cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Test 1 : Read UVW data without any selection applied to
+             to the table.
+  */
+  
+  cout << "\n[1] Read UVW data without any selection ..." << endl;
+  try {
+    std::vector<int> data;
+    // read baseline values
+    ms.readData (data, "ANTENNA1");
+    cout << "-- shape(ANTENNA1) = " << data.size() << endl;
+  } catch (casa::AipsError x) {
+    cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Test 2 : Read UVW data for a specific antenna.
+  */
+  
+  cout << "\n[2] Read UVW data for specific antenna ..." << endl;
+  try {
+    std::vector<int> data;
+    // select individual antenna
+    ms.selectAntenna (1);
+    // read baseline values
+    ms.readData (data, "ANTENNA1");
+    cout << "-- shape(ANTENNA1) = " << data.size() << endl;
+  } catch (casa::AipsError x) {
+    cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Test 3 : Read UVW data for baselines including a
+             specific antenna.
+  */
+  
+  cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
+  try {
+    std::vector<int> data;
+    // select individual antenna
+    ms.selectBaseline (1);
+    // read baseline values
+    ms.readData (data, "ANTENNA1");
+    cout << "-- shape(ANTENNA1) = " << data.size() << endl;
+  } catch (casa::AipsError x) {
+    cerr << x.getMesg() << endl;
+    ++nofFailedTests;
+  }
+  
+  /*________________________________________________________
+    Test 4 : Read UVW data for baseline between two specific
+             antennae.
+  */
+  
+  cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
+  try {
+    int antenna1 = 1;
+    int antenna2 = 2;
+    std::vector<int> data;
+    // select individual antenna
+    ms.selectBaseline (antenna1, antenna2);
+    // read baseline values
+    ms.readData (data, "ANTENNA1");
+    cout << "-- shape(ANTENNA1) = " << data.size() << endl;
+  } catch (casa::AipsError x) {
+    cerr << x.getMesg() << endl;
+    ++nofFailedTests;
   }
   
   return nofFailedTests;
@@ -502,9 +650,10 @@ int main (int argc, char *argv[])
     nofFailedTests += test_constructors (filename);
     // Test reading data from MS table columns.
     nofFailedTests += test_readData (filename);
+    // Test applying selections to the table data
+    nofFailedTests += test_selection (filename);
   } else {
-    std::cerr << "[tMS_Dataset] No dataset provided - skipping tests!"
-	      << std::endl;
+    cerr << "[tMS_Dataset] No dataset provided - skipping tests!" << endl;
   }
   
   return nofFailedTests;
