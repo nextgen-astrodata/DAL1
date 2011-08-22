@@ -226,9 +226,9 @@ int test_createHDF5 (std::string const &filename_ms,
     Test 1: Open table columns
   */
 
-  dalTable * maintable;
-  dalColumn * data_col;
-  dalData * data_object;
+  dalTable * maintable  = NULL;
+  dalColumn * data_col  = NULL;
+  dalData * data_object = NULL;
   vector<int> shape3;
   
   std::cout << "[1] Opening table columns ..." << std::endl;
