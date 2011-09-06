@@ -60,7 +60,6 @@ BOOST_PYTHON_MODULE(pydal)
   export_dalGroup ();
   export_dalTable ();
   export_IO_Mode ();
-  export_HDF5Hyperslab ();
 
   // ============================================================================
   //

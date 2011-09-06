@@ -90,8 +90,6 @@ void export_dalGroup ();
 void export_dalTable ();
 //! Bindings for DAL::IO_Mode
 void export_IO_Mode ();
-//! Bindings for DAL::HDF5Hyperslab
-void export_HDF5Hyperslab ();
 
   // ============================================================================
   //

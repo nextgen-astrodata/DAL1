@@ -19,12 +19,12 @@
  ***************************************************************************/
 
 /*!
-  \file pydal_core.cc
+  \file pydal_HDF5Hyperslab.cc
 
   \ingroup DAL
   \ingroup pydal
 
-  \brief Python bindings DAL C++ classes in the \e core directory
+  \brief Python bindings for the DAL::HDF5Hyperslab class
 
   \author Lars B&auml;hren
 */

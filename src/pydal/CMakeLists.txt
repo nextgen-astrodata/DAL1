@@ -11,6 +11,8 @@
 set (pydal_sources
   num_util.cc
   pydal.cc
+  core/pydal_HDF5Dataset.cc
+  core/pydal_HDF5Hyperslab.cc
   coordinates/pydal_Angle.cc
   coordinates/pydal_Coordinate.cc
   coordinates/pydal_RaDec.cc
@@ -22,7 +24,6 @@ set (pydal_sources
   pydal_core_dalDataset.cc
   pydal_core_dalFileType.cc
   pydal_core_dalGroup.cc
-  pydal_core_HDF5Hyperslab.cc
   pydal_core_IO_Mode.cc
   pydal_core_dalTable.cc
   pydal_data_common.cc
