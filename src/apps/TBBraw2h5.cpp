@@ -53,7 +53,6 @@ namespace bpo = boost::program_options;
 #include <linux/version.h>
 #endif
 
-
 /*!
   \file TBBraw2h5.cpp
 
@@ -235,6 +234,300 @@ int increase_io_priority(bool verbose) {
 }
 
 #endif
+
+//_______________________________________________________________________________
+//                                                              stationIdToName
+
+/*!
+  \brief Get station id including prefix (CS, RS or IN) for given station number
+  
+  \param n -- Station number
+*/
+std::string stationIdToName(int n)
+{
+  std::string s = "";
+
+  switch (n) {
+    case 1:
+      s = "CS001";
+      break;
+    case 2:
+      s = "CS002";
+      break;
+    case 3:
+      s = "CS003";
+      break;
+    case 4:
+      s = "CS004";
+      break;
+    case 5:
+      s = "CS005";
+      break;
+    case 6:
+      s = "CS006";
+      break;
+    case 7:
+      s = "CS007";
+      break;
+    case 8:
+      s = "CS008";
+      break;
+    case 9:
+      s = "CS009";
+      break;
+    case 10:
+      s = "CS010";
+      break;
+    case 11:
+      s = "CS011";
+      break;
+    case 12:
+      s = "CS012";
+      break;
+    case 13:
+      s = "CS013";
+      break;
+    case 14:
+      s = "CS014";
+      break;
+    case 15:
+      s = "CS015";
+      break;
+    case 16:
+      s = "CS016";
+      break;
+    case 17:
+      s = "CS017";
+      break;
+    case 18:
+      s = "CS018";
+      break;
+    case 19:
+      s = "CS019";
+      break;
+    case 20:
+      s = "CS020";
+      break;
+    case 21:
+      s = "CS021";
+      break;
+    case 22:
+      s = "CS022";
+      break;
+    case 23:
+      s = "CS023";
+      break;
+    case 24:
+      s = "CS024";
+      break;
+    case 25:
+      s = "CS025";
+      break;
+    case 26:
+      s = "CS026";
+      break;
+    case 27:
+      s = "CS027";
+      break;
+    case 28:
+      s = "CS028";
+      break;
+    case 29:
+      s = "CS029";
+      break;
+    case 30:
+      s = "CS030";
+      break;
+    case 31:
+      s = "CS031";
+      break;
+    case 32:
+      s = "CS032";
+      break;
+    case 101:
+      s = "CS101";
+      break;
+    case 102:
+      s = "CS102";
+      break;
+    case 103:
+      s = "CS103";
+      break;
+    case 121:
+      s = "CS201";
+      break;
+    case 141:
+      s = "CS301";
+      break;
+    case 142:
+      s = "CS302";
+      break;
+    case 161:
+      s = "CS401";
+      break;
+    case 181:
+      s = "CS501";
+      break;
+    case 104:
+      s = "RS104";
+      break;
+    case 105:
+      s = "RS105";
+      break;
+    case 106:
+      s = "RS106";
+      break;
+    case 107:
+      s = "RS107";
+      break;
+    case 108:
+      s = "RS108";
+      break;
+    case 109:
+      s = "RS109";
+      break;
+    case 122:
+      s = "RS202";
+      break;
+    case 123:
+      s = "RS203";
+      break;
+    case 124:
+      s = "RS204";
+      break;
+    case 125:
+      s = "RS205";
+      break;
+    case 126:
+      s = "RS206";
+      break;
+    case 127:
+      s = "RS207";
+      break;
+    case 128:
+      s = "RS208";
+      break;
+    case 129:
+      s = "RS209";
+      break;
+    case 130:
+      s = "RS210";
+      break;
+    case 143:
+      s = "RS303";
+      break;
+    case 144:
+      s = "RS304";
+      break;
+    case 145:
+      s = "RS305";
+      break;
+    case 146:
+      s = "RS306";
+      break;
+    case 147:
+      s = "RS307";
+      break;
+    case 148:
+      s = "RS308";
+      break;
+    case 149:
+      s = "RS309";
+      break;
+    case 150:
+      s = "RS310";
+      break;
+    case 162:
+      s = "RS402";
+      break;
+    case 163:
+      s = "RS403";
+      break;
+    case 164:
+      s = "RS404";
+      break;
+    case 165:
+      s = "RS405";
+      break;
+    case 166:
+      s = "RS406";
+      break;
+    case 167:
+      s = "RS407";
+      break;
+    case 168:
+      s = "RS408";
+      break;
+    case 169:
+      s = "RS409";
+      break;
+    case 170:
+      s = "RS410";
+      break;
+    case 171:
+      s = "RS411";
+      break;
+    case 172:
+      s = "RS412";
+      break;
+    case 173:
+      s = "RS413";
+      break;
+    case 182:
+      s = "RS502";
+      break;
+    case 183:
+      s = "RS503";
+      break;
+    case 184:
+      s = "RS504";
+      break;
+    case 185:
+      s = "RS505";
+      break;
+    case 186:
+      s = "RS506";
+      break;
+    case 187:
+      s = "RS507";
+      break;
+    case 188:
+      s = "RS508";
+      break;
+    case 189:
+      s = "RS509";
+      break;
+    case 201:
+      s = "DE601";
+      break;
+    case 202:
+      s = "DE602";
+      break;
+    case 203:
+      s = "DE603";
+      break;
+    case 204:
+      s = "DE604";
+      break;
+    case 205:
+      s = "DE605";
+      break;
+    case 206:
+      s = "FR606";
+      break;
+    case 207:
+      s = "SE607";
+      break;
+    case 208:
+      s = "UK608";
+      break;
+    default:
+      // Unknown station number, just insert the number to not loose information
+      s = boost::lexical_cast<std::string>(n);
+  }
+
+  return s;
+}
 
 //_______________________________________________________________________________
 //                                                             socketReaderThread
@@ -523,20 +816,20 @@ bool readFromSockets (std::vector<int> ports,
 	
 	// Generate filename
 	std::ostringstream outfile;
-	outfile << outFileBase << observationID << "_" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
+	outfile << outFileBase << observationID << "_D" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
 	
 	// Check if filename exists already and change it accordingly
-	if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
+	if (boost::filesystem::exists(outfile.str()+"_tbb.h5"))
 	  {
 	    int n = 1;
-	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
+	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+"_tbb.h5"))
 	      {
 		++n;
 	      }
 	    outfile << "-" << n;
 	  }
 	// Create file
-	tbb = new DAL::TBBraw(outfile.str()+".tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+	tbb = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
 	if ( !tbb->isConnected() )
 	  {
 	    cout << "[TBBraw2h5] Failed to open output file." << endl;
@@ -729,20 +1022,20 @@ bool readStationsFromSockets (std::vector<int> ports,
       
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << observationID << "_" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "-" << std::setw(3) << std::setfill('0') << int(stationId);
+      outfile << outFileBase << observationID << "_" << stationIdToName(stationId) << "_D" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
       
       // Check if filename exists already and change it accordingly
-      if (boost::filesystem::exists(outfile.str()+".tbb.h5"))
+      if (boost::filesystem::exists(outfile.str()+"_tbb.h5"))
 	{
 	  int n = 1;
-	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+".tbb.h5"))
+	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+"_tbb.h5"))
 	    {
 	      ++n;
 	    }
 	  outfile << "-" << n;
 	}
       
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+".tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
 	cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
 	     << outfile.str() << endl;
@@ -1105,7 +1398,7 @@ int main(int argc, char *argv[])
       if (keepRunning) 
 	{
 	  std::ostringstream temp;
-	  temp << outfileOrig << "-" << runNumber << ".tbb.h5";
+	  temp << outfileOrig << "-" << runNumber << "_tbb.h5";
 	  outfile = temp.str();
 	  runNumber++;
 	};
