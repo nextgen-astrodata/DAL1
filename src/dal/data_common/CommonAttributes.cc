@@ -328,44 +328,48 @@ namespace DAL { // Namespace DAL -- begin
     itsAttributes.insert("PIPELINE_VERSION");
     itsAttributes.insert("OBSERVATION_NOF_STATIONS");
     itsAttributes.insert("OBSERVATION_STATIONS_LIST");
+    itsAttributes.insert("ICD_NUMBER");
+    itsAttributes.insert("ICD_VERSION");
     itsAttributes.insert("NOTES");
     /* Default values of the attributes */
     std::string undefined ("UNDEFINED");
     //
-    itsGroupType           = "Root";
-    itsFilename            = undefined;
-    itsFiletype            = undefined;
-    itsFiledate            = undefined;
-    itsTelescope           = "LOFAR";
-    itsObserver            = undefined;
-    itsProjectID           = undefined;
-    itsProjectTitle        = undefined;
-    itsProjectPI           = undefined;
-    itsProjectCoI          = undefined;
-    itsProjectContact      = undefined;
-    itsObservationID       = undefined;
-    itsStartMJD            = undefined;
-    itsStartTAI            = undefined;
-    itsStartUTC            = undefined;
-    itsEndMJD              = undefined;
-    itsEndTAI              = undefined;
-    itsEndUTC              = undefined;
-    itsNofStations         = 0;
-    itsStationsList        = std::vector<std::string> (1,undefined);
-    itsFrequencyMin        = 0;
-    itsFrequencyMax        = 0;
-    itsFrequencyCenter     = 0;
-    itsFrequencyUnit       = "Hz";
-    itsNofBitsPerSample    = 0;
-    itsAntennaSet          = undefined;
-    itsFilterSelection     = undefined;
-    itsClockFrequency      = 0;
-    itsClockFrequencyUnit  = undefined;
-    itsTarget              = undefined;
-    itsSystemVersion       = undefined;
-    itsPipelineName        = undefined;
-    itsPipelineVersion     = undefined;
-    itsNotes               = undefined;
+    itsGroupType          = "Root";
+    itsFilename           = undefined;
+    itsFiletype           = undefined;
+    itsFiledate           = undefined;
+    itsTelescope          = "LOFAR";
+    itsObserver           = undefined;
+    itsProjectID          = undefined;
+    itsProjectTitle       = undefined;
+    itsProjectPI          = undefined;
+    itsProjectCoI         = undefined;
+    itsProjectContact     = undefined;
+    itsObservationID      = undefined;
+    itsStartMJD           = undefined;
+    itsStartTAI           = undefined;
+    itsStartUTC           = undefined;
+    itsEndMJD             = undefined;
+    itsEndTAI             = undefined;
+    itsEndUTC             = undefined;
+    itsNofStations        = 0;
+    itsStationsList       = std::vector<std::string> (1,undefined);
+    itsFrequencyMin       = 0;
+    itsFrequencyMax       = 0;
+    itsFrequencyCenter    = 0;
+    itsFrequencyUnit      = "Hz";
+    itsNofBitsPerSample   = 0;
+    itsAntennaSet         = undefined;
+    itsFilterSelection    = undefined;
+    itsClockFrequency     = 0;
+    itsClockFrequencyUnit = undefined;
+    itsTarget             = undefined;
+    itsSystemVersion      = undefined;
+    itsPipelineName       = undefined;
+    itsPipelineVersion    = undefined;
+    itsIcdNumber          = undefined;
+    itsIcdVersion         = undefined;
+    itsNotes              = undefined;
   }
   
 #ifdef DAL_WITH_HDF5
@@ -421,7 +425,9 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::write (id, "SYSTEM_VERSION",       itsSystemVersion );
     HDF5Attribute::write (id, "PIPELINE_NAME",        itsPipelineName );
     HDF5Attribute::write (id, "PIPELINE_VERSION",     itsPipelineVersion );
-    HDF5Attribute::write (id, "NOTES",                itsNotes );
+    HDF5Attribute::write (id, "ICD_NUMBER",           itsIcdNumber       );
+    HDF5Attribute::write (id, "ICD_VERSION",          itsIcdVersion      );
+    HDF5Attribute::write (id, "NOTES",                itsNotes           );
 
     return status;
   }
@@ -478,7 +484,9 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::read (location, "SYSTEM_VERSION",        itsSystemVersion );
     HDF5Attribute::read (location, "PIPELINE_NAME",         itsPipelineName );
     HDF5Attribute::read (location, "PIPELINE_VERSION",      itsPipelineVersion );
-    HDF5Attribute::read (location, "NOTES",                 itsNotes );
+    HDF5Attribute::read (location, "ICD_NUMBER",            itsIcdNumber       );
+    HDF5Attribute::read (location, "ICD_VERSION",           itsIcdVersion      );
+    HDF5Attribute::read (location, "NOTES",                 itsNotes           );
 
     return status;
   }

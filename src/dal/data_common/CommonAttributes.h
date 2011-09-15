@@ -164,6 +164,10 @@ namespace DAL { // Namespace DAL -- begin
     std::string itsPipelineName;
     //! Processing pipeline version
     std::string itsPipelineVersion;
+    //! Interface Control Document (ICD) number 
+    std::string itsIcdNumber;
+    //! Interface Control Document (ICD) document version
+    std::string itsIcdVersion;
     //! Notes or comments
     std::string itsNotes;
     
@@ -524,6 +528,24 @@ namespace DAL { // Namespace DAL -- begin
     //! Set processing pipeline version
     inline void setPipelineVersion (std::string const &pipelineVersion) {
       itsPipelineVersion = pipelineVersion;
+    }
+
+    //! Get the ICD document number
+    inline std::string icdNumber () const {
+      return itsIcdNumber;
+    }
+    //! Set the ICD document number
+    inline void setIcdNumber (std::string const &number) {
+      itsIcdNumber = number;
+    }
+    
+    //! Get the ICD document version
+    inline std::string icdVersion () const {
+      return itsIcdVersion;
+    }
+    //! Set the ICD document version
+    inline void setIcdVersion (std::string const &version) {
+      itsIcdVersion = version;
     }
 
     //! Notes or comments
