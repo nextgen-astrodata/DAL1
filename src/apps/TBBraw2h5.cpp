@@ -236,6 +236,27 @@ int increase_io_priority(bool verbose) {
 #endif
 
 //_______________________________________________________________________________
+//                                                             zero_padded_number
+
+/*!
+  \brief Convert number to string and width with specified number of zeros
+  
+  \param n -- number
+  \param width -- number of characters in output
+*/
+std::string zero_padded_number(int number, int width)
+{
+  std::string s = boost::lexical_cast<std::string>(number);
+
+  while (width - s.size() > 0)
+  {
+    s = "0" + s;
+  }
+
+  return s;
+}
+
+//_______________________________________________________________________________
 //                                                              stationIdToName
 
 /*!
@@ -523,7 +544,7 @@ std::string stationIdToName(int n)
       break;
     default:
       // Unknown station number, just insert the number to not loose information
-      s = boost::lexical_cast<std::string>(n);
+      s = "ST"+zero_padded_number(n, 3);
   }
 
   return s;
@@ -819,15 +840,13 @@ bool readFromSockets (std::vector<int> ports,
 	outfile << outFileBase << observationID << "_D" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
 	
 	// Check if filename exists already and change it accordingly
-	if (boost::filesystem::exists(outfile.str()+"_tbb.h5"))
-	  {
-	    int n = 1;
-	    while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+"_tbb.h5"))
-	      {
-		++n;
-	      }
-	    outfile << "-" << n;
-	  }
+	int n = 0;
+  while (boost::filesystem::exists(outfile.str()+"_R"+zero_padded_number(n, 3)+"_tbb.h5"))
+  {
+    ++n;
+  }
+  outfile << "_R" << std::setw(3) << std::setfill('0') << n;
+
 	// Create file
 	tbb = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
 	if ( !tbb->isConnected() )
@@ -1022,18 +1041,15 @@ bool readStationsFromSockets (std::vector<int> ports,
       
       // Generate filename
       std::ostringstream outfile;
-      outfile << outFileBase << observationID << "_" << stationIdToName(stationId) << "_D" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z";
+      outfile << outFileBase << observationID << "_D" << timestamp_buffer << std::setw(6) << std::setfill('0') << std::setiosflags(std::ios::fixed) << std::setprecision(3) << timestamp_fraction << "Z" << "_" << stationIdToName(stationId);
       
       // Check if filename exists already and change it accordingly
-      if (boost::filesystem::exists(outfile.str()+"_tbb.h5"))
-	{
-	  int n = 1;
-	  while (boost::filesystem::exists(outfile.str()+"-"+boost::lexical_cast<std::string>(n)+"_tbb.h5"))
-	    {
-	      ++n;
-	    }
-	  outfile << "-" << n;
-	}
+      int n = 0;
+      while (boost::filesystem::exists(outfile.str()+"_R"+zero_padded_number(n, 3)+"_tbb.h5"))
+      {
+        ++n;
+      }
+      outfile << "_R" << std::setw(3) << std::setfill('0') << n;
       
       TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
