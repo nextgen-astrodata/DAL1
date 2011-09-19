@@ -401,6 +401,7 @@ namespace DAL {
 
     // === Create/set attributes ================================================
 
+    //! Read value of attribute attached to dataset
     template <class T>
     inline bool readAttribute (std::string const &name,
                               T &data)
@@ -408,6 +409,7 @@ namespace DAL {
       return HDF5Attribute::read (itsLocation, name, data);
     }
     
+    //! Read value of attribute attached to dataset
     template <class T>
     inline bool readAttribute (std::string const &name,
                               std::vector<T> &data)
@@ -415,6 +417,7 @@ namespace DAL {
       return HDF5Attribute::read (itsLocation, name, data);
     }
     
+    //! Write value of attribute attached to dataset
     template <class T>
       inline bool writeAttribute (std::string const &name,
 				  T const &data)
@@ -422,6 +425,7 @@ namespace DAL {
 	return HDF5Attribute::write (itsLocation, name, data);
       }
     
+    //! Write value of attribute attached to dataset
     template <class T>
       inline bool writeAttribute (std::string const &name,
 				  std::vector<T> const &data)
