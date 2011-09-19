@@ -46,6 +46,8 @@ set (tests read_tbb)
 ## linker instructions
 set (apps_link_libraries dal)
 
+add_executable (udp-copy udp-copy.c)
+
 ##____________________________________________________________________
 ## Applications which require casacore
 
