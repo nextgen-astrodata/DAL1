@@ -146,16 +146,7 @@ void export_TBB_DipoleDataset();
 //! Bindings for DAL::LOPES_EventFile
 void export_LOPES_EventFile();
 
-//<<<<<<< HEAD
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #define NO_IMPORT_ARRAY
-//=======
-// === bf ======================================================================
-
-//! Bindings for DAL::BF_BeamGroup
-void export_BF_BeamGroup();
-//! Bindings for DAL:BF_RootGroup
-void export_BF_RootGroup();
-//>>>>>>> python-bindings
 
 #endif

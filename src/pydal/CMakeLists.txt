@@ -28,6 +28,7 @@ set (pydal_sources
   pydal_core_dalTable.cc
   pydal_data_common.cc
   pydal_data_hl.cc
+  data_common/pydal_Filename.cc
   data_hl/pydal_BeamFormed.cc
   data_hl/pydal_BeamGroup.cc
   data_hl/pydal_TBB_Timeseries.cc
