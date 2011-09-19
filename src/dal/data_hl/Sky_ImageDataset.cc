@@ -149,6 +149,8 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- I/O mode flags   = " << itsFlags.names() << std::endl;
     os << "-- Attributes       = " << itsAttributes    << std::endl;
     os << "-- Path to WCS info = " << itsWCSinfo       << std::endl;
+    os << "-- Dataset rank     = " << nofAxes()        << std::endl;
+    os << "-- Dataset shape    = " << shape()          << std::endl;
   }
   
   // ============================================================================

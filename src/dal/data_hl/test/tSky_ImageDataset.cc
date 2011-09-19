@@ -21,6 +21,8 @@
 #include <data_hl/Sky_ImageDataset.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::Sky_ImageDataset;
 
 /*!
@@ -48,29 +50,40 @@ using DAL::Sky_ImageDataset;
 int test_constructors (hid_t const &fileID,
 		       std::string const &nameDataset)
 {
-  std::cout << "\n[tSky_ImageDataset::test_constructors]\n" << std::endl;
+  cout << "\n[tSky_ImageDataset::test_constructors]" << endl;
 
   int nofFailedTests = 0;
   
-  std::cout << "[1] Testing Sky_ImageDataset() ..." << std::endl;
-  try {
+  cout << "\n[1] Testing Sky_ImageDataset() ..." << endl;
+  {
     Sky_ImageDataset sky;
     //
     sky.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
   }
   
-  std::cout << "[2] Testing Sky_ImageDataset() ..." << std::endl;
-  try {
-    Sky_ImageDataset sky (fileID,nameDataset);
+  cout << "\n[2] Testing Sky_ImageDataset(hid_t,string) ..." << endl;
+  {
+    Sky_ImageDataset sky (fileID, nameDataset);
     //
     sky.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
   }
+
+  
+  cout << "\n[3] Testing Sky_ImageDataset(hid_t,string,vector<hsize_t>) ..." << endl;
+  {
+    unsigned int rank = 3;
+    std::vector<hsize_t> shape (rank);
+
+    shape[0] = 1024;
+    shape[1] = 1024;
+    shape[2] = 512;
+
+    Sky_ImageDataset sky (fileID, nameDataset, shape);
+
+    sky.summary(); 
+  }
+
+  
   
   return nofFailedTests;
 }
