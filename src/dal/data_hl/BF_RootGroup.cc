@@ -212,7 +212,7 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("EXPTIME_START_TAI");
     attributes_p.insert("EXPTIME_STOP_TAI");
     attributes_p.insert("TOTAL_INTEGRATION_TIME");
-    attributes_p.insert("OBS_DATATYPE");
+    attributes_p.insert("OBSERVATION_DATATYPE");
     attributes_p.insert("PRIMARY_POINTING_DIAMETER");
     attributes_p.insert("BANDWIDTH");
     attributes_p.insert("BEAM_DIAMETER");
@@ -275,7 +275,7 @@ namespace DAL { // Namespace DAL -- begin
       HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined  );
       HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined  );
       HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valDouble  );
-      HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined  );
+      HDF5Attribute::write (location_p,"OBSERVATION_DATATYPE",      undefined  );
       HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valDouble  );
       HDF5Attribute::write (location_p,"BANDWIDTH",                 valDouble  );
       HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valDouble  );

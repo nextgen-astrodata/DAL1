@@ -131,8 +131,6 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("TRACKING");
     attributes_p.insert("POINT_ALTITUDE");
     attributes_p.insert("POINT_AZIMUTH");
-    attributes_p.insert("CLOCK_RATE");
-    attributes_p.insert("CLOCK_RATE_UNIT");
     attributes_p.insert("NOF_SAMPLES");
     attributes_p.insert("SAMPLING_RATE");
     attributes_p.insert("SAMPLING_RATE_UNIT");
@@ -198,8 +196,6 @@ namespace DAL { // Namespace DAL -- begin
 	HDF5Attribute::write (location_p,"TRACKING",                  tracking    );
 	HDF5Attribute::write (location_p,"POINT_ALTITUDE",            vectD       );
 	HDF5Attribute::write (location_p,"POINT_AZIMUTH",             vectD       );
-	HDF5Attribute::write (location_p,"CLOCK_RATE",                valDouble   );
-	HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",           mhz         );
 	HDF5Attribute::write (location_p,"NOF_SAMPLES",               int(0)      );
 	HDF5Attribute::write (location_p,"SAMPLING_RATE",             valDouble   );
 	HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",        mhz         );
