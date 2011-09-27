@@ -487,9 +487,9 @@ namespace DAL { // Namespace DAL -- begin
     
     /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(itsLocation)) {
-      std::string grouptype       = "Data";
-      std::string datatype        = "float";
-      std::string stokesComponent = itsStokesComponent.name();
+      std::string grouptype              = "Data";
+      std::string datatype               = "float";
+      std::string stokesComponent        = itsStokesComponent.name();
       std::vector<unsigned int> channels = itsNofChannels;
       unsigned int subbands              = channels.size();
       

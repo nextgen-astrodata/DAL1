@@ -180,6 +180,8 @@ namespace DAL { // Namespace DAL -- begin
 
 	// Initial values for the attributes _______________
 	
+	double valDouble (0.0);
+	std::vector<double> vectD (1,valDouble);
 	std::string mhz ("MHz");
 	std::string tracking ("OFF");
 	std::string second ("s");
@@ -188,29 +190,29 @@ namespace DAL { // Namespace DAL -- begin
 	
 	// Write attribute values __________________________
 	
-	HDF5Attribute::write (location_p,"GROUPTYPE",                itsGroupType);
-	HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
-	HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
-	HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
-	HDF5Attribute::write (location_p,"POINT_DEC",                double(0.0) );
-	HDF5Attribute::write (location_p,"TRACKING",                 tracking    );
-	HDF5Attribute::write (location_p,"POINT_ALTITUDE",           double(0.0) );
-	HDF5Attribute::write (location_p,"POINT_AZIMUTH",            double(0.0) );
-	HDF5Attribute::write (location_p,"CLOCK_RATE",               double(0.0) );
-	HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",          mhz         );
-	HDF5Attribute::write (location_p,"NOF_SAMPLES",              int(0)      );
-	HDF5Attribute::write (location_p,"SAMPLING_RATE",            double(0.0) );
-	HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",       mhz         );
-	HDF5Attribute::write (location_p,"SAMPLING_TIME",            float(0.0)  );
-	HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",       usecond     );
-	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
+	HDF5Attribute::write (location_p,"GROUPTYPE",                 itsGroupType);
+	HDF5Attribute::write (location_p,"NOF_STATIONS",              int(0)      );
+	HDF5Attribute::write (location_p,"STATIONS_LIST",             stationsList);
+	HDF5Attribute::write (location_p,"POINT_RA",                  valDouble   );
+	HDF5Attribute::write (location_p,"POINT_DEC",                 valDouble   );
+	HDF5Attribute::write (location_p,"TRACKING",                  tracking    );
+	HDF5Attribute::write (location_p,"POINT_ALTITUDE",            vectD       );
+	HDF5Attribute::write (location_p,"POINT_AZIMUTH",             vectD       );
+	HDF5Attribute::write (location_p,"CLOCK_RATE",                valDouble   );
+	HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",           mhz         );
+	HDF5Attribute::write (location_p,"NOF_SAMPLES",               int(0)      );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE",             valDouble   );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",        mhz         );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME",             valDouble   );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",        usecond     );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valDouble   );
 	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
-	HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
-	HDF5Attribute::write (location_p,"SUBBAND_WIDTH",            double(0.0) );
-	HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
-	HDF5Attribute::write (location_p,"CHANNEL_WIDTH",            double(0.0) );
-	HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
-	HDF5Attribute::write (location_p,"NOF_BEAMS",                int(0)      );
+	HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",       int(0)    );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH",              valDouble );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",         mhz       );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH",              valDouble );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",         mhz       );
+	HDF5Attribute::write (location_p,"NOF_BEAMS",                  int(0)    );
       }
 
       // Open embedded groups ______________________________

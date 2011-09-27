@@ -260,10 +260,8 @@ namespace DAL { // Namespace DAL -- begin
       itsCommonAttributes.h5write(location_p);
       /* Write the additional attributes attached to the root group */
       bool valBool          = true;
-      float valFloat        = 0.0;
       double valDouble      = 0.0;
       std::string undefined = "UNDEFINED";
-      std::vector<float> vectF (1,valFloat);
       std::vector<double> vectD (1,0.0);
       //
       HDF5Attribute::write (location_p,"FILENAME",                  name       );
@@ -276,14 +274,14 @@ namespace DAL { // Namespace DAL -- begin
       HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined  );
       HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined  );
       HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined  );
-      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valFloat   );
+      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valDouble  );
       HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined  );
-      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valFloat   );
+      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valDouble  );
       HDF5Attribute::write (location_p,"BANDWIDTH",                 valDouble  );
-      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valFloat   );
-      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF      );
-      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF      );
-      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF      );
+      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valDouble  );
+      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectD      );
+      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectD      );
+      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectD      );
       HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)     );
     }
 

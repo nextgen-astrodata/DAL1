@@ -191,7 +191,6 @@ namespace DAL { // Namespace DAL -- begin
 	
 	bool valBool           = false;
 	int valInt             = 0;
-	double valFloat        = 0.0;
 	double valDouble       = 0.0;
 	std::string grouptype  = "Beam";
 	std::string undefined  = "UNDEFINED";
@@ -210,15 +209,15 @@ namespace DAL { // Namespace DAL -- begin
 	HDF5Attribute::write (location_p,"POINT_DEC",                  valDouble  );
 	HDF5Attribute::write (location_p,"POSITION_OFFSET_RA" ,        valDouble  );
 	HDF5Attribute::write (location_p,"POSITION_OFFSET_DEC",        valDouble  );
-	HDF5Attribute::write (location_p,"BEAM_DIAMETER_RA",           valFloat   );
-	HDF5Attribute::write (location_p,"BEAM_DIAMETER_DEC",          valFloat   );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_RA",           valDouble  );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_DEC",          valDouble  );
 	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER",      valDouble  );
 	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER_UNIT", MHz        );
 	HDF5Attribute::write (location_p,"FOLDED_DATA",                valBool    );
-	HDF5Attribute::write (location_p,"FOLD_PERIOD",                valFloat   );
+	HDF5Attribute::write (location_p,"FOLD_PERIOD",                valDouble  );
 	HDF5Attribute::write (location_p,"FOLD_PERIOD_UNIT",           foldPeriod );
 	HDF5Attribute::write (location_p,"DEDISPERSION",               undefined  );
-	HDF5Attribute::write (location_p,"DISPERSION_MEASURE",         valFloat   );
+	HDF5Attribute::write (location_p,"DISPERSION_MEASURE",         valDouble  );
 	HDF5Attribute::write (location_p,"DISPERSION_MEASURE_UNIT",    undefined  );
 	HDF5Attribute::write (location_p,"BARYCENTER",                 valBool    );
 	HDF5Attribute::write (location_p,"NOF_STOKES",                 valInt     );
