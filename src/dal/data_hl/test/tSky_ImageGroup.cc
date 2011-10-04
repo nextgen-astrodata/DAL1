@@ -51,6 +51,10 @@ int test_constructors (hid_t const &fileID)
 
   int nofFailedTests (0);
   
+  /*________________________________________________________
+    Test 1 : Default constructor for a new object.
+  */
+
   std::cout << "[1] Testing Sky_ImageGroup() ..." << std::endl;
   try {
     Sky_ImageGroup newObject;
@@ -61,6 +65,11 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
   
+  /*________________________________________________________
+    Test 2 : Argumented constructor, to open an exiting or
+             create new image group.
+  */
+
   std::cout << "[2] Testing Sky_ImageGroup(hid_t,uint,IO_Mode) ..." << std::endl;
   try {
     Sky_ImageGroup group (fileID, 0);
