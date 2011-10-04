@@ -54,6 +54,7 @@ foreach (_test
     tBF_BeamGroup
     tBF_StokesDataset
     tRM_RootGroup
+    tSky_ImageGroup
     tSky_ImageDataset
     tSysLog
     tTBB_StationTrigger

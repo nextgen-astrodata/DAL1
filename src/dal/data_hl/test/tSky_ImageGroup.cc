@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars Baehren (<mail>)                                                     *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,7 +31,7 @@ using DAL::Sky_ImageGroup;
 
   \brief A collection of test routines for the DAL::Sky_ImageGroup class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2011-09-19
 */
