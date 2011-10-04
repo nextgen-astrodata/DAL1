@@ -28,8 +28,44 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                               Sky_ImageGroup
+
   Sky_ImageGroup::Sky_ImageGroup ()
+    : HDF5GroupBase()
   {;}
+  
+  //_____________________________________________________________________________
+  //                                                               Sky_ImageGroup
+
+  /*!
+    \param location -- Identifier of the object the image group is attached to.
+    \param name     -- Name of the beam group to be opened.
+  */
+  Sky_ImageGroup::Sky_ImageGroup (hid_t const &location,
+				  std::string const &name)
+  {
+    open (location,name,IO_Mode(IO_Mode::Open));
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               Sky_ImageGroup
+  
+  /*!
+    \param location -- Identifier of the object the beam group is attached to.
+    \param index    -- Index of the image group.
+    \param flags    -- I/O mode flags.
+  */
+  Sky_ImageGroup::Sky_ImageGroup (hid_t const &location,
+				  unsigned int const &index,
+				  IO_Mode const &flags)
+  {
+    std::string name = getName(index);
+    open (location,name,flags);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               Sky_ImageGroup
   
   /*!
     \param other -- Another Sky_ImageGroup object from which to create this new
@@ -102,6 +138,10 @@ namespace DAL { // Namespace DAL -- begin
   void Sky_ImageGroup::summary (std::ostream &os)
   {
     os << "[Sky_ImageGroup] Summary of internal parameters." << std::endl;
+    os << "-- Location ID     = " << location_p                   << std::endl;
+    os << "-- Group name      = " << HDF5Object::name(location_p) << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size()          << std::endl;
+    os << "-- Attributes      = " << attributes_p                 << std::endl;
   }
   
   // ============================================================================
@@ -126,16 +166,52 @@ namespace DAL { // Namespace DAL -- begin
 			     std::string const &name,
 			     IO_Mode const &flags)
   {
-    if (H5Iis_valid(location)) {
-      
-      // if ( H5Lexists (location, name.c_str(), H5P_DEFAULT) ) {
-      // }
-      
+    bool status    = true;
+    bool truncated = HDF5GroupBase::open (location_p,
+					  location,
+					  name,
+					  flags);
+    
+    if ( H5Iis_valid(location_p) ) {
+
+      // List of recognized attributes _____________________
       setAttributes();
-      return true;
+      
+      if (truncated) {
+
+	// Initial values for the attributes _______________
+	
+	double valDouble       = 0.0;
+	std::string grouptype  = "Image";
+	std::string undefined  = "UNDEFINED";
+	std::vector<std::string> vectString (1,undefined);
+	
+	// Write attribute values __________________________
+	
+	HDF5Attribute::write (location_p,"GROUPTYPE",                 grouptype );
+	HDF5Attribute::write (location_p,"REFERENCE_FREQUENCY_VALUE", valDouble );
+	HDF5Attribute::write (location_p,"REFERENCE_FREQUENCY_UNIT",  undefined );
+	HDF5Attribute::write (location_p,"REFERENCE_BANDWIDTH_VALUE", valDouble );
+	HDF5Attribute::write (location_p,"REFERENCE_BANDWIDTH_UNIT",  undefined );
+	HDF5Attribute::write (location_p,"EFFECTIVE_FREQUENCY_VALUE", valDouble );
+	HDF5Attribute::write (location_p,"EFFECTIVE_FREQUENCY_UNIT",  undefined );
+	HDF5Attribute::write (location_p,"EFFECTIVE_BANDWIDTH_VALUE", valDouble );
+	HDF5Attribute::write (location_p,"EFFECTIVE_BANDWIDTH_UNIT",  undefined );
+      }
+      
+      // Open embedded groups ______________________________
+      
+      status = openEmbedded (flags);
+      
     } else {
+      std::cerr << "[Sky_ImageGroup::open]"
+		<< " Failed to open/create group " << name
+		<< std::endl;
       return false;
     }
+    
+    
+    return status;
   }
   
   // ============================================================================
@@ -144,8 +220,26 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                      getName
   
+  /*!
+    \param index -- Index identifying the beam.
 
+    \return name -- The name of the beam group, <tt>Beam<index></tt>
+  */
+  std::string Sky_ImageGroup::getName (unsigned int const &index)
+  {
+    char uid[10];
+    sprintf (uid, "%03d", index);
+    
+    std::string name (uid);
+    
+    name = "IMAGE_" + name;
+    
+    return name;
+  }
+  
   // ============================================================================
   //
   //  Private methods
@@ -160,6 +254,14 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.clear();
 
     attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("REFERENCE_FREQUENCY_VALUE");
+    attributes_p.insert("REFERENCE_FREQUENCY_UNIT");
+    attributes_p.insert("REFERENCE_BANDWIDTH_VALUE");
+    attributes_p.insert("REFERENCE_BANDWIDTH_UNIT");
+    attributes_p.insert("EFFECTIVE_FREQUENCY_VALUE");
+    attributes_p.insert("EFFECTIVE_FREQUENCY_UNIT");
+    attributes_p.insert("EFFECTIVE_BANDWIDTH_VALUE");
+    attributes_p.insert("EFFECTIVE_BANDWIDTH_UNIT");
   }
 
   //_____________________________________________________________________________

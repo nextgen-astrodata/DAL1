@@ -45,7 +45,7 @@ using DAL::Sky_ImageGroup;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &fileID)
 {
   std::cout << "\n[tSky_ImageGroup::test_constructors]\n" << std::endl;
 
@@ -56,6 +56,16 @@ int test_constructors ()
     Sky_ImageGroup newObject;
     //
     newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing Sky_ImageGroup(hid_t,uint,IO_Mode) ..." << std::endl;
+  try {
+    Sky_ImageGroup group (fileID, 0);
+    //
+    group.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -75,10 +85,31 @@ int test_constructors ()
 */
 int main ()
 {
-  int nofFailedTests (0);
-
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  int nofFailedTests   = 0;
+  std::string filename = "tSky_ImageGroup.h5";
+  
+  //________________________________________________________
+  // Create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* If file creation was successful, run the tests. */
+  if (H5Iis_valid(fileID)) {
+    
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose (fileID);
 
   return nofFailedTests;
 }

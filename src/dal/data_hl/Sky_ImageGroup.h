@@ -53,6 +53,32 @@ namespace DAL { // Namespace DAL -- begin
     </ul>
     
     <h3>Synopsis</h3>
+
+    \verbatim
+    L1002977_sky.h5                         ...  (Root) Group
+    |-- SYS_LOG                             ...  Group
+    |-- IMAGE_000                           ...  Group
+    |   |-- GROUPTYPE                       ...  Attr.          string
+    |   |-- REFERENCE_FREQUENCY_VALUE       ...  Attr.          double
+    |   |-- REFERENCE_FREQUENCY_UNIT        ...  Attr.          string
+    |   |-- REFERENCE_BANDWIDTH_VALUE       ...  Attr.          double
+    |   |-- REFERENCE_BANDWIDTH_UNIT        ...  Attr.          string
+    |   |-- EFFECTIVE_FREQUENCY_VALUE       ...  Attr.          double
+    |   |-- EFFECTIVE_FREQUENCY_UNIT        ...  Attr.          string
+    |   |-- EFFECTIVE_BANDWIDTH_VALUE       ...  Attr.          double
+    |   |-- EFFECTIVE_BANDWIDTH_UNIT        ...  Attr.          string
+    |   |-- COORDINATES                     ...  Group
+    |   |   |-- COORDINATE_0                ...  Group
+    |   |   |-- COORDINATE_1                ...  Group
+    |   |   `-- COORDINATE_2                ...  Group
+    |   |-- IMAGE_DATA                      ...  Dataset
+    |   |-- SOURCE_TABLE                    ...  Dataset
+    |   |-- PSF_INFO                        ...  Group
+    |   `-- PROCESS_HISTORY                 ...  Group
+    |-- IMAGE_001                           ...  Group
+    |
+    `-- IMAGE{NNN}                          ...  Group
+    \endverbatim
     
     <h3>Example(s)</h3>
     
@@ -70,12 +96,18 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     Sky_ImageGroup ();
-    
+    //! Argumented constructor
+    Sky_ImageGroup (hid_t const &location,
+		    std::string const &name);
+    //! Argumented constructor
+    Sky_ImageGroup (hid_t const &location,
+		    unsigned int const &index,
+		    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Copy constructor
     Sky_ImageGroup (Sky_ImageGroup const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~Sky_ImageGroup ();
     
@@ -122,6 +154,8 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Static methods =======================================================
     
+    //! Convert image group index to name of the HDF5 group
+    static std::string getName (unsigned int const &index);
     
     
   private:

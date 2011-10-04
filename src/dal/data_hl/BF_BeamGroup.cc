@@ -56,7 +56,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the object the beam group is attached to.
-    \param index    -- 
+    \param index    -- Index of the beam group.
     \param flags    -- I/O mode flags.
   */
   BF_BeamGroup::BF_BeamGroup (hid_t const &location,
