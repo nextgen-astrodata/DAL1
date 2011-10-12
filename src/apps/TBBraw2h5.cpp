@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <sstream>
 
 #include <dal_config.h>
@@ -234,6 +235,15 @@ int increase_io_priority(bool verbose) {
 }
 
 #endif
+
+//!keep program running
+bool keepRunning;
+
+void signal_callback_handler(int signum)
+{
+  keepRunning = false;
+  std::cout << "Caught signal, waiting for last event to be written before quitting." << std::endl;
+}
 
 //_______________________________________________________________________________
 //                                                             zero_padded_number
@@ -986,7 +996,7 @@ bool readStationsFromSockets (std::vector<int> ports,
   unsigned char stationId;
   char * bufferPointer;
   
-  while ((noRunning>0) || (inBufStorID != inBufProcessID) )  {
+  while (keepRunning && ((noRunning>0) || (inBufStorID != inBufProcessID)) )  {
     if (inBufStorID == inBufProcessID)  {
       if (verbose && ((amWaiting%100)==1) ) {
 	std::cout << "[TBBraw2h5::readStationsFromSockets]"
@@ -1148,13 +1158,16 @@ int main(int argc, char *argv[])
   int fixTransientTimes       = 2;
   int doCheckCRC              = 1;
   int socketmode              = -1;
-  bool keepRunning            = false;
   bool waitForAll             = false;
   bool multipeStations        = false;
   bool raiseIOprio            = false;
   int runNumber               = 0;
   
+  keepRunning            = false;
   input_buffer_size = 50000;
+
+  // Register signal and signal handler
+  signal(SIGTERM, signal_callback_handler);
   
   bpo::options_description desc ("[TBBraw2h5] Available command line options");
   
