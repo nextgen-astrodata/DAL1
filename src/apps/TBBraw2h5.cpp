@@ -238,10 +238,12 @@ int increase_io_priority(bool verbose) {
 
 //!keep program running
 bool keepRunning;
+bool lastEvent;
 
 void signal_callback_handler(int signum)
 {
   keepRunning = false;
+  lastEvent = true;
   std::cout << "Caught signal, waiting for last event to be written before quitting." << std::endl;
 }
 
@@ -633,6 +635,12 @@ void socketReaderThread (int port,
       if (select( main_socket + 1, &readSet, NULL, NULL, &TimeoutWait ) != 0){
         break;
       };
+      if (lastEvent)
+      {
+        boost::mutex::scoped_lock lock(writeMutex);
+        noRunning--;
+        return;
+      }
     }
   } else {
     while (!terminateThreads){
@@ -642,6 +650,12 @@ void socketReaderThread (int port,
       if (select( main_socket + 1, &readSet, NULL, NULL, &TimeoutWait ) != 0){
         break;
       };
+      if (lastEvent)
+      {
+        boost::mutex::scoped_lock lock(writeMutex);
+        noRunning--;
+        return;
+      }
     };
   };
   bool ImRunning=true;
@@ -707,7 +721,7 @@ void socketReaderThread (int port,
         };
       };
     }
-    else if (! stayConnected)
+    else if (! stayConnected || lastEvent)
     {
       if (verbose)
       {
@@ -996,7 +1010,7 @@ bool readStationsFromSockets (std::vector<int> ports,
   unsigned char stationId;
   char * bufferPointer;
 
-  while (keepRunning && ((noRunning>0) || (inBufStorID != inBufProcessID)) )  {
+  while (((noRunning>0) || (inBufStorID != inBufProcessID)) )  {
     if (inBufStorID == inBufProcessID)  {
       if (verbose && ((amWaiting%100)==1) ) {
         std::cout << "[TBBraw2h5::readStationsFromSockets]"
@@ -1164,10 +1178,11 @@ int main(int argc, char *argv[])
   int runNumber               = 0;
 
   keepRunning            = false;
+  lastEvent              = false;
   input_buffer_size = 50000;
 
   // Register signal and signal handler
-  signal(SIGINT, signal_callback_handler);
+  signal(SIGTERM, signal_callback_handler);
 
   bpo::options_description desc ("[TBBraw2h5] Available command line options");
 
@@ -1387,7 +1402,6 @@ int main(int argc, char *argv[])
     // Begin of "keepRunning" loop
     do 
     {
-      std::cout<<"I am here"<<std::endl;
       tbb = NULL;
 
       readFromSockets (ports,
