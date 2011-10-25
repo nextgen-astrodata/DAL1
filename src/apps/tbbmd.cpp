@@ -58,102 +58,99 @@ int main (int argc, char *argv[])
   //! Directory with antenna positions files
   std::string metadataDir = "";
   bool s_metadataDir = false;
-  //! Antenna set
+  //! File creation date, YYYY-MM-DDThh:mm:ss.s
+  std::string filedate;
+  bool s_filedate = false;
+  //! Name of the telescope ("LOFAR")
+  std::string telescope;
+  bool s_telescope = false;
+  //! Name(s) of the observer(s)
+  std::string observer;
+  bool s_observer = false;
+  //! Unique identifier for the project
+  std::string projectID;
+  bool s_projectID = false;
+  //! Name of the project
+  std::string projectTitle;
+  bool s_projectTitle = false;
+  //! Name of the project's principal investigator
+  std::string projectPI;
+  bool s_projectPI = false;
+  //! Name(s) of the project's co-PI(s)
+  std::string projectCoI;
+  bool s_projectCoI = false;
+  //! Names/Email-addresses of the project's primary contact person(s)
+  std::string projectContact;
+  bool s_projectContact = false;
+  //! Unique identifier for the observation
+  std::string observationID;
+  bool s_observationID = false;
+  //! Start date of the observation (MJD)
+  std::string startMJD;
+  bool s_startMJD = false;
+  //! Start date of the observation (TAI)
+  std::string startTAI;
+  bool s_startTAI = false;
+  //! Start date of the observation (UTC)
+  std::string startUTC;
+  bool s_startUTC = false;
+  //! End date of the observation (MJD)
+  std::string endMJD;
+  bool s_endMJD = false;
+  //! End date of the observation (TAI)
+  std::string endTAI;
+  bool s_endTAI = false;
+  //! End date of the observation (UTC)
+  std::string endUTC;
+  bool s_endUTC = false;
+  //! List of stations used during the observation
+  std::vector<std::string> stationsList;
+  bool s_stationsList = false;
+  //! Observation minimum frequency
+  double frequencyMin;
+  bool s_frequencyMin = false;
+  //! Observation maximum frequency
+  double frequencyMax;
+  bool s_frequencyMax = false;
+  //! Observation center frequency
+  double frequencyCenter;
+  bool s_frequencyCenter = false;
+  //! Observation frequency physical units
+  std::string frequencyUnit;
+  bool s_frequencyUnit = false;
+  //! Clock frequency (LOFAR: 200.0 or 160.0)
+  double clockFrequency;
+  bool s_clockFrequency = false;
+  //! Clock frequency physical unit
+  std::string clockFrequencyUnit;
+  bool s_clockFrequencyUnit = false;
+  //! Antenna set specification of observation
   std::string antennaSet;
   bool s_antennaSet = false;
-  //! File creation date, YYYY-MM-DDThh:mm:ss.s
-  std::string itsFiledate;
-  bool s_itsFiledate = false;
-  //! Name of the telescope ("LOFAR")
-  std::string itsTelescope;
-  bool s_itsTelescope = false;
-  //! Name(s) of the observer(s)
-  std::string itsObserver;
-  bool s_itsObserver = false;
-  //! Unique identifier for the project
-  std::string itsProjectID;
-  bool s_itsProjectID = false;
-  //! Name of the project
-  std::string itsProjectTitle;
-  bool s_itsProjectTitle = false;
-  //! Name of the project's principal investigator
-  std::string itsProjectPI;
-  bool s_itsProjectPI = false;
-  //! Name(s) of the project's co-PI(s)
-  std::string itsProjectCoI;
-  bool s_itsProjectCoI = false;
-  //! Names/Email-addresses of the project's primary contact person(s)
-  std::string itsProjectContact;
-  bool s_itsProjectContact = false;
-  //! Unique identifier for the observation
-  std::string itsObservationID;
-  bool s_itsObservationID = false;
-  //! Start date of the observation (MJD)
-  std::string itsStartMJD;
-  bool s_itsStartMJD = false;
-  //! Start date of the observation (TAI)
-  std::string itsStartTAI;
-  bool s_itsStartTAI = false;
-  //! Start date of the observation (UTC)
-  std::string itsStartUTC;
-  bool s_itsStartUTC = false;
-  //! End date of the observation (MJD)
-  std::string itsEndMJD;
-  bool s_itsEndMJD = false;
-  //! End date of the observation (TAI)
-  std::string itsEndTAI;
-  bool s_itsEndTAI = false;
-  //! End date of the observation (UTC)
-  std::string itsEndUTC;
-  bool s_itsEndUTC = false;
-  //! List of stations used during the observation
-  std::vector<std::string> itsStationsList;
-  bool s_itsStationsList = false;
-  //! Observation minimum frequency
-  double itsFrequencyMin;
-  bool s_itsFrequencyMin = false;
-  //! Observation maximum frequency
-  double itsFrequencyMax;
-  bool s_itsFrequencyMax = false;
-  //! Observation center frequency
-  double itsFrequencyCenter;
-  bool s_itsFrequencyCenter = false;
-  //! Observation frequency physical units
-  std::string itsFrequencyUnit;
-  bool s_itsFrequencyUnit = false;
-  //! Clock frequency (LOFAR: 200.0 or 160.0)
-  double itsClockFrequency;
-  bool s_itsClockFrequency = false;
-  //! Clock frequency physical unit
-  std::string itsClockFrequencyUnit;
-  bool s_itsClockFrequencyUnit = false;
-  //! Antenna set specification of observation
-  std::string itsAntennaSet;
-  bool s_itsAntennaSet = false;
   //! Filter selection
-  std::string itsFilterSelection;
-  bool s_itsFilterSelection = false;
+  std::string filterSelection;
+  bool s_filterSelection = false;
   //! Single or list of observation targets/sources
-  std::string itsTarget;
-  bool s_itsTarget = false;
+  std::string target;
+  bool s_target = false;
   //! Processing system name/version
-  std::string itsSystemVersion;
-  bool s_itsSystemVersion = false;
+  std::string systemVersion;
+  bool s_systemVersion = false;
   //! Processing pipeline name
-  std::string itsPipelineName;
-  bool s_itsPipelineName = false;
+  std::string pipelineName;
+  bool s_pipelineName = false;
   //! Processing pipeline version
-  std::string itsPipelineVersion;
-  bool s_itsPipelineVersion = false;
+  std::string pipelineVersion;
+  bool s_pipelineVersion = false;
   //! Interface Control Document (ICD) number 
-  std::string itsIcdNumber;
-  bool s_itsIcdNumber = false;
+  std::string icdNumber;
+  bool s_icdNumber = false;
   //! Interface Control Document (ICD) document version
-  std::string itsIcdVersion;
-  bool s_itsIcdVersion = false;
+  std::string icdVersion;
+  bool s_icdVersion = false;
   //! Notes or comments
-  std::string itsNotes;
-  bool s_itsNotes = false;
+  std::string notes;
+  bool s_notes = false;
 
   bpo::options_description desc ("[AddMetadata] Available command line options");
 
@@ -162,35 +159,35 @@ int main (int argc, char *argv[])
     ("station,s", bpo::value< std::vector<std::string> >(), "")
     ("metadataDir", bpo::value<std::string>(), "Directory containing static metadata")
     ("antennaSet", bpo::value<std::string>(&antennaSet)->default_value("UNDEFINED"), "antennaSet")
-    ("itsTelescope", bpo::value<std::string>(), "itsTelescope")
-    ("itsObserver", bpo::value<std::string>(), "itsObserver")
-    ("itsProjectID", bpo::value<std::string>(), "itsProjectID")
-    ("itsProjectTitle", bpo::value<std::string>(), "itsProjectTitle")
-    ("itsProjectPI", bpo::value<std::string>(), "")
-    ("itsProjectCoI", bpo::value<std::string>(), "")
-    ("itsProjectContact", bpo::value<std::string>(), "")
-    ("itsObservationID", bpo::value<std::string>(), "")
-    ("itsStartMJD", bpo::value<std::string>(), "")
-    ("itsStartTAI", bpo::value<std::string>(), "")
-    ("itsStartUTC", bpo::value<std::string>(), "")
-    ("itsEndMJD", bpo::value<std::string>(), "")
-    ("itsEndTAI", bpo::value<std::string>(), "")
-    ("itsEndUTC", bpo::value<std::string>(), "")
-    ("itsFrequencyMin", bpo::value<double>(), "")
-    ("itsFrequencyMax", bpo::value<double>(), "")
-    ("itsFrequencyCenter", bpo::value<double>(), "")
-    ("itsFrequencyUnit", bpo::value<std::string>(), "")
-    ("itsClockFrequency", bpo::value<double>(), "")
-    ("itsClockFrequencyUnit", bpo::value<std::string>(), "")
-    ("itsAntennaSet", bpo::value<std::string>(), "")
-    ("itsFilterSelection", bpo::value<std::string>(), "")
-    ("itsTarget", bpo::value<std::string>(), "")
-    ("itsSystemVersion", bpo::value<std::string>(), "")
-    ("itsPipelineName", bpo::value<std::string>(), "")
-    ("itsPipelineVersion", bpo::value<std::string>(), "")
-    ("itsIcdNumber", bpo::value<std::string>(), "")
-    ("itsIcdVersion", bpo::value<std::string>(), "")
-    ("itsNotes", bpo::value<std::string>(), "")
+    ("telescope", bpo::value<std::string>(), "telescope")
+    ("observer", bpo::value<std::string>(), "observer")
+    ("projectID", bpo::value<std::string>(), "projectID")
+    ("projectTitle", bpo::value<std::string>(), "projectTitle")
+    ("projectPI", bpo::value<std::string>(), "")
+    ("projectCoI", bpo::value<std::string>(), "")
+    ("projectContact", bpo::value<std::string>(), "")
+    ("observationID", bpo::value<std::string>(), "")
+    ("startMJD", bpo::value<std::string>(), "")
+    ("startTAI", bpo::value<std::string>(), "")
+    ("startUTC", bpo::value<std::string>(), "")
+    ("endMJD", bpo::value<std::string>(), "")
+    ("endTAI", bpo::value<std::string>(), "")
+    ("endUTC", bpo::value<std::string>(), "")
+    ("frequencyMin", bpo::value<double>(), "")
+    ("frequencyMax", bpo::value<double>(), "")
+    ("frequencyCenter", bpo::value<double>(), "")
+    ("frequencyUnit", bpo::value<std::string>(), "")
+    ("clockFrequency", bpo::value<double>(), "")
+    ("clockFrequencyUnit", bpo::value<std::string>(), "")
+    ("antennaSet", bpo::value<std::string>(), "")
+    ("filterSelection", bpo::value<std::string>(), "")
+    ("target", bpo::value<std::string>(), "")
+    ("systemVersion", bpo::value<std::string>(), "")
+    ("pipelineName", bpo::value<std::string>(), "")
+    ("pipelineVersion", bpo::value<std::string>(), "")
+    ("icdNumber", bpo::value<std::string>(), "")
+    ("icdVersion", bpo::value<std::string>(), "")
+    ("notes", bpo::value<std::string>(), "")
     ("input-file", bpo::value< vector<string> >(), "Input file")
     ;
 
@@ -220,189 +217,189 @@ int main (int argc, char *argv[])
     s_antennaSet = true;
   }
 
-  if (vm.count("itsFiledate"))
+  if (vm.count("filedate"))
   {
-    itsFiledate = vm["itsFiledate"].as<std::string>();
+    filedate = vm["filedate"].as<std::string>();
   }
 
-  if (vm.count("itsTelescope"))
+  if (vm.count("telescope"))
   {
-    itsTelescope = vm["itsTelescope"].as<std::string>();
-    s_itsTelescope = true;
+    telescope = vm["telescope"].as<std::string>();
+    s_telescope = true;
   }
 
-  if (vm.count("itsObserver"))
+  if (vm.count("observer"))
   {
-    itsObserver = vm["itsObserver"].as<std::string>();
-    s_itsObserver = true;
+    observer = vm["observer"].as<std::string>();
+    s_observer = true;
   }
 
-  if (vm.count("itsProjectID"))
+  if (vm.count("projectID"))
   {
-    itsProjectID = vm["itsProjectID"].as<std::string>();
-    s_itsProjectID = true;
+    projectID = vm["projectID"].as<std::string>();
+    s_projectID = true;
   }
 
-  if (vm.count("itsProjectTitle"))
+  if (vm.count("projectTitle"))
   {
-    itsProjectTitle = vm["itsProjectTitle"].as<std::string>();
-    s_itsProjectTitle = true;
+    projectTitle = vm["projectTitle"].as<std::string>();
+    s_projectTitle = true;
   }
 
-  if (vm.count("itsProjectPI"))
+  if (vm.count("projectPI"))
   {
-    itsProjectPI = vm["itsProjectPI"].as<std::string>();
-    s_itsProjectPI = true;
+    projectPI = vm["projectPI"].as<std::string>();
+    s_projectPI = true;
   }
 
-  if (vm.count("itsProjectCoI"))
+  if (vm.count("projectCoI"))
   {
-    itsProjectCoI = vm["itsProjectCoI"].as<std::string>();
-    s_itsProjectCoI = true;
+    projectCoI = vm["projectCoI"].as<std::string>();
+    s_projectCoI = true;
   }
   
-  if (vm.count("itsProjectContact"))
+  if (vm.count("projectContact"))
   {
-    itsProjectContact = vm["itsProjectContact"].as<std::string>();
-    s_itsProjectContact = true;
+    projectContact = vm["projectContact"].as<std::string>();
+    s_projectContact = true;
   }
 
-  if (vm.count("itsObservationID"))
+  if (vm.count("observationID"))
   {
-    itsObservationID = vm["itsObservationID"].as<std::string>();
-    s_itsObservationID = true;
+    observationID = vm["observationID"].as<std::string>();
+    s_observationID = true;
   }
 
-  if (vm.count("itsStartMJD"))
+  if (vm.count("startMJD"))
   {
-    itsStartMJD = vm["itsStartMJD"].as<std::string>();
-    s_itsStartMJD = true;
+    startMJD = vm["startMJD"].as<std::string>();
+    s_startMJD = true;
   }
 
-  if (vm.count("itsStartTAI"))
+  if (vm.count("startTAI"))
   {
-    itsStartTAI = vm["itsStartTAI"].as<std::string>();
-    s_itsStartTAI = true;
+    startTAI = vm["startTAI"].as<std::string>();
+    s_startTAI = true;
   }
 
-  if (vm.count("itsStartUTC"))
+  if (vm.count("startUTC"))
   {
-    itsStartUTC = vm["itsStartUTC"].as<std::string>();
-    s_itsStartUTC = true;
+    startUTC = vm["startUTC"].as<std::string>();
+    s_startUTC = true;
   }
 
-  if (vm.count("itsEndMJD"))
+  if (vm.count("endMJD"))
   {
-    itsEndMJD = vm["itsEndMJD"].as<std::string>();
-    s_itsEndMJD = true;
+    endMJD = vm["endMJD"].as<std::string>();
+    s_endMJD = true;
   }
 
-  if (vm.count("itsEndTAI"))
+  if (vm.count("endTAI"))
   {
-    itsEndTAI = vm["itsEndTAI"].as<std::string>();
-    s_itsEndTAI = true;
+    endTAI = vm["endTAI"].as<std::string>();
+    s_endTAI = true;
   }
 
-  if (vm.count("itsEndUTC"))
+  if (vm.count("endUTC"))
   {
-    itsEndUTC = vm["itsEndUTC"].as<std::string>();
-    s_itsEndUTC = true;
+    endUTC = vm["endUTC"].as<std::string>();
+    s_endUTC = true;
   }
 
   if (vm.count("station"))
   {
-    itsStationsList = vm["station"].as< std::vector<std::string> >();
-    s_itsStationsList = true;
+    stationsList = vm["station"].as< std::vector<std::string> >();
+    s_stationsList = true;
   }
 
-  if (vm.count("itsFrequencyMin"))
+  if (vm.count("frequencyMin"))
   {
-    itsFrequencyMin = vm["itsFrequencyMin"].as<double>();
-    s_itsFrequencyMin = true;
+    frequencyMin = vm["frequencyMin"].as<double>();
+    s_frequencyMin = true;
   }
 
-  if (vm.count("itsFrequencyMax"))
+  if (vm.count("frequencyMax"))
   {
-    itsFrequencyMax = vm["itsFrequencyMax"].as<double>();
-    s_itsFrequencyMax = true;
+    frequencyMax = vm["frequencyMax"].as<double>();
+    s_frequencyMax = true;
   }
 
-  if (vm.count("itsFrequencyCenter"))
+  if (vm.count("frequencyCenter"))
   {
-    itsFrequencyCenter = vm["itsFrequencyCenter"].as<double>();
-    s_itsFrequencyCenter = true;
+    frequencyCenter = vm["frequencyCenter"].as<double>();
+    s_frequencyCenter = true;
   }
 
-  if (vm.count("itsFrequencyUnit"))
+  if (vm.count("frequencyUnit"))
   {
-    itsFrequencyUnit = vm["itsFrequencyUnit"].as<std::string>();
-    s_itsFrequencyUnit = true;
+    frequencyUnit = vm["frequencyUnit"].as<std::string>();
+    s_frequencyUnit = true;
   }
 
-  if (vm.count("itsClockFrequency"))
+  if (vm.count("clockFrequency"))
   {
-    itsClockFrequency = vm["itsClockFrequency"].as<double>();
-    s_itsClockFrequency = true;
+    clockFrequency = vm["clockFrequency"].as<double>();
+    s_clockFrequency = true;
   }
 
-  if (vm.count("itsClockFrequencyUnit"))
+  if (vm.count("clockFrequencyUnit"))
   {
-    itsClockFrequencyUnit = vm["itsClockFrequencyUnit"].as<std::string>();
-    s_itsClockFrequencyUnit = true;
+    clockFrequencyUnit = vm["clockFrequencyUnit"].as<std::string>();
+    s_clockFrequencyUnit = true;
   }
 
-  if (vm.count("itsAntennaSet"))
+  if (vm.count("antennaSet"))
   {
-    itsAntennaSet = vm["itsAntennaSet"].as<std::string>();
-    s_itsAntennaSet = true;
+    antennaSet = vm["antennaSet"].as<std::string>();
+    s_antennaSet = true;
   }
 
-  if (vm.count("itsFilterSelection"))
+  if (vm.count("filterSelection"))
   {
-    itsFilterSelection = vm["itsFilterSelection"].as<std::string>();
-    s_itsFilterSelection = true;
+    filterSelection = vm["filterSelection"].as<std::string>();
+    s_filterSelection = true;
   }
 
-  if (vm.count("itsTarget"))
+  if (vm.count("target"))
   {
-    itsTarget = vm["itsTarget"].as<std::string>();
-    s_itsTarget = true;
+    target = vm["target"].as<std::string>();
+    s_target = true;
   }
 
-  if (vm.count("itsSystemVersion"))
+  if (vm.count("systemVersion"))
   {
-    itsSystemVersion = vm["itsSystemVersion"].as<std::string>();
-    s_itsSystemVersion = true;
+    systemVersion = vm["systemVersion"].as<std::string>();
+    s_systemVersion = true;
   }
 
-  if (vm.count("itsPipelineName"))
+  if (vm.count("pipelineName"))
   {
-    itsPipelineName = vm["itsPipelineName"].as<std::string>();
-    s_itsPipelineName = true;
+    pipelineName = vm["pipelineName"].as<std::string>();
+    s_pipelineName = true;
   }
 
-  if (vm.count("itsPipelineVersion"))
+  if (vm.count("pipelineVersion"))
   {
-    itsPipelineVersion = vm["itsPipelineVersion"].as<std::string>();
-    s_itsPipelineVersion = true;
+    pipelineVersion = vm["pipelineVersion"].as<std::string>();
+    s_pipelineVersion = true;
   }
 
-  if (vm.count("itsIcdNumber"))
+  if (vm.count("icdNumber"))
   {
-    itsIcdNumber = vm["itsIcdNumber"].as<std::string>();
-    s_itsIcdNumber = true;
+    icdNumber = vm["icdNumber"].as<std::string>();
+    s_icdNumber = true;
   }
 
-  if (vm.count("itsIcdVersion"))
+  if (vm.count("icdVersion"))
   {
-    itsIcdVersion = vm["itsIcdVersion"].as<std::string>();
-    s_itsIcdVersion = true;
+    icdVersion = vm["icdVersion"].as<std::string>();
+    s_icdVersion = true;
   }
 
-  if (vm.count("itsNotes"))
+  if (vm.count("notes"))
   {
-    itsNotes = vm["itsNotes"].as<std::string>();
-    s_itsNotes = true;
+    notes = vm["notes"].as<std::string>();
+    s_notes = true;
   }
 
   if (vm.count("input-file"))
@@ -419,36 +416,36 @@ int main (int argc, char *argv[])
     DAL::CommonAttributes c = tbb->commonAttributes();
 
     if (s_antennaSet) c.setAntennaSet(antennaSet);
-    if (s_itsTelescope) c.setTelescope(itsTelescope);
-    if (s_itsFiledate) c.setFiledate(itsFiledate);
-    if (s_itsObserver) c.setObserver(itsObserver);
-    if (s_itsProjectID) c.setProjectID(itsProjectID);
-    if (s_itsProjectTitle) c.setProjectTitle(itsProjectTitle);
-    if (s_itsProjectPI) c.setProjectPI(itsProjectPI);
-    if (s_itsProjectCoI) c.setProjectCoI(itsProjectCoI);
-    if (s_itsProjectContact) c.setProjectContact(itsProjectContact);
-    if (s_itsObservationID) c.setObservationID(itsObservationID);
-    if (s_itsStartMJD) c.setStartMJD(itsStartMJD);
-    if (s_itsStartTAI) c.setStartTAI(itsStartTAI);
-    if (s_itsStartUTC) c.setStartUTC(itsStartUTC);
-    if (s_itsEndMJD) c.setEndMJD(itsEndMJD);
-    if (s_itsEndTAI) c.setEndTAI(itsEndTAI);
-    if (s_itsEndUTC) c.setEndUTC(itsEndUTC);
-    if (s_itsStationsList) c.setStationsList(itsStationsList);
-    if (s_itsFrequencyMin) c.setFrequencyMin(itsFrequencyMin);
-    if (s_itsFrequencyMax) c.setFrequencyMax(itsFrequencyMax);
-    if (s_itsFrequencyCenter) c.setFrequencyCenter(itsFrequencyCenter);
-    if (s_itsFrequencyUnit) c.setFrequencyUnit(itsFrequencyUnit);
-    if (s_itsClockFrequency) c.setClockFrequency(itsClockFrequency);
-    if (s_itsClockFrequencyUnit) c.setClockFrequencyUnit(itsClockFrequencyUnit);
-    if (s_itsFilterSelection) c.setFilterSelection(itsFilterSelection);
-    if (s_itsTarget) c.setTarget(itsTarget);
-    if (s_itsSystemVersion) c.setSystemVersion(itsSystemVersion);
-    if (s_itsPipelineName) c.setPipelineName(itsPipelineName);
-    if (s_itsPipelineVersion) c.setPipelineVersion(itsPipelineVersion);
-    if (s_itsIcdNumber) c.setIcdNumber(itsIcdNumber);
-    if (s_itsIcdVersion) c.setIcdVersion(itsIcdVersion);
-    if (s_itsNotes) c.setNotes(itsNotes);
+    if (s_telescope) c.setTelescope(telescope);
+    if (s_filedate) c.setFiledate(filedate);
+    if (s_observer) c.setObserver(observer);
+    if (s_projectID) c.setProjectID(projectID);
+    if (s_projectTitle) c.setProjectTitle(projectTitle);
+    if (s_projectPI) c.setProjectPI(projectPI);
+    if (s_projectCoI) c.setProjectCoI(projectCoI);
+    if (s_projectContact) c.setProjectContact(projectContact);
+    if (s_observationID) c.setObservationID(observationID);
+    if (s_startMJD) c.setStartMJD(startMJD);
+    if (s_startTAI) c.setStartTAI(startTAI);
+    if (s_startUTC) c.setStartUTC(startUTC);
+    if (s_endMJD) c.setEndMJD(endMJD);
+    if (s_endTAI) c.setEndTAI(endTAI);
+    if (s_endUTC) c.setEndUTC(endUTC);
+    if (s_stationsList) c.setStationsList(stationsList);
+    if (s_frequencyMin) c.setFrequencyMin(frequencyMin);
+    if (s_frequencyMax) c.setFrequencyMax(frequencyMax);
+    if (s_frequencyCenter) c.setFrequencyCenter(frequencyCenter);
+    if (s_frequencyUnit) c.setFrequencyUnit(frequencyUnit);
+    if (s_clockFrequency) c.setClockFrequency(clockFrequency);
+    if (s_clockFrequencyUnit) c.setClockFrequencyUnit(clockFrequencyUnit);
+    if (s_filterSelection) c.setFilterSelection(filterSelection);
+    if (s_target) c.setTarget(target);
+    if (s_systemVersion) c.setSystemVersion(systemVersion);
+    if (s_pipelineName) c.setPipelineName(pipelineName);
+    if (s_pipelineVersion) c.setPipelineVersion(pipelineVersion);
+    if (s_icdNumber) c.setIcdNumber(icdNumber);
+    if (s_icdVersion) c.setIcdVersion(icdVersion);
+    if (s_notes) c.setNotes(notes);
 
     if (vm.count("input-file"))
     {
