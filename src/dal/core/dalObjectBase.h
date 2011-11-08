@@ -75,6 +75,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Object handler, used with underlying low-level libraries
     void * itsObjectHandler;
     
+    //! Unconditional copying
+    void copy (dalObjectBase const &other);
+    
   public:
     
     // === Construction =========================================================
@@ -187,9 +190,6 @@ namespace DAL { // Namespace DAL -- begin
     
     
   private:
-    
-    //! Unconditional copying
-    void copy (dalObjectBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);

@@ -373,7 +373,7 @@ namespace DAL { // Namespace DAL -- begin
 	  
 	  hid_t memtype  = H5Tcopy (H5T_C_S1);
 	  /* Adjust the size of the buffer array */
-	  char **buffer = (char **) malloc (dims[0] * sizeof (char *));
+	  char **buffer = (char **) std::malloc (dims[0] * sizeof (char *));
 	  h5err = H5Tset_size (memtype, H5T_VARIABLE);
 	  /* Read the attribute into the buffer */
 	  h5err = H5Aread (attribute, memtype, buffer);
@@ -387,7 +387,7 @@ namespace DAL { // Namespace DAL -- begin
 	  
 	  /* Release allocated memory */
 	  h5err = H5Dvlen_reclaim (memtype, dataspace, H5P_DEFAULT, buffer);
-	  free (buffer);
+	  std::free (buffer);
 	  
 	} else {
 	  return false;
