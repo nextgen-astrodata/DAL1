@@ -122,19 +122,23 @@ namespace DAL { // Namespace DAL -- begin
   */
   void MS_Dataset::summary (std::ostream &os)
   {
+#ifdef DAL_WITH_CASA
     casa::TableDesc tableDesc = itsTable.tableDesc();
     unsigned int nofRows      = itsTable.nrow();
+#endif
 
     os << "[MS_Dataset] Summary of internal parameters."       << std::endl;
     os << "-- File type           = " << itsFiletype.name()    << std::endl;
     os << "-- I/O mode flags      = " << itsFlags.names()      << std::endl;
     os << "-- Table name          = " << itsName               << std::endl;
+#ifdef DAL_WITH_CASA
     os << "-- nof. sub-tables     = " << itsTableNames.size()  << std::endl;
     os << "-- Sub-table names     = " << itsTableNames         << std::endl;
     os << "-- nof. table columns  = " << itsColumnNames.size() << std::endl;
     os << "-- Column names        = " << itsColumnNames        << std::endl;
     os << "-- nof. table rows     = " << nofRows               << std::endl;
-
+#endif
+    
     if (!itsSubtables.empty()) {
       std::vector<double> data;
       std::vector<double>::iterator itMin;
@@ -164,6 +168,7 @@ namespace DAL { // Namespace DAL -- begin
   bool MS_Dataset::open (std::string const &name,
 			 IO_Mode const &flags)
   {
+#ifdef DAL_WITH_CASA
     /*______________________________________________________
       Open the root table of the MeasurementSet.
     */
@@ -199,6 +204,12 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     return status;
+#else
+    std::cerr << "[MS_Dataset::open] Unable to open dataset " << name
+    << " - missing casacore to interface to MS." << std::endl;
+    itsFlags = flags;
+    return false;
+#endif
   }
 
   //_____________________________________________________________________________
@@ -221,10 +232,18 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool MS_Dataset::selectBaseline (unsigned int const &antenna)
   {
+#ifdef DAL_WITH_CASA
     return setSelection ("ANTENNA1",
 			 Operator::Equal,
 			 antenna,
 			 true);
+#else
+    std::cerr << "[MS_Dataset::selectBasline] Unable to select baselines containing antenna "
+    << antenna
+    << " - missing casacore to interface to MS."
+    << std::endl;
+    return false;
+#endif
   }
   
   //_____________________________________________________________________________
@@ -239,10 +258,18 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status = true;
     
+#ifdef DAL_WITH_CASA
     /* New selection: first call needs to ensure previous selection is
        overwritten. */
     status *= setSelection ("ANTENNA1", Operator::Equal, antenna1, true);
     status *= setSelection ("ANTENNA2", Operator::Equal, antenna2);
+#else
+    std::cerr << "[MS_Dataset::selectBasline] Unable to select baselines containing antennas "
+    << antenna1 << " and " << antenna2
+    << " - missing casacore to interface to MS."
+    << std::endl;
+    status = false;
+#endif
     
     return status;
   }
@@ -258,7 +285,12 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool MS_Dataset::exposureValues (std::vector<double> &data)
   {
+#ifdef DAL_WITH_CASA
     return readData(data, "EXPOSURE");
+#else
+    data.clear();
+    return false;
+#endif
   }
 
   //_____________________________________________________________________________
@@ -272,7 +304,12 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool MS_Dataset::timeValues (std::vector<double> &data)
   {
+#ifdef DAL_WITH_CASA
     return readData(data, "TIME");
+#else
+    data.clear();
+    return false;
+#endif
   }
 
   //_____________________________________________________________________________
@@ -286,7 +323,12 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool MS_Dataset::uvwValues (std::vector<double> &data)
   {
+#ifdef DAL_WITH_CASA
     return readData(data, "UVW");
+#else
+    data.clear();
+    return false;
+#endif
   }
 
   //_____________________________________________________________________________
@@ -300,6 +342,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool MS_Dataset::channelFrequencyValues (std::vector<double> &data)
   {
+#ifdef DAL_WITH_CASA
     bool status      = true;
     std::string name = "SPECTRAL_WINDOW";
     std::map<std::string,MS_Table>::iterator it = itsSubtables.find(name);
@@ -319,6 +362,10 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return status;
+#else
+    data.clear();
+    return false;
+#endif
   }
   
   //_____________________________________________________________________________
