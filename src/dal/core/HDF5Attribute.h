@@ -21,6 +21,8 @@
 #ifndef HDF5ATTRIBUTE_H
 #define HDF5ATTRIBUTE_H
 
+#include <cstdlib>
+
 #include <core/HDF5Dataspace.h>
 
 #ifdef DAL_WITH_CASA
