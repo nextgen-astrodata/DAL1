@@ -67,35 +67,58 @@ else (CASA_FOUND OR CASACORE_FOUND)
 endif (CASA_FOUND OR CASACORE_FOUND)
 
 ##____________________________________________________________________
-## Applications which require Boost
+##                                                              tbb2h5
+##                                                           TBBraw2h5
 
-if (Boost_PROGRAM_OPTIONS_LIBRARY)
-  if (Boost_THREAD_LIBRARY)
+if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+  ## compiler instructions
+  add_executable (tbb2h5    tbb2h5.cpp   )
+  add_executable (TBBraw2h5 TBBraw2h5.cpp)
+  ## linker instructions
+  target_link_libraries (tbb2h5
+    dal
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    )
+  target_link_libraries (TBBraw2h5
+    dal
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_FILESYSTEM_LIBRARY}
+    )
+  ## Installation instructions
+  install (TARGETS tbb2h5 TBBraw2h5
+    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+    )
+else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+    message (STATUS "[DAL] Unable to build tbb2h5 - missing Boost++ libraries!")
+    message (STATUS "[DAL] Unable to build TBBraw2h5 - missing Boost++ libraries!")
+endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+
+##____________________________________________________________________
+
+if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+  if (CASA_FOUND)
     ## compiler instructions
-    add_executable (tbb2h5    tbb2h5.cpp   )
-    add_executable (TBBraw2h5 TBBraw2h5.cpp)
     add_executable (AddMetadata AddMetadata.cpp)
     ## linker instructions
-    target_link_libraries (tbb2h5
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
-      )
-    target_link_libraries (TBBraw2h5
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
-      )
     target_link_libraries (AddMetadata
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY}
+      dal
+      ${Boost_PROGRAM_OPTIONS_LIBRARY}
       )
     ## Installation instructions
-    install (TARGETS tbb2h5 TBBraw2h5 AddMetadata
+    install (TARGETS AddMetadata
       RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
       LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
       )
-  else (Boost_THREAD_LIBRARY)
-    message (STATUS "[DAL] Unable to build apps -- Boost thread library!")
-  endif (Boost_THREAD_LIBRARY)
-else (Boost_PROGRAM_OPTIONS_LIBRARY)
-  message (STATUS "[DAL] Unable to build apps -- Boost program_options library!")
-endif (Boost_PROGRAM_OPTIONS_LIBRARY)
+  else (CASA_FOUND)
+    message (STATUS "[DAL] Unable to build AddMetadata - missing casacore libraries!")
+  endif (CASA_FOUND)
+else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+  message (STATUS "[DAL] Unable to build AddMetadata - missing Boost++ libraries!")
+endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
 
 ##____________________________________________________________________
 ## Build the executables
