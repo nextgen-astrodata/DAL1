@@ -574,6 +574,13 @@ namespace DAL { // Namespace DAL -- begin
   public:
     //! Default constructor
     MS_Table ();
+    //! Test if a column with this \e name exists. 
+    bool hasColumn (std::string const &name)
+      {
+	std::cerr << "[MS_Table::readData] Unable to check for column "
+	<< name << " - missing casacore!" << std::endl;
+	return false;
+      }
     //! Read data from MS
     template <class T>
       bool readData (std::vector<T> &data,
@@ -584,7 +591,18 @@ namespace DAL { // Namespace DAL -- begin
 	data.clear();
 	return false;
       }
-    
+    //! Read data from MS
+    template <class T>
+      bool readData (std::vector<T> &data,
+		     std::string const &column,
+		     unsigned int const &start,
+		     unsigned int const &nofRows=1)
+      {
+	std::cerr << "[MS_Table::readData] Unable to read data from column "
+	<< column << " - missing casacore!" << std::endl;
+	data.clear();
+	return false;
+      }
 #endif
     
   }; // Class MS_Table -- end

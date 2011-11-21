@@ -20,6 +20,8 @@
 
 #include <data_hl/MS_Dataset.h>
 
+#include <complex>
+
 // Namespace usage
 using std::cerr;
 using std::cout;
@@ -595,16 +597,13 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
-  try {
+  {
     std::vector<int> data;
     // select individual antenna
     ms.selectBaseline (1);
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   /*________________________________________________________
@@ -613,7 +612,7 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
-  try {
+  {
     int antenna1 = 1;
     int antenna2 = 2;
     std::vector<int> data;
@@ -622,9 +621,6 @@ int test_selection (std::string const &filename)
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   return nofFailedTests;
