@@ -1,6 +1,3 @@
-## ------------------------------------------------------------------------------
-## $Id::                                                                        $
-## ------------------------------------------------------------------------------
 
 set(CMAKE_CXX_FLAGS "-W -Wall")
 
@@ -98,6 +95,7 @@ else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
 endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
 
 ##____________________________________________________________________
+##                                                         AddMetadata
 
 if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
   if (CASA_FOUND)
