@@ -20,6 +20,8 @@
 
 #include <data_hl/MS_Dataset.h>
 
+#include <complex>
+
 // Namespace usage
 using std::cerr;
 using std::cout;
@@ -110,6 +112,7 @@ int test_readData (std::string const &filename)
   */
   
   cout << "\n[1] Testing readData (Array<double>,string) ..." << endl;
+#ifdef DAL_WITH_CASA
   try {
     casa::Array<casa::Double> data;
     // Define the colums from which to try reading data
@@ -130,6 +133,7 @@ int test_readData (std::string const &filename)
     cerr << message << endl;
     nofFailedTests++;
   }
+#endif
   
   /*________________________________________________________
     Test 2: Read data from columns of type double for a
@@ -137,6 +141,7 @@ int test_readData (std::string const &filename)
   */
   
   cout << "\n[2] Testing readData (Array<double>,string,uint,uint) ..." << endl;
+#ifdef DAL_WITH_CASA
   try {
     unsigned int start  = 0;
     unsigned int length = 10;
@@ -159,12 +164,14 @@ int test_readData (std::string const &filename)
     cerr << message << endl;
     nofFailedTests++;
   }
+#endif
   
   /*________________________________________________________
     Test 3: Read data from columns of type float.
   */
   
   cout << "\n[3] Testing readData (Array<float>,string) ..." << endl;
+#ifdef DAL_WITH_CASA
   try {
     casa::Array<casa::Float> data;
     // Define the colums from which to try reading data
@@ -184,6 +191,7 @@ int test_readData (std::string const &filename)
     cerr << message << endl;
     nofFailedTests++;
   }
+#endif
   
   /*________________________________________________________
     Test 4: Read data from columns of type float for a
@@ -191,6 +199,7 @@ int test_readData (std::string const &filename)
   */
   
   cout << "\n[4] Testing readData (Array<float>,string,uint,uint) ..." << endl;
+#ifdef DAL_WITH_CASA
   try {
     unsigned int start  = 0;
     unsigned int length = 10;
@@ -212,6 +221,7 @@ int test_readData (std::string const &filename)
     cerr << message << endl;
     nofFailedTests++;
   }
+#endif
   
   /*________________________________________________________
     Test 5: Read data from columns of type double
@@ -499,6 +509,7 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[0] Direct selection on table ..." << endl;
+#ifdef DAL_WITH_CASA
   try {
     // Get all entries in the UVW column
     {
@@ -551,6 +562,7 @@ int test_selection (std::string const &filename)
     cerr << x.getMesg() << endl;
     ++nofFailedTests;
   }
+#endif
   
   /*________________________________________________________
     Test 1 : Read UVW data without any selection applied to
@@ -558,14 +570,11 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[1] Read UVW data without any selection ..." << endl;
-  try {
+  {
     std::vector<int> data;
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   /*________________________________________________________
@@ -573,16 +582,13 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[2] Read UVW data for specific antenna ..." << endl;
-  try {
+  {
     std::vector<int> data;
     // select individual antenna
     ms.selectAntenna (1);
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   /*________________________________________________________
@@ -591,16 +597,13 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
-  try {
+  {
     std::vector<int> data;
     // select individual antenna
     ms.selectBaseline (1);
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   /*________________________________________________________
@@ -609,7 +612,7 @@ int test_selection (std::string const &filename)
   */
   
   cout << "\n[3] Read UVW data baselines including specific antenna ..." << endl;
-  try {
+  {
     int antenna1 = 1;
     int antenna2 = 2;
     std::vector<int> data;
@@ -618,9 +621,6 @@ int test_selection (std::string const &filename)
     // read baseline values
     ms.readData (data, "ANTENNA1");
     cout << "-- shape(ANTENNA1) = " << data.size() << endl;
-  } catch (casa::AipsError x) {
-    cerr << x.getMesg() << endl;
-    ++nofFailedTests;
   }
   
   return nofFailedTests;
