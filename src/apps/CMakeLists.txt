@@ -71,6 +71,7 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
   ## compiler instructions
   add_executable (tbb2h5    tbb2h5.cpp   )
   add_executable (TBBraw2h5 TBBraw2h5.cpp)
+  add_executable (tbbmd tbbmd.cpp)
   ## linker instructions
   target_link_libraries (tbb2h5
     dal
@@ -84,45 +85,17 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     )
+  target_link_libraries (tbbmd
+    dal ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    )
   ## Installation instructions
-  install (TARGETS tbb2h5 TBBraw2h5
+  install (TARGETS tbb2h5 TBBraw2h5 tbbmd
     RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
     LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
 else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
     message (STATUS "[DAL] Unable to build tbb2h5 - missing Boost++ libraries!")
     message (STATUS "[DAL] Unable to build TBBraw2h5 - missing Boost++ libraries!")
-endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
-
-##____________________________________________________________________
-##                                                         AddMetadata
-
-if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
-  if (CASA_FOUND)
-    ## compiler instructions
-    add_executable (tbb2h5    tbb2h5.cpp   )
-    add_executable (TBBraw2h5 TBBraw2h5.cpp)
-    add_executable (tbbmd tbbmd.cpp)
-    ## linker instructions
-    target_link_libraries (tbb2h5
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
-      )
-    target_link_libraries (TBBraw2h5
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
-      )
-    target_link_libraries (tbbmd
-      dal ${Boost_PROGRAM_OPTIONS_LIBRARY}
-      )
-    ## Installation instructions
-    install (TARGETS tbb2h5 TBBraw2h5 tbbmd
-      RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
-      LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
-      )
-  else (CASA_FOUND)
-    message (STATUS "[DAL] Unable to build AddMetadata - missing casacore libraries!")
-  endif (CASA_FOUND)
-else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
-  message (STATUS "[DAL] Unable to build AddMetadata - missing Boost++ libraries!")
 endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
 
 ##____________________________________________________________________
