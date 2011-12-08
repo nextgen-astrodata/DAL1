@@ -754,9 +754,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     if (start<0) {
       if (dataEnd<0) {
-	for (int n(0); n<nofSamples; ++n) {
-	  data[n] = 0;
-	}
 	return false;
       } // end -- (dataEnd<0) 
       else {
@@ -766,9 +763,6 @@ namespace DAL {  // Namespace DAL -- begin
 	/* Adjust the number of datapoints to be requested from the file */
 	dataLength = nofSamples-dataOffset;
 	/* Initialize the array elements which will not be used for actual data */
-	for (int n(0); n<dataOffset; ++n) {
-	  data[n] = 0;
-	}
       }
     } else {
       dataStart  = start;
@@ -849,6 +843,11 @@ namespace DAL {  // Namespace DAL -- begin
 	return false;
       }
       
+      // Zero out the data array (note zeros can thus be either real or unread samples)
+	    for (int n(0); n<nofSamples; ++n) {
+	      data[n] = 0;
+	    }
+
       // Retrieve the actual data from the file ...
       h5error = H5Dread (location_p,
 			 H5T_NATIVE_SHORT,
