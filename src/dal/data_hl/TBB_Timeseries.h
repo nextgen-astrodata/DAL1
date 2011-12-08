@@ -34,6 +34,9 @@
 
 namespace DAL {  // Namespace DAL -- begin
 
+  /*! Way to catch IO errors, should probably be implemented throughout */
+  class IOError {};
+
   /*!
     \class TBB_Timeseries
 

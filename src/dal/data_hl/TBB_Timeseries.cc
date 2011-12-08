@@ -265,14 +265,6 @@ namespace DAL {  // Namespace DAL -- begin
       else {
         // Open read-write
         location_p = H5Fopen (name.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-
-        /* If opening the the file failed, this might have been due to wrong
-           access permissions; check if the file can be opened as read-only. */
-        /* This is ugly behaviour, it should just raise an error allowing the user
-           to explicitly retry with read only. (Pim) */
-        if (location_p<0) {
-          location_p = H5Fopen (name.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-        }
       }
     } else {
       infile.close();
@@ -295,10 +287,7 @@ namespace DAL {  // Namespace DAL -- begin
         //
         HDF5Attribute::write (location_p, "FILENAME", name );
       } else {
-        std::cerr << "[TBB_Timeseries::open] Failed to open file "
-          << name
-          << std::endl;
-        status = false;
+        throw IOError();
       }
     }
 
