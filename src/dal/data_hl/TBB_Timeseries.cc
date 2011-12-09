@@ -371,10 +371,7 @@ namespace DAL {  // Namespace DAL -- begin
 						      *it, flags);
       }
     } else {
-      std::cerr << "[TBB_Timeseries::openStationGroups]"
-		<< " No station groups found!"
-		<< std::endl;
-      status = false;
+      throw IOError();
     }
 
     status *= setSelectedDatasets ();
