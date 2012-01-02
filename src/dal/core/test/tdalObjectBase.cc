@@ -58,7 +58,7 @@ int test_constructors ()
     dalObjectBase newObject;
     //
     newObject.summary(); 
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -70,7 +70,7 @@ int test_constructors ()
     dalObjectBase newObject (name);
     //
     newObject.summary(); 
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -83,7 +83,7 @@ int test_constructors ()
     dalObjectBase newObject (name, filetype);
     //
     newObject.summary(); 
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -97,7 +97,7 @@ int test_constructors ()
     dalObjectBase newObject (name, filetype,flags);
     //
     newObject.summary(); 
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }

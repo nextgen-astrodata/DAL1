@@ -60,7 +60,7 @@ int test_constructors ()
     //
     filter.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -80,7 +80,7 @@ int test_constructors ()
     DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns);
     filterMS.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -100,7 +100,7 @@ int test_constructors ()
     DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns, conditions);
     filterMS.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -132,18 +132,16 @@ int test_methods ()
 
 int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
-  bool haveDataset (true);
-  std::string filename ("tdalFilter.h5");
+  int nofFailedTests   = 0;
+  std::string filename = "tdalFilter.h5";
 
   //________________________________________________________
   // Process parameters from the command line
   
   if (argc < 2) {
-    haveDataset = false;
+    /* nothing else to do so far */
   } else {
     filename    = argv[1];
-    haveDataset = true;
   }
 
   //________________________________________________________

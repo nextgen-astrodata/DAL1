@@ -73,7 +73,7 @@ int test_create_new (std::string const &filename,
     //
     std::cout << "-- Filename = " << filename << std::endl;
     std::cout << "-- Status   = " << status   << std::endl;
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
@@ -87,7 +87,7 @@ int test_create_new (std::string const &filename,
     fits_create_img (fptr, FLOAT_IMG, rank, naxes, &status);
     //
     std::cout << "-- nof axes = " << rank << std::endl;
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
@@ -109,7 +109,7 @@ int test_create_new (std::string const &filename,
     std::cout << "-- write image array to file ..." << std::endl;
     fits_write_img(fptr, TFLOAT, fpixel, nelements, pixels[0], &status);
     
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
@@ -122,7 +122,7 @@ int test_create_new (std::string const &filename,
     std::cout << "-- closing file " << filename << " ..." << std::endl;
     fits_close_file (fptr, &status);
     fptr = NULL;
-  } catch (std::string message) {
+  } catch (std::string& message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }

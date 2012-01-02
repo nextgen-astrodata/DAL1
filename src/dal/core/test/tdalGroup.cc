@@ -56,7 +56,7 @@ int test_constructors ()
   try {
     DAL::dalGroup group;
     group.summary();
-  } catch (std::string message) {
+  } catch (std::string& message) {
     cerr << message << endl;
     nofFailedTests++;
   }
@@ -79,7 +79,7 @@ int test_constructors ()
     // release file handle
     cout << "-- closing HDF5 file ..." << endl;
     H5Fclose (fileID);
-  } catch (std::string message) {
+  } catch (std::string& message) {
     cerr << message << endl;
     nofFailedTests++;
   }

@@ -80,7 +80,7 @@ int test_constructors (std::string const &filename,
     //
     table.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -90,7 +90,7 @@ int test_constructors (std::string const &filename,
     DAL::dalTable table (DAL::dalFileType::HDF5);
     table.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -100,7 +100,7 @@ int test_constructors (std::string const &filename,
     DAL::dalTable table (DAL::dalFileType::FITS);
     table.summary();
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -118,7 +118,7 @@ int test_constructors (std::string const &filename,
       std::cout << "--> Skipping test - missing input dataset." << std::endl;
     }
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
@@ -153,7 +153,7 @@ int test_parameters (std::string const &filename,
       std::cout << "--> Skipping test - missing input dataset." << std::endl;
     }
   }
-  catch (std::string message) {
+  catch (std::string& message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
