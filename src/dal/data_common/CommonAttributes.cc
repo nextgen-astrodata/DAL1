@@ -406,8 +406,8 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::write (id, "OBSERVATION_START_TAI",        itsStartTAI);
     HDF5Attribute::write (id, "OBSERVATION_START_UTC",        itsStartUTC);
     HDF5Attribute::write (id, "OBSERVATION_END_MJD",          itsEndMJD);
-    HDF5Attribute::write (id, "OBSERVATION_END_TAI",          itsEndMJD);
-    HDF5Attribute::write (id, "OBSERVATION_END_UTC",          itsEndMJD);
+    HDF5Attribute::write (id, "OBSERVATION_END_TAI",          itsEndTAI);
+    HDF5Attribute::write (id, "OBSERVATION_END_UTC",          itsEndUTC);
     HDF5Attribute::write (id, "OBSERVATION_NOF_STATIONS",     itsNofStations);
     HDF5Attribute::write (id, "OBSERVATION_STATIONS_LIST",    itsStationsList);
     HDF5Attribute::write (id, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
@@ -465,8 +465,8 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::read (location, "OBSERVATION_START_TAI",        itsStartTAI);
     HDF5Attribute::read (location, "OBSERVATION_START_UTC",        itsStartUTC);
     HDF5Attribute::read (location, "OBSERVATION_END_MJD",          itsEndMJD);
-    HDF5Attribute::read (location, "OBSERVATION_END_TAI",          itsEndMJD);
-    HDF5Attribute::read (location, "OBSERVATION_END_UTC",          itsEndMJD);
+    HDF5Attribute::read (location, "OBSERVATION_END_TAI",          itsEndTAI);
+    HDF5Attribute::read (location, "OBSERVATION_END_UTC",          itsEndUTC);
     HDF5Attribute::read (location, "OBSERVATION_NOF_STATIONS",     itsNofStations);
     HDF5Attribute::read (location, "OBSERVATION_STATIONS_LIST",    itsStationsList);
     HDF5Attribute::read (location, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);

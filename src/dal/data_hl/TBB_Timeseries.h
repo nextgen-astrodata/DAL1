@@ -32,7 +32,12 @@
 #include <data_hl/TBB_StationGroup.h>
 #include <data_hl/TBB_StationTrigger.h>
 
+#define HAS_EXCEPTION_HANDLING
+
 namespace DAL {  // Namespace DAL -- begin
+
+  /*! Way to catch IO errors, should probably be implemented throughout */
+  class IOError {};
 
   /*!
     \class TBB_Timeseries
