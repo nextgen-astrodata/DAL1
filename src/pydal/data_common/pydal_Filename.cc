@@ -34,8 +34,8 @@
 #include <data_common/Filename.h>
 
 // namespace usage
+using std::string;
 using DAL::Filename;
-
 
 void export_Filename ()
 {
