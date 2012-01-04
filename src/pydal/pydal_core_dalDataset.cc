@@ -32,6 +32,7 @@
 #include "pydal.h"
 #include <core/dalDataset.h>
 
+using std::string;
 using DAL::dalDataset;
 using DAL::dalTable;
 using DAL::dalArray;

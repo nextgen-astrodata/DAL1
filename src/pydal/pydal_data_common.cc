@@ -38,6 +38,7 @@
 #include <data_common/SAS_Settings.h>
 
 using std::string;
+using std::vector;
 using DAL::CommonAttributes;
 using DAL::Timestamp;
 using DAL::HDF5Measure;
