@@ -46,7 +46,7 @@ void export_TBB_Timeseries ()
   boost::python::class_<TBB_Timeseries>("TBB_Timeseries")
     /* Construction */
     .def( boost::python::init<>())
-    .def( boost::python::init<string>())
+    .def( boost::python::init<std::string>())
     /* Access to internal parameters */
     .def( "filename", &TBB_Timeseries::filename,
 	  "Get the name of the data file." )

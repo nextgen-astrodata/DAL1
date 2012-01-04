@@ -45,7 +45,7 @@ void export_BeamFormed ()
 {
   boost::python::class_<BeamFormed>("BeamFormed")
     .def( boost::python::init<>())
-    .def( boost::python::init<string>())
+    .def( boost::python::init<std::string>())
     .def( "notes", &BeamFormed::notes,
 	  "Return the notes from the header" )
     .def( "filename", &BeamFormed::filename,
