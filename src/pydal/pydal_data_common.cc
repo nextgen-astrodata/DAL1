@@ -37,6 +37,7 @@
 #include <data_common/HDF5Quantity.h>
 #include <data_common/SAS_Settings.h>
 
+using std::string;
 using DAL::CommonAttributes;
 using DAL::Timestamp;
 using DAL::HDF5Measure;

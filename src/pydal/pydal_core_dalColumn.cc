@@ -32,6 +32,7 @@
 #include "pydal.h"
 #include <core/dalColumn.h>
 
+using std::string;
 using DAL::dalColumn;
 
 // ==============================================================================
