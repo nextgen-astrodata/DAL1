@@ -36,7 +36,6 @@
 #include <data_hl/SysLog.h>
 #include <data_common/CommonAttributes.h>
 
-
 using DAL::BF_BeamGroup;
 using DAL::BF_RootGroup;
 
@@ -51,7 +50,7 @@ void export_BF_BeamGroup ()
   boost::python::class_<BF_BeamGroup>("BF_BeamGroup")
     // Construction
     .def( boost::python::init<>())
-    .def( boost::python::init<hid_t,string>())
+    .def( boost::python::init<hid_t,std::string>())
     // Access to internal parameters
     .def( "locationID", &BF_BeamGroup::locationID,
 	  "Get the object identifier for the data file." )
@@ -111,11 +110,11 @@ void export_BF_RootGroup ()
   //________________________________________________________
   // Bindings for class and its methods
   
-  boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const string>())
+  boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const std::string>())
     // Construction
     .def( boost::python::init<DAL::Filename, bool>())
-    .def( boost::python::init<string const &>())
-    .def( boost::python::init<string &>())
+    .def( boost::python::init<std::string const &>())
+    .def( boost::python::init<std::string &>())
     .def( boost::python::init<DAL::CommonAttributes, bool>())     
     // Parameter access
     // Public methods
