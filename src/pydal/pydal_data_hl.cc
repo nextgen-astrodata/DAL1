@@ -93,7 +93,9 @@ void export_LOPES_EventFile ()
 	  "Get the Nyquist zone in which the data are sampled." )
     .def( "nofAntennas", &LOPES_EventFile::nofAntennas,
 	  "Get the number of antennas in the data set." )
+#ifdef DAL_WITH_CASACORE
     .def( "nofDatapoints", &LOPES_EventFile::nofDatapoints,
 	  "Get the number of data points stored." )
+#endif
     ;
 }
