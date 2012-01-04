@@ -71,7 +71,6 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
   ## compiler instructions
   add_executable (tbb2h5    tbb2h5.cpp   )
   add_executable (TBBraw2h5 TBBraw2h5.cpp)
-  add_executable (tbbmd tbbmd.cpp)
   ## linker instructions
   target_link_libraries (tbb2h5
     dal
@@ -85,11 +84,8 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     )
-  target_link_libraries (tbbmd
-    dal ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    )
   ## Installation instructions
-  install (TARGETS tbb2h5 TBBraw2h5 tbbmd
+  install (TARGETS tbb2h5 TBBraw2h5
     RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
     LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
@@ -97,6 +93,31 @@ else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
     message (STATUS "[DAL] Unable to build tbb2h5 - missing Boost++ libraries!")
     message (STATUS "[DAL] Unable to build TBBraw2h5 - missing Boost++ libraries!")
 endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
+
+##____________________________________________________________________
+##                                                               tbbmd
+
+if (Boost_PROGRAM_OPTIONS_LIBRARY)
+  if (CASA_LIBRARIES)
+    ## compiler instructions
+    add_executable (tbbmd tbbmd.cpp)
+    ## linker instructions
+    target_link_libraries (tbbmd
+      dal
+      ${Boost_PROGRAM_OPTIONS_LIBRARY}
+      ${CASA_LIBRARIES}
+      )
+    ## Installation instructions
+    install (TARGETS tbbmd
+      RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+      )
+  else (CASA_LIBRARIES)
+    message (STATUS "[DAL] Unable to build tbbmd - missing casacore library!")
+  endif (CASA_LIBRARIES)
+else (Boost_PROGRAM_OPTIONS_LIBRARY)
+  message (STATUS "[DAL] Unable to build tbbmd - missing Boost++ program_options library!")
+endif (Boost_PROGRAM_OPTIONS_LIBRARY)
 
 ##____________________________________________________________________
 ## Build the executables

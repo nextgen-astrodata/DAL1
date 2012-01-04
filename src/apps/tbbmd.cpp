@@ -15,7 +15,19 @@
 
 namespace bpo = boost::program_options;
 
-bool get_antenna_positions(std::map<std::string, casa::MPosition> *positions, std::string filename)
+//_______________________________________________________________________________
+//                                                          get_antenna_positions
+
+/*!
+  \brief Get antenna positions from file
+  \retval positions - Map with the antenna IDs and their respective positions.
+  \param filename   - Name of the input file from which the antenna positions
+                      are being read.
+  \return status    - Returns \e false in case an error was encountered (e.g. 
+                      input file not found or read error).
+*/
+bool get_antenna_positions (std::map<std::string, casa::MPosition> *positions,
+			    std::string filename)
 {
   std::ifstream file;
   std::string name;
@@ -34,7 +46,8 @@ bool get_antenna_positions(std::map<std::string, casa::MPosition> *positions, st
       file >> z;
 
       // Add to output
-      positions->insert(std::make_pair(name, casa::MPosition(casa::MVPosition(x, y, z), casa::MPosition::ITRF)));
+      positions->insert(std::make_pair(name, casa::MPosition(casa::MVPosition(x, y, z),
+							     casa::MPosition::ITRF)));
     }
   }
   else
@@ -46,6 +59,9 @@ bool get_antenna_positions(std::map<std::string, casa::MPosition> *positions, st
   file.close();
   return true;
 }
+
+//_______________________________________________________________________________
+//                                                                           main
 
 int main (int argc, char *argv[])
 {
