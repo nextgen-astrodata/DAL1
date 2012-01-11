@@ -1074,6 +1074,30 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                     dipole_calibration_delay
+
+  std::vector<double> TBB_Timeseries::dipole_calibration_delay ()
+  {
+    std::vector<double> out;
+
+    getAttributes("CABLE_DELAY_VALUE", out);
+
+    return out;
+  }
+
+  //_____________________________________________________________________________
+  //                                                     dipole_calibration_delay
+
+  std::vector<std::string> TBB_Timeseries::dipole_calibration_delay_unit ()
+  {
+    std::vector<std::string> out;
+
+    getAttributes("CABLE_DELAY_UNIT", out);
+
+    return out;
+  }
+
+  //_____________________________________________________________________________
   //                                                 set_dipole_calibration_delay
 
   bool TBB_Timeseries::set_dipole_calibration_delay (std::map<std::string, casa::Quantity> &delay)

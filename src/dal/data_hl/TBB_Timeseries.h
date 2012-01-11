@@ -376,6 +376,10 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> cable_delay ();
     //! Get the values of CABLE_DELAY_UNIT for all present cablesets
     std::vector<std::string> cable_delay_unit ();
+    //! Get the values of DIPOLE_CALIBRATION_DELAY for all present dipoles
+    std::vector<double> dipole_calibration_delay ();
+    //! Get the values of DIPOLE_CALIBRATION_DELAY_UNIT for all present dipoles
+    std::vector<std::string> dipole_calibration_delay_unit ();
     //! Get the values of the ADC sample frequency
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
