@@ -251,8 +251,10 @@ namespace DAL {  // Namespace DAL -- begin
     attributes_p.insert("SAMPLES_PER_FRAME");
     attributes_p.insert("DATA_LENGTH");
     attributes_p.insert("NYQUIST_ZONE");
-    attributes_p.insert("CABLE_DELAY");
+    attributes_p.insert("CABLE_DELAY_VALUE");
     attributes_p.insert("CABLE_DELAY_UNIT");
+    attributes_p.insert("DIPOLE_CALIBRATION_DELAY_VALUE");
+    attributes_p.insert("DIPOLE_CALIBRATION_DELAY_UNIT");
     attributes_p.insert("FEED");
     attributes_p.insert("ANTENNA_POSITION_VALUE");
     attributes_p.insert("ANTENNA_POSITION_UNIT");
@@ -983,6 +985,47 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                              set_cable_delay
+  
+  /*!
+    \param delay -- the cable delay
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
+  bool TBB_DipoleDataset::set_cable_delay (casa::Quantity const &delay)
+  {
+    bool status (true);
+    double val       = delay.getValue();
+    std::string unit = delay.getUnit();
+    
+    status *= setAttribute ("CABLE_DELAY_VALUE",val);
+    status *= setAttribute ("CABLE_DELAY_UNIT",unit);
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                 set_dipole_calibration_delay
+  
+  /*!
+    \param delay -- the calibration delay
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
+  bool TBB_DipoleDataset::set_dipole_calibration_delay (casa::Quantity const &delay)
+  {
+    std::cout<<"Setting calibration delays"<<std::endl;
+    bool status (true);
+    double val       = delay.getValue();
+    std::string unit = delay.getUnit();
+    
+    status *= setAttribute ("DIPOLE_CALIBRATION_DELAY_VALUE",val);
+    status *= setAttribute ("DIPOLE_CALIBRATION_DELAY_UNIT",unit);
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                         set_sample_frequency
   

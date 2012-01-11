@@ -61,6 +61,48 @@ bool get_antenna_positions (std::map<std::string, casa::MPosition> *positions,
 }
 
 //_______________________________________________________________________________
+//                                                               get_dipole_calibration_delays
+
+/*!
+  \brief Get calibration delays from file
+  \retval delays    - Map with the antenna IDs and their respective delays.
+  \param filename   - Name of the input file from which the calibration delays 
+                      are being read.
+  \return status    - Returns false in case an error was encountered (e.g. 
+                      input file not found or read error).
+*/
+bool get_dipole_calibration_delays (std::map<std::string, casa::Quantity> *delays,
+			    std::string filename)
+{
+  std::ifstream file;
+  std::string name;
+  double d;
+
+  file.open(filename.c_str());
+
+  if (file.is_open())
+  {
+    while (!file.eof())
+    {
+      // Read delays from file
+      file >> name;
+      file >> d;
+
+      // Add to output
+      delays->insert(std::make_pair(name, casa::Quantity(d, "s")));
+    }
+  }
+  else
+  {
+    file.close();
+    return false;
+  }
+
+  file.close();
+  return true;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc, char *argv[])
@@ -70,10 +112,14 @@ int main (int argc, char *argv[])
   DAL::TBB_Timeseries *tbb;
 
   std::map<std::string, casa::MPosition> *positions;
+  std::map<std::string, casa::Quantity> *delays;
 
   //! Directory with antenna positions files
-  std::string metadataDir = "";
-  bool s_metadataDir = false;
+  std::string antennaPositionDir = "";
+  bool s_antennaPositionDir = false;
+  //! Directory with calibration delays files
+  std::string dipoleCalibrationDelayDir = "";
+  bool s_dipoleCalibrationDelayDir = false;
   //! File creation date, YYYY-MM-DDThh:mm:ss.s
   std::string filedate;
   bool s_filedate = false;
@@ -173,7 +219,8 @@ int main (int argc, char *argv[])
   desc.add_options ()
     ("help,H", "Show help messages")
     ("station,s", bpo::value< std::vector<std::string> >(), "")
-    ("metadataDir", bpo::value<std::string>(), "Directory containing static metadata")
+    ("antennaPositionDir", bpo::value<std::string>(), "Directory containing antenna position files")
+    ("dipoleCalibrationDelayDir", bpo::value<std::string>(), "Directory containing calibration delay files")
     ("telescope", bpo::value<std::string>(), "telescope")
     ("observer", bpo::value<std::string>(), "observer")
     ("projectID", bpo::value<std::string>(), "projectID")
@@ -220,10 +267,16 @@ int main (int argc, char *argv[])
     return 0;
   }
 
-  if (vm.count("metadataDir"))
+  if (vm.count("antennaPositionDir"))
   {
-    metadataDir = vm["metadataDir"].as<std::string>();
-    s_metadataDir = true;
+    antennaPositionDir = vm["antennaPositionDir"].as<std::string>();
+    s_antennaPositionDir = true;
+  }
+
+  if (vm.count("dipoleCalibrationDelayDir"))
+  {
+    dipoleCalibrationDelayDir = vm["dipoleCalibrationDelayDir"].as<std::string>();
+    s_dipoleCalibrationDelayDir = true;
   }
 
   if (vm.count("antennaSet"))
@@ -467,26 +520,48 @@ int main (int argc, char *argv[])
       files = vm["input-file"].as< vector<string> >();
     }
 
-    if (s_metadataDir)
+    if (s_antennaPositionDir)
     {
       antennaSet = c.antennaSet();
 
       // Get antenna postitions from coordinates file
       positions = new std::map<std::string, casa::MPosition>();
 
-      if (get_antenna_positions(positions, metadataDir+"LOFAR_ITRF_" + antennaSet))
+      if (get_antenna_positions(positions, antennaPositionDir+"LOFAR_ITRF_" + antennaSet))
       {
-        std::cout << "obtained antenna positions from: " << metadataDir+"LOFAR_ITRF_" + antennaSet << std::endl;
+        std::cout << "obtained antenna positions from: " << antennaPositionDir+"LOFAR_ITRF_" + antennaSet << std::endl;
       }
       else
       {
-        std::cout << "failed to obtain antenna positions from: " << metadataDir+"LOFAR_ITRF_" + antennaSet << std::endl;
+        std::cout << "failed to obtain antenna positions from: " << antennaPositionDir+"LOFAR_ITRF_" + antennaSet << std::endl;
       }
 
       // Set antenna positions
       tbb->set_antenna_position(*positions);
 
       delete positions;
+    }
+
+    if (s_dipoleCalibrationDelayDir)
+    {
+      antennaSet = c.antennaSet();
+
+      // Get antenna postitions from coordinates file
+      delays = new std::map<std::string, casa::Quantity>();
+
+      if (get_dipole_calibration_delays(delays, dipoleCalibrationDelayDir+"LOFAR_DIPOLE_CALIBRATION_DELAY_" + antennaSet))
+      {
+        std::cout << "obtained antenna delays from: " << dipoleCalibrationDelayDir+"LOFAR_DIPOLE_CALIBRATION_DELAY_" + antennaSet << std::endl;
+      }
+      else
+      {
+        std::cout << "failed to obtain antenna delays from: " << dipoleCalibrationDelayDir+"LOFAR_DIPOLE_CALIBRATION_DELAY_" + antennaSet << std::endl;
+      }
+
+      // Set antenna delays
+      tbb->set_dipole_calibration_delay(*delays);
+
+      delete delays;
     }
 
     tbb->setCommonAttributes(c);
