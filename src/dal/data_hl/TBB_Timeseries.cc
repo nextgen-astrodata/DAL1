@@ -1080,7 +1080,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> out;
 
-    getAttributes("CABLE_DELAY_VALUE", out);
+    getAttributes("DIPOLE_CALIBRATION_DELAY_VALUE", out);
 
     return out;
   }
@@ -1092,7 +1092,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> out;
 
-    getAttributes("CABLE_DELAY_UNIT", out);
+    getAttributes("DIPOLE_CALIBRATION_DELAY_UNIT", out);
 
     return out;
   }
