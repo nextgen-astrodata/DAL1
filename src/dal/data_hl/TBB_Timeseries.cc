@@ -1028,7 +1028,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> out;
 
-    getAttributes("CABLE_DELAY", out);
+    getAttributes("CABLE_DELAY_VALUE", out);
 
     return out;
   }
@@ -1043,6 +1043,86 @@ namespace DAL {  // Namespace DAL -- begin
     getAttributes("CABLE_DELAY_UNIT", out);
 
     return out;
+  }
+
+  //_____________________________________________________________________________
+  //                                                              set_cable_delay
+
+  bool TBB_Timeseries::set_cable_delay (std::map<std::string, casa::Quantity> &delay)
+  {
+    std::map<std::string, casa::Quantity>::iterator delay_it;
+    std::map<std::string, iterDipoleDataset>::iterator ds_it;
+
+    bool status = true;
+
+    for (delay_it=delay.begin(); delay_it!=delay.end(); ++delay_it) {
+      ds_it = selectedDatasets_p.find(delay_it->first);
+      if (ds_it != selectedDatasets_p.end())
+      {
+        if ((ds_it->second)->second.set_cable_delay(delay_it->second) == false)
+        {
+          status = false;
+        }
+      }
+      else
+      {
+        status = false;
+      }
+    }
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                     dipole_calibration_delay
+
+  std::vector<double> TBB_Timeseries::dipole_calibration_delay ()
+  {
+    std::vector<double> out;
+
+    getAttributes("DIPOLE_CALIBRATION_DELAY_VALUE", out);
+
+    return out;
+  }
+
+  //_____________________________________________________________________________
+  //                                                     dipole_calibration_delay
+
+  std::vector<std::string> TBB_Timeseries::dipole_calibration_delay_unit ()
+  {
+    std::vector<std::string> out;
+
+    getAttributes("DIPOLE_CALIBRATION_DELAY_UNIT", out);
+
+    return out;
+  }
+
+  //_____________________________________________________________________________
+  //                                                 set_dipole_calibration_delay
+
+  bool TBB_Timeseries::set_dipole_calibration_delay (std::map<std::string, casa::Quantity> &delay)
+  {
+    std::map<std::string, casa::Quantity>::iterator delay_it;
+    std::map<std::string, iterDipoleDataset>::iterator ds_it;
+
+    bool status = true;
+
+    for (delay_it=delay.begin(); delay_it!=delay.end(); ++delay_it) {
+      ds_it = selectedDatasets_p.find(delay_it->first);
+      if (ds_it != selectedDatasets_p.end())
+      {
+        if ((ds_it->second)->second.set_dipole_calibration_delay(delay_it->second) == false)
+        {
+          status = false;
+        }
+      }
+      else
+      {
+        status = false;
+      }
+    }
+
+    return status;
   }
 
   // -------------------------------------------------------------- sample_offset
