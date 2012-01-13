@@ -209,6 +209,10 @@ namespace DAL {  // Namespace DAL -- begin
     bool sample_frequency (casa::MFrequency &freq);
     //! Set the ADC sample frequency as casa::Quantity
     bool set_sample_frequency (casa::Quantity const &freq);
+    //! Set the cable delay as casa::Quantity
+    bool set_cable_delay (casa::Quantity const &delay);
+    //! Set the dipole calibration delay as casa::Quantity
+    bool set_dipole_calibration_delay (casa::Quantity const &delay);
     //! Get a casa::Record containing the values of the attributes
     bool getAttributes (casa::Record &rec);
     //! Get a number of data values as recorded for this dipole

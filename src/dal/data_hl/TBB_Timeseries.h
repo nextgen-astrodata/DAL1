@@ -34,6 +34,9 @@
 
 #define HAS_EXCEPTION_HANDLING
 
+// To be increased whenever a new feature is added
+#define TBB_TIMESERIES_VERSION 1
+
 namespace DAL {  // Namespace DAL -- begin
 
   /*! Way to catch IO errors, should probably be implemented throughout */
@@ -303,6 +306,10 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::MPosition> antenna_position ();
     //! Set the antenna position of all selected datasets as casa::Measure
     bool set_antenna_position (std::map<std::string, casa::MPosition> &pos);
+    //! Set the cable delay of all selected datasets as casa::Quantity
+    bool set_cable_delay (std::map<std::string, casa::Quantity> &delay);
+    //! Set the dipole calibration delay of all selected datasets as casa::Quantity
+    bool set_dipole_calibration_delay (std::map<std::string, casa::Quantity> &delay);
     //! Get the reference codes for the frame of the station positions
     casa::Vector<casa::String> station_position_frame ();
 #else
@@ -369,6 +376,10 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> cable_delay ();
     //! Get the values of CABLE_DELAY_UNIT for all present cablesets
     std::vector<std::string> cable_delay_unit ();
+    //! Get the values of DIPOLE_CALIBRATION_DELAY for all present dipoles
+    std::vector<double> dipole_calibration_delay ();
+    //! Get the values of DIPOLE_CALIBRATION_DELAY_UNIT for all present dipoles
+    std::vector<std::string> dipole_calibration_delay_unit ();
     //! Get the values of the ADC sample frequency
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
