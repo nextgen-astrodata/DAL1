@@ -1102,7 +1102,6 @@ namespace DAL {  // Namespace DAL -- begin
 
   bool TBB_Timeseries::set_dipole_calibration_delay (std::map<std::string, casa::Quantity> &delay)
   {
-    std::cout<<"Calling TBB_Timeseries::set_dipole_calibration_delay"<<std::endl;
     std::map<std::string, casa::Quantity>::iterator delay_it;
     std::map<std::string, iterDipoleDataset>::iterator ds_it;
 

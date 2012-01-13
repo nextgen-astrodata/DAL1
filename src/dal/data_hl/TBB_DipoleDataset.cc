@@ -1015,7 +1015,6 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::set_dipole_calibration_delay (casa::Quantity const &delay)
   {
-    std::cout<<"Setting calibration delays"<<std::endl;
     bool status (true);
     double val       = delay.getValue();
     std::string unit = delay.getUnit();
