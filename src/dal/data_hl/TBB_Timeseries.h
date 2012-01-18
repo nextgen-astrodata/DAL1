@@ -39,8 +39,27 @@
 
 namespace DAL {  // Namespace DAL -- begin
 
-  /*! Way to catch IO errors, should probably be implemented throughout */
-  class IOError {};
+  /*!
+    \brief Exception base class
+  */
+  class Exception
+  {
+  public:
+    Exception(std::string m)
+    {
+      message = m;
+    };
+
+    ~Exception(){};
+
+    std::string message;
+  };
+
+  class IOError: public Exception
+  {
+  public:
+    IOError(std::string m): Exception(m) {};
+  };
 
   /*!
     \class TBB_Timeseries
