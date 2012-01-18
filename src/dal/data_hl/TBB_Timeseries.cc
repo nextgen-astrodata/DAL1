@@ -287,7 +287,7 @@ namespace DAL {  // Namespace DAL -- begin
         //
         HDF5Attribute::write (location_p, "FILENAME", name );
       } else {
-        throw IOError();
+        throw IOError("DAL error while opening file.");
       }
     }
 
@@ -371,7 +371,7 @@ namespace DAL {  // Namespace DAL -- begin
 						      *it, flags);
       }
     } else {
-      throw IOError();
+      throw IOError("DAL error wile iterating through station groups.");
     }
 
     status *= setSelectedDatasets ();
@@ -958,7 +958,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("TIME", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading TIME attribute.");
     }
 
     return out;
@@ -973,7 +973,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("SAMPLE_NUMBER", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading SAMPLE_NUMBER attribute.");
     }
 
     return out;
@@ -988,7 +988,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("NYQUIST_ZONE", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading NYQUIST_ZONE attribute.");
     }
 
     return out;
@@ -1003,7 +1003,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("SAMPLE_FREQUENCY_VALUE", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading SAMPLE_FREQUENCY_VALUE attribute.");
     }
 
     return out;
@@ -1018,7 +1018,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("SAMPLE_FREQUENCY_UNIT", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading SAMPLE_FREQUENCY_UNIT attribute.");
     }
 
     return out;
@@ -1033,7 +1033,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("DATA_LENGTH", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading DATA_LENGTH attribute.");
     }
 
     return out;
@@ -1048,7 +1048,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("CABLE_DELAY_VALUE", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading CABLE_DELAY_VALUE attribute.");
     }
 
     return out;
@@ -1063,7 +1063,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("CABLE_DELAY_UNIT", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading CABLE_DELAY_UNIT attribute.");
     }
 
     return out;
@@ -1106,7 +1106,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("DIPOLE_CALIBRATION_DELAY_VALUE", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading DIPOLE_CALIBRATION_DELAY_VALUE attribute.");
     }
 
     return out;
@@ -1121,7 +1121,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (getAttributes("DIPOLE_CALIBRATION_DELAY_UNIT", out) == false)
     {
-      throw IOError();
+      throw IOError("DAL error while reading DIPOLE_CALIBRATION_DELAY_UNIT attribute.");
     }
 
     return out;
