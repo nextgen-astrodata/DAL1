@@ -240,7 +240,10 @@ namespace DAL {   // Namespace DAL -- begin
     result.clear();
 	  
 	  for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
-	    it->second->second.getAttribute(name,tmp);
+	    if (it->second->second.getAttribute(name,tmp) == false)
+      {
+        status = false;
+      }
 	    result.push_back(tmp);
 	  }
 	} else {
