@@ -340,8 +340,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     //  High-level access to data and attributes ___________
     template <class T>
-    void getAttributes (std::string attr, std::vector<T> &out)
+    bool getAttributes (std::string attr, std::vector<T> &out)
     {
+      bool status      = true;
       uint n           = 0;
       uint station     = 0;
       uint dipole      = 0;
@@ -353,7 +354,10 @@ namespace DAL {  // Namespace DAL -- begin
       out.resize(nofDipoles);
 
       for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-        it->second.getAttributes(attr, tmp);
+        if (it->second.getAttributes(attr, tmp) == false)
+        {
+          status = false;
+        }
         nofDipoles = (*it).second.nofSelectedDatasets();
 
         // go through the dipoles from an individual station
@@ -364,6 +368,7 @@ namespace DAL {  // Namespace DAL -- begin
         // increment station counter
         ++station;
       }
+      return status;
     }
     
     //! Get the values of TIME for all present datasets

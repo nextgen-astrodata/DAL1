@@ -956,7 +956,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<uint> out;
 
-    getAttributes("TIME", out);
+    if (getAttributes("TIME", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -968,7 +971,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<uint> out;
 
-    getAttributes("SAMPLE_NUMBER", out);
+    if (getAttributes("SAMPLE_NUMBER", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -980,7 +986,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<uint> out;
 
-    getAttributes("NYQUIST_ZONE", out);
+    if (getAttributes("NYQUIST_ZONE", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -992,7 +1001,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> out;
 
-    getAttributes("SAMPLE_FREQUENCY_VALUE", out);
+    if (getAttributes("SAMPLE_FREQUENCY_VALUE", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1004,7 +1016,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> out;
 
-    getAttributes("SAMPLE_FREQUENCY_UNIT", out);
+    if (getAttributes("SAMPLE_FREQUENCY_UNIT", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1016,7 +1031,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<uint> out;
 
-    getAttributes("DATA_LENGTH", out);
+    if (getAttributes("DATA_LENGTH", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1028,7 +1046,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> out;
 
-    getAttributes("CABLE_DELAY_VALUE", out);
+    if (getAttributes("CABLE_DELAY_VALUE", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1040,7 +1061,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> out;
 
-    getAttributes("CABLE_DELAY_UNIT", out);
+    if (getAttributes("CABLE_DELAY_UNIT", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1080,7 +1104,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> out;
 
-    getAttributes("DIPOLE_CALIBRATION_DELAY_VALUE", out);
+    if (getAttributes("DIPOLE_CALIBRATION_DELAY_VALUE", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
@@ -1092,7 +1119,10 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> out;
 
-    getAttributes("DIPOLE_CALIBRATION_DELAY_UNIT", out);
+    if (getAttributes("DIPOLE_CALIBRATION_DELAY_UNIT", out) == false)
+    {
+      throw IOError();
+    }
 
     return out;
   }
