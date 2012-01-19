@@ -1155,6 +1155,7 @@ namespace DAL {  // Namespace DAL -- begin
     return status;
   }
 
+#ifdef DAL_WITH_CASA
   // -------------------------------------------------------------- sample_offset
 
   std::vector<int> TBB_Timeseries::sample_offset (uint const &refAntenna)
@@ -1172,6 +1173,10 @@ namespace DAL {  // Namespace DAL -- begin
 
     // Restore antenna selection
     selectDipoles(selection);
+
+    // Get clock frequency in Hz
+    CommonAttributes c = commonAttributes();
+    casa::Quantity clock = casa::Quantity(c.clockFrequency(), casa::Unit(c.clockFrequencyUnit()));
     
     uint nofDipoles              = nofSelectedDatasets();
     std::vector<uint> valTime   = time();
@@ -1179,11 +1184,12 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<int> offset (nofDipoles);
 
     for (uint n(0); n<nofDipoles; n++) {
-      offset[n] = valTime[n]-refTime + valSample[n]-refSample;
+      offset[n] = (valTime[n]-refTime) / clock.getValue("Hz") + valSample[n]-refSample;
     }
 
     return offset;
   }
+#endif
 
   // -------------------------------------------------------------- alignment_reference_antenna
   uint TBB_Timeseries::alignment_reference_antenna ()
