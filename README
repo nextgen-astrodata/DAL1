@@ -28,6 +28,8 @@ may include HDF5, AIPS++/CASA tables, FITS or specific raw formats. This library
 is available to both the C/C++ developer and the Python user via the "pydal"
 module.
 
+NOTE: This library is no longer maintained and has been renamed to DAL1 to make
+space for a new data access library (as DAL).
 
 _________________________________________________________________________________
 >>> 2. Getting the source code
@@ -35,18 +37,22 @@ ________________________________________________________________________________
 As of Feb 15, 2001 the DAL can be cloned directly from the master repository
 hosted on Github (http://github.com):
      
-  git clone https://github.com/nextgen-astrodata/DAL.git DAL
+  git clone https://github.com/nextgen-astrodata/DAL1.git DAL1
 
 Once your checkout from the Git repository is complete, follow the
 instructions as described in the section "Configuration and build" below.
 
 
+As of Feb 8, 2012 the new DAL can be cloned from:
+
+  git clone https://github.com/nextgen-astrodata/DAL.git DAL
+
 _________________________________________________________________________________
 >>> 3. Organization of the source code
 
-The components of the DAL is organized into the following directory structure:
+The components of the DAL are organized into the following directory structure:
 
-  DAL
+  DAL1
   |-- build
   |-- cmake
   |-- data                     ..   Reference data sets used for rest programs.
@@ -104,13 +110,13 @@ Once your checkout from the Git repository is complete you will have a directory
 structure on disk as described in section "Organization of the source code"
 above.
 
-  cd DAL
+  cd DAL1
   mkdir build
   cd build
   cmake ..
   make
 
-The default installation location is "/opt/dal"; if you want to change this,
+The default installation location is "/opt/dal1"; if you want to change this,
 you can tell CMake so by using
 
   cmake -D DAL_INSTALL_PREFIX=<installation prefix> ..

@@ -35,7 +35,7 @@
 # the following default installation layout has been defined:
 #
 # /opt
-# └── dal                          DAL_INSTALL_PREFIX
+# └── dal1                         DAL_INSTALL_PREFIX
 #     ├── bin                      DAL_INSTALL_BINDIR
 #     ├── include                  DAL_INSTALL_INCLUDEDIR
 #     │   ├── coordinates

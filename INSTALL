@@ -1,4 +1,4 @@
-The Data Access Library (DAL) uses the CMake cross-platform build system.
+The Data Access Library (DAL1) uses the CMake cross-platform build system.
 Follow the instructions on `http://www.cmake.org` to install CMake.
 
 - Go to the build directory:

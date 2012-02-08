@@ -62,7 +62,7 @@ else (LUS_INSTALL_PREFIX)
 
     ## Default installation configuration
     
-    set (DAL_INSTALL_PREFIX "/opt/dal")
+    set (DAL_INSTALL_PREFIX "/opt/dal1")
     
     set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
       "CMake installation area."
