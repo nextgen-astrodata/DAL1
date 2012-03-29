@@ -21,10 +21,10 @@
 /*!
   \file pydal_Coordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::Coordinate class
+  \brief Python bindings for the DAL1::Coordinate class
 
   \author Lars B&auml;hren
 */
@@ -33,11 +33,11 @@
 #include "pydal.h"
 #include <coordinates/Coordinate.h>
 
-using DAL::Coordinate;
+using DAL1::Coordinate;
 
 // ==============================================================================
 //
-//                                                                DAL::Coordinate
+//                                                                DAL1::Coordinate
 //
 // ==============================================================================
 
@@ -47,12 +47,12 @@ void export_Coordinate ()
   // Enumeration: Cordinate type
 
   boost::python::enum_<Coordinate::Type>("Type")
-    .value("DIRECTION", DAL::Coordinate::DIRECTION)
-    .value("LINEAR",    DAL::Coordinate::LINEAR)
-    .value("TABULAR",   DAL::Coordinate::TABULAR)
-    .value("STOKES",    DAL::Coordinate::STOKES)
-    .value("SPECTRAL",  DAL::Coordinate::SPECTRAL)
-    .value("UNDEFINED", DAL::Coordinate::UNDEFINED)
+    .value("DIRECTION", DAL1::Coordinate::DIRECTION)
+    .value("LINEAR",    DAL1::Coordinate::LINEAR)
+    .value("TABULAR",   DAL1::Coordinate::TABULAR)
+    .value("STOKES",    DAL1::Coordinate::STOKES)
+    .value("SPECTRAL",  DAL1::Coordinate::SPECTRAL)
+    .value("UNDEFINED", DAL1::Coordinate::UNDEFINED)
     ;
   
   //________________________________________________________

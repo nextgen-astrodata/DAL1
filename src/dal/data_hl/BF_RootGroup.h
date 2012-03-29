@@ -31,12 +31,12 @@
 #include <data_hl/BF_SubArrayPointing.h>
 #include <data_hl/SysLog.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class BF_RootGroup
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the root-group of a beamformed dataset
@@ -108,8 +108,8 @@ namespace DAL { // Namespace DAL -- begin
       <li>Create new BF dataset file:
       \code
       // Construct filename from observation ID and filename extension
-      DAL::Filename filename ("1234567890",
-                              DAL::Filename::h5);
+      DAL1::Filename filename ("1234567890",
+                              DAL1::Filename::h5);
       // Create BF root-group object for new file
       BF_RootGroup bf (filename);
       \endcode
@@ -181,7 +181,7 @@ namespace DAL { // Namespace DAL -- begin
     BF_RootGroup (std::string const &filename);
     
     //! Argumented constructor
-    BF_RootGroup (DAL::Filename &infile,
+    BF_RootGroup (DAL1::Filename &infile,
 		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
@@ -248,7 +248,7 @@ namespace DAL { // Namespace DAL -- begin
 			    unsigned int const &nofSamples,
 			    unsigned int const &nofSubbands,
 			    unsigned int const &nofChannels,
-			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
@@ -258,7 +258,7 @@ namespace DAL { // Namespace DAL -- begin
 			    unsigned int const &stokesID,
 			    unsigned int const &nofSamples,
 			    std::vector<unsigned int> const &nofChannels,
-			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
@@ -295,7 +295,7 @@ namespace DAL { // Namespace DAL -- begin
       
   }; // Class BF_RootGroup -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* BF_ROOTGROUP_H */
   

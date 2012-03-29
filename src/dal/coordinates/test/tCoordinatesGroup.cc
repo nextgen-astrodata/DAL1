@@ -21,15 +21,15 @@
 #include <coordinates/CoordinatesGroup.h>
 
 // Namespace usage
-using DAL::CoordinatesGroup;
+using DAL1::CoordinatesGroup;
 
 /*!
   \file tCoordinatesGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::CoordinatesGroup class
+  \brief A collection of test routines for the DAL1::CoordinatesGroup class
  
   \author Lars B&auml;hren
  

@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalTable.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalTable class
+  \brief Python bindings for the DAL1::dalTable class
 
   \author Lars B&auml;hren
 */
@@ -32,7 +32,7 @@
 #include "pydal.h"
 #include <core/dalTable.h>
 
-using DAL::dalTable;
+using DAL1::dalTable;
 
 // ==============================================================================
 //
@@ -147,7 +147,7 @@ PyObject* dalTable::readRows_boost (int start,
   PyObject* py_list = PyList_New( 0 );
   PyObject *py_item;
   void * value;
-  if (itsFiletype.type()==DAL::dalFileType::HDF5) {
+  if (itsFiletype.type()==DAL1::dalFileType::HDF5) {
     char * data_out;
     data_out = (char*) malloc ( 1 );
     
@@ -465,8 +465,8 @@ void export_dalTable ()
   // Bindings for class and its methods
   
   boost::python::class_<dalTable>("dalTable")
-    .def( boost::python::init<DAL::dalFileType const &>())
-    .def( boost::python::init<DAL::dalFileType::Type const &>())
+    .def( boost::python::init<DAL1::dalFileType const &>())
+    .def( boost::python::init<DAL1::dalFileType::Type const &>())
     // Public methods
     .def("summary",
 	 summary1,

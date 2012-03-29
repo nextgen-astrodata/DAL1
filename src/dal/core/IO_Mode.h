@@ -25,14 +25,14 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <dal_config.h>
+#include <dal1_config.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class IO_Mode
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Book-keeping of access properties
@@ -383,49 +383,49 @@ namespace DAL { // Namespace DAL -- begin
 	  <td class="indexkey">C#</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::Create</td>
+	  <td>DAL1::IO::Create</td>
 	  <td>O_CREAT | O_TRUNC</td>
 	  <td></td>
 	  <td>H5Fcreate(...,ACC_TRUNC)</td>
 	  <td>Create</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::CreateNew</td>
+	  <td>DAL1::IO::CreateNew</td>
 	  <td>O_CREAT | O_EXCL</td>
 	  <td></td>
 	  <td>H5Fcreate(...,ACC_CREAT)</td>
 	  <td>CreateNew</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::Open</td>
+	  <td>DAL1::IO::Open</td>
 	  <td></td>
 	  <td></td>
 	  <td></td>
 	  <td>Open</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::OpenOrCreate</td>
+	  <td>DAL1::IO::OpenOrCreate</td>
 	  <td></td>
 	  <td></td>
 	  <td></td>
 	  <td>OpenOrCreate</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::ReadOnly</td>
+	  <td>DAL1::IO::ReadOnly</td>
 	  <td>O_RDONLY</td>
 	  <td>_O_RDONLY</td>
 	  <td>ACC_RDONLY</td>
 	  <td>Read</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::WriteOnly</td>
+	  <td>DAL1::IO::WriteOnly</td>
 	  <td>O_WRONLY</td>
 	  <td>_O_WRONLY</td>
 	  <td>---</td>
 	  <td>Write</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::ReadWrite</td>
+	  <td>DAL1::IO::ReadWrite</td>
 	  <td>O_RDWR</td>
 	  <td>_O_RDWR</td>
 	  <td>ACC_RDWR</td>
@@ -600,7 +600,7 @@ namespace DAL { // Namespace DAL -- begin
     bool h5get_flags(IO_Mode &flags, hid_t const &object_id);
 #endif
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* IO_MODE_H */
   

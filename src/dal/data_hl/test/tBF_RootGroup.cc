@@ -24,16 +24,16 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::Filename;
-using DAL::BF_RootGroup;
+using DAL1::Filename;
+using DAL1::BF_RootGroup;
 
 /*!
   \file tBF_RootGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BF_RootGroup class
+  \brief A collection of test routines for the DAL1::BF_RootGroup class
  
   \author Lars B&auml;hren
  
@@ -44,14 +44,14 @@ using DAL::BF_RootGroup;
 //                                                              test_constructors
 
 /*!
-  \brief Get DAL::Filename object
+  \brief Get DAL1::Filename object
 
   \param obsID          -- Unique identifier for the observation.
   \param optDescription	-- Optional descriptors.
   \param filetype       -- Marker for the contents of the file.
   \param extension      -- Extension of the file.
 */
-DAL::Filename getFilename (std::string const &obsID="123456789",
+DAL1::Filename getFilename (std::string const &obsID="123456789",
 			   std::string const &optDescription="test",
 			   Filename::Type const &filetype=Filename::bf,
 			   Filename::Extension const &extension=Filename::h5)
@@ -77,11 +77,11 @@ bool show_attributes (hid_t const &location)
   std::string telescope;
   std::string observer;
 
-  status *= DAL::HDF5Attribute::read (location, "GROUPTYPE", grouptype );
-  status *= DAL::HDF5Attribute::read (location, "FILENAME",  filename  );
-  status *= DAL::HDF5Attribute::read (location, "FILETYPE",  filetype  );
-  status *= DAL::HDF5Attribute::read (location, "TELESCOPE", telescope );
-  status *= DAL::HDF5Attribute::read (location, "OBSERVER",  observer  );
+  status *= DAL1::HDF5Attribute::read (location, "GROUPTYPE", grouptype );
+  status *= DAL1::HDF5Attribute::read (location, "FILENAME",  filename  );
+  status *= DAL1::HDF5Attribute::read (location, "FILETYPE",  filetype  );
+  status *= DAL1::HDF5Attribute::read (location, "TELESCOPE", telescope );
+  status *= DAL1::HDF5Attribute::read (location, "OBSERVER",  observer  );
   
   std::cout << "-- GROUPTYPE = " << grouptype << std::endl;
   std::cout << "-- FILENAME  = " << filename  << std::endl;
@@ -106,16 +106,16 @@ int test_constructors ()
   cout << "\n[tBF_RootGroup::test_constructors]\n" << endl;
 
   int nofFailedTests = 0;
-  DAL::Filename file = getFilename();
+  DAL1::Filename file = getFilename();
 
   /*________________________________________________________
-    Test 1 : Testing construction with DAL::Filename object.
+    Test 1 : Testing construction with DAL1::Filename object.
   */
   
   cout << "[1] Testing BF_RootGroup(Filename) ..." << endl;
   try {
     // Create new file
-    DAL::BF_RootGroup bf (file);
+    DAL1::BF_RootGroup bf (file);
     bf.summary();
     // Display selected attributes
     show_attributes (bf.locationID());
@@ -127,14 +127,14 @@ int test_constructors ()
   return 0;
   
   /*________________________________________________________
-    Test 2 : Testing construction with DAL::CommonAttributes
+    Test 2 : Testing construction with DAL1::CommonAttributes
              object, from which then the proper file name
 	     is being extracted.
   */
   
   cout << "[2] Testing BF_RootGroup(CommonAttributes) ..." << endl;
   try {
-    DAL::CommonAttributes commonAttr;
+    DAL1::CommonAttributes commonAttr;
     commonAttr.setFilename (file);
     //
     BF_RootGroup dataset (commonAttr);
@@ -179,7 +179,7 @@ int test_attributes ()
   cout << "\n[tBF_RootGroup::test_attributes]\n" << endl;
 
   int nofFailedTests = 0;
-  DAL::Filename file = getFilename();
+  DAL1::Filename file = getFilename();
 
   // Open BF dataset
   BF_RootGroup bf (file);
@@ -261,7 +261,7 @@ int test_methods ()
 
   cout << "[1] Extract SysLog from BF dataset ..." << endl;
   try {
-    DAL::SysLog sysLog = dataset.sysLog();
+    DAL1::SysLog sysLog = dataset.sysLog();
     //
     std::string groupType;
     sysLog.getAttribute("GROUPTYPE",groupType);
@@ -276,7 +276,7 @@ int test_methods ()
 
   cout << "[2] Extract SubArrayPointing group from BF dataset ..." << endl;
   try {
-    DAL::BF_SubArrayPointing pointing = dataset.getSubArrayPointing (0);
+    DAL1::BF_SubArrayPointing pointing = dataset.getSubArrayPointing (0);
     //
     std::string groupType;
     pointing.getAttribute("GROUPTYPE",groupType);

@@ -25,13 +25,13 @@
 #include <core/dalDataset.h>
 #include <core/dalTable.h>
 
-namespace DAL
+namespace DAL1
   {
 
   /*!
     \class BeamSubband
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
 
     \brief High-level interface between beam-formed data and the DAL
@@ -121,6 +121,6 @@ namespace DAL
 
     }; // class BeamSubband -- end
 
-} // namespace DAL -- end
+} // namespace DAL1 -- end
 
 #endif

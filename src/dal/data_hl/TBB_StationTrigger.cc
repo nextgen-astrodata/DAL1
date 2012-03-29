@@ -20,7 +20,7 @@
 
 #include <data_hl/TBB_StationTrigger.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -244,4 +244,4 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

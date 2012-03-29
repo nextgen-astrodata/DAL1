@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::dalFileType;
+using DAL1::dalFileType;
 
 /*!
   \file tdalFileType.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalFileType class
+  \brief A collection of test routines for the DAL1::dalFileType class
  
   \author Lars B&auml;hren
  

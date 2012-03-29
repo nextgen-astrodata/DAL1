@@ -29,12 +29,12 @@
 #include <casa/Arrays/Vector.h>
 #endif
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Attribute
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Brief description for class HDF5Attribute
@@ -580,7 +580,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5Attribute -- end
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5ATTRIBUTE_H */
   

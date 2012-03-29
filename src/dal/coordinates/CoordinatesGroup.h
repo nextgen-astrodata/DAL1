@@ -25,18 +25,18 @@
 #include <iostream>
 #include <string>
 
-// DAL header files
+// DAL1 header files
 #include <core/HDF5Object.h>
 #include <coordinates/DirectionCoordinate.h>
 #include <coordinates/LinearCoordinate.h>
 #include <coordinates/TabularCoordinate.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class CoordinatesGroup
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief High-level interface to the system logs attached to a beamformed dataset
@@ -206,7 +206,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class CoordinatesGroup -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* COORDINATESGROUP_H */
 

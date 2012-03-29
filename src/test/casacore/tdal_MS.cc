@@ -23,7 +23,7 @@
 
   \brief Test program for reading CASA measurement sets.
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \author Joseph Masters
@@ -38,7 +38,7 @@
 #include <core/dalDataset.h>
 
 using namespace casa;
-using namespace DAL;
+using namespace DAL1;
 
 //_______________________________________________________________________________
 
@@ -71,7 +71,7 @@ int test_MeasurementSet (std::string const &filename_ms)
   //__________________________________________________________________
   // Provide dalDataset object for the subsequent tests
 
-  DAL::dalDataset msds;
+  DAL1::dalDataset msds;
   msds.open( filename_ms.c_str() );
 
   //__________________________________________________________________
@@ -219,8 +219,8 @@ int test_createHDF5 (std::string const &filename_ms,
   cout << "\n[tdal_MS::test_createHDF5]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::dalDataset msds (filename_ms.c_str());
-  DAL::dalDataset ds (filename_hdf5.c_str(), "HDF5" );
+  DAL1::dalDataset msds (filename_ms.c_str());
+  DAL1::dalDataset ds (filename_hdf5.c_str(), "HDF5" );
 
   /*__________________________________________________________________
     Test 1: Open table columns
@@ -319,7 +319,7 @@ int main (int argc, char *argv[])
     cout << "The first parameter is the input casa measurement set." << endl;
     cout << "The second parameter is the output hdf5 file." << endl;
     cout << endl;
-    return DAL::FAIL;
+    return DAL1::FAIL;
   } else {
     filename_ms   = argv[1];
     filename_hdf5 = argv[2];

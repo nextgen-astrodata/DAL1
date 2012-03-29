@@ -21,15 +21,15 @@
 #include <core/HDF5Property.h>
 
 // Namespace usage
-using DAL::HDF5Property;
+using DAL1::HDF5Property;
 
 /*!
   \file tHDF5Property.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::HDF5Property class
+  \brief A collection of test routines for the DAL1::HDF5Property class
  
   \author Lars B&auml;hren
  

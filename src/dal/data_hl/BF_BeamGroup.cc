@@ -20,7 +20,7 @@
 
 #include <data_hl/BF_BeamGroup.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -301,7 +301,7 @@ namespace DAL { // Namespace DAL -- begin
 					unsigned int const &nofSamples,
 					unsigned int const &nofSubbands,
 					unsigned int const &nofChannels,
-					DAL::Stokes::Component const &component,
+					DAL1::Stokes::Component const &component,
 					hid_t const &datatype,
 					IO_Mode const &flags)
   {
@@ -332,7 +332,7 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID,
 					unsigned int const &nofSamples,
 					std::vector<unsigned int> const &nofChannels,
-					DAL::Stokes::Component const &component,
+					DAL1::Stokes::Component const &component,
 					hid_t const &datatype,
 					IO_Mode const &flags)
   {
@@ -532,4 +532,4 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

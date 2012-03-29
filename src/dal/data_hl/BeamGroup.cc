@@ -20,7 +20,7 @@
 
 #include <data_hl/BeamGroup.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -253,7 +253,7 @@ namespace DAL {
 
     if (group_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == HDF5Attribute::read (group_p->getId(), "RA", ra ) )
+        if ( DAL1::FAIL == HDF5Attribute::read (group_p->getId(), "RA", ra ) )
           {
             std::cerr << "-- Error extracting attribute RA" << endl;
           }
@@ -272,7 +272,7 @@ namespace DAL {
 
     if (group_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(), "DEC", dec ) )
+        if ( DAL1::FAIL == HDF5Attribute::read( group_p->getId(), "DEC", dec ) )
           {
             std::cerr << "-- Error extracting attribute DEC" << endl;
           }
@@ -306,7 +306,7 @@ namespace DAL {
     int nofSubbands = -1;
     if (group_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == HDF5Attribute::read( group_p->getId(),
+        if ( DAL1::FAIL == HDF5Attribute::read( group_p->getId(),
 					       "NUMBER_OF_SUBBANDS",
 					       nofSubbands) )
           {
@@ -647,4 +647,4 @@ namespace DAL {
     getSubbandData_Y( subband, start, length, values_y );
   }
 
-} // end namespace DAL
+} // end namespace DAL1

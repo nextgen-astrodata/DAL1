@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalArray.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalArray class
+  \brief Python bindings for the DAL1::dalArray class
 
   \author Lars B&auml;hren
 */
@@ -32,7 +32,7 @@
 #include "pydal.h"
 #include <core/dalArray.h>
 
-using DAL::dalArray;
+using DAL1::dalArray;
 
 // ==============================================================================
 //
@@ -40,7 +40,7 @@ using DAL::dalArray;
 //
 // ==============================================================================
 
-void DAL::dalArray::extend_boost (boost::python::list pydims )
+void DAL1::dalArray::extend_boost (boost::python::list pydims )
 {
   std::vector<int> dims;
   
@@ -51,55 +51,55 @@ void DAL::dalArray::extend_boost (boost::python::list pydims )
   extend( dims );
 }
 
-bool DAL::dalArray::setAttribute_char (std::string attrname,
+bool DAL1::dalArray::setAttribute_char (std::string attrname,
 				       char data )
 {
   return setAttribute( attrname, &data );
 }
 
-bool DAL::dalArray::setAttribute_short (std::string const &name,
+bool DAL1::dalArray::setAttribute_short (std::string const &name,
 					short const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_int (std::string const &name,
+bool DAL1::dalArray::setAttribute_int (std::string const &name,
 				      int const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_uint (std::string const &name,
+bool DAL1::dalArray::setAttribute_uint (std::string const &name,
 				       uint const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_long (std::string const &name,
+bool DAL1::dalArray::setAttribute_long (std::string const &name,
 				       long const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_float (std::string const &name,
+bool DAL1::dalArray::setAttribute_float (std::string const &name,
 					float const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_double (std::string const &name,
+bool DAL1::dalArray::setAttribute_double (std::string const &name,
 					 double const &data)
 {
   return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
-bool DAL::dalArray::setAttribute_string (std::string attrname,
+bool DAL1::dalArray::setAttribute_string (std::string attrname,
 					 std::string data)
 {
   return setAttribute( attrname, &data );
 }
 
-bool DAL::dalArray::setAttribute_char_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_char_vector (std::string attrname,
 					      boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -111,7 +111,7 @@ bool DAL::dalArray::setAttribute_char_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_short_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_short_vector (std::string attrname,
 					       boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -123,7 +123,7 @@ bool DAL::dalArray::setAttribute_short_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_int_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_int_vector (std::string attrname,
 					     boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -135,7 +135,7 @@ bool DAL::dalArray::setAttribute_int_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_uint_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_uint_vector (std::string attrname,
 					      boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -147,7 +147,7 @@ bool DAL::dalArray::setAttribute_uint_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_long_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_long_vector (std::string attrname,
 					      boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -159,7 +159,7 @@ bool DAL::dalArray::setAttribute_long_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_float_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_float_vector (std::string attrname,
 					       boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -171,7 +171,7 @@ bool DAL::dalArray::setAttribute_float_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_double_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_double_vector (std::string attrname,
 						boost::python::list data )
 {
   int size = boost::python::len(data);
@@ -183,7 +183,7 @@ bool DAL::dalArray::setAttribute_double_vector (std::string attrname,
   return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
 }
 
-bool DAL::dalArray::setAttribute_string_vector (std::string attrname,
+bool DAL1::dalArray::setAttribute_string_vector (std::string attrname,
 						boost::python::list data )
 {
   int size = boost::python::len(data);

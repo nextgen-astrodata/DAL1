@@ -21,15 +21,15 @@
 #include <data_hl/Sky_ImageGroup.h>
 
 // Namespace usage
-using DAL::Sky_ImageGroup;
+using DAL1::Sky_ImageGroup;
 
 /*!
   \file tSky_ImageGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::Sky_ImageGroup class
+  \brief A collection of test routines for the DAL1::Sky_ImageGroup class
  
   \author Lars B&auml;hren
  

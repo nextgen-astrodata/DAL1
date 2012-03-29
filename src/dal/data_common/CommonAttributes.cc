@@ -20,7 +20,7 @@
 
 #include <data_common/CommonAttributes.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param filename -- The name of the file.
   */
-  CommonAttributes::CommonAttributes (DAL::Filename const &filename)
+  CommonAttributes::CommonAttributes (DAL1::Filename const &filename)
   {
     init ();
     setFilename (filename);
@@ -61,7 +61,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- The name of the file.
     \param filedate -- The file creation date.
   */
-  CommonAttributes::CommonAttributes (DAL::Filename const &filename,
+  CommonAttributes::CommonAttributes (DAL1::Filename const &filename,
 				      std::string const &filedate)
   {
     init ();
@@ -587,4 +587,4 @@ namespace DAL { // Namespace DAL -- begin
     setEndUTC (endUTC);
   }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

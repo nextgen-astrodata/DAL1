@@ -21,10 +21,10 @@
 /*!
   \file pydal_HDF5Dataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::HDF5Dataset class
+  \brief Python bindings for the DAL1::HDF5Dataset class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include <pydal.h>
 #include <core/HDF5Dataset.h>
 
-using DAL::HDF5Dataset;
+using DAL1::HDF5Dataset;
 
 // ==============================================================================
 //
@@ -59,18 +59,18 @@ void export_HDF5Dataset ()
     .def( boost::python::init<>())
     .def( boost::python::init<hid_t const &,
 			      std::string const &,
-			      DAL::IO_Mode const &>())
+			      DAL1::IO_Mode const &>())
     .def( boost::python::init<hid_t const &,
 			      std::string const &,
 			      std::vector<hsize_t> const &,
 			      hid_t const &,
-			      DAL::IO_Mode const &>())
+			      DAL1::IO_Mode const &>())
     .def( boost::python::init<hid_t const &,
 			      std::string const &,
 			      std::vector<hsize_t> const &,
 			      std::vector<hsize_t> const &,
 			      hid_t const &,
-			      DAL::IO_Mode const &>())
+			      DAL1::IO_Mode const &>())
     .def( boost::python::init<HDF5Dataset>())
     // Parameter access
     .def("name",

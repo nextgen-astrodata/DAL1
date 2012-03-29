@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
                 << "rcu id." << std::endl;
       std::cerr << "The third parameter is the station group itentifier." << std::endl;
       std::cerr << std::endl;
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
 
-  DAL::dalDataset ds;
-  if ( DAL::FAIL == ds.open( argv[1] ) )
+  DAL1::dalDataset ds;
+  if ( DAL1::FAIL == ds.open( argv[1] ) )
     std::cerr << "ERROR: couldn't open file: " << argv[1] << std::endl;
 
   std::string id = argv[2];
@@ -60,30 +60,30 @@ int main(int argc, char *argv[])
     std::cerr << groups[idx] << std::endl;
   std::cerr << std::endl;
 
-  DAL::dalArray * array = NULL;
-  if ( DAL::FAIL == ( array = ds.openArray( argv[2], argv[3] ) ) )
+  DAL1::dalArray * array = NULL;
+  if ( DAL1::FAIL == ( array = ds.openArray( argv[2], argv[3] ) ) )
     std::cerr << "ERROR: couldn't open dipole: " << argv[2] << std::endl;
 
   std::cerr << "\nGetting TELESCOPE attribute from array...";
   std::string telescope("");
-  if ( DAL::SUCCESS == ds.getAttribute( "TELESCOPE", telescope ) )
+  if ( DAL1::SUCCESS == ds.getAttribute( "TELESCOPE", telescope ) )
     std::cerr << telescope << " ...done.";
   else   std::cerr << "FAILED.";
 
   std::cerr << "\nGetting TIME attribute from array...";
   uint time = 0;
-  if ( DAL::SUCCESS == array->getAttribute( "TIME", time ) )
+  if ( DAL1::SUCCESS == array->getAttribute( "TIME", time ) )
     std::cerr << time << " ...done.";
   else   std::cerr << "FAILED.";
 
   std::cerr << "\n\nClosing integer array... ";
-  if ( DAL::SUCCESS == array->close() )
+  if ( DAL1::SUCCESS == array->close() )
     std::cerr << "done." << std::endl;
   else  std::cerr << "FAILED.";
 
-  if ( DAL::FAIL == ds.close() )
+  if ( DAL1::FAIL == ds.close() )
     std::cerr << "ERROR: closing dataset failed\n";
 
   std::cerr << "\nSUCCESS" << std::endl;
-  return DAL::SUCCESS;
+  return DAL1::SUCCESS;
 }

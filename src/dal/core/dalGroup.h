@@ -30,13 +30,13 @@
 #include <core/dalShortArray.h>
 #include <core/dalComplexArray_int16.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalGroup
     \brief Represents a group of tables, arrays or sub-groups.
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \test tdalGroup.cc
@@ -132,7 +132,7 @@ namespace DAL {
       
       \param attrname The name of the attribute you want to retrieve.
       \param value The value of the attribute.
-      \return bool -- DAL::FAIL or DAL::SUCCESS
+      \return bool -- DAL1::FAIL or DAL1::SUCCESS
     */
     template <class T>
       bool getAttribute( std::string attrname, T &value )
@@ -232,6 +232,6 @@ namespace DAL {
 
   }; // end class dalGroup
   
-} // end namespace DAL
+} // end namespace DAL1
 
 #endif  // end #ifndef DALGROUP_H

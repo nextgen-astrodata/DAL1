@@ -21,9 +21,9 @@
 /*!
   \file tdalTable.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
-  \brief A collection of test routines for the DAL::dalTable class
+  \brief A collection of test routines for the DAL1::dalTable class
 
   \author Lars B&auml;hren
 
@@ -76,7 +76,7 @@ int test_constructors (std::string const &filename,
 
   std::cout << "[1] Default constructor..." << std::endl;
   try {
-    DAL::dalTable table;
+    DAL1::dalTable table;
     //
     table.summary();
   }
@@ -87,7 +87,7 @@ int test_constructors (std::string const &filename,
   
   std::cout << "[2] Construct object for table of type HDF5..." << std::endl;
   try {
-    DAL::dalTable table (DAL::dalFileType::HDF5);
+    DAL1::dalTable table (DAL1::dalFileType::HDF5);
     table.summary();
   }
   catch (std::string& message) {
@@ -97,7 +97,7 @@ int test_constructors (std::string const &filename,
   
   std::cout << "[3] Construct object for table of type FITS..." << std::endl;
   try {
-    DAL::dalTable table (DAL::dalFileType::FITS);
+    DAL1::dalTable table (DAL1::dalFileType::FITS);
     table.summary();
   }
   catch (std::string& message) {
@@ -108,11 +108,11 @@ int test_constructors (std::string const &filename,
   std::cout << "[4] Construction from dalDataset..." << std::endl;
   try {
     if (haveDataset) {
-      DAL::dalDataset dataset;
+      DAL1::dalDataset dataset;
       dataset.open(filename.c_str());
       dataset.summary();
       //
-      DAL::dalTable * table = dataset.openTable ("/beam000","SB000");
+      DAL1::dalTable * table = dataset.openTable ("/beam000","SB000");
       table->summary();
     } else {
       std::cout << "--> Skipping test - missing input dataset." << std::endl;
@@ -147,7 +147,7 @@ int test_parameters (std::string const &filename,
   std::cout << "[1] Getting group names from dataset ..." << std::endl;
   try {
     if (haveDataset) {
-      DAL::dalDataset dataset (filename.c_str(),"HDF5");
+      DAL1::dalDataset dataset (filename.c_str(),"HDF5");
       std::vector<std::string> groupNames = dataset.getGroupNames();
     } else {
       std::cout << "--> Skipping test - missing input dataset." << std::endl;
@@ -180,7 +180,7 @@ int test_methods (std::string const &filename,
   int nofFailedTests (0);
 
   if (haveDataset) {
-    DAL::dalDataset dataset (filename.c_str(),"HDF5");
+    DAL1::dalDataset dataset (filename.c_str(),"HDF5");
   }
 
   return nofFailedTests;

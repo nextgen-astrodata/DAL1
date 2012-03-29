@@ -22,15 +22,15 @@
 #include <core/Operator.h>
 
 // Namespace usage
-using DAL::Operator;
+using DAL1::Operator;
 
 /*!
   \file tOperator.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::Operator class
+  \brief A collection of test routines for the DAL1::Operator class
  
   \author Lars B&auml;hren
  
@@ -94,8 +94,8 @@ int test_static_functions ()
 
   std::cout << "\[1] Retrieve set with types and names ..." << std::endl;
   {
-    std::set<DAL::Operator::Types> types = DAL::Operator::operatorTypes();
-    std::set<std::string> names          = DAL::Operator::operatorNames();
+    std::set<DAL1::Operator::Types> types = DAL1::Operator::operatorTypes();
+    std::set<std::string> names          = DAL1::Operator::operatorNames();
     //
     std::cout << "-- Operator::operatorTypes = " << types << std::endl;
     std::cout << "-- Operator::operatorNames = " << names << std::endl;
@@ -103,8 +103,8 @@ int test_static_functions ()
   
   std::cout << "\[2] Test Operator::name() ..." << std::endl;
   {
-    std::set<DAL::Operator::Types> types = DAL::Operator::operatorTypes();
-    std::set<DAL::Operator::Types>::iterator it;
+    std::set<DAL1::Operator::Types> types = DAL1::Operator::operatorTypes();
+    std::set<DAL1::Operator::Types>::iterator it;
     //
     for (it=types.begin(); it!=types.end(); ++it) {
       std::cout << std::setw(5) << *it << "  ->  " << Operator::name(*it) << std::endl;

@@ -21,15 +21,15 @@
 #include <data_hl/Sky_SourceTable.h>
 
 // Namespace usage
-using DAL::Sky_SourceTable;
+using DAL1::Sky_SourceTable;
 
 /*!
   \file tSky_SourceTable.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::Sky_SourceTable class
+  \brief A collection of test routines for the DAL1::Sky_SourceTable class
  
   \author Lars B&auml;hren
  

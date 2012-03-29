@@ -23,12 +23,12 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::HDF5Quantity;
+using DAL1::HDF5Quantity;
 
 /*!
   \file tHDF5Quantity.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_common
 
   \brief A collection of test routines for the HDF5Quantity class

@@ -21,15 +21,15 @@
 #include <core/HDF5Table.h>
 
 // Namespace usage
-using DAL::HDF5Table;
+using DAL1::HDF5Table;
 
 /*!
   \file tHDF5Table.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::HDF5Table class
+  \brief A collection of test routines for the DAL1::HDF5Table class
  
   \author Lars B&auml;hren
  

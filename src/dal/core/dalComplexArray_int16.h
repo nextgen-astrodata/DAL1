@@ -23,12 +23,12 @@
 
 #include <core/dalArray.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalComplexArray_int16
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Represents an n-dimensional array of type \e complex<int16>
@@ -50,7 +50,7 @@ namespace DAL {
 			   std::vector<int>chnkdims);
   };
 
-} //   END -- namespace DAL
+} //   END -- namespace DAL1
 
 #endif
 

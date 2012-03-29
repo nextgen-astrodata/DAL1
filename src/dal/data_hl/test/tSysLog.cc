@@ -21,13 +21,13 @@
 #include <data_hl/SysLog.h>
 
 // Namespace usage
-using DAL::Filename;
-using DAL::SysLog;
+using DAL1::Filename;
+using DAL1::SysLog;
 
 /*!
   \file tSysLog.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the SysLog class

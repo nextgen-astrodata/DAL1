@@ -20,7 +20,7 @@
 
 #include <coordinates/DirectionCoordinate.h>
 
-namespace DAL {   // Namespace DAL -- begin
+namespace DAL1 {   // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -257,10 +257,10 @@ namespace DAL {   // Namespace DAL -- begin
     HDF5Attribute::read (groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
-    if (DAL::Coordinate::getType(coordinate_type) == Coordinate::DIRECTION)
+    if (DAL1::Coordinate::getType(coordinate_type) == Coordinate::DIRECTION)
       {
         // basic parameters
-        coord_p   = DAL::Coordinate::getType(coordinate_type);
+        coord_p   = DAL1::Coordinate::getType(coordinate_type);
         nofAxes_p = nof_axes;
         // WCS parameters
         setAxisNames (axis_names);
@@ -371,4 +371,4 @@ namespace DAL {   // Namespace DAL -- begin
 #endif
   
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

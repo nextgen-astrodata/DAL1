@@ -29,12 +29,12 @@
 #include <core/dalCommon.h>
 #include <core/HDF5Object.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Quantity
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Brief description for class HDF5Quantity
@@ -300,7 +300,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5Quantity -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5QUANTITY_H */
   

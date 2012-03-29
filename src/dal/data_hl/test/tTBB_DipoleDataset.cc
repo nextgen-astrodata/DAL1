@@ -22,7 +22,7 @@
 #include <data_hl/TBB_DipoleDataset.h>
 
 // Namespace usage
-using DAL::TBB_DipoleDataset;
+using DAL1::TBB_DipoleDataset;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -30,10 +30,10 @@ using std::endl;
 /*!
   \file tTBB_DipoleDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::TBB_DipoleDataset class
+  \brief A collection of test routines for the DAL1::TBB_DipoleDataset class
  
   \author Lars B&auml;hren
  
@@ -108,7 +108,7 @@ int test_constructors (std::string const &filename)
 
   if (fileID > 0) {
     names.clear();
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
     //
     if (names.size() > 0) {
       cout << "-- Groups  = " << names << endl;
@@ -127,7 +127,7 @@ int test_constructors (std::string const &filename)
 
   if (groupID > 0) {
     names.clear();
-    DAL::h5get_names (names,groupID,H5G_DATASET);
+    DAL1::h5get_names (names,groupID,H5G_DATASET);
     cout << "-- Datasets = " << names << endl;
   } else {
     cerr << "Skipping tests - unable to open group." << endl;
@@ -203,7 +203,7 @@ int test_attributes (std::string const &filename)
 
   if (fileID > 0) {
     names.clear();
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
     //
     if (names.size() > 0) {
       it      = names.begin();
@@ -221,7 +221,7 @@ int test_attributes (std::string const &filename)
 
   if (groupID > 0) {
     names.clear();
-    DAL::h5get_names (names,groupID,H5G_DATASET);
+    DAL1::h5get_names (names,groupID,H5G_DATASET);
   } else {
     cerr << "Skipping tests - unable to open group." << endl;
     return -1;
@@ -344,7 +344,7 @@ int test_data (std::string const &filename)
 
   if (fileID > 0) {
     names.clear();
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
     //
     if (names.size() > 0) {
       it      = names.begin();
@@ -362,7 +362,7 @@ int test_data (std::string const &filename)
 
   if (groupID > 0) {
     names.clear();
-    DAL::h5get_names (names,groupID,H5G_DATASET);
+    DAL1::h5get_names (names,groupID,H5G_DATASET);
   } else {
     cerr << "Skipping tests - unable to open group." << endl;
     return -1;

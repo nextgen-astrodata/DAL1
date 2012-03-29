@@ -25,14 +25,14 @@
 #include <string>
 #include <map>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 
 // LOFAR header files
 #ifdef DAL_WITH_LOFAR
 #include <Interface/Parset.h>
 #endif
 
-// DAL header files
+// DAL1 header files
 #include "HDF5Writer.h"
 #include "Bf2h5Calculator.h"
 #include "StationBeamReader.h"
@@ -52,7 +52,7 @@ typedef std::map<uint8_t, long int> bufferTracker;
 /*!
   \class BF2H5
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup dal_apps
 
   \author Alwin de Jong
@@ -64,7 +64,7 @@ typedef std::map<uint8_t, long int> bufferTracker;
   <h3>Prerequisite</h3>
   
   <ul type="square">
-    <li>DAL::Bf2h5Calculator
+    <li>DAL1::Bf2h5Calculator
     <li>LOFAR::RTCP::Parset
   </ul>
   
@@ -170,9 +170,9 @@ class BF2H5 {
   std::string inputFile;
   std::string outputFile;
   uint tcpPort;
-  DAL::Bf2h5Calculator *itsCalculator;
+  DAL1::Bf2h5Calculator *itsCalculator;
   HDF5Writer *itsWriter;
-  DAL::StationBeamReader *itsReader;
+  DAL1::StationBeamReader *itsReader;
   
   // data structures:
   

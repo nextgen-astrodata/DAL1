@@ -24,7 +24,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -283,8 +283,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Get name of file and dataset ________________________
     
-    status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location, absolutePath);
+    status  = DAL1::h5get_filename (filename, location);
+    status *= DAL1::h5get_name (dataset, location, absolutePath);
 
     if (status) {
 
@@ -896,7 +896,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   casa::MPosition TBB_DipoleDataset::antenna_position ()
   {
-    return DAL::h5get_position (location_p,
+    return DAL1::h5get_position (location_p,
                                 "ANTENNA_POSITION_VALUE",
                                 "ANTENNA_POSITION_UNIT",
                                 "ANTENNA_POSITION_FRAME");
@@ -948,7 +948,7 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_DipoleDataset::sample_frequency (casa::Quantity &freq)
   { 
     if (location_p > 0) {
-      freq = DAL::h5get_quantity (location_p,
+      freq = DAL1::h5get_quantity (location_p,
 				  "SAMPLE_FREQUENCY_VALUE",
 				  "SAMPLE_FREQUENCY_UNIT");
       return true;
@@ -971,7 +971,7 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_DipoleDataset::sample_frequency (casa::MFrequency &freq)
   {
     if (location_p > 0) {
-      casa::Quantity qFreq = DAL::h5get_quantity (location_p,
+      casa::Quantity qFreq = DAL1::h5get_quantity (location_p,
 						  "SAMPLE_FREQUENCY_VALUE",
 						  "SAMPLE_FREQUENCY_UNIT");
       freq = casa::MFrequency (qFreq,
@@ -1173,4 +1173,4 @@ namespace DAL {  // Namespace DAL -- begin
   
 #endif
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

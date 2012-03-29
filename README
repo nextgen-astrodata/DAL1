@@ -22,7 +22,7 @@ meeting these challenges, ASTRON and the LOFAR project are currently exploring
 the use of the Hierarchical Data Format, version 5 (HDF5) for LOFAR radio data
 encapsulation.
 
-The Data Access Library (DAL) is a library that abstracts the underlying file
+The Data Access Library (DAL1) is a library that abstracts the underlying file
 format from the user when working with radio astronomy data. Underlying formats
 may include HDF5, AIPS++/CASA tables, FITS or specific raw formats. This library
 is available to both the C/C++ developer and the Python user via the "pydal"
@@ -34,13 +34,14 @@ space for a new data access library (as DAL).
 _________________________________________________________________________________
 >>> 2. Getting the source code
 
-As of Feb 15, 2001 the DAL can be cloned directly from the master repository
+As of Feb 15, 2001 the DAL1 can be cloned directly from the master repository
 hosted on Github (http://github.com):
      
   git clone https://github.com/nextgen-astrodata/DAL1.git DAL1
 
 Once your checkout from the Git repository is complete, follow the
 instructions as described in the section "Configuration and build" below.
+
 
 
 As of Feb 8, 2012 the new DAL can be cloned from:
@@ -50,7 +51,7 @@ As of Feb 8, 2012 the new DAL can be cloned from:
 _________________________________________________________________________________
 >>> 3. Organization of the source code
 
-The components of the DAL are organized into the following directory structure:
+The components of the DAL1 are organized into the following directory structure:
 
   DAL1
   |-- build
@@ -81,7 +82,7 @@ The components of the DAL are organized into the following directory structure:
 _________________________________________________________________________________
 >>> 4. External dependencies
 
-To build the DAL from the sources you need a number of installed software
+To build the DAL1 from the sources you need a number of installed software
 packages and utilities:
 
   * CMake, >=2.6 (www.cmake.org)
@@ -103,7 +104,7 @@ packages and utilities:
 _________________________________________________________________________________
 >>> 5. Configuration, build and installation
 
-The DAL uses the CMake (www.cmake.org) Cross-Platform Makefile Generator for 
+The DAL1 uses the CMake (www.cmake.org) Cross-Platform Makefile Generator for 
 configuration and control of the build.
 
 Once your checkout from the Git repository is complete you will have a directory
@@ -128,7 +129,7 @@ finding all required components:
 
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> ..
 
-In to install the DAL you will have to run
+In to install the DAL1 you will have to run
 
   make install
 
@@ -140,7 +141,7 @@ In order to maintain compatibility with the Filesystem Hierarchy Standard (FHS)
 the following default installation layout has been defined:
 
 /opt
-└── dal                            CMAKE_INSTALL_PREFIX   = DAL_INSTALL_PREFIX
+└── dal1                           CMAKE_INSTALL_PREFIX   = DAL_INSTALL_PREFIX
     ├── bin                        DAL_INSTALL_BINDIR     = DAL_INSTALL_PREFIX/bin
     ├── include                    DAL_INSTALL_INCLUDEDIR = DAL_INSTALL_PREFIX/include
     │   ├── coordinates
@@ -169,7 +170,7 @@ needs:
 
   3. Installation as part of the LUS.
 
-     In order to simplify installation of the DAL as part of the LOFAR User
+     In order to simplify installation of the DAL1 as part of the LOFAR User
      Software distribution, a preset has been defined which can be used through
 
        -D LUS_INSTALL_PREFIX=<prefix>
@@ -183,8 +184,8 @@ ________________________________________________________________________________
 >>> 6. Contributing changes
 
 Direct write access to the project's code respository is limited to a small core
-team, responsible for the guiding the development of the DAL. If you are in more
-than simply using the DAL, but actively contributing to it development, the 
+team, responsible for the guiding the development of the DAL1. If you are in more
+than simply using the DAL1, but actively contributing to it development, the 
 advised work-flow is as follows:
 
   1. Create your own fork from the master repository of the project.

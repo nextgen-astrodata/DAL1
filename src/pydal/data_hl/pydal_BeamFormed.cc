@@ -21,10 +21,10 @@
 /*!
   \file pydal_BeamFormed.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::BeamFormed class
+  \brief Python bindings for the DAL1::BeamFormed class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include <pydal.h>
 #include <data_hl/BeamFormed.h>
 
-using DAL::BeamFormed;
+using DAL1::BeamFormed;
 
 // ==============================================================================
 //

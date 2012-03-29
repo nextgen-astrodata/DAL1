@@ -30,15 +30,15 @@
 #include <data_common/HDF5GroupBase.h>
 #include <data_hl/Sky_ImageDataset.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Sky_ImageGroup
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
-    \brief Brief description for class DAL::Sky_ImageGroup
+    \brief Brief description for class DAL1::Sky_ImageGroup
     
     \author Lars B&auml;hren
 
@@ -179,7 +179,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Sky_ImageGroup -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* SKY_IMAGEGROUP_H */
   

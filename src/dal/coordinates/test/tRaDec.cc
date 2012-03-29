@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::RaDec;
+using DAL1::RaDec;
 
 /*!
   \file tRaDec.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::RaDec class
+  \brief A collection of test routines for the DAL1::RaDec class
  
   \author Lars B&auml;hren
  

@@ -20,7 +20,7 @@
 
 #include <core/dalComplexArray_int16.h>
 
-namespace DAL {   // BEGIN -- namespace DAL
+namespace DAL1 {   // BEGIN -- namespace DAL1
   
   /*!
     Constructor for an extendible complex int16 array.  This is
@@ -65,19 +65,19 @@ namespace DAL {   // BEGIN -- namespace DAL
       }
     
     // create a new hdf5 datatype for complex values
-    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof( DAL::Complex_Int16 )) )
+    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof( DAL1::Complex_Int16 )) )
          < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype.\n";
       }
 
-    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL::Complex_Int16,real),
+    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL1::Complex_Int16,real),
                     H5T_NATIVE_SHORT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (r).\n";
       }
 
-    if ( H5Tinsert( complex_id, "imag", HOFFSET(DAL::Complex_Int16,imag),
+    if ( H5Tinsert( complex_id, "imag", HOFFSET(DAL1::Complex_Int16,imag),
                     H5T_NATIVE_SHORT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (i).\n";
@@ -154,4 +154,4 @@ namespace DAL {   // BEGIN -- namespace DAL
     
   }
 
-} //   END -- namespace DAL
+} //   END -- namespace DAL1

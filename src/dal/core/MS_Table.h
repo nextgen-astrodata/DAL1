@@ -41,12 +41,12 @@
 #include <tables/Tables/ExprNode.h>
 #endif
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class MS_Table
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Interface to MeasurementSet table
@@ -143,7 +143,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
       <li>Select table entries for baselines including a specific antenna:
       \code
-      ms.setSelection ("ANTENNA1", DAL::Operator::Equal, 1);
+      ms.setSelection ("ANTENNA1", DAL1::Operator::Equal, 1);
       \endcode
     </ol>
     
@@ -285,7 +285,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       bool setSelection (std::string const &column,
-			 DAL::Operator::Types const &op,
+			 DAL1::Operator::Types const &op,
 			 T const &value,
 			 bool const &overwrite=false)
       {
@@ -607,7 +607,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class MS_Table -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* MS_TABLE_H */
 

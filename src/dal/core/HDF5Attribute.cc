@@ -21,7 +21,7 @@
 #include "HDF5Attribute.h"
 #include "HDF5Datatype.h"
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -758,4 +758,4 @@ namespace DAL { // Namespace DAL -- begin
   
   /// @endcond
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

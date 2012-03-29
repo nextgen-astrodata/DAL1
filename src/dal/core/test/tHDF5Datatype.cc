@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::HDF5Datatype;
+using DAL1::HDF5Datatype;
 
 /*!
   \file tHDF5Datatype.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::HDF5Datatype class
+  \brief A collection of test routines for the DAL1::HDF5Datatype class
  
   \author Lars B&auml;hren
  

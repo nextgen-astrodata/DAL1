@@ -24,12 +24,12 @@
 #include <iostream>
 #include <core/dalCommon.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class Database
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Class to allow database connections
@@ -122,6 +122,6 @@ namespace DAL {
 
   }; // end class
   
-} // end namespace DAL
+} // end namespace DAL1
 
 #endif // DATABASE_H

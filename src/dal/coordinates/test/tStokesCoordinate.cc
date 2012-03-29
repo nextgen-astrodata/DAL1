@@ -26,7 +26,7 @@ using std::endl;
 /*!
   \file tStokesCoordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
   \brief A collection of test routines for the StokesCoordinate class
@@ -53,7 +53,7 @@ int test_constructors ()
   
   cout << "[1] Testing StokesCoordinate() ..." << endl;
   try {
-    DAL::StokesCoordinate coord;
+    DAL1::StokesCoordinate coord;
     //
     coord.summary(); 
   } catch (std::string message) {
@@ -63,22 +63,22 @@ int test_constructors ()
 
   cout << "[2] Testing StokesCoordinate (Stokes::Component) ..." << endl;
   try {
-    DAL::StokesCoordinate stokesI (DAL::Stokes::I);
+    DAL1::StokesCoordinate stokesI (DAL1::Stokes::I);
     stokesI.summary();
     //
-    DAL::StokesCoordinate stokesQ (DAL::Stokes::Q);
+    DAL1::StokesCoordinate stokesQ (DAL1::Stokes::Q);
     stokesQ.summary();
     //
-    DAL::StokesCoordinate stokesU (DAL::Stokes::U);
+    DAL1::StokesCoordinate stokesU (DAL1::Stokes::U);
     stokesU.summary();
     //
-    DAL::StokesCoordinate stokesV (DAL::Stokes::V);
+    DAL1::StokesCoordinate stokesV (DAL1::Stokes::V);
     stokesV.summary();
     //
-    DAL::StokesCoordinate stokesR (DAL::Stokes::R);
+    DAL1::StokesCoordinate stokesR (DAL1::Stokes::R);
     stokesR.summary();
     //
-    DAL::StokesCoordinate stokesL (DAL::Stokes::L);
+    DAL1::StokesCoordinate stokesL (DAL1::Stokes::L);
     stokesL.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -87,63 +87,63 @@ int test_constructors ()
 
   cout << "[2] Testing StokesCoordinate (Stokes) ..." << endl;
   try {
-    DAL::Stokes stokesI (DAL::Stokes::I);
-    DAL::Stokes stokesQ (DAL::Stokes::Q);
-    DAL::Stokes stokesR (DAL::Stokes::R);
-    DAL::Stokes stokesL (DAL::Stokes::L);
-    DAL::Stokes stokesX (DAL::Stokes::X);
-    DAL::Stokes stokesY (DAL::Stokes::Y);
+    DAL1::Stokes stokesI (DAL1::Stokes::I);
+    DAL1::Stokes stokesQ (DAL1::Stokes::Q);
+    DAL1::Stokes stokesR (DAL1::Stokes::R);
+    DAL1::Stokes stokesL (DAL1::Stokes::L);
+    DAL1::Stokes stokesX (DAL1::Stokes::X);
+    DAL1::Stokes stokesY (DAL1::Stokes::Y);
     //
-    DAL::StokesCoordinate coordI (stokesI);
+    DAL1::StokesCoordinate coordI (stokesI);
     coordI.summary();
     //
-    DAL::StokesCoordinate coordQ (stokesQ);
+    DAL1::StokesCoordinate coordQ (stokesQ);
     coordQ.summary();
     //
-    DAL::StokesCoordinate coordR (stokesR);
+    DAL1::StokesCoordinate coordR (stokesR);
     coordR.summary();
     //
-    DAL::StokesCoordinate coordL (stokesL);
+    DAL1::StokesCoordinate coordL (stokesL);
     coordL.summary();
     //
-    DAL::StokesCoordinate coordX (stokesX);
+    DAL1::StokesCoordinate coordX (stokesX);
     coordX.summary();
     //
-    DAL::StokesCoordinate coordY (stokesY);
+    DAL1::StokesCoordinate coordY (stokesY);
     coordY.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  cout << "[4] Testing StokesCoordinate(std::vector<DAL::Stokes::Component>) ..." << endl;
+  cout << "[4] Testing StokesCoordinate(std::vector<DAL1::Stokes::Component>) ..." << endl;
   try {
     unsigned int nelem (4);
-    std::vector<DAL::Stokes::Component> stokes (nelem);
+    std::vector<DAL1::Stokes::Component> stokes (nelem);
     //
-    stokes[0] = DAL::Stokes::I;
-    stokes[1] = DAL::Stokes::Q;
-    stokes[2] = DAL::Stokes::U;
-    stokes[3] = DAL::Stokes::V;
+    stokes[0] = DAL1::Stokes::I;
+    stokes[1] = DAL1::Stokes::Q;
+    stokes[2] = DAL1::Stokes::U;
+    stokes[3] = DAL1::Stokes::V;
     //
-    DAL::StokesCoordinate coord (stokes);
+    DAL1::StokesCoordinate coord (stokes);
     coord.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  cout << "[5] Testing StokesCoordinate(std::vector<DAL::Stokes>) ..." << endl;
+  cout << "[5] Testing StokesCoordinate(std::vector<DAL1::Stokes>) ..." << endl;
   try {
     unsigned int nelem (4);
-    std::vector<DAL::Stokes> stokes (nelem);
+    std::vector<DAL1::Stokes> stokes (nelem);
     //
-    stokes[0] = DAL::Stokes(DAL::Stokes::X);
-    stokes[1] = DAL::Stokes(DAL::Stokes::Y);
-    stokes[2] = DAL::Stokes(DAL::Stokes::R);
-    stokes[3] = DAL::Stokes(DAL::Stokes::L);
+    stokes[0] = DAL1::Stokes(DAL1::Stokes::X);
+    stokes[1] = DAL1::Stokes(DAL1::Stokes::Y);
+    stokes[2] = DAL1::Stokes(DAL1::Stokes::R);
+    stokes[3] = DAL1::Stokes(DAL1::Stokes::L);
     //
-    DAL::StokesCoordinate coord (stokes);
+    DAL1::StokesCoordinate coord (stokes);
     coord.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -153,21 +153,21 @@ int test_constructors ()
   cout << "[6] Testing StokesCoordinate(StokesCoordinate) ..." << endl;
   try {
     unsigned int nelem (8);
-    std::vector<DAL::Stokes> stokes (nelem);
+    std::vector<DAL1::Stokes> stokes (nelem);
     //
-    stokes[0] = DAL::Stokes(DAL::Stokes::I);
-    stokes[1] = DAL::Stokes(DAL::Stokes::Q);
-    stokes[2] = DAL::Stokes(DAL::Stokes::U);
-    stokes[3] = DAL::Stokes(DAL::Stokes::V);
-    stokes[4] = DAL::Stokes(DAL::Stokes::X);
-    stokes[5] = DAL::Stokes(DAL::Stokes::Y);
-    stokes[6] = DAL::Stokes(DAL::Stokes::R);
-    stokes[7] = DAL::Stokes(DAL::Stokes::L);
+    stokes[0] = DAL1::Stokes(DAL1::Stokes::I);
+    stokes[1] = DAL1::Stokes(DAL1::Stokes::Q);
+    stokes[2] = DAL1::Stokes(DAL1::Stokes::U);
+    stokes[3] = DAL1::Stokes(DAL1::Stokes::V);
+    stokes[4] = DAL1::Stokes(DAL1::Stokes::X);
+    stokes[5] = DAL1::Stokes(DAL1::Stokes::Y);
+    stokes[6] = DAL1::Stokes(DAL1::Stokes::R);
+    stokes[7] = DAL1::Stokes(DAL1::Stokes::L);
     //
-    DAL::StokesCoordinate coord (stokes);
+    DAL1::StokesCoordinate coord (stokes);
     coord.summary();
     //
-    DAL::StokesCoordinate coordCopy (coord);
+    DAL1::StokesCoordinate coordCopy (coord);
     coordCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;

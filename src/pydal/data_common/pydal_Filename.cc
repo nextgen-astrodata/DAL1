@@ -21,10 +21,10 @@
 /*!
   \file pydal_Filename.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::Filename class
+  \brief Python bindings for the DAL1::Filename class
 
   \author Lars B&auml;hren
 */
@@ -35,7 +35,7 @@
 
 // namespace usage
 using std::string;
-using DAL::Filename;
+using DAL1::Filename;
 
 void export_Filename ()
 {

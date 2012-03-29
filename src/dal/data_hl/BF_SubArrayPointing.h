@@ -29,12 +29,12 @@
 #include <data_common/HDF5GroupBase.h>
 #include <data_hl/BF_BeamGroup.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class BF_SubArrayPointing
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the Sub-Array pointing group of Beam-Formed Data
@@ -173,7 +173,7 @@ namespace DAL { // Namespace DAL -- begin
 			    unsigned int const &nofSamples,
 			    unsigned int const &nofSubbands,
 			    unsigned int const &nofChannels,
-			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
@@ -182,7 +182,7 @@ namespace DAL { // Namespace DAL -- begin
 			    unsigned int const &stokesID,
 			    unsigned int const &nofSamples,
 			    std::vector<unsigned int> const &nofChannels,
-			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
@@ -204,7 +204,7 @@ namespace DAL { // Namespace DAL -- begin
 
   }; // Class BF_SubArrayPointing -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* BF_PRIMARYPOINTING_H */
   

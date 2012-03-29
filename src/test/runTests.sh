@@ -25,11 +25,11 @@ runExperimental ()
 
 ##_______________________________________________________________________________
 
-## Build DAL Library (libdal)
+## Build DAL1 Library (libdal1)
 
-echo "-- Building library dal..."
+echo "-- Building library dal1..."
 
-make -j5 dal >& $logfile
+make -j5 dal1 >& $logfile
 
 for FILE in $FILES
 {

@@ -21,10 +21,10 @@
 /*!
   \file tBeamSubband.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BeamSubband class
+  \brief A collection of test routines for the DAL1::BeamSubband class
 
   \author Lars B&auml;hren
 
@@ -34,10 +34,10 @@
 #include <core/dalDataset.h>
 #include <data_hl/BeamSubband.h>
 
-using DAL::dalDataset;
-using DAL::dalGroup;
-using DAL::dalTable;
-using DAL::BeamSubband;
+using DAL1::dalDataset;
+using DAL1::dalGroup;
+using DAL1::dalTable;
+using DAL1::BeamSubband;
 
 // ------------------------------------------------------------------------------
 
@@ -190,7 +190,7 @@ int main (int argc,char *argv[])
   else
     {
       std::cout << "[tBeamSubband] Missing name of input test file." << std::endl;
-      return(DAL::FAIL);
+      return(DAL1::FAIL);
     }
 
   nofFailedTests += test_tables (filename,groupName,tableName);

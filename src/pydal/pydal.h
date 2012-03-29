@@ -26,7 +26,7 @@
 /*!
   \file pydal.h
   
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pyrap
   
   \brief Python bindings for the C++ layer of the Data Acccess Library
@@ -43,7 +43,7 @@
   //
   // ============================================================================
 
-namespace DAL {   //   BEGIN -- namespace DAL
+namespace DAL1 {   //   BEGIN -- namespace DAL1
 
   //! Convert array to Boost.Python numeric array
   template <class T>
@@ -64,7 +64,7 @@ namespace DAL {   //   BEGIN -- namespace DAL
       return narray;
     }
 
-};   //   END -- namespace DAL
+};   //   END -- namespace DAL1
 
   // ============================================================================
   //
@@ -74,21 +74,21 @@ namespace DAL {   //   BEGIN -- namespace DAL
 
 #include <core/dalData.h>
 
-//! Bindings for DAL::dalArray
+//! Bindings for DAL1::dalArray
 void export_dalArray ();
-//! Bindings for DAL::dalColumn
+//! Bindings for DAL1::dalColumn
 void export_dalColumn ();
 //! Bindings for the methods in dalCommon
 void export_dalCommon();
-//! Bindings for DAL::dalData
+//! Bindings for DAL1::dalData
 void export_dalData ();
-//! Bindings for DAL::dalDataset
+//! Bindings for DAL1::dalDataset
 void export_dalDataset ();
-//! Bindings for DAL::dalGroup
+//! Bindings for DAL1::dalGroup
 void export_dalGroup ();
-//! Bindings for DAL::dalTable
+//! Bindings for DAL1::dalTable
 void export_dalTable ();
-//! Bindings for DAL::IO_Mode
+//! Bindings for DAL1::IO_Mode
 void export_IO_Mode ();
 
   // ============================================================================
@@ -97,13 +97,13 @@ void export_IO_Mode ();
   //
   // ============================================================================
 
-//! Bindings for DAL::Angle
+//! Bindings for DAL1::Angle
 void export_Angle ();
-//! Bindings for DAL::RaDec
+//! Bindings for DAL1::RaDec
 void export_RaDec ();
-//! Bindings for DAL::Stokes
+//! Bindings for DAL1::Stokes
 void export_Stokes ();
-//! Bindings for DAL::Coordinate
+//! Bindings for DAL1::Coordinate
 void export_Coordinate ();
 
   // ============================================================================
@@ -112,17 +112,17 @@ void export_Coordinate ();
   //
   // ============================================================================
   
-//! Bindings for DAL::CommonAttributes
+//! Bindings for DAL1::CommonAttributes
 void export_CommonAttributes ();
-//! Bindings for DAL::Filename
+//! Bindings for DAL1::Filename
 void export_Filename ();
-//! Bindings for DAL::HDF5Measure
+//! Bindings for DAL1::HDF5Measure
 void export_HDF5Measure ();
-//! Bindings for DAL::HDF5Quantity
+//! Bindings for DAL1::HDF5Quantity
 void export_HDF5Quantity ();
-//! Bindings for DAL::SAS_Settings
+//! Bindings for DAL1::SAS_Settings
 void export_SAS_Settings ();
-//! Bindings for DAL::Timestamp
+//! Bindings for DAL1::Timestamp
 void export_Timestamp ();
 
   // ============================================================================
@@ -131,19 +131,19 @@ void export_Timestamp ();
   //
   // ============================================================================
   
-//! Bindings for DAL::BeamFormed
+//! Bindings for DAL1::BeamFormed
 void export_BeamFormed();
-//! Bindings for DAL::BeamGroup
+//! Bindings for DAL1::BeamGroup
 void export_BeamGroup();
-//! Bindings for DAL::BF_BeamGroup
+//! Bindings for DAL1::BF_BeamGroup
 void export_BF_BeamGroup();
-//! Bindings for DAL::TBB_Timeseries
+//! Bindings for DAL1::TBB_Timeseries
 void export_TBB_Timeseries();
-//! Bindings for DAL::TBB_StationGroup
+//! Bindings for DAL1::TBB_StationGroup
 void export_TBB_StationGroup();
-//! Bindings for DAL::TBB_DipoleDataset
+//! Bindings for DAL1::TBB_DipoleDataset
 void export_TBB_DipoleDataset();
-//! Bindings for DAL::LOPES_EventFile
+//! Bindings for DAL1::LOPES_EventFile
 void export_LOPES_EventFile();
 
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle

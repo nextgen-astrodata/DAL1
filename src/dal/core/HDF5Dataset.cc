@@ -20,7 +20,7 @@
 
 #include <core/HDF5Dataset.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -297,13 +297,13 @@ namespace DAL {
 
       /* If failed to open the group, check if we are supposed to create one */
       
-      if ( flags.flags() & DAL::IO_Mode::Create ) {
+      if ( flags.flags() & DAL1::IO_Mode::Create ) {
 	status = open (location,
 		       itsName,
 		       itsShape,
 		       itsDatatype);
       } 
-      else if ( flags.flags() & DAL::IO_Mode::Truncate ) {
+      else if ( flags.flags() & DAL1::IO_Mode::Truncate ) {
 	status = open (location,
 		       itsName,
 		       itsShape,
@@ -448,7 +448,7 @@ namespace DAL {
       relation of flags.
     */
     
-    if ( flags.flags() & DAL::IO_Mode::OpenOrCreate ) {
+    if ( flags.flags() & DAL1::IO_Mode::OpenOrCreate ) {
       if (datasetExists) {
 	return open (datasetID,
 		     location,
@@ -977,4 +977,4 @@ namespace DAL {
     return status;
   }
   
-} // end namespace DAL
+} // end namespace DAL1

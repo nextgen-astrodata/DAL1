@@ -21,10 +21,10 @@
 /*!
   \file tDatabase.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::Database class
+  \brief A collection of test routines for the DAL1::Database class
 
   \author Lars B&auml;hren
 
@@ -62,7 +62,7 @@ int test_constructors (std::string const &server="pc-swinbank",
   
   cout << "[1] Testing Database() ..." << endl;
   try {
-    DAL::Database db;
+    DAL1::Database db;
     db.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -72,7 +72,7 @@ int test_constructors (std::string const &server="pc-swinbank",
   cout << "[2] Testing Database(string,string,string,string) ..." << endl;
   try {
     // Create object
-    DAL::Database db (server, name, passwd, database);
+    DAL1::Database db (server, name, passwd, database);
     db.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -83,7 +83,7 @@ int test_constructors (std::string const &server="pc-swinbank",
   try {
     unsigned int port = 100;
     // Create object
-    DAL::Database db (server, name, passwd, database,port);
+    DAL1::Database db (server, name, passwd, database,port);
     db.summary();
   } catch (std::string message) {
     std::cerr << message << endl;

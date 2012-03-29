@@ -21,17 +21,17 @@
 /*!
   \file tBeamGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BeamGroup class
+  \brief A collection of test routines for the DAL1::BeamGroup class
   \author Lars B&auml;hren
 
   \date 2008/09/19
 
   This test program mainly is going through the functionality of the
-  DAL::BeamGroup class, but also - at least in an indirect way - some of
-  DAL::BeamSubband.
+  DAL1::BeamGroup class, but also - at least in an indirect way - some of
+  DAL1::BeamSubband.
 */
 
 #include <core/dalCommon.h>
@@ -63,7 +63,7 @@ int test_constructors (std::string const &filename,
   cout << "[1] Default constructor..." << endl;
   try
     {
-      DAL::BeamGroup group;
+      DAL1::BeamGroup group;
       //
       group.summary();
     }
@@ -76,10 +76,10 @@ int test_constructors (std::string const &filename,
   cout << "[2] Argumented constructor..." << endl;
   try
     {
-      DAL::dalDataset dataset;
+      DAL1::dalDataset dataset;
       dataset.open(filename.c_str());
       //
-      DAL::BeamGroup group (dataset,groupName);
+      DAL1::BeamGroup group (dataset,groupName);
       //
       group.summary();
     }
@@ -93,11 +93,11 @@ int test_constructors (std::string const &filename,
   try
     {
       cout << "-- Creating BeamFormed object ..." << endl;
-      DAL::BeamFormed bf (filename);
+      DAL1::BeamFormed bf (filename);
       //
       cout << "-- Extracting beam group from dataset ..." << endl;
       int numBeam (0);
-      DAL::BeamGroup * group = bf.getBeam (numBeam);
+      DAL1::BeamGroup * group = bf.getBeam (numBeam);
       //
       group->summary();
     }
@@ -128,9 +128,9 @@ int test_attributes (std::string const &filename,
 
   int nofFailedTests (0);
 
-  DAL::dalDataset dataset;
+  DAL1::dalDataset dataset;
   dataset.open(filename.c_str());
-  DAL::BeamGroup group (dataset,groupName);
+  DAL1::BeamGroup group (dataset,groupName);
 
   cout << "[1] Attributes attached to the beam group ..." << endl;
   try
@@ -201,9 +201,9 @@ int test_methods (std::string const &filename,
   int start (0);
   int length (20);
 
-  DAL::dalDataset dataset;
+  DAL1::dalDataset dataset;
   dataset.open(filename.c_str());
-  DAL::BeamGroup group (dataset,groupName);
+  DAL1::BeamGroup group (dataset,groupName);
   int nofSubbands (group.nofSubbands());
   std::vector<long> rows = group.nofTableRows();
 
@@ -212,7 +212,7 @@ int test_methods (std::string const &filename,
     {
       if (nofSubbands > 0)
         {
-          DAL::BeamSubband * subband;
+          DAL1::BeamSubband * subband;
           /* Extract the n-th subband from the beam-group */
           for (int n(0); n<nofSubbands; n++)
             {
@@ -347,7 +347,7 @@ int main (int argc,char *argv[])
   else
     {
       cout << "[tBeamGroup] Missing name of input test file." << endl;
-      return(DAL::FAIL);
+      return(DAL1::FAIL);
     }
 
   /* Test the constructors */

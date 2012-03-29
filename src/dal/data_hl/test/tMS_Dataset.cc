@@ -26,15 +26,15 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::MS_Dataset;
+using DAL1::MS_Dataset;
 
 /*!
   \file tMS_Dataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::MS_Dataset class
+  \brief A collection of test routines for the DAL1::MS_Dataset class
  
   \author Lars B&auml;hren
  
@@ -500,7 +500,7 @@ int test_selection (std::string const &filename)
   int nofFailedTests = 0;
 
   /* Open MeasurementSet to work with */
-  DAL::MS_Dataset ms (filename);
+  DAL1::MS_Dataset ms (filename);
   ms.summary();
 
   /*________________________________________________________

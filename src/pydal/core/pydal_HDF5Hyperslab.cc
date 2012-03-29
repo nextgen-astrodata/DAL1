@@ -21,10 +21,10 @@
 /*!
   \file pydal_HDF5Hyperslab.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::HDF5Hyperslab class
+  \brief Python bindings for the DAL1::HDF5Hyperslab class
 
   \author Lars B&auml;hren
 */
@@ -34,7 +34,7 @@
 #include <core/HDF5Hyperslab.h>
 
 // namespace usage
-using DAL::HDF5Hyperslab;
+using DAL1::HDF5Hyperslab;
 
 
 void export_HDF5Hyperslab ()

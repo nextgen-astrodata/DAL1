@@ -37,12 +37,12 @@
 #include <core/IO_Mode.h>
 #include <data_common/CommonAttributes.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5GroupBase
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Common functionality for the high-level interfaces to the datasets
@@ -509,7 +509,7 @@ namespace DAL { // Namespace DAL -- begin
 
   }; // Class HDF5GroupBase -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5GROUPBASE_H */
   

@@ -21,7 +21,7 @@
 /*!
   \file test_bf2h5writer.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief Integrated test for the creation of BF data sets.
@@ -32,13 +32,13 @@
   <h3>Prerequisite</h3>
   
   <ul>
-    <li>DAL::BF_RootGroup -- High-level interface to the root-group of
+    <li>DAL1::BF_RootGroup -- High-level interface to the root-group of
         Beam-Formed data.
-    <li>DAL::BF_SubArrayPointing -- High-level interface to the Sub-Array
+    <li>DAL1::BF_SubArrayPointing -- High-level interface to the Sub-Array
         pointing group of Beam-Formed data.
-    <li>DAL::BF_BeamGroup -- High-level interface to the Beam group of
+    <li>DAL1::BF_BeamGroup -- High-level interface to the Beam group of
         Beam-Formed Data.
-    <li>DAL::BF_StokesDataset -- High-level interface to the Stokes dataset
+    <li>DAL1::BF_StokesDataset -- High-level interface to the Stokes dataset
         of Beam-Formed Data.
   </ul>
 */
@@ -70,9 +70,9 @@ using boost::format;
   \brief Get object holding collection of LOFAR common attributes.
   \return attributes -- Object holding collection of LOFAR common attributes.
 */
-DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
+DAL1::CommonAttributes commonAttributes (DAL1::Filename const &filename)
 {
-  DAL::CommonAttributes attributes (filename);
+  DAL1::CommonAttributes attributes (filename);
 
   attributes.setTelescope      ("LOFAR");
   attributes.setObserver       ("Pulsar observer");
@@ -96,15 +96,15 @@ int main()
   unsigned int beamID       = 0;
   
   /*__________________________________________________________________
-    Create DAL::Filename object for generation of proper filename,
+    Create DAL1::Filename object for generation of proper filename,
     matching the rules as  defined in ICD-005.
   */
   
   std::string observationID ("1234567890");
-  DAL::Filename filename (observationID,
+  DAL1::Filename filename (observationID,
 			  "test",
-			  DAL::Filename::bf,
-			  DAL::Filename::h5);
+			  DAL1::Filename::bf,
+			  DAL1::Filename::h5);
   
   /*__________________________________________________________________
     Set up the LOFAR Common Attributes, which will be attached to the
@@ -113,7 +113,7 @@ int main()
 
   std::cout << "\n[1] Setting up LOFAR Common Attributes ..." << std::endl;
 
-  DAL::CommonAttributes attributes = commonAttributes (filename);
+  DAL1::CommonAttributes attributes = commonAttributes (filename);
 
   /*__________________________________________________________________
     Create new BF file; we are using "IO_Mode::Truncate" in order to
@@ -123,8 +123,8 @@ int main()
   
   std::cout << "\n[2] Creating new file " << filename.filename() << endl;
 
-  DAL::BF_RootGroup bfRoot (attributes,
-			    DAL::IO_Mode(DAL::IO_Mode::Create));
+  DAL1::BF_RootGroup bfRoot (attributes,
+			    DAL1::IO_Mode(DAL1::IO_Mode::Create));
   
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.
@@ -155,14 +155,14 @@ int main()
 			    SAMPLES,
 			    SUBBANDS,
 			    CHANNELS,
-			    DAL::Stokes::I);
+			    DAL1::Stokes::I);
   bfRoot.openStokesDataset (subArrayID,        // ID of sub-array pointing
 			    beamID,            // ID of beam group
 			    1,                 // ID of Stokes dataset
 			    SAMPLES,
 			    SUBBANDS,
 			    CHANNELS,
-			    DAL::Stokes::Q);
+			    DAL1::Stokes::Q);
 
   /*__________________________________________________________________
     Write data to Stokes dataset
@@ -173,13 +173,13 @@ int main()
   {
     unsigned int stokesID   = 0;
     hid_t fileID            = bfRoot.locationID();
-    std::string name = DAL::BF_SubArrayPointing::getName(subArrayID)
-      + "/" + DAL::BF_BeamGroup::getName(beamID) 
-      + "/" + DAL::BF_StokesDataset::getName(stokesID);
+    std::string name = DAL1::BF_SubArrayPointing::getName(subArrayID)
+      + "/" + DAL1::BF_BeamGroup::getName(beamID) 
+      + "/" + DAL1::BF_StokesDataset::getName(stokesID);
     
     std::cout << "-- Opening Stokes dataset " << name << std::endl;
     
-    DAL::BF_StokesDataset stokesDataset(fileID,
+    DAL1::BF_StokesDataset stokesDataset(fileID,
 					name);
     stokesDataset.summary();
     
@@ -203,7 +203,7 @@ int main()
       start[1]      = 0;
       block[0]      = 1;
       block[1]      = int(SUBBANDS)*int(CHANNELS);
-      nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
       
       std::cout << "-- Writing data for timestep " << t 
 		<< " : start /block = " << start << " / " << block

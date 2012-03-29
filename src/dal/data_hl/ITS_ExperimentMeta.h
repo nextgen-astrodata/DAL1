@@ -26,12 +26,12 @@
 #include <string>
 #include <vector>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class ITS_ExperimentMeta
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Storage of meta information from an LOFAR ITS experiment
@@ -204,7 +204,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class ITS_ExperimentMeta -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* ITS_EXPERIMENTMETA_H */
   

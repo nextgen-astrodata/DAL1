@@ -30,12 +30,12 @@
 #include <data_common/Filename.h>
 #include <data_hl/SysLog.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class RM_RootGroup
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the root-group of a beamformed dataset
@@ -135,7 +135,7 @@ namespace DAL { // Namespace DAL -- begin
     RM_RootGroup (std::string const &filename);
     
     //! Argumented constructor
-    RM_RootGroup (DAL::Filename &infile,
+    RM_RootGroup (DAL1::Filename &infile,
 		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
@@ -203,7 +203,7 @@ namespace DAL { // Namespace DAL -- begin
       
   }; // Class RM_RootGroup -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* RM_ROOTGROUP_H */
   

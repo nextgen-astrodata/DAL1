@@ -23,13 +23,13 @@
 
 #include <data_hl/BeamSubband.h>
 
-namespace DAL
+namespace DAL1
   {
 
   /*!
     \class BeamGroup
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
 
     \brief High-level interface between beam-formed data and the DAL
@@ -58,7 +58,7 @@ namespace DAL
       <li>Construction of a new BeamGroup object can be done via the default
       constructor (which will not be connected to any dataset)
       \code
-      DAL::BeamGroup group;
+      DAL1::BeamGroup group;
       \endcode
       or from an existing dalDataset
       \code
@@ -67,10 +67,10 @@ namespace DAL
       // Name of the beam group within the dataset
       std::string nameBeam ("beam000");
       // Open dataset into a dalDataset
-      DAL::dalDataset dataset;
+      DAL1::dalDataset dataset;
       dataset.open(nameFile.c_str());
       // Extract beam group from the dataset
-      DAL::BeamGroup beam (dataset,nameBeam);
+      DAL1::BeamGroup beam (dataset,nameBeam);
       \endcode
       Another method to get the same result is by extracting the object for a
       beam-group from a previously created BeamFormed object:
@@ -79,9 +79,9 @@ namespace DAL
       int numBeam (<number of the beam>);
 
       // Open beamformed dataset
-      DAL::BeamFormed bf (filename);
+      DAL1::BeamFormed bf (filename);
       // Extract contents for the selected beam
-      DAL::BeamGroup * group = bf.getBeam (numBeam);
+      DAL1::BeamGroup * group = bf.getBeam (numBeam);
       \endcode
       <li>Get the center frequencies of the sub-bands contained within this beam:
       \code

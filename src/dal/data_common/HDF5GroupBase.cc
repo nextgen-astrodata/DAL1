@@ -20,7 +20,7 @@
 
 #include "HDF5GroupBase.h"
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
 
   // ============================================================================
   //
@@ -254,8 +254,8 @@ namespace DAL { // Namespace DAL -- begin
     
     // Get name of file and dataset ________________________
     
-    status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location, absolutePath);
+    status  = DAL1::h5get_filename (filename, location);
+    status *= DAL1::h5get_name (dataset, location, absolutePath);
     
     if (status) {
       // open the file
@@ -415,4 +415,4 @@ namespace DAL { // Namespace DAL -- begin
     return groupCreate;
   }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

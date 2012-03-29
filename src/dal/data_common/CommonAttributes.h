@@ -33,12 +33,12 @@
 #include <core/HDF5Attribute.h>
 #include <data_common/Filename.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class CommonAttributes
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Collection of attributes common to all LOFAR datasets
@@ -238,7 +238,7 @@ namespace DAL { // Namespace DAL -- begin
       return itsFilename;
     }
     //! Set the name of the file
-    inline void setFilename (DAL::Filename const &filename) {
+    inline void setFilename (DAL1::Filename const &filename) {
       itsFilenameHolder = filename;
       itsFilename       = itsFilenameHolder.filename();
       itsFiletype       = itsFilenameHolder.filetypeName();
@@ -625,7 +625,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class CommonAttributes -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* COMMONATTRIBUTES_H */
   

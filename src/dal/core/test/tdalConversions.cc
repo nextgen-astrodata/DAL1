@@ -28,7 +28,7 @@ using std::endl;
 /*!
   \file tdalConversions.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of test routines for the dalConversions class
@@ -112,7 +112,7 @@ int test_convertTime ()
     long double fracmjd   = 0;
     long double julianDay = 0;
 
-    julianDay = DAL::julday (seconds, intmjd, fracmjd);
+    julianDay = DAL1::julday (seconds, intmjd, fracmjd);
     cout << "-- Julian day, full     = " << julianDay << endl;
     cout << "-- Julian day, int      = " << intmjd    << endl;
     cout << "-- Julian day, fraction = " << fracmjd   << endl;
@@ -156,9 +156,9 @@ int test_convertVector ()
 
     // convert vector and display results
 
-    DAL::convertVector (VectorInt, vectorInt);
-    DAL::convertVector (VectorFloat, vectorInt);
-    DAL::convertVector (VectorDouble, vectorInt);
+    DAL1::convertVector (VectorInt, vectorInt);
+    DAL1::convertVector (VectorFloat, vectorInt);
+    DAL1::convertVector (VectorDouble, vectorInt);
 
     cout << "-- <int> -> <int>    : " << vectorInt << " -> " << VectorInt    << endl;
     cout << "-- <int> -> <float>  : " << vectorInt << " -> " << VectorFloat  << endl;
@@ -183,9 +183,9 @@ int test_convertVector ()
 
     // convert vector and display results
 
-    DAL::convertVector (VectorInt, vectorFloat);
-    DAL::convertVector (VectorFloat, vectorFloat);
-    DAL::convertVector (VectorDouble, vectorFloat);
+    DAL1::convertVector (VectorInt, vectorFloat);
+    DAL1::convertVector (VectorFloat, vectorFloat);
+    DAL1::convertVector (VectorDouble, vectorFloat);
 
     cout << "-- <float> -> <int>    : " << vectorFloat << " -> " << VectorInt    << endl;
     cout << "-- <float> -> <float>  : " << vectorFloat << " -> " << VectorFloat  << endl;
@@ -209,9 +209,9 @@ int test_convertVector ()
 
     // convert vector and display results
 
-    DAL::convertVector (VectorInt, vectorDouble);
-    DAL::convertVector (VectorFloat, vectorDouble);
-    DAL::convertVector (VectorDouble, vectorDouble);
+    DAL1::convertVector (VectorInt, vectorDouble);
+    DAL1::convertVector (VectorFloat, vectorDouble);
+    DAL1::convertVector (VectorDouble, vectorDouble);
 
     cout << "-- <float> -> <int>    : " << vectorDouble << " -> " << VectorInt    << endl;
     cout << "-- <float> -> <float>  : " << vectorDouble << " -> " << VectorFloat  << endl;

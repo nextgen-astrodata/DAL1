@@ -20,15 +20,15 @@
 
 #include <coordinates/CoordinateBase.h>
 
-namespace DAL {
+namespace DAL1 {
   
   //_____________________________________________________________________________
   //                                                                         init
   
   template <>
-  void CoordinateBase<std::string>::init (DAL::Coordinate const &coord,
+  void CoordinateBase<std::string>::init (DAL1::Coordinate const &coord,
 					  unsigned int const &nofAxes,
-					  DAL::Coordinate const &storageType)
+					  DAL1::Coordinate const &storageType)
   {
     std::string undefined ("UNDEFINED");
     
@@ -66,7 +66,7 @@ namespace DAL {
 	increment_p[n] = 0;
       }
       // Transformation is identity matrix
-      DAL::IdentityMatrix (pc_p,nofAxes);
+      DAL1::IdentityMatrix (pc_p,nofAxes);
     } else {
       // set the number of coordinate axes
       nofAxes_p = 0;
@@ -76,4 +76,4 @@ namespace DAL {
     setAttributes ();
   };
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

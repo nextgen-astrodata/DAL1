@@ -42,17 +42,17 @@ using std::vector;
 #include <casa/Arrays/Array.h>
 #endif
 
-// DAL header files
+// DAL1 header files
 #include <core/dalCommon.h>
 #include <core/dalDataset.h>
 #include <data_common/CommonAttributes.h>
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   /*!
     \class TBBraw
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Class to generate HDF5 files from raw TBB data-frames
@@ -431,7 +431,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   }; // class TBBraw -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* TBBRAW_H */
 

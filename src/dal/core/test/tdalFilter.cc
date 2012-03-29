@@ -21,10 +21,10 @@
 /*!
   \file tdalFilter.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalFilter class
+  \brief A collection of test routines for the DAL1::dalFilter class
 
   \author Lars B&auml;hren
 
@@ -37,7 +37,7 @@
 //                                                              test_constructors
 
 /*!
-  \brief Test the various constructors for an object of type DAL::dalFilter
+  \brief Test the various constructors for an object of type DAL1::dalFilter
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
@@ -56,7 +56,7 @@ int test_constructors ()
   
   std::cout << "\n[1] Testing dalFilter() ..." << std::endl;
   try {
-    DAL::dalFilter filter;
+    DAL1::dalFilter filter;
     //
     filter.summary();
   }
@@ -71,13 +71,13 @@ int test_constructors ()
   
   std::cout << "\n[2] Testing dalFilter(dalFileType,string) ..." << std::endl;
   try {
-    DAL::dalFilter filterHDF5 (DAL::dalFileType::HDF5, columns);
+    DAL1::dalFilter filterHDF5 (DAL1::dalFileType::HDF5, columns);
     filterHDF5.summary();
     //
-    DAL::dalFilter filterFITS (DAL::dalFileType::FITS, columns);
+    DAL1::dalFilter filterFITS (DAL1::dalFileType::FITS, columns);
     filterFITS.summary();
     //
-    DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns);
+    DAL1::dalFilter filterMS (DAL1::dalFileType::CASA_MS, columns);
     filterMS.summary();
   }
   catch (std::string& message) {
@@ -91,13 +91,13 @@ int test_constructors ()
   
   std::cout << "\n[3] Testing dalFilter(dalFileType,string,string) ..." << std::endl;
   try {
-    DAL::dalFilter filterHDF5 (DAL::dalFileType::HDF5, columns, conditions);
+    DAL1::dalFilter filterHDF5 (DAL1::dalFileType::HDF5, columns, conditions);
     filterHDF5.summary();
     //
-    DAL::dalFilter filterFITS (DAL::dalFileType::FITS, columns, conditions);
+    DAL1::dalFilter filterFITS (DAL1::dalFileType::FITS, columns, conditions);
     filterFITS.summary();
     //
-    DAL::dalFilter filterMS (DAL::dalFileType::CASA_MS, columns, conditions);
+    DAL1::dalFilter filterMS (DAL1::dalFileType::CASA_MS, columns, conditions);
     filterMS.summary();
   }
   catch (std::string& message) {

@@ -28,12 +28,12 @@
 /* DAL header files*/
 #include <data_comon/HDF5DatasetBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class ITS_Dataset
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Brief description for class ITS_Dataset
@@ -113,7 +113,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class ITS_Dataset -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* ITS_DATASET_H */
   

@@ -21,7 +21,7 @@
 /*!
   \file pydal_core_IO_Mode.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings DAL C++ classes in the \e core directory
@@ -34,7 +34,7 @@
 #include <core/IO_Mode.h>
 
 // namespace usage
-using DAL::IO_Mode;
+using DAL1::IO_Mode;
 
 // ==============================================================================
 //

@@ -29,7 +29,7 @@
 #include <vector>
 #include <assert.h>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
@@ -38,7 +38,7 @@
 /*!
   \file dalConversions.h
   
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
   
   \brief Collection of functions to perform various types of conversions
@@ -60,7 +60,7 @@
   <h3>Example(s)</h3>
   
 */  
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
 
   // ============================================================================
   //
@@ -169,7 +169,7 @@ namespace DAL { // Namespace DAL -- begin
   
 #endif
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* DALCONVERSIONS_H */
 

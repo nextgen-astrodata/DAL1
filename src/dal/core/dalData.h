@@ -29,12 +29,12 @@
 #include <pydal/num_util.h>
 #endif
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalData
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Represents container of data.

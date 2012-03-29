@@ -27,10 +27,10 @@ using std::endl;
 /*!
   \file tTabularCoordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::TabularCoordinate class
+  \brief A collection of test routines for the DAL1::TabularCoordinate class
 
   \author Lars B&auml;hren
 
@@ -55,19 +55,19 @@ int test_constructors ()
   cout << "[1] Testing TabularCoordinate() ..." << std::endl;
   try {
     cout << "--> TabularCoordinate<int>" << endl;
-    DAL::TabularCoordinate<int> coordInt;
+    DAL1::TabularCoordinate<int> coordInt;
     coordInt.summary();
     //
     cout << "--> TabularCoordinate<float>" << endl;
-    DAL::TabularCoordinate<float> coordFloat;
+    DAL1::TabularCoordinate<float> coordFloat;
     coordFloat.summary();
     //
     cout << "--> TabularCoordinate<double>" << endl;
-    DAL::TabularCoordinate<double> coordDouble;
+    DAL1::TabularCoordinate<double> coordDouble;
     coordDouble.summary();
     //
     cout << "--> TabularCoordinate<std::string>" << endl;
-    DAL::TabularCoordinate<std::string> coordString;
+    DAL1::TabularCoordinate<std::string> coordString;
     coordString.summary();
   }
   catch (std::string message) {
@@ -80,7 +80,7 @@ int test_constructors ()
     std::string names ("Time");
     std::string units ("s");
     //
-    DAL::TabularCoordinate<double> coord (names, units);
+    DAL1::TabularCoordinate<double> coord (names, units);
     //
     coord.summary();
   }
@@ -106,7 +106,7 @@ int test_constructors ()
     worldValues[2] = 5;
     worldValues[3] = 10;
     //
-    DAL::TabularCoordinate<double> coord (axisNames,
+    DAL1::TabularCoordinate<double> coord (axisNames,
 					  axisUnits,
 					  pixelValues,
 					  worldValues);
@@ -135,7 +135,7 @@ int test_methods ()
   cout << "\n[tTabularCoordinate::test_methods]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::TabularCoordinate<double> coord;
+  DAL1::TabularCoordinate<double> coord;
 
   cout << "[1] Testing setAxisNames(string) ..." << std::endl;
   coord.setAxisNames ("Time");
@@ -173,7 +173,7 @@ int test_hdf5 ()
   worldValues[2] = 5;
   worldValues[3] = 10;
 
-  DAL::TabularCoordinate<double> coord (axisNames,
+  DAL1::TabularCoordinate<double> coord (axisNames,
 					axisUnits,
 					pixelValues,
 					worldValues);
@@ -256,7 +256,7 @@ int example_beamformed ()
   std::string axisNames("Length");
   std::string axisUnits("m");
   
-  DAL::TabularCoordinate<double> coord (axisNames,
+  DAL1::TabularCoordinate<double> coord (axisNames,
 					axisUnits,
 					pixelValues,
 					worldValues);

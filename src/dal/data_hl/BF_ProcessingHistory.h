@@ -28,12 +28,12 @@
 // DAL header files
 #include <data_common/HDF5GroupBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class BF_ProcessingHistory
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the processing history attached to a BF dataset
@@ -123,7 +123,7 @@ namespace DAL { // Namespace DAL -- begin
 
   }; // Class BF_ProcessingHistory -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* BF_PROCESSINGHISTORY_H */
   

@@ -24,12 +24,12 @@
 #include <data_common/CommonAttributes.h>
 #include <data_hl/BeamGroup.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class BeamFormed
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface between beam-formed data and the DAL
@@ -47,9 +47,9 @@ namespace DAL {
     <table border="0">
       <tr>
         <td class="indexkey"></td>
-	<td class="indexkey">DAL::BeamFormed</td>
-	<td class="indexkey">DAL::BeamGroup</td>
-	<td class="indexkey">DAL::BeamSubband</td>
+	<td class="indexkey">DAL1::BeamFormed</td>
+	<td class="indexkey">DAL1::BeamGroup</td>
+	<td class="indexkey">DAL1::BeamSubband</td>
 	</tr>
       <tr>
         <td class="indexkey">DAL object</td>
@@ -78,7 +78,7 @@ namespace DAL {
       \code
       #include <dal/BeamFormed.h>
 
-      DAL::BeamFormed bf (filename);
+      DAL1::BeamFormed bf (filename);
       \endcode
 
       <li>Retrieve attributes in the root group of the file:
@@ -222,6 +222,6 @@ namespace DAL {
 
   }; // BeamFormed class
   
-} // namespace DAL
+} // namespace DAL1
 
 #endif // BEAMFORMED_H

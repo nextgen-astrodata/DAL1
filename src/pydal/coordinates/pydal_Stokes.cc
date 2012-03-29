@@ -21,10 +21,10 @@
 /*!
   \file pydal_Stokes.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::Stokes class
+  \brief Python bindings for the DAL1::Stokes class
 
   \author Lars B&auml;hren
 */
@@ -33,11 +33,11 @@
 #include "pydal.h"
 #include <coordinates/Stokes.h>
 
-using DAL::Stokes;
+using DAL1::Stokes;
 
 // ==============================================================================
 //
-//                                                                    DAL::Stokes
+//                                                                    DAL1::Stokes
 //
 // ==============================================================================
 

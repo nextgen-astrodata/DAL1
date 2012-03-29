@@ -22,7 +22,7 @@
 #include <core/HDF5Object.h>
 
 // Namespace usage
-using DAL::HDF5Object;
+using DAL1::HDF5Object;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -30,10 +30,10 @@ using std::endl;
 /*!
   \file tHDF5Object.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::HDF5Object class
+  \brief A collection of test routines for the DAL1::HDF5Object class
  
   \author Lars B&auml;hren
  
@@ -138,7 +138,7 @@ int test_hdf5 (hid_t const &location)
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new DAL::HDF5Object object
+  \brief Test constructors for a new DAL1::HDF5Object object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
@@ -235,7 +235,7 @@ int test_constructors (std::string const &filename,
 //                                                             test_staticMethods
 
 /*!
-  \brief Test the various static methods provided by the DAL::HDF5Object class
+  \brief Test the various static methods provided by the DAL1::HDF5Object class
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.

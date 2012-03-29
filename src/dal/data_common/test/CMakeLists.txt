@@ -22,11 +22,11 @@ foreach (src ${tests_data_common})
   ## linker instructions
   if (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src}
-      dal
+      dal1
       ${dal_link_libraries}
       )
   else (CASA_FOUND OR CASACORE_FOUND)
-    target_link_libraries(${src} dal)
+    target_link_libraries(${src} dal1)
   endif (CASA_FOUND OR CASACORE_FOUND)
 endforeach (src)
 

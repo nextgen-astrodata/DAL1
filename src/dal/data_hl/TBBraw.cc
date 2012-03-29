@@ -21,7 +21,7 @@
 
 #include "TBBraw.h"
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -148,7 +148,7 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBBraw::open_file ()
   {
     struct stat filestat;
-    // This doesn't work yet, as a DAL::Filename object cannot store a path
+    // This doesn't work yet, as a DAL1::Filename object cannot store a path
     //std::string filename = itsCommonAttributes.filename();
     std::string filename = itsFilename;
     
@@ -326,7 +326,7 @@ namespace DAL {  // Namespace DAL -- begin
     headerp->seqnr = 0;
 
     uint16_t * headerBuf = reinterpret_cast<uint16_t*> (headerp);
-    uint16_t CRC = DAL::crc16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
+    uint16_t CRC = DAL1::crc16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
     headerp->seqnr = seqnr; // and set it back again
 
     return (CRC == 0);
@@ -678,4 +678,4 @@ namespace DAL {  // Namespace DAL -- begin
     return true;
   };
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

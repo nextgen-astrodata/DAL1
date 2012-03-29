@@ -29,12 +29,12 @@
 #include <coordinates/Stokes.h>
 #include <data_common/HDF5DatasetBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class BF_StokesDataset
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the Stokes dataset of Beam-Formed Data
@@ -189,7 +189,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Set of attributes attached to the dataset
     std::set<std::string> itsAttributes;
     //! Stokes component stored inside this dataset
-    DAL::Stokes itsStokesComponent;
+    DAL1::Stokes itsStokesComponent;
     //! Number of channels within the subbands
     std::vector<unsigned int> itsNofChannels;
     
@@ -215,7 +215,7 @@ namespace DAL { // Namespace DAL -- begin
 		      unsigned int const &index,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
@@ -225,7 +225,7 @@ namespace DAL { // Namespace DAL -- begin
 		      unsigned int const &nofSamples,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
@@ -234,7 +234,7 @@ namespace DAL { // Namespace DAL -- begin
 		      unsigned int const &index,
 		      unsigned int const &nofSamples,
 		      std::vector<unsigned int> const &nofChannels,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
@@ -242,14 +242,14 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset (hid_t const &location,
 		      unsigned int const &index,
 		      std::vector<hsize_t> const &shape,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::vector<hsize_t> const &shape,
-		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      DAL1::Stokes::Component const &component=DAL1::Stokes::I,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Copy constructor
@@ -312,7 +312,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Methods ==============================================================
     
     //! Get Stokes component stored within this dataset
-    inline DAL::Stokes stokesComponent () const {
+    inline DAL1::Stokes stokesComponent () const {
       return itsStokesComponent;
     }
     
@@ -322,7 +322,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get type of Stokes component stored within this dataset
-    inline DAL::Stokes::Component stokesComponentType () const {
+    inline DAL1::Stokes::Component stokesComponentType () const {
       return itsStokesComponent.type();
     }
     
@@ -333,7 +333,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Create a new Stokes dataset
     bool open (hid_t const &location,
-	       DAL::Stokes::Component const &component,
+	       DAL1::Stokes::Component const &component,
 	       unsigned int const &nofSamples,
 	       unsigned int const &nofSubbands,
 	       unsigned int const &nofChannels,
@@ -341,7 +341,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Create a new Stokes dataset
     bool open (hid_t const &location,
-	       DAL::Stokes::Component const &component,
+	       DAL1::Stokes::Component const &component,
 	       unsigned int const &nofSamples,
 	       std::vector<unsigned int> const &nofChannels,
 	       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
@@ -370,14 +370,14 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
-		      DAL::Stokes::Component const &component,
+		      DAL1::Stokes::Component const &component,
 		      unsigned int const &nofChannels,
 		      IO_Mode const &flags) {
       return open (location, component, 1, nofChannels, flags);
     }
     //! Initialize the internal parameters 
     inline bool open (hid_t const &location,
-		      DAL::Stokes::Component const &component,
+		      DAL1::Stokes::Component const &component,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
 		      IO_Mode const &flags) {
@@ -385,7 +385,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
-		      DAL::Stokes::Component const &component,
+		      DAL1::Stokes::Component const &component,
 		      std::vector<unsigned int> const &nofChannels,
 		      IO_Mode const &flags=IO_Mode(IO_Mode::Open)) {
       if (nofChannels.size()>1) {
@@ -400,7 +400,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class BF_StokesDataset -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* BF_STOKESDATASET_H */
 

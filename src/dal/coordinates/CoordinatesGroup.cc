@@ -20,7 +20,7 @@
 
 #include <coordinates/CoordinatesGroup.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -336,7 +336,7 @@ namespace DAL { // Namespace DAL -- begin
 				 std::string const &name)
   {
     bool status (true);
-    hid_t id = DAL::HDF5Object::open (location, name);
+    hid_t id = DAL1::HDF5Object::open (location, name);
 
     if (id<0) {
       status = false;
@@ -344,7 +344,7 @@ namespace DAL { // Namespace DAL -- begin
       status = h5read (id);
     }
     
-    DAL::HDF5Object::close (id);
+    DAL1::HDF5Object::close (id);
     
     return status;
   }
@@ -379,7 +379,7 @@ namespace DAL { // Namespace DAL -- begin
 				  std::string const &name)
   {
     bool status (true);
-    hid_t id = DAL::HDF5Object::open (location, name);
+    hid_t id = DAL1::HDF5Object::open (location, name);
 
     if (id<0) {
       status = false;
@@ -387,10 +387,10 @@ namespace DAL { // Namespace DAL -- begin
       status = h5write (id);
     }
     
-    DAL::HDF5Object::close (id);
+    DAL1::HDF5Object::close (id);
     
     return status;
   }
   
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::SAS_Settings;
+using DAL1::SAS_Settings;
 
 /*!
   \file tSAS_Settings.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_common
 
-  \brief A collection of test routines for the DAL::SAS_Settings class
+  \brief A collection of test routines for the DAL1::SAS_Settings class
  
   \author Lars B&auml;hren
  

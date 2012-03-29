@@ -42,7 +42,7 @@
 /*!
   \brief Type of TIM-board data
 
-  \ingroup DAL
+  \ingroup DAL1
 */
 enum datatypes
 {

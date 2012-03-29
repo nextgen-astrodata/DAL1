@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::CoordinateGenerator;
+using DAL1::CoordinateGenerator;
 
 /*!
   \file tCoordinateGenerator.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::CoordinateGenerator class
+  \brief A collection of test routines for the DAL1::CoordinateGenerator class
  
   \author Lars B&auml;hren
  

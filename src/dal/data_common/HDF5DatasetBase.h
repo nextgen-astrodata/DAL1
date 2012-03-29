@@ -29,12 +29,12 @@
 // DAL header files
 #include <core/HDF5Dataset.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5DatasetBase
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Abstract base class for HDF5 datasets within a LOFAR data product
@@ -192,7 +192,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5DatasetBase -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5DATASETBASE_H */
 

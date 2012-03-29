@@ -21,15 +21,15 @@
 #include <data_hl/Sky_RootGroup.h>
 
 // Namespace usage
-using DAL::Sky_RootGroup;
+using DAL1::Sky_RootGroup;
 
 /*!
   \file tSky_RootGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::Sky_RootGroup class
+  \brief A collection of test routines for the DAL1::Sky_RootGroup class
  
   \author Lars B&auml;hren
  

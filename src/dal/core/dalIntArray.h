@@ -23,11 +23,11 @@
 
 #include <core/dalArray.h>
 
-namespace DAL {
+namespace DAL1 {
 
   /*!
     \class dalIntArray
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     \brief Represents an n-dimensional array of type \e int
   */
@@ -46,7 +46,7 @@ namespace DAL {
 			std::string arrayname);
   };
   
-}   // END : namespace DAL
+}   // END : namespace DAL1
 
 #endif
 

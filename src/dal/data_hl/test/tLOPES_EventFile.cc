@@ -20,13 +20,13 @@
 
 #include <fstream>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 #include <data_hl/LOPES_EventFile.h>
 
 /*!
   \file tLOPES_EventFile.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of tests for the LOPES_EventFile class
@@ -207,7 +207,7 @@ int test_constructors (std::string const &filename)
 
   std::cout << "[1] Testing default constructor..." << std::endl;
   try {
-    DAL::LOPES_EventFile event;
+    DAL1::LOPES_EventFile event;
     event.summary();
   }
   catch (std::string message) {
@@ -218,7 +218,7 @@ int test_constructors (std::string const &filename)
   std::cout << "[2] Testing argumented constructor..." << std::endl;
   try
     {
-      DAL::LOPES_EventFile event (filename);
+      DAL1::LOPES_EventFile event (filename);
       event.summary();
     }
   catch (std::string message)
@@ -252,7 +252,7 @@ int test_channeldata (std::string const &filename)
   try
     {
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      DAL::LOPES_EventFile event (filename);
+      DAL1::LOPES_EventFile event (filename);
       std::cout << "-- Retrieving data ..." << std::endl;
       casa::Matrix<short> data = event.channeldata();
       // export data to file
@@ -266,7 +266,7 @@ int test_channeldata (std::string const &filename)
   std::cout << "[2] Get data per antenna as casa::Vector ..." << std::endl;
   try {
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::LOPES_EventFile event (filename);
+    DAL1::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     casa::Vector<short> data;
     std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
@@ -287,7 +287,7 @@ int test_channeldata (std::string const &filename)
       short *data;
       
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      DAL::LOPES_EventFile event (filename);
+      DAL1::LOPES_EventFile event (filename);
       nofAntennas = event.nofAntennas();
       blocksize   = event.blocksize();
       std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -310,7 +310,7 @@ int test_channeldata (std::string const &filename)
     short *data;
     
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::LOPES_EventFile event (filename);
+    DAL1::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     blocksize   = event.blocksize();
     std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -338,7 +338,7 @@ int test_channeldata (std::string const &filename)
     unsigned int blocksize (0);
     
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::LOPES_EventFile event (filename);
+    DAL1::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     blocksize   = event.blocksize();
     std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -396,7 +396,7 @@ int test_statistics (std::string const &filename)
   std::ofstream outfile;
 
   std::cout << "-- Opening file " << filename << " ..." << std::endl;
-  DAL::LOPES_EventFile event (filename);
+  DAL1::LOPES_EventFile event (filename);
   // get the number of antenna in the data set
   unsigned int nofAntennas (event.nofAntennas());
   // Array for taking up the data

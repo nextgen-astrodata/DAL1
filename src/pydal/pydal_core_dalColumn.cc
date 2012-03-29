@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalColumn.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalColumn class
+  \brief Python bindings for the DAL1::dalColumn class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include <core/dalColumn.h>
 
 using std::string;
-using DAL::dalColumn;
+using DAL1::dalColumn;
 
 // ==============================================================================
 //
@@ -84,7 +84,7 @@ boost::python::numeric::array dalColumn::data_boost2( int32_t length )
 boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
 						      int32_t length)
 {
-  if (itsFiletype.type()==DAL::dalFileType::CASA_MS) {
+  if (itsFiletype.type()==DAL1::dalFileType::CASA_MS) {
 #ifdef DAL_WITH_CASA
     
     if ("unknown" == itsCasaDatatype) {
@@ -232,7 +232,7 @@ boost::python::numeric::array dalColumn::data_boost3 (int64_t offset,
     }
 #endif // DAL_WITH_CASA
   }
-  else if (itsFiletype.type()==DAL::dalFileType::HDF5) {
+  else if (itsFiletype.type()==DAL1::dalFileType::HDF5) {
     std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
     int start = 0;
     int length = -1;
@@ -278,7 +278,7 @@ void export_dalColumn ()
 			      string const &>())
     .def( boost::python::init<hid_t const &,
 			      hid_t const &,
-			      DAL::dalFileType const &,
+			      DAL1::dalFileType const &,
 			      string const &,
 			      string const &,
 			      string const &>())

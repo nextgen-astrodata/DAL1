@@ -28,12 +28,12 @@
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Object.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalDataset
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Represents the file containing all sub-structures (tables, arrays, etc.)
@@ -63,7 +63,7 @@ namespace DAL {
       \code
       #include <dal/dalDataset.h>
 
-      DAL::dalDataset dataset;
+      DAL1::dalDataset dataset;
       \endcode
       and display some of its internal properties
       \code
@@ -73,7 +73,7 @@ namespace DAL {
       \code
       std::string filename ("mydata.h5");
 
-      DAL::dalDataset dataset (filename.c_str(),"HDF5");
+      DAL1::dalDataset dataset (filename.c_str(),"HDF5");
       \endcode
       <li>Obtain a summary of the object's internal properties:
       \code
@@ -175,7 +175,7 @@ namespace DAL {
       
       \param attrname The name of the attribute you want to retrieve.
       \param value Attribute value to return.
-      \return bool -- DAL::FAIL or DAL::SUCCESS
+      \return bool -- DAL1::FAIL or DAL1::SUCCESS
     */
     template <class T>
       bool getAttribute (std::string attrname, T &value )
@@ -392,6 +392,6 @@ namespace DAL {
     
   };  /* end class dalDataset */
   
-}  /* end namespace DAL */
+}  /* end namespace DAL1 */
 
 #endif

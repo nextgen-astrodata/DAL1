@@ -21,10 +21,10 @@
 /*!
   \file pydal_Timestamp.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::Timestamp class
+  \brief Python bindings for the DAL1::Timestamp class
 
   \author Lars B&auml;hren
 */
@@ -34,7 +34,7 @@
 #include <data_common/Timestamp.h>
 
 // namespace usage
-using DAL::Timestamp;
+using DAL1::Timestamp;
 
 
 void export_Timestamp ()

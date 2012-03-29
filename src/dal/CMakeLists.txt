@@ -1,7 +1,7 @@
 
 ## ==============================================================================
 ##
-##  libdal: Source & header files
+##  libdal1: Source & header files
 ##
 ## ==============================================================================
 
@@ -44,37 +44,37 @@ endforeach (dalModule)
 
 ## ==============================================================================
 ##
-##  libdal: Compiler instructions
+##  libdal1: Compiler instructions
 ##
 ## ==============================================================================
 
 if (DAL_SHARED_LIBRARY)
-  add_library(dal SHARED ${dalSources})
+  add_library(dal1 SHARED ${dalSources})
 else (DAL_SHARED_LIBRARY)
-  add_library(dal STATIC ${dalSources})
+  add_library(dal1 STATIC ${dalSources})
 endif (DAL_SHARED_LIBRARY)
 
-set_target_properties (dal
+set_target_properties (dal1
   PROPERTIES
   COMPILE_FLAGS "-fpermissive -ftemplate-depth-100"
   )
 
 ## ==============================================================================
 ##
-##  libdal: Linker instructions
+##  libdal1: Linker instructions
 ##
 ## ==============================================================================
 
-target_link_libraries(dal ${dal_link_libraries})
+target_link_libraries(dal1 ${dal_link_libraries})
 
 ## ==============================================================================
 ##
-##  libdal: Installation instructions
+##  libdal1: Installation instructions
 ##
 ## ==============================================================================
 
 install (
-  TARGETS dal
+  TARGETS dal1
   RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
   LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${DAL_INSTALL_LIBDIR}

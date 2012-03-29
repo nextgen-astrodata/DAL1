@@ -36,12 +36,12 @@
 #include <data_hl/TBB_DipoleDataset.h>
 #include <data_hl/TBB_StationTrigger.h>
 
-namespace DAL {   // Namespace DAL -- begin
+namespace DAL1 {   // Namespace DAL1 -- begin
 
   /*!
     \class TBB_StationGroup
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
 
     \brief Container for the data in the StationGroup of LOFAR times-series data
@@ -56,9 +56,9 @@ namespace DAL {   // Namespace DAL -- begin
 
     <ul type="square">
       <li>\ref dal_icd_001
-      <li>DAL::TBB_Timeseries
-      <li>DAL::TBB_StationTrigger
-      <li>DAL::TBB_DipoleDataset
+      <li>DAL1::TBB_Timeseries
+      <li>DAL1::TBB_StationTrigger
+      <li>DAL1::TBB_DipoleDataset
     </ul>
 
     <h3>Example(s)</h3>
@@ -378,7 +378,7 @@ namespace DAL {   // Namespace DAL -- begin
     
   };
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* TBB_STATIONGROUP_H */
 

@@ -22,7 +22,7 @@
 /*!
   \file lopes2h5.cpp
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup dal_apps
 
   \brief Convert LopesEvent format data to HDF5-based time-series format
@@ -32,7 +32,7 @@
   <h3>Usage</h3>
 
   In order to convert a data stored in a LopesEvent data file to the time-series
-  data format defined for the DAL use:
+  data format defined for the DAL1 use:
   \verbatim
   ./lopes2h5 <LopesEvent file> <HDF5 file>
   \endverbatim
@@ -45,7 +45,7 @@
 #include <data_hl/TBB.h>
 #include <data_hl/LOPES_EventFile.h>
 
-using namespace DAL;
+using namespace DAL1;
 
 void export_data (std::string const &filename,
                   casa::Matrix<short> const &data)
@@ -88,7 +88,7 @@ int main (int argc, char *argv[])
       cout << "The first parameter is the raw LOPES input file name." << endl;
       cout << "The second parameter is the hdf5 dataset name." << endl;
       cout << endl;
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
 
   dalDataset * dataset;

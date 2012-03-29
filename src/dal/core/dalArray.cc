@@ -20,7 +20,7 @@
 
 #include <core/dalArray.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -66,16 +66,16 @@ namespace DAL {
   //                                                                        close
   
   /*!
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::close()
   {
     if ( H5Dclose(itsDatasetID) < 0 ) {
       std::cerr << "ERROR: dalArray::close() failed.\n";
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
     
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
   
   // ============================================================================
@@ -109,7 +109,7 @@ namespace DAL {
     \param offset Position to begin writing array.
     \param data Data array to write.
     \param arraysize Size of the array to write.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::write (int offset,
 			int data[],
@@ -125,7 +125,7 @@ namespace DAL {
     if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
     
     if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
@@ -133,7 +133,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
     
     /* Define memory space */
@@ -141,7 +141,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Write the data to the hyperslab  */
@@ -155,14 +155,14 @@ namespace DAL {
         std::cerr << "ERROR: Could not write integer array.\n";
         H5Sclose(dataspace);
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Close the memory- and data-space */
     H5Sclose(dataspace);
     H5Sclose(filespace);
 
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
   
   //_____________________________________________________________________________
@@ -174,7 +174,7 @@ namespace DAL {
     \param offset Position to begin writing array.
     \param data Data array to write.
     \param arraysize Size of the array to write.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::write (int offset,
 			short data[],
@@ -190,7 +190,7 @@ namespace DAL {
     if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
@@ -198,7 +198,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Define memory space */
@@ -206,7 +206,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Write the data to the hyperslab  */
@@ -216,14 +216,14 @@ namespace DAL {
         std::cerr << "ERROR: Could not write short array.\n";
         H5Sclose(dataspace);
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Close the memory- and data-space */
     H5Sclose(dataspace);
     H5Sclose(filespace);
 
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
 
   //_____________________________________________________________________________
@@ -235,7 +235,7 @@ namespace DAL {
    \param offset Position to begin writing array.
    \param data Data array to write.
    \param arraysize Size of the array to write.
-   \return bool -- DAL::FAIL or DAL::SUCCESS
+   \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::write (int offset,
 			std::complex<float> data[],
@@ -250,7 +250,7 @@ namespace DAL {
     if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
@@ -258,7 +258,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Define memory space */
@@ -272,7 +272,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not create complex datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Tinsert( complex_id, "real", HOFFSET(complex_t,re),
@@ -280,7 +280,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Tinsert( complex_id, "imaginary", HOFFSET(complex_t,im),
@@ -288,7 +288,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Write the data to the hyperslab  */
@@ -297,11 +297,11 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not write complex<float> array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     H5Sclose(filespace);
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
 
   //_____________________________________________________________________________
@@ -315,7 +315,7 @@ namespace DAL {
    \param offset Position to begin writing array.
    \param data Data array to write.
    \param arraysize Size of the array to write.
-   \return bool -- DAL::FAIL or DAL::SUCCESS
+   \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::write( int offset,
 			std::complex<Int16> data[],
@@ -329,7 +329,7 @@ namespace DAL {
     if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Select a hyperslab  */
@@ -338,7 +338,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Define memory space */
@@ -352,7 +352,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not create complex datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Tinsert ( complex_id, "real", HOFFSET(complex_t,re),
@@ -360,7 +360,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     if ( H5Tinsert ( complex_id, "imaginary", HOFFSET(complex_t,im),
@@ -368,7 +368,7 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     /* Write the data to the hyperslab  */
@@ -377,12 +377,12 @@ namespace DAL {
       {
         std::cerr << "ERROR: Could not write complex<Int16> array.\n";
         H5Sclose(filespace);
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
     H5Sclose(filespace);
 
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
 
   //_____________________________________________________________________________
@@ -418,7 +418,7 @@ namespace DAL {
   /*!
     \param dims The new desired dimensions of the array.  The extend method
                 should normally be followed by a write.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::extend (std::vector<int> const &newdims)
   {
@@ -431,10 +431,10 @@ namespace DAL {
     if ( H5Dextend( itsDatasetID, lcldims ) )
       {
         std::cerr << "ERROR: Could not extend array dimensions.\n";
-        return DAL::FAIL;
+        return DAL1::FAIL;
       }
 
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
 
   }
 
@@ -444,7 +444,7 @@ namespace DAL {
   /*!
     \brief Print the attributes of the array.
     
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalArray::getAttributes()
   {
@@ -455,10 +455,10 @@ namespace DAL {
      */
     if ( H5Aiterate1( itsDatasetID, NULL, attr_info, NULL ) < 0 ) {
       std::cerr << "ERROR: Could not iterate over array attributes.\n";
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
     
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
   
   /********************************************************************
@@ -647,19 +647,19 @@ namespace DAL {
     }
     
     // create a new hdf5 datatype for complex values
-    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof(DAL::Complex_Float32 )) )
+    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof(DAL1::Complex_Float32 )) )
          < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype.\n";
       }
 
-    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL::Complex_Float32,real),
+    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL1::Complex_Float32,real),
                     H5T_NATIVE_FLOAT ) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (r).\n";
       }
 
-    if ( H5Tinsert ( complex_id, "imag", HOFFSET(DAL::Complex_Float32,imag),
+    if ( H5Tinsert ( complex_id, "imag", HOFFSET(DAL1::Complex_Float32,imag),
                      H5T_NATIVE_FLOAT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (i).\n";
@@ -743,4 +743,4 @@ namespace DAL {
     
   }
   
-} // end namespace DAL
+} // end namespace DAL1

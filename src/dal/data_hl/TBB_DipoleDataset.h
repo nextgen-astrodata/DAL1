@@ -35,12 +35,12 @@
 
 #include <data_common/HDF5GroupBase.h>
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
 
   /*!
     \class TBB_DipoleDataset
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Container for dipole-based data in a LOFAR TBB time-series dataset
@@ -56,8 +56,8 @@ namespace DAL {  // Namespace DAL -- begin
     <ul type="square">
       <li><a href="http://www.atnf.csiro.au/computing/software/casacore/classcasa_1_1Record.html">casa::Record</a>
       -- A hierarchical collection of named fields of various types.
-      <li>DAL::TBB_StationGroup
-      <li>DAL::TBB_Timeseries
+      <li>DAL1::TBB_StationGroup
+      <li>DAL1::TBB_Timeseries
     </ul>
 
     <h3>Synopsis</h3>
@@ -71,7 +71,7 @@ namespace DAL {  // Namespace DAL -- begin
     settings:
     \code
     // Create new object
-    DAL::TBB_DipoleDataset dataset;
+    DAL1::TBB_DipoleDataset dataset;
     // Summaru of the internal properties
     dataset.summary();
     \endcode
@@ -83,7 +83,7 @@ namespace DAL {  // Namespace DAL -- begin
     // The path to the dataset contained within the HDF5 file
     std::string datasetName ("<path to the dataset>");
 
-    DAL::TBB_DipoleDataset dataset (fileName,
+    DAL1::TBB_DipoleDataset dataset (fileName,
                                     datasetName);
     \endcode
   </ul>
@@ -239,7 +239,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   };
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* TBB_DIPOLEDATASET_H */
 

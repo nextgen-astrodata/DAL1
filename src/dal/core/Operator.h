@@ -30,12 +30,12 @@
 /* DAL header files */
 #include <core/dalCommon.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Operator
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Definition of operator types
@@ -214,7 +214,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Operator -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* OPERATOR_H */
   

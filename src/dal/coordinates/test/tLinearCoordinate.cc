@@ -23,10 +23,10 @@
 /*!
   \file tLinearCoordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::LinearCoordinate class
+  \brief A collection of test routines for the DAL1::LinearCoordinate class
 
   \author Lars B&auml;hren
 
@@ -54,7 +54,7 @@ int test_constructors ()
 
   cout << "[1] Testing LinearCoordinate() ..." << endl;
   try {
-    DAL::LinearCoordinate coord;
+    DAL1::LinearCoordinate coord;
     //
     coord.summary();
   }
@@ -68,17 +68,17 @@ int test_constructors ()
     
     cout << "--> coordinate with 2 axes" << endl;
 
-    DAL::LinearCoordinate coord2d (2);
+    DAL1::LinearCoordinate coord2d (2);
     coord2d.summary();
 
     cout << "--> coordinate with 3 axes" << endl;
 
-    DAL::LinearCoordinate coord3d (3);
+    DAL1::LinearCoordinate coord3d (3);
     coord3d.summary();
 
     cout << "--> coordinate with 4 axes" << endl;
 
-    DAL::LinearCoordinate coord4d (4);
+    DAL1::LinearCoordinate coord4d (4);
     coord4d.summary();
   }
   catch (std::string message) {
@@ -97,7 +97,7 @@ int test_constructors ()
     worldAxisUnits[0] = "m";
     worldAxisUnits[1] = "s";
     //
-    DAL::LinearCoordinate coord (nofAxes,
+    DAL1::LinearCoordinate coord (nofAxes,
 				 worldAxisNames,
 				 worldAxisUnits);
     //
@@ -122,7 +122,7 @@ int test_constructors ()
     worldAxisUnits[0] = "m";
     worldAxisUnits[1] = "s";
     //
-    DAL::LinearCoordinate coord (nofAxes,
+    DAL1::LinearCoordinate coord (nofAxes,
 				 worldAxisNames,
 				 worldAxisUnits,
 				 refValue,
@@ -147,12 +147,12 @@ int test_constructors ()
     units[0] = "s";
     units[1] = "Hz";
     //
-    DAL::LinearCoordinate coord (nofAxes);
+    DAL1::LinearCoordinate coord (nofAxes);
     coord.setAxisNames (names);
     coord.setAxisUnits (units);
     coord.summary();
     //
-    DAL::LinearCoordinate coordCopy (coord);
+    DAL1::LinearCoordinate coordCopy (coord);
     coordCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -177,7 +177,7 @@ int test_parameters ()
 
   int nofFailedTests (0);
   unsigned int nofAxes (2);
-  DAL::LinearCoordinate coord (nofAxes);
+  DAL1::LinearCoordinate coord (nofAxes);
   
   coord.summary();
 
@@ -333,7 +333,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     // set number of axes
     nofAxes = 1;
     // create coordinate object
-    DAL::LinearCoordinate coord (nofAxes);
+    DAL1::LinearCoordinate coord (nofAxes);
     // show summary of object
     coord.summary();
     // write coordinate to file
@@ -365,7 +365,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     increment[0]      = 0.5;
     pc[0]             = 1.0;
     // create coordinate object
-    DAL::LinearCoordinate coord (nofAxes);
+    DAL1::LinearCoordinate coord (nofAxes);
     // show summary of object
     coord.summary();
     // write coordinate to file
@@ -405,7 +405,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     pc[2]             = 0;
     pc[3]             = 1;
     
-    DAL::LinearCoordinate coord (nofAxes,
+    DAL1::LinearCoordinate coord (nofAxes,
 				 worldAxisNames,
 				 worldAxisUnits,
 				 refValue,
@@ -452,9 +452,9 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     increment[1]      = 0.2;
     increment[2]      = 0.4;
     
-    DAL::IdentityMatrix (pc, nofAxes);
+    DAL1::IdentityMatrix (pc, nofAxes);
     
-    DAL::LinearCoordinate coord (nofAxes,
+    DAL1::LinearCoordinate coord (nofAxes,
 				 worldAxisNames,
 				 worldAxisUnits,
 				 refValue,

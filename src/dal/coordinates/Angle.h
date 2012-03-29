@@ -27,12 +27,12 @@
 
 #include <core/dalCommon.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Angle
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Class to describe the properties of an angle
@@ -182,6 +182,6 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Angle -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* ANGLE_H */

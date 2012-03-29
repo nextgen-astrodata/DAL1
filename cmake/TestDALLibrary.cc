@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include <dal_config.h>
+#include <dal1_config.h>
 
 int main ()
 {
@@ -8,10 +8,10 @@ int main ()
     Library version
   */
   
-  std::cout << "DAL_VERSION "       << DAL_VERSION       << std::endl;
-  std::cout << "DAL_VERSION_MAJOR " << DAL_VERSION_MAJOR << std::endl;
-  std::cout << "DAL_VERSION_MINOR " << DAL_VERSION_MINOR << std::endl;
-  std::cout << "DAL_VERSION_PATCH " << DAL_VERSION_PATCH << std::endl;
+  std::cout << "DAL_VERSION "       << DAL1_VERSION       << std::endl;
+  std::cout << "DAL_VERSION_MAJOR " << DAL1_VERSION_MAJOR << std::endl;
+  std::cout << "DAL_VERSION_MINOR " << DAL1_VERSION_MINOR << std::endl;
+  std::cout << "DAL_VERSION_PATCH " << DAL1_VERSION_PATCH << std::endl;
 
   /*________________________________________________________
     External packages

@@ -27,12 +27,12 @@
 
 #include <data_common/HDF5GroupBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class TBB_StationTrigger
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Container for the parameters generated from the station trigger
@@ -47,8 +47,8 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>DAL::HDF5GroupBase
-      <li>DAL::TBB_Timeseries
+      <li>DAL1::HDF5GroupBase
+      <li>DAL1::TBB_Timeseries
     </ul>
     
     <h3>Synopsis</h3>
@@ -128,7 +128,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class TBB_StationTrigger -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* TBB_STATIONTRIGGER_H */
   

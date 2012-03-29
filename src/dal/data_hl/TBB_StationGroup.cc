@@ -23,7 +23,7 @@
 using std::cout;
 using std::endl;
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
 
   // ============================================================================
   //
@@ -191,8 +191,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Get name of file and dataset ________________________
     
-    status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location, absolutePath);
+    status  = DAL1::h5get_filename (filename, location);
+    status *= DAL1::h5get_name (dataset, location, absolutePath);
 
     if (status) {
 
@@ -394,7 +394,7 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
     std::string name ("UNDEFINED");
 
-    status = DAL::h5get_name (name,location_p);
+    status = DAL1::h5get_name (name,location_p);
 
     if (status) {
       if (stripPath) {
@@ -416,7 +416,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef DAL_WITH_CASA
   casa::MPosition TBB_StationGroup::station_position ()
   {
-    return DAL::h5get_position (location_p,
+    return DAL1::h5get_position (location_p,
                                 "STATION_POSITION_VALUE",
                                 "STATION_POSITION_UNIT",
                                 "STATION_POSITION_FRAME");
@@ -801,7 +801,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   casa::MDirection TBB_StationGroup::beam_direction ()
   {
-    return DAL::h5get_direction (location_p,
+    return DAL1::h5get_direction (location_p,
                                  "BEAM_DIRECTION_VALUE",
                                  "BEAM_DIRECTION_UNIT",
                                  "BEAM_DIRECTION_FRAME");
@@ -974,4 +974,4 @@ namespace DAL {  // Namespace DAL -- begin
 
 #endif
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

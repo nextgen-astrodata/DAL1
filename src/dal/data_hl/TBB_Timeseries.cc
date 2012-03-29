@@ -23,7 +23,7 @@
 using std::cout;
 using std::endl;
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -367,7 +367,7 @@ namespace DAL {  // Namespace DAL -- begin
     if (groupnames.size() > 0) {
       std::set<std::string>::iterator it;
       for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
-	stationGroups_p[*it] = DAL::TBB_StationGroup (location_p,
+	stationGroups_p[*it] = DAL1::TBB_StationGroup (location_p,
 						      *it, flags);
       }
     } else {
@@ -1394,4 +1394,4 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif 
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

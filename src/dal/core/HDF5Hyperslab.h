@@ -30,12 +30,12 @@
 #include "dalCommon.h"
 #include "HDF5Dataspace.h"
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Hyperslab
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief A hyperslab region for selective access to a dataspace
@@ -474,7 +474,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5Hyperslab -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5HYPERSLAB_H */
   

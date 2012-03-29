@@ -21,7 +21,7 @@
 /*!
   \file testCFITSIO.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A number of basic test for working with the CFITSIO library
@@ -38,7 +38,7 @@
 #include <iostream>
 #include <string>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 
 #ifdef DAL_WITH_CFITSIO
 
@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
 
 int main ()
 {
-  std::cerr << "[test_CFITSIO] DAL build without support for CFITSIO - skipping test!"
+  std::cerr << "[test_CFITSIO] DAL1 build without support for CFITSIO - skipping test!"
 	    << std::endl;
 
   return -1;

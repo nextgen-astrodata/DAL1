@@ -20,7 +20,7 @@
 
 #include "TBB.h"
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -1123,4 +1123,4 @@ namespace DAL {
     dipoleArray_p = NULL;
   }
 
-} // end namespace DAL
+} // end namespace DAL1

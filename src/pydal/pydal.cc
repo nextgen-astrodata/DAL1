@@ -25,7 +25,7 @@
 /*!
   \file pydal.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings for the C++ layer of the Data Acccess Library

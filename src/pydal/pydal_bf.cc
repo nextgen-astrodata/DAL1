@@ -21,7 +21,7 @@
 /*!
   \file pydal_bf.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings DAL C++ BF classes 
@@ -36,8 +36,8 @@
 #include <data_hl/SysLog.h>
 #include <data_common/CommonAttributes.h>
 
-using DAL::BF_BeamGroup;
-using DAL::BF_RootGroup;
+using DAL1::BF_BeamGroup;
+using DAL1::BF_RootGroup;
 
 // ==============================================================================
 //
@@ -78,14 +78,14 @@ void export_BF_RootGroup ()
     = &BF_RootGroup::summary;
   
   bool (BF_RootGroup::*openSubArrayPointing1)(unsigned int const &,
-					      DAL::IO_Mode const &) 
+					      DAL1::IO_Mode const &) 
     = &BF_RootGroup::openSubArrayPointing;
 
 
   bool (BF_RootGroup::*openStokesDataset1)(unsigned int const &,
 					   unsigned int const &,
 					   unsigned int const &,
-					   DAL::IO_Mode const &)
+					   DAL1::IO_Mode const &)
     = &BF_RootGroup::openStokesDataset;
   bool (BF_RootGroup::*openStokesDataset2)(unsigned int const &,
 					   unsigned int const &,
@@ -93,18 +93,18 @@ void export_BF_RootGroup ()
 					   unsigned int const &,
 					   unsigned int const &,
 					   unsigned int const &,
-					   DAL::Stokes::Component const &,
+					   DAL1::Stokes::Component const &,
 					   hid_t const &,
-					   DAL::IO_Mode const &) 
+					   DAL1::IO_Mode const &) 
     = &BF_RootGroup::openStokesDataset;
   bool (BF_RootGroup::*openStokesDataset3)(unsigned int const &,
 					   unsigned int const &,
 					   unsigned int const &,
 					   unsigned int const &,
 					   std::vector<unsigned int> const &,
-					   DAL::Stokes::Component const &,
+					   DAL1::Stokes::Component const &,
 					   hid_t const &,
-					   DAL::IO_Mode const &) 
+					   DAL1::IO_Mode const &) 
     = &BF_RootGroup::openStokesDataset;
   
   //________________________________________________________
@@ -112,10 +112,10 @@ void export_BF_RootGroup ()
   
   boost::python::class_<BF_RootGroup>("BF_RootGroup", boost::python::init<const std::string>())
     // Construction
-    .def( boost::python::init<DAL::Filename, bool>())
+    .def( boost::python::init<DAL1::Filename, bool>())
     .def( boost::python::init<std::string const &>())
     .def( boost::python::init<std::string &>())
-    .def( boost::python::init<DAL::CommonAttributes, bool>())     
+    .def( boost::python::init<DAL1::CommonAttributes, bool>())     
     // Parameter access
     // Public methods
     .def("summary",

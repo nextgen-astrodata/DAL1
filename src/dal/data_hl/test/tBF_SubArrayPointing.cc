@@ -25,18 +25,18 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::CommonAttributes;
-using DAL::Filename;
-using DAL::BF_RootGroup;
-using DAL::BF_SubArrayPointing;
+using DAL1::CommonAttributes;
+using DAL1::Filename;
+using DAL1::BF_RootGroup;
+using DAL1::BF_SubArrayPointing;
 
 /*!
   \file tBF_SubArrayPointing.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BF_SubArrayPointing class
+  \brief A collection of test routines for the DAL1::BF_SubArrayPointing class
  
   \author Lars B&auml;hren
  
@@ -155,14 +155,14 @@ int test_subGroups ()
 //                                                                test_containers
 
 /*!
-  \brief Test usage of std::map<std::string,DAL::BF_SubArrayPointing>
+  \brief Test usage of std::map<std::string,DAL1::BF_SubArrayPointing>
 
   Instead of directly handling objects of type BF_SubArrayPointing use 
   \code
-  std::map<std::string,DAL::BF_SubArrayPointing> stationBeams;
+  std::map<std::string,DAL1::BF_SubArrayPointing> stationBeams;
   
-  name               = DAL::BF_SubArrayPointing::getName(pointingID);
-  stationBeams[name] = DAL::BF_SubArrayPointing (fileID, pointingID, true);
+  name               = DAL1::BF_SubArrayPointing::getName(pointingID);
+  stationBeams[name] = DAL1::BF_SubArrayPointing (fileID, pointingID, true);
   \endcode
   as a container.
 
@@ -181,8 +181,8 @@ int test_containers ()
   hid_t fileID = H5Fopen (filename.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
-  std::map<std::string,DAL::BF_SubArrayPointing> stationBeams;
-  std::map<std::string,DAL::BF_SubArrayPointing>::iterator it;
+  std::map<std::string,DAL1::BF_SubArrayPointing> stationBeams;
+  std::map<std::string,DAL1::BF_SubArrayPointing>::iterator it;
 
   //______________________________________________
   // Test creation of groups

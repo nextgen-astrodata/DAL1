@@ -21,12 +21,12 @@
 #include <data_hl/TBB_StationCalibration.h>
 
 // Namespace usage
-using DAL::TBB_StationCalibration;
+using DAL1::TBB_StationCalibration;
 
 /*!
   \file tTBB_StationCalibration.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the TBB_StationCalibration class

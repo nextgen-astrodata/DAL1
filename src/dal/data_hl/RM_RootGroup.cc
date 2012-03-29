@@ -20,7 +20,7 @@
 
 #include <data_hl/RM_RootGroup.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -53,7 +53,7 @@ namespace DAL { // Namespace DAL -- begin
     \param create   -- Create the corresponding data structure, if it does not 
            exist yet?
   */
-  RM_RootGroup::RM_RootGroup (DAL::Filename &infile,
+  RM_RootGroup::RM_RootGroup (DAL1::Filename &infile,
 			      IO_Mode const &flags)
     : HDF5GroupBase()
   {
@@ -337,4 +337,4 @@ namespace DAL { // Namespace DAL -- begin
   }
 
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

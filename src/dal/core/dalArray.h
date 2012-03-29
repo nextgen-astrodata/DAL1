@@ -27,12 +27,12 @@
 #include <core/dalObjectBase.h>
 #include <core/HDF5Attribute.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalArray
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Represents an n-dimensional array.
@@ -105,7 +105,7 @@ namespace DAL {
       
       \param attrname The name of the attribute you want to retrieve.
       \param value Attribute value to return.
-      \return bool -- DAL::FAIL or DAL::SUCCESS
+      \return bool -- DAL1::FAIL or DAL1::SUCCESS
     */
     template <class T>
       bool getAttribute (std::string attrname,
@@ -225,7 +225,7 @@ namespace DAL {
   
   /*!
     \class dalFloatArray
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup  core
     \brief Represents an n-dimensional array of type \e float
   */
@@ -244,7 +244,7 @@ namespace DAL {
   
   /*!
     \class dalComplexArray_float32
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup  core
     \brief Represents an n-dimensional array of type \e complex<float32>
   */
@@ -260,6 +260,6 @@ namespace DAL {
 			     std::vector<int>chnkdims);
   };
   
-} // end namespace DAL
+} // end namespace DAL1
 
 #endif // end #ifndef DALARRAY_H

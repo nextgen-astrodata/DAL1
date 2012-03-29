@@ -41,12 +41,12 @@
 using casa::Vector;
 #endif
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class CoordinateGenerator
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief A collection of methods to create coordinate objects
@@ -231,7 +231,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class CoordinateGenerator -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* COORDINATEGENERATOR_H */
   

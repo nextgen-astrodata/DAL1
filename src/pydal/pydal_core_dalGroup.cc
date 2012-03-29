@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalGroup class
+  \brief Python bindings for the DAL1::dalGroup class
 
   \author Lars B&auml;hren
 */
@@ -32,8 +32,8 @@
 #include "pydal.h"
 #include <core/dalGroup.h>
 
-using DAL::dalGroup;
-using DAL::dalArray;
+using DAL1::dalGroup;
+using DAL1::dalArray;
 
 // ==============================================================================
 //

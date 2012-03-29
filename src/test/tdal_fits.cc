@@ -20,13 +20,13 @@
 
 #include <core/dalDataset.h>
 
-using namespace DAL;
+using namespace DAL1;
 
 //_______________________________________________________________________________
 //                                                                test_dalDataset
 
 /*!
-  \brief Test wrapping access to the FITS file through the DAL::dalDataset class
+  \brief Test wrapping access to the FITS file through the DAL1::dalDataset class
   
   \param filename -- The name of the FITS file to use for testing
   
@@ -115,7 +115,7 @@ int test_dalDataset (std::string const &filename)
 /*!
   \file tdal_fits.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of tests to work with FITS type data

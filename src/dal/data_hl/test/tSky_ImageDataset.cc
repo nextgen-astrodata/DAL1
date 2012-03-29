@@ -23,12 +23,12 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::Sky_ImageDataset;
+using DAL1::Sky_ImageDataset;
 
 /*!
   \file tSky_ImageDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the Sky_ImageDataset class

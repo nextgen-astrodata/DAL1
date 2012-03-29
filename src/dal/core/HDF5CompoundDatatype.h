@@ -24,12 +24,12 @@
 // DAL header files
 #include <core/HDF5Datatype.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5CompoundDatatype
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Brief description for class HDF5CompoundDatatype
@@ -107,7 +107,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5CompoundDatatype -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5COMPOUNDDATATYPE_H */
   

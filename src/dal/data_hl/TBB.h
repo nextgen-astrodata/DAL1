@@ -50,12 +50,12 @@
 //(the vBuf of the system on the storage nodes can store ca. 3600 frames!)
 #define INPUT_BUFFER_SIZE 50000
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class TBB
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface between TBB data and the DAL

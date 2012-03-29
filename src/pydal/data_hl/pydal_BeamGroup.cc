@@ -21,10 +21,10 @@
 /*!
   \file pydal_BeamGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::BeamGroup class
+  \brief Python bindings for the DAL1::BeamGroup class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include <pydal.h>
 #include <data_hl/BeamGroup.h>
 
-using DAL::BeamGroup;
+using DAL1::BeamGroup;
 
 // ==============================================================================
 //

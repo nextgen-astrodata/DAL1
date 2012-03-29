@@ -21,10 +21,10 @@
 /*!
   \file tdalArray.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalArray class
+  \brief A collection of test routines for the DAL1::dalArray class
 
   \author Lars B&auml;hren
 
@@ -37,7 +37,7 @@
 //                                                              test_constructors
 
 /*!
-  \brief Test the various constructors for an object of type DAL::dalDataset
+  \brief Test the various constructors for an object of type DAL1::dalDataset
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
@@ -50,7 +50,7 @@ int test_constructors ()
 
   std::cout << "[1] Default constructor..." << std::endl;
   try {
-    DAL::dalArray arr;
+    DAL1::dalArray arr;
     //
     arr.summary();
   }
@@ -66,7 +66,7 @@ int test_constructors ()
 //                                                              test_constructors
 
 /*!
-  \brief Test the various constructors for an object of type DAL::dalDataset
+  \brief Test the various constructors for an object of type DAL1::dalDataset
 
   \param filename -- Name of the input HDF5 data file
 
@@ -96,7 +96,7 @@ int test_constructors (std::string const &filename)
 
   std::cout << "[1] Default constructor..." << std::endl;
   try {
-    DAL::dalArray arr;
+    DAL1::dalArray arr;
     //
     arr.summary();
   }

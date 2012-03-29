@@ -41,7 +41,7 @@ endif (Boost_PROGRAM_OPTIONS_LIBRARY)
 ## source files
 set (tests read_tbb)
 ## linker instructions
-set (apps_link_libraries dal)
+set (apps_link_libraries dal1)
 
 add_executable (udp-copy udp-copy.c)
 
@@ -60,7 +60,7 @@ if (CASA_FOUND OR CASACORE_FOUND)
   ## remove duplicates from the list of link libraries
   list (REMOVE_DUPLICATES apps_link_libraries)
 else (CASA_FOUND OR CASACORE_FOUND)
-  message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
+  message (STATUS "[DAL1] Unable to build applications: msread, ms2h5")
 endif (CASA_FOUND OR CASACORE_FOUND)
 
 ##____________________________________________________________________
@@ -73,12 +73,12 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
   add_executable (TBBraw2h5 TBBraw2h5.cpp)
   ## linker instructions
   target_link_libraries (tbb2h5
-    dal
+    dal1
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     )
   target_link_libraries (TBBraw2h5
-    dal
+    dal1
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
@@ -90,8 +90,8 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
     LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
 else (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
-    message (STATUS "[DAL] Unable to build tbb2h5 - missing Boost++ libraries!")
-    message (STATUS "[DAL] Unable to build TBBraw2h5 - missing Boost++ libraries!")
+    message (STATUS "[DAL1] Unable to build tbb2h5 - missing Boost++ libraries!")
+    message (STATUS "[DAL1] Unable to build TBBraw2h5 - missing Boost++ libraries!")
 endif (Boost_PROGRAM_OPTIONS_LIBRARY AND Boost_THREAD_LIBRARY)
 
 ##____________________________________________________________________
@@ -103,7 +103,7 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
     add_executable (tbbmd tbbmd.cpp)
     ## linker instructions
     target_link_libraries (tbbmd
-      dal
+      dal1
       ${Boost_PROGRAM_OPTIONS_LIBRARY}
       ${CASA_LIBRARIES}
       )
@@ -113,10 +113,10 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
       LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
       )
   else (CASA_LIBRARIES)
-    message (STATUS "[DAL] Unable to build tbbmd - missing casacore library!")
+    message (STATUS "[DAL1] Unable to build tbbmd - missing casacore library!")
   endif (CASA_LIBRARIES)
 else (Boost_PROGRAM_OPTIONS_LIBRARY)
-  message (STATUS "[DAL] Unable to build tbbmd - missing Boost++ program_options library!")
+  message (STATUS "[DAL1] Unable to build tbbmd - missing Boost++ program_options library!")
 endif (Boost_PROGRAM_OPTIONS_LIBRARY)
 
 ##____________________________________________________________________

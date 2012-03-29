@@ -20,7 +20,7 @@
 
 #include <core/Operator.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -204,4 +204,4 @@ namespace DAL { // Namespace DAL -- begin
     return it->second;
   }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

@@ -28,12 +28,12 @@
 #include <time.h>
 #include <sstream>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Timestamp
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Wrapper for the time information in its various formats

@@ -36,7 +36,7 @@ using std::endl;
 /*!
   \file tcasacore_hdf5.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of tests to work with the casacore HDF5 module
 

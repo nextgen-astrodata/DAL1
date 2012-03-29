@@ -33,7 +33,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   //! Not more than 30 antennas available (yet).
 #define MAX_NUM_ANTENNAS 31
@@ -45,7 +45,7 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \class LOPES_EventFile
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Read in LOPES event files
@@ -393,6 +393,6 @@ namespace DAL {  // Namespace DAL -- begin
 
   };  //  end -- class LOPES_EventFile
 
-}  //  end -- namespace DAL
+}  //  end -- namespace DAL1
 
 #endif /* LOPES_EVENTFILE_H */

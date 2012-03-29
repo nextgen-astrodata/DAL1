@@ -20,7 +20,7 @@
 
 #include <core/IO_Mode.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -412,4 +412,4 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

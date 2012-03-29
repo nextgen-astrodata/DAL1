@@ -20,7 +20,7 @@
 
 #include <core/dalFileType.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -33,7 +33,7 @@ namespace DAL { // Namespace DAL -- begin
 
   dalFileType::dalFileType ()
   {
-    itsType = DAL::dalFileType::UNDEFINED;
+    itsType = DAL1::dalFileType::UNDEFINED;
   }
   
   //_____________________________________________________________________________
@@ -275,4 +275,4 @@ namespace DAL { // Namespace DAL -- begin
     return result;
   }
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

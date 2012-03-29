@@ -29,15 +29,15 @@
 
 #include <core/MS_Table.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class MS_Dataset
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
-    \brief Brief description for class DAL::MS_Dataset
+    \brief Brief description for class DAL1::MS_Dataset
     
     \author Lars B&auml;hren
 
@@ -115,7 +115,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
     Besides inheriting the more generic interface to access table columns - as
-    implemented in DAL::MS_Table - there are a few convenience functions available
+    implemented in DAL1::MS_Table - there are a few convenience functions available
     as well:
     
     \code
@@ -220,7 +220,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class MS_Dataset -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* MS_DATASET_H */
   

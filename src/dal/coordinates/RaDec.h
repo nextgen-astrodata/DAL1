@@ -26,15 +26,15 @@
 #include <string>
 #include <vector>
 
-// DAL header files
+// DAL1 header files
 #include <coordinates/Angle.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class RaDec
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Brief description for class RaDec
@@ -59,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
   class RaDec {
 
     //! (RA,Dec) angles
-    std::vector<DAL::Angle> radec_p;
+    std::vector<DAL1::Angle> radec_p;
     
   public:
     
@@ -74,7 +74,7 @@ namespace DAL { // Namespace DAL -- begin
 	   bool const &angleInDegrees=false);
     
     //! Argumented constructor
-    RaDec (std::vector<DAL::Angle> const &angles);
+    RaDec (std::vector<DAL1::Angle> const &angles);
     
     /*!
       \brief Copy constructor
@@ -123,7 +123,7 @@ namespace DAL { // Namespace DAL -- begin
 		    bool const &angleInDegrees=false);
     
     //! Set both Right Ascension (RA) and Declination (Dec) angle
-    bool setAngles (std::vector<DAL::Angle> const &angles);
+    bool setAngles (std::vector<DAL1::Angle> const &angles);
     
     /*!
       \brief Get the name of the class
@@ -159,7 +159,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class RaDec -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* RADEC_H */
   

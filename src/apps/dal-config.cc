@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 
-#include <dal_config.h>
+#include <dal1_config.h>
 #include <iostream>
 #include <boost/program_options.hpp>
 
@@ -29,17 +29,17 @@ int main (int argc, char *argv[])
 {
   int status = 0;
 
-  bpo::options_description desc ("[dal-config] Available command line options");
+  bpo::options_description desc ("[dal1-config] Available command line options");
 
   desc.add_options ()
   ("help,H",         "Show help messages")
   ("all,A",          "Print all available information")
-  ("version",        "Print version of DAL.")
-  ("version-major",  "Print major version of DAL.")
-  ("version-minor",  "Print minor version of DAL.")
-  ("version-patch",  "Print patch version of DAL.")
+  ("version",        "Print version of DAL1.")
+  ("version-major",  "Print major version of DAL1.")
+  ("version-minor",  "Print minor version of DAL1.")
+  ("version-patch",  "Print patch version of DAL1.")
   ("version-cmake",  "Print full version of CMake used for build.")
-  ("version-system", "Print name of the system the DAL was built for.")
+  ("version-system", "Print name of the system the DAL1 was built for.")
   ;
 
   bpo::variables_map vm;
@@ -53,17 +53,17 @@ int main (int argc, char *argv[])
     std::cout << "\n" << desc << std::endl;
     return 0;
   } else if (vm.count("all")) {
-    std::cout << "DAL version         : " << DAL_VERSION   << std::endl;
+    std::cout << "DAL1 version         : " << DAL1_VERSION   << std::endl;
     std::cout << "CMake version       : " << CMAKE_VERSION << std::endl;
     std::cout << "System name/version : " << CMAKE_SYSTEM  << std::endl;
   } else if (vm.count("version")) {
-    std::cout << "DAL version : " << DAL_VERSION << std::endl;
+    std::cout << "DAL1 version : " << DAL1_VERSION << std::endl;
   } else if (vm.count("version-major")) {
-    std::cout << "DAL major version : " << DAL_VERSION_MAJOR << std::endl;
+    std::cout << "DAL1 major version : " << DAL1_VERSION_MAJOR << std::endl;
   } else if (vm.count("version-minor")) {
-    std::cout << "DAL minor version : " << DAL_VERSION_MINOR << std::endl;
+    std::cout << "DAL1 minor version : " << DAL1_VERSION_MINOR << std::endl;
   } else if (vm.count("version-patch")) {
-    std::cout << "DAL patch version : " << DAL_VERSION_PATCH << std::endl;
+    std::cout << "DAL1 patch version : " << DAL1_VERSION_PATCH << std::endl;
   } else if (vm.count("version-cmake")) {
     std::cout << "CMake version : " << CMAKE_VERSION << std::endl;
   } else if (vm.count("version-patch")) {

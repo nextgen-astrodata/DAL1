@@ -21,7 +21,7 @@
 
 #include <data_hl/LOPES_EventFile.h>
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -274,4 +274,4 @@ namespace DAL {  // Namespace DAL -- begin
     
   }
   
-}  //  end -- namespace DAL
+}  //  end -- namespace DAL1

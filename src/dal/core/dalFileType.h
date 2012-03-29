@@ -26,12 +26,12 @@
 #include <map>
 #include <string>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class dalFileType
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Brief description for class dalFileType
@@ -156,7 +156,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class dalFileType -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* DALFILETYPE_H */
   

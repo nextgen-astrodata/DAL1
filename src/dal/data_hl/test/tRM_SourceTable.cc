@@ -21,12 +21,12 @@
 #include <data_hl/RM_SourceTable.h>
 
 // Namespace usage
-using DAL::RM_SourceTable;
+using DAL1::RM_SourceTable;
 
 /*!
   \file tRM_SourceTable.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the RM_SourceTable class

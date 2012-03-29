@@ -30,15 +30,15 @@
 #include <data_common/Timestamp.h>
 
 using std::endl;
-using DAL::Timestamp;
+using DAL1::Timestamp;
 
 /*!
   \file tTimestamp.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_common
 
-  \brief A collection of test routines for the DAL::Timestamp class
+  \brief A collection of test routines for the DAL1::Timestamp class
  
   \author Lars B&auml;hren
  

@@ -20,7 +20,7 @@
 
 #include <coordinates/Angle.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -127,7 +127,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   double Angle::rad2deg (double const &rad)
   {
-    return rad*180/DAL::PI;
+    return rad*180/DAL1::PI;
   }
 
   //_____________________________________________________________________________
@@ -168,7 +168,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   double Angle::deg2rad (double const &deg)
   {
-    return deg*DAL::PI/180.0;
+    return deg*DAL1::PI/180.0;
   }
   
   //_____________________________________________________________________________
@@ -294,4 +294,4 @@ namespace DAL { // Namespace DAL -- begin
     hms = deg2hms (rad);
   }  
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

@@ -25,7 +25,7 @@
 using casa::MPosition;
 #endif
 
-namespace DAL {
+namespace DAL1 {
   
   // ============================================================================
   //
@@ -419,7 +419,7 @@ namespace DAL {
 	/* Get the type of the attached object */
 	if (type == H5Gget_objtype_by_idx (locationID,idx)) {
 	  /* If the attached object is a group, retrieve its name */
-	  status = DAL::h5get_name (tmp,
+	  status = DAL1::h5get_name (tmp,
 				    locationID,
 				    idx);
 	  /* If retrieval of the name was successful, add it to the list */
@@ -810,4 +810,4 @@ namespace DAL {
   
 #endif
   
-} // namespace DAL
+} // namespace DAL1

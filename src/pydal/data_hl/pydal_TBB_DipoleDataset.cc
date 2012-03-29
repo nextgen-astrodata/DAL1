@@ -21,10 +21,10 @@
 /*!
   \file pydal_TBB_DipoleDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::TBB_DipoleDataset class
+  \brief Python bindings for the DAL1::TBB_DipoleDataset class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include "pydal.h"
 #include <data_hl/TBB_DipoleDataset.h>
 
-using DAL::TBB_DipoleDataset;
+using DAL1::TBB_DipoleDataset;
 
 // ==============================================================================
 //
@@ -48,7 +48,7 @@ void export_TBB_DipoleDataset()
   bool (TBB_DipoleDataset::*open1)(hid_t const &)      = &TBB_DipoleDataset::open;
   bool (TBB_DipoleDataset::*open2)(hid_t const &,
 				   std::string const &,
-				   DAL::IO_Mode const &) = &TBB_DipoleDataset::open;
+				   DAL1::IO_Mode const &) = &TBB_DipoleDataset::open;
   bool (TBB_DipoleDataset::*open3)(hid_t const &,
 				   uint const &,
 				   uint const &,

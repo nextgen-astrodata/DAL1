@@ -22,15 +22,15 @@
 
 // Namespace usage
 using std::endl;
-using DAL::TBB_StationTrigger;
+using DAL1::TBB_StationTrigger;
 
 /*!
   \file tTBB_StationTrigger.cc
   
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
   
-  \brief A collection of test routines for the DAL::TBB_StationTrigger class
+  \brief A collection of test routines for the DAL1::TBB_StationTrigger class
   
   \author Lars B&auml;hren
   

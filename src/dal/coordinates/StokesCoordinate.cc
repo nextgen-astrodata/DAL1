@@ -20,7 +20,7 @@
 
 #include <coordinates/StokesCoordinate.h>
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
 
   // ============================================================================
   //
@@ -40,9 +40,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
   
-  StokesCoordinate::StokesCoordinate (DAL::Stokes const &value)
+  StokesCoordinate::StokesCoordinate (DAL1::Stokes const &value)
   {
-    std::vector<DAL::Stokes> stokes (1,value);
+    std::vector<DAL1::Stokes> stokes (1,value);
     init (stokes);
   }
   
@@ -51,14 +51,14 @@ namespace DAL {  // Namespace DAL -- begin
   
   StokesCoordinate::StokesCoordinate ()
   {
-    std::vector<DAL::Stokes::Component> stokes (1,DAL::Stokes::I);
+    std::vector<DAL1::Stokes::Component> stokes (1,DAL1::Stokes::I);
     init (stokes);
   }
   
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
 
-  StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes::Component> const &values)
+  StokesCoordinate::StokesCoordinate (std::vector<DAL1::Stokes::Component> const &values)
   {
     init (values);
   }
@@ -66,7 +66,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
 
-  StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes> const &values)
+  StokesCoordinate::StokesCoordinate (std::vector<DAL1::Stokes> const &values)
   {
     init (values);
   }
@@ -186,13 +186,13 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
   
-  void StokesCoordinate::init (std::vector<DAL::Stokes::Component> const &values)
+  void StokesCoordinate::init (std::vector<DAL1::Stokes::Component> const &values)
   {
     unsigned int nelem = values.size();
-    std::vector<DAL::Stokes> stokes (nelem);
+    std::vector<DAL1::Stokes> stokes (nelem);
     
     for (unsigned int n(0); n<nelem; ++n) {
-      stokes[n] = DAL::Stokes(values[n]);
+      stokes[n] = DAL1::Stokes(values[n]);
     }
     
     init (stokes);
@@ -201,7 +201,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
   
-  void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
+  void StokesCoordinate::init (std::vector<DAL1::Stokes> const &values)
   {
     // store the input list of Stokes values
     itsValues.resize (values.size());
@@ -221,8 +221,8 @@ namespace DAL {  // Namespace DAL -- begin
     /* Initialize internal variables storing coordinate parameters */
 
     nofAxes_p     = 1;
-    coord_p       = DAL::Coordinate(Coordinate::STOKES);
-    storageType_p = DAL::Coordinate(Coordinate::TABULAR);
+    coord_p       = DAL1::Coordinate(Coordinate::STOKES);
+    storageType_p = DAL1::Coordinate(Coordinate::TABULAR);
     
     if (nofAxes_p > 0) {
       // Adjust the size of the internal arrays
@@ -240,7 +240,7 @@ namespace DAL {  // Namespace DAL -- begin
 	increment_p[n] = 0;
       }
       // Transformation is identity matrix
-      DAL::IdentityMatrix (pc_p,nofAxes_p);
+      DAL1::IdentityMatrix (pc_p,nofAxes_p);
     } else {
       // set the number of coordinate axes
       nofAxes_p = 0;
@@ -257,7 +257,7 @@ namespace DAL {  // Namespace DAL -- begin
   std::vector<Stokes::Component> StokesCoordinate::stokesTypes ()
   {
     unsigned int nelem = itsValues.size();
-    std::vector<DAL::Stokes::Component> val (nelem);
+    std::vector<DAL1::Stokes::Component> val (nelem);
     
     for (unsigned int n(0); n<nelem; ++n) {
       val[n] = itsValues[n].type();
@@ -340,9 +340,9 @@ namespace DAL {  // Namespace DAL -- begin
     HDF5Attribute::read (groupID, "AXIS_VALUES_WORLD", world    );
     
     /* Store the retrieved values */
-    if (DAL::Coordinate::getType(coordinate_type) == DAL::Coordinate::STOKES) {
+    if (DAL1::Coordinate::getType(coordinate_type) == DAL1::Coordinate::STOKES) {
       // basic parameters
-      coord_p   = DAL::Coordinate::getType(coordinate_type);
+      coord_p   = DAL1::Coordinate::getType(coordinate_type);
       nofAxes_p = nof_axes;
     }
     else {
@@ -429,4 +429,4 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

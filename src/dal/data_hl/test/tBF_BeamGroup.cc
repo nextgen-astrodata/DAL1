@@ -23,14 +23,14 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::Filename;
-using DAL::BF_BeamGroup;
-using DAL::BF_StokesDataset;
+using DAL1::Filename;
+using DAL1::BF_BeamGroup;
+using DAL1::BF_StokesDataset;
 
 /*!
   \file tBF_BeamGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the BF_BeamGroup class
@@ -112,13 +112,13 @@ int test_constructors (hid_t const &fileID)
             a std::map container.
   */
 
-  std::cout << "[4] Testing std::map<std::string,DAL::BF_BeamGroup> ..." << endl;
+  std::cout << "[4] Testing std::map<std::string,DAL1::BF_BeamGroup> ..." << endl;
   try {
     unsigned int nofBeams = 10;
     unsigned int num      = 0;
     std::string name;
-    std::map<std::string,DAL::BF_BeamGroup> beams;
-    // std::map<std::string,DAL::BF_BeamGroup>::iterator it;
+    std::map<std::string,DAL1::BF_BeamGroup> beams;
+    // std::map<std::string,DAL1::BF_BeamGroup>::iterator it;
 
     for (unsigned int n=0; n<nofBeams; ++n) {
       // get the name of the beam group
@@ -126,7 +126,7 @@ int test_constructors (hid_t const &fileID)
       name = BF_BeamGroup::getName (num);
       // create new beam group
       std::cout << "-- creating new beam group " << name << " ..." << endl;
-      beams[name] = DAL::BF_BeamGroup (fileID, num, true);
+      beams[name] = DAL1::BF_BeamGroup (fileID, num, true);
     }
     
     /* Summary */
@@ -251,22 +251,22 @@ int test_StokesDataset (hid_t const &fileID)
 				     nofSamples,
 				     nofSubbands,
 				     nofChannels,
-				     DAL::Stokes::I);
+				     DAL1::Stokes::I);
     status = beam.openStokesDataset (1,
 				     nofSamples,
 				     nofSubbands,
 				     nofChannels,
-				     DAL::Stokes::Q);
+				     DAL1::Stokes::Q);
     status = beam.openStokesDataset (2,
 				     nofSamples,
 				     nofSubbands,
 				     nofChannels,
-				     DAL::Stokes::U);
+				     DAL1::Stokes::U);
     status = beam.openStokesDataset (3,
 				     nofSamples,
 				     nofSubbands,
 				     nofChannels,
-				     DAL::Stokes::V);
+				     DAL1::Stokes::V);
     beam.summary();
     
   } catch (std::string message) {

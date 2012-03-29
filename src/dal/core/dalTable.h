@@ -32,12 +32,12 @@
 #include <tables/Tables.h>
 #endif
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalTable
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Object representing a table within a dataset.
@@ -314,5 +314,5 @@ namespace DAL {
 
   };
   
-} // end namespace DAL
+} // end namespace DAL1
 #endif

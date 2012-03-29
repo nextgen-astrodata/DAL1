@@ -21,10 +21,10 @@
 /*!
   \file pydal_TBB_Timeseries.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::TBB_Timeseries class
+  \brief Python bindings for the DAL1::TBB_Timeseries class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include "pydal.h"
 #include <data_hl/TBB_Timeseries.h>
 
-using DAL::TBB_Timeseries;
+using DAL1::TBB_Timeseries;
 
 // ==============================================================================
 //

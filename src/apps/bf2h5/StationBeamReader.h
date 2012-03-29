@@ -36,12 +36,12 @@
 class fstream;
 class BF2H5;
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class StationBeamReader
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup dal_apps
     
     \author Alwin de Jong
@@ -131,6 +131,6 @@ namespace DAL { // Namespace DAL -- begin
     size_t blockHeaderSize;
   };
   
-} // END : namespace DAL
+} // END : namespace DAL1
 
 #endif // _StationBeamReader_

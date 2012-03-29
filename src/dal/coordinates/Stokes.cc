@@ -20,7 +20,7 @@
 
 #include <coordinates/Stokes.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -64,7 +64,7 @@ namespace DAL { // Namespace DAL -- begin
 		<< " - reverting to default value (Stokes::I)!"
 		<< std::endl;
       /* Assign fallback default value */
-      setType(DAL::Stokes::I);
+      setType(DAL1::Stokes::I);
     }
   }
 
@@ -444,4 +444,4 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

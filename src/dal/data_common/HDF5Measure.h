@@ -28,12 +28,12 @@
 
 #include <data_common/HDF5Quantity.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Measure
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Brief description for class HDF5Measure
@@ -47,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>DAL::HDF5Quantity
+      <li>DAL1::HDF5Quantity
     </ul>
     
     <h3>Synopsis</h3>
@@ -271,7 +271,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5Measure -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5MEASURE_H */
   

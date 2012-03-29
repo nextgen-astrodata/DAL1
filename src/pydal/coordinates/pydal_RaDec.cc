@@ -21,10 +21,10 @@
 /*!
   \file pydal_coordinates.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::RaDec class
+  \brief Python bindings for the DAL1::RaDec class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include "pydal.h"
 #include <coordinates/RaDec.h>
 
-using DAL::RaDec;
+using DAL1::RaDec;
 
 // ==============================================================================
 //

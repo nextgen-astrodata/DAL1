@@ -21,19 +21,19 @@
 #ifndef TABULARCOORDINATE_H
 #define TABULARCOORDINATE_H
 
-// DAL header files
+// DAL1 header files
 #include <coordinates/CoordinateBase.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>
 #endif
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   /*!
     \class TabularCoordinate
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Brief description for class TabularCoordinate
@@ -325,7 +325,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   }; // Class TabularCoordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* TABULARCOORDINATE_H */
 

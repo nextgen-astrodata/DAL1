@@ -20,7 +20,7 @@
 
 #include <coordinates/LinearCoordinate.h>
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
 
   // ============================================================================
   //
@@ -268,7 +268,7 @@ namespace DAL {  // Namespace DAL -- begin
     /* Store the retrieved values */
     if (Coordinate::getType(coordinate_type) == Coordinate::LINEAR) {
       // basic parameters
-      coord_p   = DAL::Coordinate::getType(coordinate_type);
+      coord_p   = DAL1::Coordinate::getType(coordinate_type);
       nofAxes_p = nof_axes;
       // WCS parameters
       setAxisNames (axis_names);
@@ -403,4 +403,4 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

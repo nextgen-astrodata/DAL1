@@ -22,7 +22,7 @@
 #include "HDF5Writer.h"
 #include <data_hl/BFRawFormat.h>
 
-using namespace DAL;
+using namespace DAL1;
 using std::vector;
 using std::string;
 

@@ -23,12 +23,12 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::CommonAttributes;
+using DAL1::CommonAttributes;
 
 /*!
   \file tCommonAttributes.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_common
 
   \brief A collection of test routines for the CommonAttributes class
@@ -52,7 +52,7 @@ int test_constructors ()
   cout << "\n[tCommonAttributes::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
+  DAL1::Filename filename ("123456789","",DAL1::Filename::uv,DAL1::Filename::h5);
 
   /*________________________________________________________
     Test 1 : Testing default constructor
@@ -70,7 +70,7 @@ int test_constructors ()
   
   /*________________________________________________________
     Test 2 : Testing argumented constructor, taking
-             DAL::Filename object as input
+             DAL1::Filename object as input
   */
   
   cout << "[2] Testing CommonAttributes(Filename) ..." << endl;
@@ -85,7 +85,7 @@ int test_constructors ()
   
   /*________________________________________________________
     Test 3 : Testing argumented constructor, taking
-             DAL::Filename object and filedate as input.
+             DAL1::Filename object and filedate as input.
   */
   
   cout << "[3] Testing CommonAttributes(Filename,string) ..." << endl;
@@ -159,7 +159,7 @@ int test_methods (hid_t const &fileID)
   cout << "\n[tCommonAttributes::test_methods]" << endl;
 
   int nofFailedTests (0);
-  DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
+  DAL1::Filename filename ("123456789","",DAL1::Filename::uv,DAL1::Filename::h5);
   CommonAttributes attr;
 
   /*__________________________________________________________________

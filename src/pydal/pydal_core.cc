@@ -21,7 +21,7 @@
 /*!
   \file pydal_core.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings DAL C++ classes in the \e core directory
@@ -33,7 +33,7 @@
 #include "pydal.h"
 
 // namespace usage
-using DAL::dalData;
+using DAL1::dalData;
 
 // ==============================================================================
 //
@@ -43,7 +43,7 @@ using DAL::dalData;
 
 void export_dalCommon ()
 {
-  def( "mjd2unix", &DAL::mjd2unix_boost,
+  def( "mjd2unix", &DAL1::mjd2unix_boost,
        "Convert Modified Julian Date (mjd) to unix time.\n"
        "The Unix base date is MJD 40587 and 1 mjd Day = 24 hours \n"
        "or 1440 minutes or 86400 seconds so: \n"
@@ -58,7 +58,7 @@ void export_dalCommon ()
 //
 // ==============================================================================
 
-namespace DAL {
+namespace DAL1 {
 
   //__________________________________________________________________
   //                                                        array2list
@@ -128,17 +128,17 @@ namespace DAL {
 //
 // ==============================================================================
 
-boost::python::numeric::array DAL::dalData::get_boost1()
+boost::python::numeric::array DAL1::dalData::get_boost1()
 {
   return get_boost3(0,-1);
 }
 
-boost::python::numeric::array DAL::dalData::get_boost2( int32_t length )
+boost::python::numeric::array DAL1::dalData::get_boost2( int32_t length )
 {
   return get_boost3(0,length);
 }
 
-boost::python::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
+boost::python::numeric::array DAL1::dalData::get_boost3( int64_t offset, int32_t length )
 {
   boost::python::list data_list;
   std::vector<int> mydims;

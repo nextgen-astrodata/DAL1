@@ -35,7 +35,7 @@ using std::endl;
 /*!
   \file tdalCommon.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of test routines for the routines contained in dalCommon
@@ -181,8 +181,8 @@ int test_beamformed (std::string const &infile)
     std::string telescope;
     int nofStations;
     //
-    DAL::h5get_name (name,fileID);
-    DAL::HDF5Attribute::read (fileID,"NUMBER_OF_STATIONS",nofStations);
+    DAL1::h5get_name (name,fileID);
+    DAL1::HDF5Attribute::read (fileID,"NUMBER_OF_STATIONS",nofStations);
     //
     cout << "-- FILENAME ......... = " << filename     << endl;
     cout << "-- TELESCOPE ........ = " << telescope    << endl;

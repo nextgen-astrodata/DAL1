@@ -21,12 +21,12 @@
 #include <core/IO_Mode.h>
 
 // Namespace usage
-using DAL::IO_Mode;
+using DAL1::IO_Mode;
 
 /*!
   \file tIO_Mode.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of test routines for the IO_Mode class

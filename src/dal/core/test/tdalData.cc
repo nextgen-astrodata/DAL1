@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::dalData;
+using DAL1::dalData;
 
 /*!
   \file tdalData.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalData class
+  \brief A collection of test routines for the DAL1::dalData class
  
   \author Lars B&auml;hren
  
@@ -73,8 +73,8 @@ int test_constructors ()
   
   cout << "[2] Testing dalData(dalFileType::Type,string,vector,long) ..." << endl;
   try {
-    DAL::dalFileType::Type filetype (DAL::dalFileType::HDF5);
-    std::string datatype (DAL::dal_INT);
+    DAL1::dalFileType::Type filetype (DAL1::dalFileType::HDF5);
+    std::string datatype (DAL1::dal_INT);
     std::vector<int> shape (2,10);
     long nofRows (100);
     //
@@ -96,7 +96,7 @@ int test_constructors ()
   cout << "[3] Testing dalData(string,string,vector,long) ..." << endl;
   try {
     std::string filetype ("HDF5");
-    std::string datatype (DAL::dal_INT);
+    std::string datatype (DAL1::dal_INT);
     std::vector<int> shape (2,10);
     long nofRows (100);
     //

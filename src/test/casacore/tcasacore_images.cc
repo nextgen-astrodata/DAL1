@@ -40,7 +40,7 @@ using std::endl;
 /*!
   \file tcasacore_images.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of tests to work with casacore images
 
@@ -240,7 +240,7 @@ int test_direction_coordinate (int const &nelem=50)
 				      csys,
 				      filename);
 	image.doPutSlice (pixels,where,stride);
-// 	DAL::summary (image);
+// 	DAL1::summary (image);
       }
       /* Convert the previously created image to FITS */
       {

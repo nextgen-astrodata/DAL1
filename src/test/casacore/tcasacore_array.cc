@@ -30,7 +30,7 @@
 /*!
   \file tcasacore_array.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief Tests for working with the casa::Array<T> class
 

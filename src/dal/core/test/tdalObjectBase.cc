@@ -23,15 +23,15 @@
 #include <core/IO_Mode.h>
 
 // Namespace usage
-using DAL::dalObjectBase;
+using DAL1::dalObjectBase;
 
 /*!
   \file tdalObjectBase.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalObjectBase class
+  \brief A collection of test routines for the DAL1::dalObjectBase class
  
   \author Lars B&auml;hren
  
@@ -78,7 +78,7 @@ int test_constructors ()
   std::cout << "[3] Testing dalObjectBase(string,dalFileType) ..." << std::endl;
   try {
     std::string name ("NewObject");
-    DAL::dalFileType filetype (DAL::dalFileType::HDF5);
+    DAL1::dalFileType filetype (DAL1::dalFileType::HDF5);
     //
     dalObjectBase newObject (name, filetype);
     //
@@ -91,8 +91,8 @@ int test_constructors ()
   std::cout << "[4] Testing dalObjectBase(string,dalFileType,IO_Mode) ..." << std::endl;
   try {
     std::string name ("NewObject");
-    DAL::dalFileType filetype (DAL::dalFileType::HDF5);
-    DAL::IO_Mode flags (DAL::IO_Mode::Open);
+    DAL1::dalFileType filetype (DAL1::dalFileType::HDF5);
+    DAL1::IO_Mode flags (DAL1::IO_Mode::Open);
     //
     dalObjectBase newObject (name, filetype,flags);
     //

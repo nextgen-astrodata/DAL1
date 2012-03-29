@@ -34,11 +34,11 @@
 #include <tables/Tables/ArrayColumn.h>
 #endif
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalColumn
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     \brief Represents a table column.
     \author Joseph Masters

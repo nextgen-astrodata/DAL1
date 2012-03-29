@@ -21,7 +21,7 @@
 /**
   \file msread.cpp
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief Test program for reading in measurement set data stored as HDF5.
 
@@ -33,7 +33,7 @@
 #include <core/dalDataset.h>
 #include <core/dalGroup.h>
 
-using namespace DAL;
+using namespace DAL1;
 
 const long BSIZE = 10000;
 const int LOOPMAX = 10000;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
       cout << "The first parameter is the dataset name." << endl;
       cout << "The second parameter is the filetype. (optional)" << endl;
       cout << endl;
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
 
 
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   if ( 0 != dataset->open( argv[1] ) )
     {
       cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
-      return(DAL::FAIL);
+      return(DAL1::FAIL);
     }
 
   // define the structure of a table
@@ -140,5 +140,5 @@ int main(int argc, char *argv[])
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return DAL::SUCCESS;
+  return DAL1::SUCCESS;
 }

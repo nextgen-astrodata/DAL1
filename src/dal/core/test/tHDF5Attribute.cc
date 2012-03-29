@@ -26,16 +26,16 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::HDF5Attribute;
-using DAL::HDF5Object;
+using DAL1::HDF5Attribute;
+using DAL1::HDF5Object;
 
 /*!
   \file tHDF5Attribute.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::HDF5Attribute class
+  \brief A collection of test routines for the DAL1::HDF5Attribute class
  
   \author Lars B&auml;hren
  
@@ -141,7 +141,7 @@ bool readAttribute (hid_t const &location,
     
     std::vector<hsize_t> dims;
     std::vector<hsize_t> dimsMax;
-    herr_t h5err    = DAL::HDF5Dataspace::shape (attribute,dims,dimsMax);
+    herr_t h5err    = DAL1::HDF5Dataspace::shape (attribute,dims,dimsMax);
     hid_t datatype  = H5Aget_type (attribute);
     hid_t dataspace = H5Aget_space(attribute);
 

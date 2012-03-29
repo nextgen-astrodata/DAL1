@@ -14,7 +14,7 @@ foreach (src ${tests_data_hl})
   add_executable(${src} ${src}.cc)
   ## linker instructions
   target_link_libraries(${src}
-    dal
+    dal1
     ${dal_link_libraries}
     )
   ## installation instructions

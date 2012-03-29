@@ -20,7 +20,7 @@
 
 #include <core/dalGroup.h>
 
-namespace DAL {
+namespace DAL1 {
   
   // ============================================================================
   //
@@ -124,11 +124,11 @@ namespace DAL {
     if ( 0 != itsGroupID ) {
       if ( H5Gclose(itsGroupID) < 0 ) {
 	std::cerr << "ERROR: dalGroup::close() failed.\n";
-	return DAL::FAIL;
+	return DAL1::FAIL;
       }
       itsGroupID = 0;
     }
-    return DAL::SUCCESS;
+    return DAL1::SUCCESS;
   }
   
   // ============================================================================
@@ -419,4 +419,4 @@ namespace DAL {
     return newGroup;
   }
 
-} // end namespace DAL
+} // end namespace DAL1

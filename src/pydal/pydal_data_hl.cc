@@ -21,7 +21,7 @@
 /*!
   \file pydal_data_hl.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings DAL C++ classes in the data_hl directory
@@ -36,8 +36,8 @@
 #include <data_hl/TBB_StationGroup.h>
 #include <data_hl/LOPES_EventFile.h>
 
-using DAL::LOPES_EventFile;
-using DAL::TBB_StationGroup;
+using DAL1::LOPES_EventFile;
+using DAL1::TBB_StationGroup;
 
 // ==============================================================================
 //

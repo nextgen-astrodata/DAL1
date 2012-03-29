@@ -23,14 +23,14 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::CommonAttributes;
-using DAL::Filename;
-using DAL::RM_RootGroup;
+using DAL1::CommonAttributes;
+using DAL1::Filename;
+using DAL1::RM_RootGroup;
 
 /*!
   \file tRM_RootGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the RM_RootGroup class

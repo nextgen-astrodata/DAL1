@@ -28,12 +28,12 @@
 // DAL header files
 #include <data_common/HDF5GroupBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Sky_RootGroup
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Root group of a Radio Sky Image Cube
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Sky_RootGroup -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* SKY_ROOTGROUP_H */
   

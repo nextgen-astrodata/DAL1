@@ -27,15 +27,15 @@
 #include <string>
 #include <vector>
 
-// DAL header files
+// DAL1 header files
 #include <core/dalCommon.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Stokes
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Components of a Stokes coordinate
@@ -212,7 +212,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Stokes -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* STOKES_H */
   

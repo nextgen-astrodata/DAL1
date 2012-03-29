@@ -59,7 +59,7 @@ add_library(pydal MODULE
 ## linker instructions
 
 target_link_libraries (pydal
-  dal
+  dal1
   ${Boost_PYTHON_LIBRARY}
   ${PYTHON_LIBRARIES}
   )

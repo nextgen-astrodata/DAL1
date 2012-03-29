@@ -25,13 +25,13 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::HDF5Dataset;
-using DAL::HDF5Hyperslab;
+using DAL1::HDF5Dataset;
+using DAL1::HDF5Hyperslab;
 
 /*!
   \file tHDF5Hyperslab.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of test routines for the HDF5Hyperslab class
@@ -334,7 +334,7 @@ int test_setHyperslab (hid_t const &fileID)
 			     H5P_DEFAULT);
     
     if (H5Iis_valid(datasetID)) {
-      DAL::HDF5Dataspace::shape (datasetID,shape);
+      DAL1::HDF5Dataspace::shape (datasetID,shape);
       //
       cout << "-- Opened dataset " << datasetName << endl;
       cout << "-- Shape = " << shape << endl;
@@ -359,9 +359,9 @@ int test_setHyperslab (hid_t const &fileID)
 			   dims,
 			   NULL);
       // Check assignment of Hyperslab
-      DAL::HDF5Hyperslab::checkSelectionValid (dataspaceID,selectValid);
+      DAL1::HDF5Hyperslab::checkSelectionValid (dataspaceID,selectValid);
       // Get the bounding box of the hyperslab selection
-      DAL::HDF5Hyperslab::getBoundingBox (dataspaceID,posStart,posEnd);
+      DAL1::HDF5Hyperslab::getBoundingBox (dataspaceID,posStart,posEnd);
       cout << "--> Hyperslab : " << posStart << " .. " << posEnd << endl;
     }
     
@@ -401,7 +401,7 @@ int test_setHyperslab (hid_t const &fileID)
 	  cout << "-- # block = " << numBlock
 	       << " , start = " << start
 	       << " , block = " << block
-	       << " , end = " << DAL::HDF5Hyperslab::end(start,stride,count,block)
+	       << " , end = " << DAL1::HDF5Hyperslab::end(start,stride,count,block)
 	       << endl << std::flush;
 	  ++numBlock;
 	  // Assign hyperslab selection

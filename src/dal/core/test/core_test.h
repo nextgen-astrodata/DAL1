@@ -21,7 +21,7 @@
 /*!
   \file core_test.h
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief Collection of functions to be commonly usd by the test programs
@@ -150,13 +150,13 @@ bool findDataset (std::string const &filename,
     // Check for dataset attached to the current location
     cout << "-- Checking for datasets location " << location << " ..." << endl;
     names.clear();
-    DAL::h5get_names (names,location,H5G_DATASET);
+    DAL1::h5get_names (names,location,H5G_DATASET);
     // Did we find a dataset?
     if (names.empty()) {
       // Check for groups attached to the current location
       cout << "-- Checking for groups location " << location << " ..." << endl;
       names.clear();
-      DAL::h5get_names (names,location,H5G_GROUP);
+      DAL1::h5get_names (names,location,H5G_GROUP);
       // Did we find a group? If not, that's it.
       if (names.empty()) {
 	return false;

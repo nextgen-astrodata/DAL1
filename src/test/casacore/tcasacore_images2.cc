@@ -42,7 +42,7 @@ using std::endl;
 /*!
   \file tcasacore_images.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of tests to work with casacore images
 

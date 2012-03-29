@@ -18,13 +18,13 @@
 # |   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 |
 # +-----------------------------------------------------------------------------+
 
-# - Check for the presence of DAL
+# - Check for the presence of DAL1
 #
 # The following variables are set when DAL is found:
 #
-#   DAL_FOUND      = Set to true, if all components of DAL have been found.
-#   DAL_INCLUDES   = Include path for the header files of DAL
-#   DAL_LIBRARIES  = Link these to use DAL
+#   DAL_FOUND      = Set to true, if all components of DAL1 have been found.
+#   DAL_INCLUDES   = Include path for the header files of DAL1
+#   DAL_LIBRARIES  = Link these to use DAL1
 #   DAL_LFLAGS     = Linker flags (optional)
 #   DAL_VERSION_MAJOR = Major version number
 #   DAL_VERSION_MINOR = Minor version number
@@ -59,14 +59,14 @@ if (NOT DAL_FOUND)
   
   find_path (DAL_INCLUDES dal_config.h
     HINTS ${DAL_ROOT_DIR}
-    PATH_SUFFIXES include include/dal
+    PATH_SUFFIXES include include/dal1
     )
   
   ## core/dalDataset.h
   
   find_path (DAL_DALDATASET_H core/dalDataset.h
     HINTS ${DAL_ROOT_DIR}
-    PATH_SUFFIXES include include/dal
+    PATH_SUFFIXES include include/dal1
     )
   if (DAL_DALDATASET_H)
     list (APPEND DAL_INCLUDES ${DAL_DALDATASET_H})
@@ -76,7 +76,7 @@ if (NOT DAL_FOUND)
   
   find_path (DAL_COORDINATE_H coordinates/Coordinate.h
     HINTS ${DAL_ROOT_DIR}
-    PATH_SUFFIXES include include/dal
+    PATH_SUFFIXES include include/dal1
     )
   if (DAL_COORDINATE_H)
     list (APPEND DAL_INCLUDES ${DAL_COORDINATE_H})
@@ -93,9 +93,9 @@ if (NOT DAL_FOUND)
 
   set (DAL_LIBRARIES "")
   
-  find_library (DAL_DAL_LIBRARY dal
+  find_library (DAL_DAL_LIBRARY dal1
     HINTS ${DAL_ROOT_DIR}
-    PATH_SUFFIXES lib lib/dal
+    PATH_SUFFIXES lib lib/dal1
     )
   if (DAL_DAL_LIBRARY)
     list (APPEND DAL_LIBRARIES ${DAL_DAL_LIBRARY})
@@ -115,13 +115,13 @@ if (NOT DAL_FOUND)
     ## try to locate the executable
     find_program (DAL_${_dal_executable}_EXECUTABLE ${_dal_executable}
       HINTS ${DAL_ROOT_DIR}
-      PATH_SUFFIXES bin bin/dal
+      PATH_SUFFIXES bin bin/dal1
       )
     
   endforeach (_dal_executable)
   
   ##_____________________________________________________________________________
-  ## Test DAL library for:
+  ## Test DAL1 library for:
   ##  - library version <major.minor.release>
   ##  - registered external packages (e.g. casacore, HDF5, etc.)
   
@@ -147,11 +147,11 @@ if (NOT DAL_FOUND)
   ## Find library version
 
   if (DAL_INCLUDES AND EXISTS "${DAL_INCLUDES}/dal_config.h")
-    file (STRINGS "${DAL_INCLUDES}/dal_config.h" DAL_H REGEX "^#define DAL_VERSION \"[^\"]*\"$")
+    file (STRINGS "${DAL_INCLUDES}/dal_config.h" DAL_H REGEX "^#define DAL1_VERSION \"[^\"]*\"$")
 
-    string (REGEX REPLACE "^.*DAL_VERSION \"([0-9]+).*$" "\\1" DAL_VERSION_MAJOR "${DAL_H}")
-    string (REGEX REPLACE "^.*DAL_VERSION \"[0-9]+\\.([0-9]+).*$" "\\1" DAL_VERSION_MINOR  "${DAL_H}")
-    string (REGEX REPLACE "^.*DAL_VERSION \"[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" DAL_VERSION_PATCH "${DAL_H}")
+    string (REGEX REPLACE "^.*DAL1_VERSION \"([0-9]+).*$" "\\1" DAL_VERSION_MAJOR "${DAL_H}")
+    string (REGEX REPLACE "^.*DAL1_VERSION \"[0-9]+\\.([0-9]+).*$" "\\1" DAL_VERSION_MINOR  "${DAL_H}")
+    string (REGEX REPLACE "^.*DAL1_VERSION \"[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" DAL_VERSION_PATCH "${DAL_H}")
     set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
   else (DAL_INCLUDES AND EXISTS "${DAL_INCLUDES}/dal_config.h")
@@ -167,10 +167,10 @@ if (NOT DAL_FOUND)
     set (DAL_FOUND FALSE)
     if (NOT DAL_FIND_QUIETLY)
       if (NOT DAL_INCLUDES)
-	message (STATUS "Unable to find DAL header files!")
+	message (STATUS "Unable to find DAL1 header files!")
       endif (NOT DAL_INCLUDES)
       if (NOT DAL_LIBRARIES)
-	message (STATUS "Unable to find DAL library files!")
+	message (STATUS "Unable to find DAL1 library files!")
       endif (NOT DAL_LIBRARIES)
     endif (NOT DAL_FIND_QUIETLY)
   endif (DAL_INCLUDES AND DAL_LIBRARIES)
@@ -184,7 +184,7 @@ if (NOT DAL_FOUND)
     endif (NOT DAL_FIND_QUIETLY)
   else (DAL_FOUND)
     if (DAL_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find DAL!")
+      message (FATAL_ERROR "Could not find DAL1!")
     endif (DAL_FIND_REQUIRED)
   endif (DAL_FOUND)
   

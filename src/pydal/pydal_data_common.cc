@@ -21,7 +21,7 @@
 /*!
   \file pydal_data_common.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
   \brief Python bindings DAL C++ classes in the \e data_common directory
@@ -39,11 +39,11 @@
 
 using std::string;
 using std::vector;
-using DAL::CommonAttributes;
-using DAL::Timestamp;
-using DAL::HDF5Measure;
-using DAL::HDF5Quantity;
-using DAL::SAS_Settings;
+using DAL1::CommonAttributes;
+using DAL1::Timestamp;
+using DAL1::HDF5Measure;
+using DAL1::HDF5Quantity;
+using DAL1::SAS_Settings;
 
 //_____________________________________________________________________________
 //                                                             CommonAttributes
@@ -52,8 +52,8 @@ void export_CommonAttributes ()
 {
   boost::python::class_<CommonAttributes>("CommonAttributes")
     .def( boost::python::init<>())
-    .def( boost::python::init<DAL::Filename>())
-    .def( boost::python::init<DAL::Filename,string>())
+    .def( boost::python::init<DAL1::Filename>())
+    .def( boost::python::init<DAL1::Filename,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,

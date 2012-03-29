@@ -20,7 +20,7 @@
 
 #include <core/dalTable.h>
 
-namespace DAL {
+namespace DAL1 {
   
   // ============================================================================
   //
@@ -1503,7 +1503,7 @@ namespace DAL {
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalTable::setAttribute( std::string attrname,
                                std::string data )
@@ -2100,4 +2100,4 @@ namespace DAL {
   }
 #endif // DAL_WITH_CASA
   
-} // end namespace DAL
+} // end namespace DAL1

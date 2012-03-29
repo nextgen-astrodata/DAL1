@@ -28,12 +28,12 @@
 // DAL header files
 #include <data_common/HDF5GroupBase.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class SysLog
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief High-level interface to the system logs attached to a beamformed dataset
@@ -132,7 +132,7 @@ namespace DAL { // Namespace DAL -- begin
 
   }; // Class SysLog -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* SYSLOG_H */
   

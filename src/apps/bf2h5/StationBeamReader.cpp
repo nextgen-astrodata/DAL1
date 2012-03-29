@@ -30,9 +30,9 @@ using std::cout;
 using std::endl;
 using std::ios;
 using std::stringstream;
-using namespace DAL;
+using namespace DAL1;
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   int StationBeamReader::server_socket = 0;
   // bool StationBeamReader::time_out = false;
@@ -437,4 +437,4 @@ namespace DAL { // Namespace DAL -- begin
       }
   }
   
-} // END : namespace DAL
+} // END : namespace DAL1

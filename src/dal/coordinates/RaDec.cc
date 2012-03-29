@@ -20,7 +20,7 @@
 
 #include <coordinates/RaDec.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -152,7 +152,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    DAL::Angle angle (ra, angleInDegrees);
+    DAL1::Angle angle (ra, angleInDegrees);
 
     radec_p[0] = angle;
     
@@ -167,7 +167,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    DAL::Angle angle (dec, angleInDegrees);
+    DAL1::Angle angle (dec, angleInDegrees);
 
     radec_p[1] = angle;
     
@@ -192,7 +192,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    setAngles
   
-  bool RaDec::setAngles (std::vector<DAL::Angle> const &angles)
+  bool RaDec::setAngles (std::vector<DAL1::Angle> const &angles)
   {
     bool status (true);
 
@@ -233,4 +233,4 @@ namespace DAL { // Namespace DAL -- begin
     radec_p.resize(2);
   }
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

@@ -2,15 +2,15 @@
 /*!
   \file dal_config.h
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief Common configured header file
 
   \author Lars B&auml;hren
 */
 
-#ifndef DAL_CONFIG_H
-#define DAL_CONFIG_H
+#ifndef DAL1_CONFIG_H
+#define DAL1_CONFIG_H
 
 // ==============================================================================
 //
@@ -19,13 +19,13 @@
 // ==============================================================================
 
 //! The full version of the DAL in major.minor.patch[-id] format.
-#define DAL_VERSION "${DAL_VERSION}"
+#define DAL1_VERSION "${DAL_VERSION}"
 //! DAL major version
-#define DAL_VERSION_MAJOR ${DAL_VERSION_MAJOR}
+#define DAL1_VERSION_MAJOR ${DAL_VERSION_MAJOR}
 //! DAL minor version
-#define DAL_VERSION_MINOR ${DAL_VERSION_MINOR}
+#define DAL1_VERSION_MINOR ${DAL_VERSION_MINOR}
 //! DAL pathc version
-#define DAL_VERSION_PATCH ${DAL_VERSION_PATCH}
+#define DAL1_VERSION_PATCH ${DAL_VERSION_PATCH}
 
 /* Print debugging information */
 #cmakedefine DAL_DEBUGGING_MESSAGES
@@ -291,7 +291,7 @@ const int32_t MAX_COL_NAME_SIZE = 256;
 //
 // ==============================================================================
 
-namespace DAL {
+namespace DAL1 {
 
   //! Numerical constant: PI
   const double PI    = 3.1415926535897932384626433832795;
@@ -408,7 +408,7 @@ namespace DAL {
   typedef Complex_Float32    Complex_Float;
   typedef Complex_Float64   Complex_Double;
    
-}   //   END -- namespace DAL
+}   //   END -- namespace DAL1
 
 #endif
 

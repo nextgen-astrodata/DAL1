@@ -20,7 +20,7 @@
 
 #include "Database.h"
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -213,4 +213,4 @@ namespace DAL {
     os << "-- Name of the database   = " << itsDatabaseName << std::endl;
   }
   
-} // end namespace DAL
+} // end namespace DAL1

@@ -24,15 +24,15 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::BF_StokesDataset;
+using DAL1::BF_StokesDataset;
 
 /*!
   \file tBF_StokesDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BF_StokesDataset class
+  \brief A collection of test routines for the DAL1::BF_StokesDataset class
  
   \author Lars B&auml;hren
  
@@ -154,7 +154,7 @@ int test_constructors (hid_t const &fileID)
     BF_StokesDataset stokes (groupID,
 			     index,
 			     shape,
-			     DAL::Stokes::Q);
+			     DAL1::Stokes::Q);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -176,7 +176,7 @@ int test_constructors (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::Q);
+			     DAL1::Stokes::Q);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -206,7 +206,7 @@ int test_constructors (hid_t const &fileID)
 			     index,
 			     nofSamples,
 			     channels,
-			     DAL::Stokes::Q);
+			     DAL1::Stokes::Q);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -276,7 +276,7 @@ int test_attributes (hid_t const &fileID)
 			   nofSamples,
 			   nofSubbands,
 			   nofChannels,
-			   DAL::Stokes::I);
+			   DAL1::Stokes::I);
   
   /*__________________________________________________________________
     Test 1: Read in the attribute values using the single value
@@ -434,7 +434,7 @@ int test_data (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::I);
+			     DAL1::Stokes::I);
     
     shape         = stokes.shape();
     nofSteps      = shape[0];
@@ -443,7 +443,7 @@ int test_data (hid_t const &fileID)
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
     count.clear();
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
     cout << "-- Shape           = " << shape    << endl;
@@ -481,7 +481,7 @@ int test_data (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::I);
+			     DAL1::Stokes::I);
     
     shape         = stokes.shape();
     nofSteps      = shape[0]/10;
@@ -490,7 +490,7 @@ int test_data (hid_t const &fileID)
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
     count.clear();
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
     cout << "-- Shape           = " << shape    << endl;
@@ -528,7 +528,7 @@ int test_data (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::I);
+			     DAL1::Stokes::I);
     
     shape         = stokes.shape();
     nofSteps      = shape[1];
@@ -536,7 +536,7 @@ int test_data (hid_t const &fileID)
     start[1]      = 0;
     block[0]      = shape[0];
     block[1]      = shape[1]/nofSteps;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
     cout << "-- Shape           = " << shape    << endl;
@@ -574,7 +574,7 @@ int test_data (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::I);
+			     DAL1::Stokes::I);
     
     shape         = stokes.shape();
     nofSteps      = shape[1]/10;
@@ -582,7 +582,7 @@ int test_data (hid_t const &fileID)
     start[1]      = 0;
     block[0]      = shape[0];
     block[1]      = shape[1]/nofSteps;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
     cout << "-- Shape           = " << shape    << endl;
@@ -622,7 +622,7 @@ int test_data (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
-			     DAL::Stokes::I);
+			     DAL1::Stokes::I);
     
     shape         = stokes.shape();
     nofSteps      = 128;
@@ -630,7 +630,7 @@ int test_data (hid_t const &fileID)
     start[1]      = 0;
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1]/nofSteps;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
     int step      = 0;
 

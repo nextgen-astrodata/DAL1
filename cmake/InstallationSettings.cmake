@@ -1,7 +1,7 @@
 
 ## ==============================================================================
 #
-#    .                       DAL_INSTALL_PREFIX       [/opt/dal]
+#    .                       DAL_INSTALL_PREFIX       [/opt/dal1]
 #    |-- bin                 DAL_INSTALL_BINDIR       [DAL_INSTALL_PREFIX/bin]
 #    |-- include             DAL_INSTALL_INCLUDEDIR   [DAL_INSTALL_PREFIX/include]
 #    |-- lib                 DAL_INSTALL_LIBDIR       [DAL_INSTALL_PREFIX/lib]
@@ -22,9 +22,9 @@ if (LUS_INSTALL_PREFIX)
   ## Installation conforming to setup for LOFAR User Software (LUS)
   set (DAL_INSTALL_PREFIX       "${LUS_INSTALL_PREFIX}"                )
   set (DAL_INSTALL_BINDIR       "${CMAKE_INSTALL_PREFIX}/bin"          )
-  set (DAL_INSTALL_INCLUDEDIR   "${CMAKE_INSTALL_PREFIX}/include/dal"  )
+  set (DAL_INSTALL_INCLUDEDIR   "${CMAKE_INSTALL_PREFIX}/include/dal1"  )
   set (DAL_INSTALL_LIBDIR       "${CMAKE_INSTALL_PREFIX}/lib"          )
-  set (DAL_INSTALL_DATAROOTDIR  "${CMAKE_INSTALL_PREFIX}/share/dal"    )
+  set (DAL_INSTALL_DATAROOTDIR  "${CMAKE_INSTALL_PREFIX}/share/dal1"    )
   set (DAL_INSTALL_DOCDIR       "${DAL_INSTALL_DATAROOTDIR}/doc"       )
 
 else (LUS_INSTALL_PREFIX)
@@ -43,7 +43,7 @@ else (LUS_INSTALL_PREFIX)
     endif (NOT DAL_INSTALL_BINDIR)
     
     if (NOT DAL_INSTALL_INCLUDEDIR)
-      set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include/dal" )
+      set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include/dal1" )
     endif (NOT DAL_INSTALL_INCLUDEDIR)
     
     if (NOT DAL_INSTALL_LIBDIR)
@@ -51,7 +51,7 @@ else (LUS_INSTALL_PREFIX)
     endif (NOT DAL_INSTALL_LIBDIR)
     
     if (NOT DAL_INSTALL_DATAROOTDIR)
-      set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share/dal" )
+      set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share/dal1" )
     endif (NOT DAL_INSTALL_DATAROOTDIR)
     
     if (NOT DAL_INSTALL_DOCDIR)

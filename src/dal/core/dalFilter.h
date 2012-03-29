@@ -24,12 +24,12 @@
 
 #include <core/dalObjectBase.h>
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class dalFilter
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Class representing a filter that can be applied to a table.

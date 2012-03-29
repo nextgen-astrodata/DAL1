@@ -22,12 +22,12 @@
 
 // Namespace usage
 using std::endl;
-using DAL::Stokes;
+using DAL1::Stokes;
 
 /*!
   \file tStokes.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
   \brief A collection of test routines for the Stokes class

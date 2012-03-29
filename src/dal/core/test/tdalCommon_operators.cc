@@ -30,7 +30,7 @@ using std::endl;
 /*!
   \file tdalCommon_operators.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of test routines for the routines contained in dalCommon
@@ -86,11 +86,11 @@ int test_operators ()
       arr_complex[n] = std::complex<double>(n);
     }
     //
-    std::cout << "-- bool*    = " << DAL::toString (arr_bool,nelem)    << endl;
-    std::cout << "-- int*     = " << DAL::toString (arr_int,nelem)     << endl;
-    std::cout << "-- float*   = " << DAL::toString (arr_float,nelem)   << endl;
-    std::cout << "-- double*  = " << DAL::toString (arr_double,nelem)  << endl;
-    std::cout << "-- complex* = " << DAL::toString (arr_complex,nelem) << endl;
+    std::cout << "-- bool*    = " << DAL1::toString (arr_bool,nelem)    << endl;
+    std::cout << "-- int*     = " << DAL1::toString (arr_int,nelem)     << endl;
+    std::cout << "-- float*   = " << DAL1::toString (arr_float,nelem)   << endl;
+    std::cout << "-- double*  = " << DAL1::toString (arr_double,nelem)  << endl;
+    std::cout << "-- complex* = " << DAL1::toString (arr_complex,nelem) << endl;
     //
     delete [] arr_bool;
     delete [] arr_int;

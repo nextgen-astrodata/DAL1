@@ -27,14 +27,14 @@
 #include <map>
 
 /* DAL header files */
-#include <dal_config.h>
+#include <dal1_config.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Sky_SourceTable
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Brief description for class Sky_SourceTable
@@ -119,7 +119,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Sky_SourceTable -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* SKY_SOURCETABLE_H */
   

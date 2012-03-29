@@ -22,14 +22,14 @@
 #include <data_hl/BF_ProcessingHistory.h>
 
 // Namespace usage
-using DAL::CommonAttributes;
-using DAL::Filename;
-using DAL::BF_ProcessingHistory;
+using DAL1::CommonAttributes;
+using DAL1::Filename;
+using DAL1::BF_ProcessingHistory;
 
 /*!
   \file tBF_ProcessingHistory.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of test routines for the BF_ProcessingHistory class
  

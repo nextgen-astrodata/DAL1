@@ -14,7 +14,7 @@ foreach (src ${tests_core})
   add_executable(${src} ${src}.cc)
   ## linker instructions
   target_link_libraries(${src}
-    dal
+    dal1
     ${dal_link_libraries}
     )
   set_target_properties(${src}

@@ -38,12 +38,12 @@ typedef std::map<long int, std::deque<std::pair<uint8_t, BFRawFormat::Sample *> 
 #define NUM_CALCULATION_THREADS 4
 #define NUM_OUTPUT_BUFFERS 2
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Bf2h5Calculator
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup dal_apps
     
     \author Alwin de Jong
@@ -147,6 +147,6 @@ namespace DAL { // Namespace DAL -- begin
     pthread_cond_t  condition;
   };
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif  /* BF2H5CALCULATOR_H */

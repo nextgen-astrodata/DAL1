@@ -32,12 +32,12 @@
 
 #define H5S_CHUNKSIZE_MAX ((uint32_t)(-1))  /* (4GB - 1) */
 
-namespace DAL {
+namespace DAL1 {
   
   /*!
     \class HDF5Dataset
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief A class to encapsulate the operations required to work with a HDF5 dataset
@@ -56,8 +56,8 @@ namespace DAL {
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>DAL::HDF5Hyperslab
-      <li>DAL::HDF5Object
+      <li>DAL1::HDF5Hyperslab
+      <li>DAL1::HDF5Object
     </ul>
 
     <h3>Synopsis</h3>
@@ -197,7 +197,7 @@ namespace DAL {
 
       // Open the dataset
       std::string name ("Array1D");
-      DAL::HDF5Dataset dataset (fileID,
+      DAL1::HDF5Dataset dataset (fileID,
                                 name);
       \endcode
 
@@ -216,7 +216,7 @@ namespace DAL {
       block[1] = shape[1];
 
       // Get the number of datapoints resulting from the hyperslab selection
-      unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      unsigned int nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
       double *data               = new double [nofDatapoints];
 
       // Read the data selection from the dataset
@@ -237,14 +237,14 @@ namespace DAL {
       block[1] = 1;
 
       // Get the number of datapoints resulting from the hyperslab selection
-      unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      unsigned int nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
       double *data               = new double [nofDatapoints];
 
       // Read the data selection from the dataset
       dataset.readData (data,start,block);
       \endcode
       For further background information on how to define hyperslabs to select
-      regions within a dataset, consult the documentation for DAL::HDF5Hyperslab.
+      regions within a dataset, consult the documentation for DAL1::HDF5Hyperslab.
     </ol>
     
   */
@@ -265,7 +265,7 @@ namespace DAL {
     //! Chunk size for extendible array
     std::vector<hsize_t> itsChunking;
     //! Hyperslabs for the dataspace attached to the dataset
-    std::vector<DAL::HDF5Hyperslab> itsHyperslab;
+    std::vector<DAL1::HDF5Hyperslab> itsHyperslab;
 
   public:
     
@@ -378,7 +378,7 @@ namespace DAL {
 		       IO_Mode const &flags=IO_Mode(IO_Mode::CreateNew));
     
     //! Get the Hyperslabs for the dataspace attached to the dataset
-    inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
+    inline std::vector<DAL1::HDF5Hyperslab> hyperslabs () const {
       return itsHyperslab;
     }
     
@@ -756,6 +756,6 @@ namespace DAL {
 
   }; // end class HDF5Dataset
   
-} // end namespace DAL
+} // end namespace DAL1
 
 #endif

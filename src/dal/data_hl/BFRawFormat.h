@@ -31,7 +31,7 @@
 /*!
   \file BFRawFormat.h
   
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
   
   \brief Definition of the format of the BFRaw data type
@@ -41,7 +41,7 @@
   <h3>Prerequisite</h3>
   
   <ul type="square">
-    <li>DAL::BFRaw
+    <li>DAL1::BFRaw
   </ul>
 
   <h3>Synopsis</h3>

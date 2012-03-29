@@ -20,7 +20,7 @@
 
 #include <data_hl/BF_RootGroup.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -52,7 +52,7 @@ namespace DAL { // Namespace DAL -- begin
            dataset is derived.
     \param flags    -- I/O mode flags.
   */
-  BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
+  BF_RootGroup::BF_RootGroup (DAL1::Filename &infile,
 			      IO_Mode const &flags)
     : HDF5GroupBase(flags)
   {
@@ -549,7 +549,7 @@ namespace DAL { // Namespace DAL -- begin
 					unsigned int const &nofSamples,
 					unsigned int const &nofSubbands,
 					unsigned int const &nofChannels,
-					DAL::Stokes::Component const &component,
+					DAL1::Stokes::Component const &component,
 					hid_t const &datatype,
 					IO_Mode const &flags)
   {
@@ -585,7 +585,7 @@ namespace DAL { // Namespace DAL -- begin
 					unsigned int const &stokesID,
 					unsigned int const &nofSamples,
 					std::vector<unsigned int> const &nofChannels,
-					DAL::Stokes::Component const &component,
+					DAL1::Stokes::Component const &component,
 					hid_t const &datatype,
 					IO_Mode const &flags)
   {
@@ -634,4 +634,4 @@ namespace DAL { // Namespace DAL -- begin
   }
 
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

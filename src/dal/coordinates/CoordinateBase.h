@@ -21,22 +21,22 @@
 #ifndef COORDINATEBASE_H
 #define COORDINATEBASE_H
 
-/* DAL header files */
+/* DAL1 header files */
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
 #include <coordinates/Coordinate.h>
 
 /* casacore header files */
-#ifdef DAL_WITH_CASA
+#ifdef DAL1_WITH_CASA
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #endif
 
-namespace DAL {   // Namespace DAL -- begin
+namespace DAL1 {   // Namespace DAL1 -- begin
 
   /*!
     \class CoordinateBase
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
 
     \brief Definition of common interface for coordinate classes
@@ -71,9 +71,9 @@ namespace DAL {   // Namespace DAL -- begin
     // === Protected attributes ==================================================
 
     //! The type of coordinate
-    DAL::Coordinate coord_p;
+    DAL1::Coordinate coord_p;
     //! Storage type for the coordinate
-    DAL::Coordinate storageType_p;
+    DAL1::Coordinate storageType_p;
     //! Attributes attached to the storage structure (typically HDF5)
     std::set<std::string> attributes_p;
 
@@ -101,9 +101,9 @@ namespace DAL {   // Namespace DAL -- begin
     //___________________________________________________________________________
     //                                                                       init
     //! Initilize the internal set of parameters
-    void init (DAL::Coordinate const &coord=DAL::Coordinate(),
+    void init (DAL1::Coordinate const &coord=DAL1::Coordinate(),
 	       unsigned int const &nofAxes=0,
-	       DAL::Coordinate const &storageType=DAL::Coordinate())
+	       DAL1::Coordinate const &storageType=DAL1::Coordinate())
     {
       /* Initialize the size of the internal arrays */
       
@@ -139,7 +139,7 @@ namespace DAL {   // Namespace DAL -- begin
 	  increment_p[n] = 0;
 	}
 	// Transformation is identity matrix
-	DAL::IdentityMatrix (pc_p,nofAxes);
+	DAL1::IdentityMatrix (pc_p,nofAxes);
       } else {
 	// set the number of coordinate axes
 	nofAxes_p = 0;
@@ -154,9 +154,9 @@ namespace DAL {   // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    CoordinateBase (DAL::Coordinate const &coord=DAL::Coordinate(),
+    CoordinateBase (DAL1::Coordinate const &coord=DAL1::Coordinate(),
 		    unsigned int const &nofAxes=0,
-		    DAL::Coordinate const &storageType=DAL::Coordinate()) {
+		    DAL1::Coordinate const &storageType=DAL1::Coordinate()) {
       init (coord, nofAxes, storageType);
     }
     //! Copy constructor
@@ -217,7 +217,7 @@ namespace DAL {   // Namespace DAL -- begin
     // === Parameter access =====================================================
     
     //! Get the coordinate type
-    inline DAL::Coordinate::Type type () {
+    inline DAL1::Coordinate::Type type () {
       return coord_p.type();
     }
     //! Get the coordinate type as name
@@ -225,7 +225,7 @@ namespace DAL {   // Namespace DAL -- begin
       return coord_p.name();
     }
     //! Get the storage type of the coordinate
-    inline DAL::Coordinate::Type storageType () {
+    inline DAL1::Coordinate::Type storageType () {
       return storageType_p.type();
     }
     //! Get the names of the attributes attached to the storage structure
@@ -647,6 +647,6 @@ namespace DAL {   // Namespace DAL -- begin
     
   }; // Class Coordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* COORDINATE_H */

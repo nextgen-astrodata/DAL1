@@ -28,10 +28,10 @@ using std::endl;
 /*!
   \file tCoordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::Coordinate class
+  \brief A collection of test routines for the DAL1::Coordinate class
  
   \author Lars B&auml;hren
  
@@ -55,7 +55,7 @@ int test_constructors ()
   
   cout << "[1] Testing Coordinate() ..." << endl;
   try {
-    DAL::Coordinate coord;
+    DAL1::Coordinate coord;
     //
     coord.summary(); 
   } catch (std::string message) {
@@ -65,19 +65,19 @@ int test_constructors ()
   
   cout << "[2] Testing Coordinate(Coordinate::Type) ..." << endl;
   try {
-    DAL::Coordinate coordDirection (DAL::Coordinate::DIRECTION);
+    DAL1::Coordinate coordDirection (DAL1::Coordinate::DIRECTION);
     coordDirection.summary();
     //
-    DAL::Coordinate coordLinear (DAL::Coordinate::LINEAR);
+    DAL1::Coordinate coordLinear (DAL1::Coordinate::LINEAR);
     coordLinear.summary();
     //
-    DAL::Coordinate coordTabular (DAL::Coordinate::TABULAR);
+    DAL1::Coordinate coordTabular (DAL1::Coordinate::TABULAR);
     coordTabular.summary();
     //
-    DAL::Coordinate coordStokes (DAL::Coordinate::STOKES);
+    DAL1::Coordinate coordStokes (DAL1::Coordinate::STOKES);
     coordStokes.summary();
     //
-    DAL::Coordinate coordSpectral (DAL::Coordinate::SPECTRAL);
+    DAL1::Coordinate coordSpectral (DAL1::Coordinate::SPECTRAL);
     coordSpectral.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -86,10 +86,10 @@ int test_constructors ()
   
   cout << "[3] Testing Coordinate(Coordinate) ..." << endl;
   try {
-    DAL::Coordinate coordStokes (DAL::Coordinate::STOKES);
+    DAL1::Coordinate coordStokes (DAL1::Coordinate::STOKES);
     coordStokes.summary();
     //
-    DAL::Coordinate coord (coordStokes);
+    DAL1::Coordinate coord (coordStokes);
     coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -114,25 +114,25 @@ int test_methods ()
 
   int nofFailedTests (0);
   bool status (true);
-  DAL::Coordinate coord;
+  DAL1::Coordinate coord;
 
   coord.summary();
 
   cout << "[1] Testing setType(Coordinate::Type) ..." << endl;
   try {
-    status = coord.setType (DAL::Coordinate::DIRECTION);
+    status = coord.setType (DAL1::Coordinate::DIRECTION);
     cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
     //
-    status = coord.setType (DAL::Coordinate::LINEAR);
+    status = coord.setType (DAL1::Coordinate::LINEAR);
     cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
     //
-    status = coord.setType (DAL::Coordinate::TABULAR);
+    status = coord.setType (DAL1::Coordinate::TABULAR);
     cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
     //
-    status = coord.setType (DAL::Coordinate::STOKES);
+    status = coord.setType (DAL1::Coordinate::STOKES);
     cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
     //
-    status = coord.setType (DAL::Coordinate::SPECTRAL);
+    status = coord.setType (DAL1::Coordinate::SPECTRAL);
     cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -183,9 +183,9 @@ int test_static_methods ()
 
   cout << "[1] Testing coordinatesMap() ..." << endl;
   try {
-    std::map<DAL::Coordinate::Type,std::string> coord;
+    std::map<DAL1::Coordinate::Type,std::string> coord;
 
-    coord = DAL::Coordinate::coordinatesMap();
+    coord = DAL1::Coordinate::coordinatesMap();
 
     cout << "-- nof. elements = " << coord.size() << endl;
   } catch (std::string message) {
@@ -196,9 +196,9 @@ int test_static_methods ()
   cout << "[2] Testing coordinatesType() ..." << endl;
   try {
     unsigned int nelem;
-    std::vector<DAL::Coordinate::Type> coord;
+    std::vector<DAL1::Coordinate::Type> coord;
     
-    coord = DAL::Coordinate::coordinatesType();
+    coord = DAL1::Coordinate::coordinatesType();
     nelem = coord.size();
     //
     cout << "-- nof. coord. types = " << nelem  << endl;
@@ -211,7 +211,7 @@ int test_static_methods ()
 
   cout << "[3] Testing coordinatesName() ..." << endl;
   try {
-    std::vector<std::string> names = DAL::Coordinate::coordinatesName();
+    std::vector<std::string> names = DAL1::Coordinate::coordinatesName();
     //
     cout << "-- nof. coord. types = " << names.size() << endl;
     cout << "-- coordinate names  = " << names        << endl;
@@ -222,10 +222,10 @@ int test_static_methods ()
 
   cout << "[4] Testing getType() ..." << endl;
   try {
-    std::vector<std::string> names = DAL::Coordinate::coordinatesName();
+    std::vector<std::string> names = DAL1::Coordinate::coordinatesName();
     //
     for (unsigned int n(0); n<names.size(); ++n) {
-      cout << "\t" << names[n] << "\t->\t" << DAL::Coordinate::getType(names[n])
+      cout << "\t" << names[n] << "\t->\t" << DAL1::Coordinate::getType(names[n])
 	   << endl;
     }
   } catch (std::string message) {
@@ -235,10 +235,10 @@ int test_static_methods ()
 
   cout << "[5] Testing getName() ..." << endl;
   try {
-    std::vector<DAL::Coordinate::Type> types = DAL::Coordinate::coordinatesType();
+    std::vector<DAL1::Coordinate::Type> types = DAL1::Coordinate::coordinatesType();
     //
     for (unsigned int n(0); n<types.size(); ++n) {
-      cout << "\t" << types[n] << "\t->\t" << DAL::Coordinate::getName(types[n])
+      cout << "\t" << types[n] << "\t->\t" << DAL1::Coordinate::getName(types[n])
 	   << endl;
     }
   } catch (std::string message) {
@@ -248,10 +248,10 @@ int test_static_methods ()
 
   cout << "[6] Testing hasProjection() ..." << endl;
   try {
-    std::vector<DAL::Coordinate::Type> types = DAL::Coordinate::coordinatesType();
+    std::vector<DAL1::Coordinate::Type> types = DAL1::Coordinate::coordinatesType();
     //
     for (unsigned int n(0); n<types.size(); ++n) {
-      cout << "\t" << types[n] << "\t->\t" << DAL::Coordinate::hasProjection(types[n])
+      cout << "\t" << types[n] << "\t->\t" << DAL1::Coordinate::hasProjection(types[n])
 	   << endl;
     }
   } catch (std::string message) {

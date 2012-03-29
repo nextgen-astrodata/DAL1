@@ -29,12 +29,12 @@
 #include <core/dalFileType.h>
 #include <core/IO_Mode.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class dalObjectBase
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Basic interface and internal properties common to DAL classes.
@@ -127,7 +127,7 @@ namespace DAL { // Namespace DAL -- begin
       \brief Get the file type: CASA_MS, HDF5, FITS, etc.
       \return type -- File type: CASA_MS, HDF5, FITS, etc.
     */
-    virtual DAL::dalFileType::Type filetype () {
+    virtual DAL1::dalFileType::Type filetype () {
       return itsFiletype.type();
     }
     
@@ -196,7 +196,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class dalObjectBase -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* DALOBJECTBASE_H */
   

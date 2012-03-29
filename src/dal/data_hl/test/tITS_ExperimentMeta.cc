@@ -21,15 +21,15 @@
 #include <data_hl/ITS_ExperimentMeta.h>
 
 // Namespace usage
-using DAL::ITS_ExperimentMeta;
+using DAL1::ITS_ExperimentMeta;
 
 /*!
   \file tITS_ExperimentMeta.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::ITS_ExperimentMeta class
+  \brief A collection of test routines for the DAL1::ITS_ExperimentMeta class
  
   \author Lars B&auml;hren
  

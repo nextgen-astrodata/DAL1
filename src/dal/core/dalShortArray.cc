@@ -20,7 +20,7 @@
 
 #include <core/dalShortArray.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -201,4 +201,4 @@ namespace DAL {
     
   }
   
-}  //  END  --  namespace DAL
+}  //  END  --  namespace DAL1

@@ -27,12 +27,12 @@
 
 #include "HDF5Object.h"
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Dataspace
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Brief description for class HDF5Dataspace
@@ -132,7 +132,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // END -- class HDF5Dataspace
   
-} // END -- namespace DAL
+} // END -- namespace DAL1
 
 #endif /* HDF5DATASPACE_H */
   

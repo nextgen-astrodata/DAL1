@@ -218,7 +218,7 @@ void BF2H5::start (bool const &verbose)
 {
   bool result          = true;
   unsigned int blockNr = 0;
-  itsReader            = new DAL::StationBeamReader(this, socketmode);
+  itsReader            = new DAL1::StationBeamReader(this, socketmode);
 
   /* Connect to the input source */
   if (socketmode) {
@@ -251,7 +251,7 @@ void BF2H5::start (bool const &verbose)
       if (allocateSampleBuffers()) {
 
 	// Start the calculator
-        itsCalculator = new DAL::Bf2h5Calculator (this,
+        itsCalculator = new DAL1::Bf2h5Calculator (this,
 						  BFMainHeader.nrSubbands,
 						  getNrSamplesPerSubband());
 	// Start the writer

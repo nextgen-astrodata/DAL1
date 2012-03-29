@@ -21,15 +21,15 @@
 #include <coordinates/Angle.h>
 
 // Namespace usage
-using DAL::Angle;
+using DAL1::Angle;
 
 /*!
   \file tAngle.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
-  \brief A collection of test routines for the DAL::Angle class
+  \brief A collection of test routines for the DAL1::Angle class
  
   \author Lars B&auml;hren
  
@@ -106,7 +106,7 @@ int test_parameters ()
   std::cout << "\n[tAngle::test_parameters]\n" << std::endl;
 
   int nofFailedTests (0);
-  double val (DAL::PI);
+  double val (DAL1::PI);
   Angle angle (val,false);
   
   std::cout << "[1] Retrieve internal parameters ..." << std::endl;
@@ -122,7 +122,7 @@ int test_parameters ()
   
   std::cout << "[2] Set angle to new value ..." << std::endl;
   try {
-    angle.setAngle (DAL::PI/2);
+    angle.setAngle (DAL1::PI/2);
     angle.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
@@ -151,12 +151,12 @@ int test_staticFunctions ()
   
   std::cout << "[1] Test conversion from radian to degrees ..." << std::endl;
   try {
-    rad = DAL::PI;
-    deg = DAL::Angle::rad2deg (rad);
+    rad = DAL1::PI;
+    deg = DAL1::Angle::rad2deg (rad);
     std::cout << "  " << rad << " -> " << deg << std::endl;
     //
     rad /= 2;
-    DAL::Angle::rad2deg (deg, rad);
+    DAL1::Angle::rad2deg (deg, rad);
     std::cout << "  " << rad << " -> " << deg << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
@@ -166,11 +166,11 @@ int test_staticFunctions ()
   std::cout << "[2] Test conversion from degrees to radian ..." << std::endl;
   try {
     deg = 90;
-    rad = DAL::Angle::deg2rad (deg);
+    rad = DAL1::Angle::deg2rad (deg);
     std::cout << "  " << deg << " -> " << rad << std::endl;
     //
     deg = 180;
-    DAL::Angle::deg2rad (rad, deg);
+    DAL1::Angle::deg2rad (rad, deg);
     std::cout << "  " << deg << " -> " << rad << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
@@ -180,10 +180,10 @@ int test_staticFunctions ()
   std::cout << "[3] Test conversion to formatted string ..." << std::endl;
   try {
     deg = 90;
-    rad = DAL::PI;
+    rad = DAL1::PI;
     //
-    std::cout << "  " << deg << " deg -> " << DAL::Angle::deg2hms(deg) << std::endl;
-    std::cout << "  " << rad << " rad -> " << DAL::Angle::rad2hms(rad) << std::endl;
+    std::cout << "  " << deg << " deg -> " << DAL1::Angle::deg2hms(deg) << std::endl;
+    std::cout << "  " << rad << " rad -> " << DAL1::Angle::rad2hms(rad) << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

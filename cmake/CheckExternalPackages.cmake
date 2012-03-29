@@ -145,12 +145,12 @@ endif (CMAKE_SIZEOF_VOID_P)
 if (NOT DOCUMENTATION_ONLY)
   
   if (NOT HDF5_FOUND)
-    message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
+    message (SEND_ERROR "[DAL1] Missing HDF5 library installation!")
   endif (NOT HDF5_FOUND)
   
   if (CASACORE_FOUND)
     if (NOT WCSLIB_FOUND)
-      message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
+      message (SEND_ERROR "[DAL1] Missing WCSLIB library installation!")
     endif (NOT WCSLIB_FOUND)
   endif (CASACORE_FOUND)
   
@@ -163,17 +163,17 @@ endif (NOT DOCUMENTATION_ONLY)
 
 if (NOT BOOST_FOUND)
   set (DAL_PYTHON_BINDINGS FALSE)
-  message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++!")
+  message (STATUS "[DAL1] Unable to generate Python bindings; missing Boost++!")
 endif (NOT BOOST_FOUND)
 
 if (NOT PYTHON_FOUND)
   set (DAL_PYTHON_BINDINGS FALSE)
-  message (STATUS "[DAL] Unable to generate Python bindings; missing Python!")
+  message (STATUS "[DAL1] Unable to generate Python bindings; missing Python!")
 endif (NOT PYTHON_FOUND)
 
 if (NOT NUMPY_FOUND)
   set (DAL_PYTHON_BINDINGS FALSE)
-  message (STATUS "[DAL] Unable to generate Python bindings; missing NumPy!")
+  message (STATUS "[DAL1] Unable to generate Python bindings; missing NumPy!")
 endif (NOT NUMPY_FOUND)
 
 ##____________________________________________________________________
@@ -205,13 +205,13 @@ endif (CASACORE_DATADIR)
 ## Generate configure file
 
 configure_file (
-  ${DAL_SOURCE_DIR}/cmake/dal_config.h.in
-  ${DAL_BINARY_DIR}/dal_config.h
+  ${DAL_SOURCE_DIR}/cmake/dal1_config.h.in
+  ${DAL_BINARY_DIR}/dal1_config.h
   )
 
 ## Installation instruction
 
 install (
-  FILES ${DAL_BINARY_DIR}/dal_config.h
+  FILES ${DAL_BINARY_DIR}/dal1_config.h
   DESTINATION ${DAL_INSTALL_INCLUDEDIR}
   )

@@ -21,10 +21,10 @@
 /*!
   \file pydal_Angle.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::Angle class
+  \brief Python bindings for the DAL1::Angle class
 
   \author Lars B&auml;hren
 */
@@ -33,7 +33,7 @@
 #include "pydal.h"
 #include <coordinates/Angle.h>
 
-using DAL::Angle;
+using DAL1::Angle;
 
 // ==============================================================================
 //

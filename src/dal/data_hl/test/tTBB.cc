@@ -23,12 +23,12 @@
 // Namespace usage
 using std::cerr;
 using std::cout;
-using DAL::TBB;
+using DAL1::TBB;
 
 /*!
   \file tTBB.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of test routines for the TBB class
 

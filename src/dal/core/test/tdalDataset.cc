@@ -21,10 +21,10 @@
 /*!
   \file tdalDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::dalDataset class
+  \brief A collection of test routines for the DAL1::dalDataset class
 
   \author Lars B&auml;hren
 
@@ -43,7 +43,7 @@ using std::endl;
 //                                                              test_constructors
 
 /*!
-  \brief Test the various constructors for an object of type DAL::dalDataset
+  \brief Test the various constructors for an object of type DAL1::dalDataset
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
@@ -53,7 +53,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
   cout << "\n[tdalDataset::test_constructors]" << endl;
 
   int nofFailedTests  = 0;
-  DAL::IO_Mode flags (DAL::IO_Mode::OpenOrCreate);
+  DAL1::IO_Mode flags (DAL1::IO_Mode::OpenOrCreate);
   std::map<std::string,std::string>::iterator it;
 
   /*__________________________________________________________________
@@ -63,7 +63,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
 
   cout << "\n[1] Testing dalDataset() ..." << endl;
   try {
-    DAL::dalDataset dataset;
+    DAL1::dalDataset dataset;
     dataset.summary();
   }
   catch (std::string message) {
@@ -83,7 +83,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
       cout << "--> Creating dataset of type '" << it->first
 		<< "' ..." << endl;
       // Create dataset
-      DAL::dalDataset dataset (it->second.c_str(),
+      DAL1::dalDataset dataset (it->second.c_str(),
 			       it->first.c_str(),
 			       flags);
       dataset.summary();
@@ -106,7 +106,7 @@ int test_constructors (std::map<std::string,std::string> &filenames)
       cout << "--> Opening dataset of type '" << it->first
 		<< "' ..." << endl;
       // Create dataset
-      DAL::dalDataset dataset (it->second.c_str(),
+      DAL1::dalDataset dataset (it->second.c_str(),
 			       it->first.c_str());
       dataset.summary();
     }
@@ -135,7 +135,7 @@ int test_open (std::string const &filename)
 
   cout << "--> Opening dataset " << filename << " ..." << endl;
 
-  DAL::dalDataset dataset (filename);
+  DAL1::dalDataset dataset (filename);
   dataset.summary();
 
   return nofFailedTests;
@@ -158,14 +158,14 @@ int test_attributes (std::map<std::string,std::string> &filenames)
   unsigned int nelem = 5;
   std::map<std::string,std::string>::iterator it;
 
-  DAL::IO_Mode flags (DAL::IO_Mode::ReadWrite);
-  flags.addFlag(DAL::IO_Mode::Open);
+  DAL1::IO_Mode flags (DAL1::IO_Mode::ReadWrite);
+  flags.addFlag(DAL1::IO_Mode::Open);
   
   for (it=filenames.begin(); it!=filenames.end(); ++it) {
     // Display which type of dataset is being created
     cout << "--> Opening dataset of type '" << it->first << "' ..." << endl;
     // Create dataset
-    DAL::dalDataset dataset (it->second.c_str(),
+    DAL1::dalDataset dataset (it->second.c_str(),
 			     it->first.c_str(),
 			     flags);
 
@@ -258,7 +258,7 @@ int test_MS (std::string const &filename,
   
   cout << "\n[1] Opening MeasurementSet ..." << endl;
 
-  DAL::dalDataset ms (filename);
+  DAL1::dalDataset ms (filename);
   ms.summary();
 
   /*________________________________________________________
@@ -289,7 +289,7 @@ int test_MS (std::string const &filename,
   cout << "\n[3] Open table " << tablename << " ..." << endl;
 
   try {
-    DAL::dalTable * table = ms.openTable (tablename);
+    DAL1::dalTable * table = ms.openTable (tablename);
     table->summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -304,10 +304,10 @@ int test_MS (std::string const &filename,
 
   try {
     cout << "--> Opening table ..." << endl;
-    DAL::dalTable * table = ms.openTable (tablename);
+    DAL1::dalTable * table = ms.openTable (tablename);
     //
     cout << "--> Opening table column ..." << endl;
-    DAL::dalColumn * column = table->getColumn("TIME");
+    DAL1::dalColumn * column = table->getColumn("TIME");
     //
     unsigned int nofRows = 10;
     if ((column->nofRows())<nofRows) {
@@ -320,7 +320,7 @@ int test_MS (std::string const &filename,
 
     cout << "--> Retrieve column data, version 1 ..." << endl;
 
-    DAL::dalData * columnData = column->data();
+    DAL1::dalData * columnData = column->data();
     
     cout << " .. Column data = [";
     for (unsigned int n=0; n<nofRows; ++n) {
@@ -376,7 +376,7 @@ int main (int argc, char *argv[])
   int nofFailedTests   = 0;
   bool haveDataset     = false;
   std::string filename = "tdalDataset.h5";
-  DAL::dalFileType filetype;
+  DAL1::dalFileType filetype;
 
   std::map<std::string,std::string> filenames;
   filenames["HDF5"]    = "tdalDataset.h5";
@@ -407,7 +407,7 @@ int main (int argc, char *argv[])
 
     nofFailedTests += test_open (filename);
 
-    if (filetype.type()==DAL::dalFileType::CASA_MS) {
+    if (filetype.type()==DAL1::dalFileType::CASA_MS) {
       nofFailedTests += test_MS (filename);
     }
 

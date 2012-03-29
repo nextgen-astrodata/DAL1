@@ -25,8 +25,8 @@ set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}
 ## ==============================================================================
 
 option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
-option (DAL_WITH_DOCUMENTATION "Generate documentation for the DAL?"         YES )
-option (DAL_SHARED_LIBRARY     "Build DAL as shared library?"                NO  )
+option (DAL_WITH_DOCUMENTATION "Generate documentation for the DAL1?"        YES )
+option (DAL_SHARED_LIBRARY     "Build DAL1 as shared library?"               NO  )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   YES )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
@@ -188,9 +188,9 @@ endif (DAL_WITH_DOCUMENTATION)
 ## =============================================================================
 
 ## Package description
-set (CPACK_PACKAGE_NAME                "DAL"                           )
-set (CPACK_PACKAGE_VENDOR              "DAL developers team"           )
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Data Access Library (DAL)" )
+set (CPACK_PACKAGE_NAME                "DAL1"                          )
+set (CPACK_PACKAGE_VENDOR              "DAL1 developers team"          )
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Data Access Library (DAL1)")
 set (CPACK_PACKAGE_DESCRIPTION_FILE    "${PROJECT_SOURCE_DIR}/README"  )
 set (CPACK_SOURCE_IGNORE_FILES         "${CMAKE_BINARY_DIR}/*;${PROJECT_SOURCE_DIR}/.git")
 
@@ -204,7 +204,7 @@ set (CPACK_PACKAGE_VERSION_PATCH ${DAL_VERSION_PATCH} )
 SET (CPACK_SYSTEM_NAME              "source" )
 SET (CPACK_GENERATOR                "TGZ"    )
 SET (CPACK_SOURCE_GENERATOR         "TGZ"    )
-SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal-${DAL_VERSION}")
+SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal1-${DAL_VERSION}")
 
 ## Load packaging tool
 include (CPack)
@@ -219,13 +219,13 @@ if (GIT_FOUND AND GIT_REMOTE_ORIGIN)
   
   add_custom_target (release
     COMMAND ${GIT_EXECUTABLE} add CMakeLists.txt
-    COMMAND ${GIT_EXECUTABLE} commit -m "DAL release, version ${DAL_VERSION}"
-    COMMAND ${GIT_EXECUTABLE} tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
+    COMMAND ${GIT_EXECUTABLE} commit -m "DAL1 release, version ${DAL_VERSION}"
+    COMMAND ${GIT_EXECUTABLE} tag -a v${DAL_VERSION} -m "DAL1 release, version ${DAL_VERSION}"
     COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} --tags
     COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} release
     COMMAND make package_source
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
+    COMMENT "... preparing DAL1 release, version ${DAL_VERSION} ..."
     )
   
 endif (GIT_FOUND AND GIT_REMOTE_ORIGIN)
@@ -237,7 +237,7 @@ endif (GIT_FOUND AND GIT_REMOTE_ORIGIN)
 ## ==============================================================================
 
 message (STATUS "=============================================================="  )
-message (STATUS "  DAL: Summary of configuration settings                      "  )
+message (STATUS "  DAL1: Summary of configuration settings                     "  )
 message (STATUS "+------------------------------------------------------------+"  )
 message (STATUS " System configuration:"                                          )
 message (STATUS " .. Hostname                     = ${CMAKE_SYSTEM_HOSTNAME}"     )

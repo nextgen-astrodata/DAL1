@@ -27,7 +27,7 @@ using std::endl;
 /*!
   \file tdalGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief A collection of test routines for the dalGroup class
  
@@ -54,7 +54,7 @@ int test_constructors ()
 
   cout << "[1] Testing default constructor ..." << endl;
   try {
-    DAL::dalGroup group;
+    DAL1::dalGroup group;
     group.summary();
   } catch (std::string& message) {
     cerr << message << endl;
@@ -71,8 +71,8 @@ int test_constructors ()
 			      H5P_DEFAULT);
     // create system log inside the root level of the HDF5 file
     cout << "-- creating groups within the file ..." << endl;
-    DAL::dalGroup group1 (fileID,"Group01");
-    DAL::dalGroup group2 (fileID,"Group02");
+    DAL1::dalGroup group1 (fileID,"Group01");
+    DAL1::dalGroup group2 (fileID,"Group02");
     // summary of group properties
     group1.summary();
     group2.summary();

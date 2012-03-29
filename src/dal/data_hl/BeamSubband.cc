@@ -23,7 +23,7 @@
 using std::cerr;
 using std::endl;
 
-namespace DAL
+namespace DAL1
   {
 
   // ============================================================================
@@ -188,7 +188,7 @@ namespace DAL
 
       if (H5tableID_p > 0)
         {
-          if ( DAL::FAIL == HDF5Attribute::read ( H5tableID_p,
+          if ( DAL1::FAIL == HDF5Attribute::read ( H5tableID_p,
 						  "CENTER_FREQUENCY",
 						  frequency) )
             {

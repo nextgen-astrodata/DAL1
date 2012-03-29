@@ -37,7 +37,7 @@
 // To be increased whenever a new feature is added
 #define TBB_TIMESERIES_VERSION 1
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
 
   /*!
     \brief Exception base class
@@ -64,7 +64,7 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \class TBB_Timeseries
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
 
     \brief Brief description for class TBB_Timeseries
@@ -82,12 +82,12 @@ namespace DAL {  // Namespace DAL -- begin
       <li>Classes handling the entities further down in the hierarchy of the
       dataset:
       <ul>
-        <li>DAL::CommonAttributes - Collection of attributes common to all
+        <li>DAL1::CommonAttributes - Collection of attributes common to all
 	LOFAR datasets.
-	<li>DAL::TBB_TriggerTable -- Container for the trigger parameter data.
-        <li>DAL::TBB_StationGroup - Container for the data in the StationGroup
+	<li>DAL1::TBB_TriggerTable -- Container for the trigger parameter data.
+        <li>DAL1::TBB_StationGroup - Container for the data in the StationGroup
 	of LOFAR times-series data.
-	<li>DAL::TBB_DipoleDataset - Container for dipole-based data in a LOFAR
+	<li>DAL1::TBB_DipoleDataset - Container for dipole-based data in a LOFAR
 	TBB time-series dataset.
       </ul>
       <li>Some of the direct interaction with a HDF5 dataset is implemented in
@@ -457,6 +457,6 @@ namespace DAL {  // Namespace DAL -- begin
     
   };  // end -- class TBB_Timeseries
   
-} // end -- namespace DAL
+} // end -- namespace DAL1
 
 #endif /* TBB_TIMESERIES_H */

@@ -23,7 +23,7 @@
 /*!
   \file tDirectionCoordinate.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup coordinates
 
   \brief A collection of test routines for the DirectionCoordinate class
@@ -54,7 +54,7 @@ int test_constructors ()
   cout << "[1] Testing default constructor ..." << endl;
   try
     {
-      DAL::DirectionCoordinate coord;
+      DAL1::DirectionCoordinate coord;
       //
       coord.summary();
     }
@@ -80,7 +80,7 @@ int test_constructors ()
       worldAxisUnits[0] = "m";
       worldAxisUnits[1] = "s";
       //
-      DAL::DirectionCoordinate coord (worldAxisNames,
+      DAL1::DirectionCoordinate coord (worldAxisNames,
                                       worldAxisUnits,
                                       refValue,
                                       refPixel,
@@ -112,7 +112,7 @@ int test_parameters ()
   cout << "\n[tDirectionCoordinate::test_parameters]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::DirectionCoordinate coord;
+  DAL1::DirectionCoordinate coord;
 
   cout << "[1] Adjust world axis names ..." << endl;
   try
@@ -245,7 +245,7 @@ int test_methods ()
   param[1] = 2;
   param[2] = 3;
 
-  DAL::DirectionCoordinate coord (worldAxisNames,
+  DAL1::DirectionCoordinate coord (worldAxisNames,
                                   worldAxisUnits,
                                   refValue,
                                   refPixel,
@@ -293,7 +293,7 @@ int test_methods ()
                         H5P_DEFAULT);
 
       cout << "-- Read the coordinate from the root group ..." << endl;
-      DAL::DirectionCoordinate coord1;
+      DAL1::DirectionCoordinate coord1;
       coord1.read_hdf5(fileID);
       coord1.summary();
 

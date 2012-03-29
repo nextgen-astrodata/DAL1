@@ -21,10 +21,10 @@
 /*!
   \file tHDF5Dataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of tests for working with the DAL::HDF5Dataset class
+  \brief A collection of tests for working with the DAL1::HDF5Dataset class
  
   \author Lars B&auml;hren
  
@@ -42,9 +42,9 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::HDF5Attribute;
-using DAL::HDF5Dataset;
-using DAL::HDF5Hyperslab;
+using DAL1::HDF5Attribute;
+using DAL1::HDF5Dataset;
+using DAL1::HDF5Hyperslab;
 
 // ==============================================================================
 //
@@ -62,7 +62,7 @@ using DAL::HDF5Hyperslab;
   \return status -- Status of the operation; returns \e false in case an error
           was encountered.
  */
-bool set_attributes (DAL::HDF5Dataset &data,
+bool set_attributes (DAL1::HDF5Dataset &data,
 		     std::vector<hsize_t> const &shape)
 {
   bool status    = true;
@@ -159,7 +159,7 @@ int test_open (hid_t const &fileID)
     
     for (it=names.begin(); it!=names.end(); ++it) {
       // Open the dataset ...
-      DAL::HDF5Dataset dataset (fileID, *it);
+      DAL1::HDF5Dataset dataset (fileID, *it);
       // ... and show a summary of its properties
       dataset.summary();
     }
@@ -203,7 +203,7 @@ int test_constructors (hid_t const &fileID)
 
   cout << "\n[1] Testing HDF5Dataset() ..." << endl;
   try {
-    DAL::HDF5Dataset dataset;
+    DAL1::HDF5Dataset dataset;
     dataset.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -219,7 +219,7 @@ int test_constructors (hid_t const &fileID)
   try {
     std::string name = "Dataset_ND";
     //
-    DAL::HDF5Dataset dataset (fileID,
+    DAL1::HDF5Dataset dataset (fileID,
 			      name);
     dataset.summary();
   } catch (std::string message) {
@@ -239,7 +239,7 @@ int test_constructors (hid_t const &fileID)
     std::string name ("Dataset");
     std::vector<hsize_t> shape (2, sidelength);
     //
-    DAL::HDF5Dataset dataset (fileID,
+    DAL1::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
     dataset.summary();
@@ -262,7 +262,7 @@ int test_constructors (hid_t const &fileID)
 
     for (it=types.begin(); it!=types.end(); ++it) {
       // create dataset
-      DAL::HDF5Dataset dataset (fileID,
+      DAL1::HDF5Dataset dataset (fileID,
 				it->first,
 				shape,
 				it->second);
@@ -290,7 +290,7 @@ int test_constructors (hid_t const &fileID)
 
     for (it=types.begin(); it!=types.end(); ++it) {
       // create dataset
-      DAL::HDF5Dataset dataset (fileID,
+      DAL1::HDF5Dataset dataset (fileID,
 				it->first,
 				shape,
 				chunk,
@@ -316,7 +316,7 @@ int test_constructors (hid_t const &fileID)
 
     for (it=types.begin(); it!=types.end(); ++it) {
       // create dataset
-      DAL::HDF5Dataset dataset (fileID,
+      DAL1::HDF5Dataset dataset (fileID,
 				it->first);
       // show summary of dataset properties
       dataset.summary();
@@ -340,12 +340,12 @@ int test_constructors (hid_t const &fileID)
     for (it=types.begin(); it!=types.end(); ++it) {
       // Create/Open original dataset
       cout << "--> Original dataset object:" << endl;
-      DAL::HDF5Dataset dataset (fileID,
+      DAL1::HDF5Dataset dataset (fileID,
 				it->first);
       dataset.summary();
       // Create new dataset as copy of the first one
       cout << "--> Copied dataset object:" << endl;
-      DAL::HDF5Dataset datasetCopy (dataset);
+      DAL1::HDF5Dataset datasetCopy (dataset);
       datasetCopy.summary();
       // Retrieve some of the basic dataset parameters ...
       shape = datasetCopy.shape();
@@ -391,7 +391,7 @@ int test_array1d (hid_t const &fileID)
   std::vector<int> count;
   std::vector<int> block;
 
-  DAL::HDF5Dataset dataset (fileID,
+  DAL1::HDF5Dataset dataset (fileID,
 			    name,
 			    shape);
   set_attributes (dataset, shape);
@@ -409,7 +409,7 @@ int test_array1d (hid_t const &fileID)
     nofSteps      = 16;
     count[0]      = 1;
     block[0]      = shape[0]/nofSteps;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
     for (unsigned int step=0; step<nofSteps; ++step) {
@@ -449,7 +449,7 @@ int test_array1d (hid_t const &fileID)
     nofSteps      = 8;
     count[0]      = 1;
     block[0]      = shape[0]/nofSteps;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
     for (unsigned int step=0; step<nofSteps; ++step) {
@@ -520,7 +520,7 @@ int test_array2d (hid_t const &fileID)
   cout << "[1] Write data to 2D dataset by row ..." << endl;
   try {
     std::string name ("Array2D_rows");
-    DAL::HDF5Dataset dataset (fileID,
+    DAL1::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
     set_attributes (dataset, shape);
@@ -534,7 +534,7 @@ int test_array2d (hid_t const &fileID)
     count[1]      = 1;
     block[0]      = 1;
     block[1]      = sidelength;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     // Write the data to the dataset
@@ -561,7 +561,7 @@ int test_array2d (hid_t const &fileID)
   cout << "[2] Write data to 2D dataset by column ..." << endl;
   try {
     std::string name ("Array2D_columns");
-    DAL::HDF5Dataset dataset (fileID,
+    DAL1::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
     set_attributes (dataset, shape);
@@ -575,7 +575,7 @@ int test_array2d (hid_t const &fileID)
     count[1]      = 1;
     block[0]      = sidelength;
     block[1]      = 1;
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     // Write the data to the dataset
@@ -602,7 +602,7 @@ int test_array2d (hid_t const &fileID)
   cout << "[3] Write data to 2D dataset by 2D blocks ..." << endl;
   try {
     std::string name ("Array2D_blocks");
-    DAL::HDF5Dataset dataset (fileID,
+    DAL1::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
     set_attributes (dataset, shape);
@@ -616,7 +616,7 @@ int test_array2d (hid_t const &fileID)
     count[1]      = 1;
     block[0]      = shape[0]/(nofSteps*count[0]);
     block[1]      = shape[1]/(nofSteps*count[1]);
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     // Write the data to the dataset
@@ -692,7 +692,7 @@ int test_hyperslab (hid_t const &fileID)
 
   cout << "[1] Create reference dataset" << endl;
   try {
-    DAL::HDF5Dataset dataset (groupID,
+    DAL1::HDF5Dataset dataset (groupID,
 			      "test0",
 			      shape);
     set_attributes (dataset, shape);
@@ -714,14 +714,14 @@ int test_hyperslab (hid_t const &fileID)
     cout << "-- count = " << count << endl;
     cout << "-- block = " << block << endl;
 
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
     for (unsigned int n(0); n<nofDatapoints; ++n) {
       data[n] = n+1.0;
     } 
     
-    DAL::HDF5Dataset dataset (groupID, "test1", shape);
+    DAL1::HDF5Dataset dataset (groupID, "test1", shape);
     set_attributes (dataset, shape);
 
     dataset.writeData (data,start,block);
@@ -751,7 +751,7 @@ int test_hyperslab (hid_t const &fileID)
     cout << "-- count  = " << count  << endl;
     cout << "-- block  = " << block  << endl;
 
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
     for (unsigned int n(0); n<nofDatapoints; ++n) {
@@ -788,7 +788,7 @@ int test_hyperslab (hid_t const &fileID)
     cout << "-- count  = " << count  << endl;
     cout << "-- block  = " << block  << endl;
 
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
     for (unsigned int n(0); n<nofDatapoints; ++n) {
@@ -872,7 +872,7 @@ int test_extension (std::string const &filename)
     count.clear();
 
     // allocate memory for the data array
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     for (unsigned int nx=0; nx<nofSteps; ++nx) {
@@ -910,7 +910,7 @@ int test_extension (std::string const &filename)
     count.clear();
 
     // allocate memory for the data array
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     for (unsigned int nx=0; nx<nofSteps; ++nx) {
@@ -947,7 +947,7 @@ int test_extension (std::string const &filename)
     count.clear();
 
     // allocate memory for the data array
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    nofDatapoints = DAL1::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
 
     for (unsigned int nx=0; nx<nofSteps; ++nx) {

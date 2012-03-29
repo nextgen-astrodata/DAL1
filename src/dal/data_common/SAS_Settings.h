@@ -30,12 +30,12 @@
 // DAL header files
 #include <core/dalCommon.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class SAS_Settings
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Brief description for class SAS_Settings
@@ -155,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class SAS_Settings -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* SAS_SETTINGS_H */
   

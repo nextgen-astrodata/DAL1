@@ -26,12 +26,12 @@
 #include <string>
 #include <vector>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class RM_SourceTable
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_hl
     
     \brief Brief description for class RM_SourceTable
@@ -121,7 +121,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class RM_SourceTable -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* RM_SOURCETABLE_H */
   

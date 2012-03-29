@@ -21,7 +21,7 @@
 
 #include "dalDataset.h"
 
-namespace DAL {
+namespace DAL1 {
   
   // ============================================================================
   //
@@ -132,7 +132,7 @@ namespace DAL {
 
     /* Release HDF5 object handler */
 
-    DAL::HDF5Object::close(h5fh_p);
+    DAL1::HDF5Object::close(h5fh_p);
 
     /* Release generic file pointer */
 
@@ -441,8 +441,8 @@ namespace DAL {
   /*!
     \param filename  -- The name of the file to open.
     \param flags     -- I/O mode flags.
-    \return bool     -- Status of the operation, either DAL::FAIL or
-            DAL::SUCCESS.
+    \return bool     -- Status of the operation, either DAL1::FAIL or
+            DAL1::SUCCESS.
   */
   bool dalDataset::open (std::string const &filename,
 			 IO_Mode const &flags)
@@ -481,7 +481,7 @@ namespace DAL {
 	 if this indeed is the case, flags resulting in creation need
 	 to be removed.
       */
-      DAL::IO_Mode tmpFlags (flags);
+      DAL1::IO_Mode tmpFlags (flags);
       tmpFlags.addFlag (IO_Mode::Open);
       tmpFlags.removeFlag (IO_Mode::OpenOrCreate);
       tmpFlags.removeFlag (IO_Mode::Create);
@@ -554,7 +554,7 @@ namespace DAL {
   //                                                                        close
   
   /*!
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalDataset::close()
   {
@@ -567,7 +567,7 @@ namespace DAL {
   /*!
     \brief Print the group attributes.
     
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalDataset::getAttributes()
   {
@@ -602,7 +602,7 @@ namespace DAL {
 
     \param attrname The name of the attribute you want to create.
     \param data The values of the attributes you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return bool -- DAL1::FAIL or DAL1::SUCCESS
   */
   bool dalDataset::setAttribute_string( std::string attrname,
                                         std::vector<std::string> data )
@@ -935,7 +935,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
+	  dalTable * lt = new dalTable (DAL1::dalFileType::HDF5);
 	  lt->createTable( itsObjectHandler, tablename, "/" );
 	  return lt;
 	} else {
@@ -976,7 +976,7 @@ namespace DAL {
     case dalFileType::HDF5:
       {
 	if (H5Iis_valid(h5fh_p)) {
-	  dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
+	  dalTable * lt = new dalTable( DAL1::dalFileType::HDF5 );
 	  lt->createTable( itsObjectHandler, tablename, groupname );
 	  return lt;
 	} else {
@@ -1027,7 +1027,7 @@ namespace DAL {
       break;
     case dalFileType::HDF5:
       {
-        dalTable * lt = new dalTable( DAL::dalFileType::HDF5 );
+        dalTable * lt = new dalTable( DAL1::dalFileType::HDF5 );
         lt->openTable( itsObjectHandler, tablename, "/" );
         return lt;
       }
@@ -1058,7 +1058,7 @@ namespace DAL {
     switch (itsFiletype.type()) {
     case dalFileType::HDF5:
       {
-        dalTable * lt = new dalTable (DAL::dalFileType::HDF5);
+        dalTable * lt = new dalTable (DAL1::dalFileType::HDF5);
         try {
 	  lt->openTable( itsObjectHandler, tablename, '/' + groupname );
 	}
@@ -1314,4 +1314,4 @@ namespace DAL {
       }
   }
   
-} // end namespace DAL
+} // end namespace DAL1

@@ -28,12 +28,12 @@
 #include <string>
 #include <vector>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Filename
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup data_common
     
     \brief Class to generate filenames matching the LOFAR convention
@@ -125,11 +125,11 @@ namespace DAL { // Namespace DAL -- begin
       \code
       // Set up the input parameters
       std::string observationID          = "123456789";
-      DAL::Filename::Type filetype       = Filename::bf;
-      DAL::Filename::Extension extension = Filename::h5;
+      DAL1::Filename::Type filetype       = Filename::bf;
+      DAL1::Filename::Extension extension = Filename::h5;
       
       // Create object ...
-      DAL::Filename filename (observationID,
+      DAL1::Filename filename (observationID,
                               filetype,
                               extension);
       // ... and retrieve filename
@@ -386,7 +386,7 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class Filename -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* FILENAME_H */
   

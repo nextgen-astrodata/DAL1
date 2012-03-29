@@ -29,7 +29,7 @@ using std::real;
 using std::imag;
 using std::bad_alloc;
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ==============================================================================
   //
@@ -426,4 +426,4 @@ void Bf2h5Calculator::showStatus(void)
   }
 }
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

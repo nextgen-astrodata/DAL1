@@ -20,7 +20,7 @@
 
 #include <data_hl/BeamFormed.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -143,7 +143,7 @@ namespace DAL {
     // Open file through dalDataset ______________
     
     dataset_p = new dalDataset;
-    if ( DAL::FAIL == dataset_p->open( filename_p.c_str() ) ) {
+    if ( DAL1::FAIL == dataset_p->open( filename_p.c_str() ) ) {
       std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
 		<< std::endl;
       return false;
@@ -659,7 +659,7 @@ namespace DAL {
     double integration_time = 0.0;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "TOTAL_INTEGRATION_TIME",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "TOTAL_INTEGRATION_TIME",
              integration_time ) )
           {
             std::cerr << "-- Error extracting attribute TOTAL_INTEGRATION_TIME\n";
@@ -702,7 +702,7 @@ namespace DAL {
     int dispersion_measure = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "DISPERSION_MEASURE",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "DISPERSION_MEASURE",
              dispersion_measure ) )
           {
             std::cerr << "-- Error extracting attribute DISPERSION_MEASURE\n";
@@ -723,7 +723,7 @@ namespace DAL {
     int number_of_samples = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_SAMPLES",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "NUMBER_OF_SAMPLES",
              number_of_samples ) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_SAMPLES\n";
@@ -744,7 +744,7 @@ namespace DAL {
     double sampling_time = -1.0;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "SAMPLING_TIME",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "SAMPLING_TIME",
              sampling_time ) )
           {
             std::cerr << "-- Error extracting attribute SAMPLING_TIME\n";
@@ -765,7 +765,7 @@ namespace DAL {
     int number_of_beams = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_BEAMS",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "NUMBER_OF_BEAMS",
              number_of_beams ) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS\n";
@@ -786,7 +786,7 @@ namespace DAL {
     int sub_beam_diameter = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "SUB_BEAM_DIAMETER",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "SUB_BEAM_DIAMETER",
              sub_beam_diameter ) )
           {
             std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER\n";
@@ -807,7 +807,7 @@ namespace DAL {
     int weather_temperature = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_TEMPERATURE",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "WEATHER_TEMPERATURE",
              weather_temperature ) )
           {
             std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE\n";
@@ -828,7 +828,7 @@ namespace DAL {
     int weather_humidity = -1;
     if (dataset_p->name() != "UNDEFINED")
       {
-        if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_HUMIDITY",
+        if ( DAL1::FAIL == dataset_p->getAttribute( "WEATHER_HUMIDITY",
              weather_humidity ) )
           {
             std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY\n";
@@ -901,4 +901,4 @@ namespace DAL {
                                          data);
   }
 
-} // end namespace DAL
+} // end namespace DAL1

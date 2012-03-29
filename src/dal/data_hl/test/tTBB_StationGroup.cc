@@ -36,12 +36,12 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::TBB_StationGroup;
+using DAL1::TBB_StationGroup;
 
 /*!
   \file tTBB_StationGroup.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the TBB_StationGroup class
@@ -66,7 +66,7 @@ using DAL::TBB_StationGroup;
   \brief Test constructors for a new TBB_StationGroup object
 
   This function should provide tests for all the available constructors to a
-  new DAL::TBB_StationGroup object.
+  new DAL1::TBB_StationGroup object.
 
   \return nofFailedTests -- The number of failed tests.
 */
@@ -145,7 +145,7 @@ int test_constructors ()
   \brief Test constructors for a new TBB_StationGroup object
 
   This function should provide tests for all the available constructors to a
-  new DAL::TBB_StationGroup object.
+  new DAL1::TBB_StationGroup object.
 
   \param filename -- Data file used for testing
 
@@ -169,7 +169,7 @@ int test_constructors (std::string const &filename)
 		    H5P_DEFAULT);
 
   if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
   } else {
     std::cerr << "Skipping tests - unable to open file." << endl;
     return -1;
@@ -270,7 +270,7 @@ int test_attributes (std::string const &filename)
 		    H5P_DEFAULT);
 
   if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
   } else {
     std::cerr << "Skipping tests - unable to open file." << endl;
     return -1;
@@ -435,7 +435,7 @@ int test_export2record (std::string const &filename)
 		    H5P_DEFAULT);
 
   if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
   } else {
     std::cerr << "Skipping tests - unable to open file." << endl;
     return -1;
@@ -527,7 +527,7 @@ int test_parameters (std::string const &filename)
 		    H5P_DEFAULT);
 
   if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
   } else {
     std::cerr << "Skipping tests - unable to open file." << endl;
     return -1;
@@ -543,7 +543,7 @@ int test_parameters (std::string const &filename)
 
   // Perform the tests _____________________________________
 
-  typedef std::map<std::string,DAL::TBB_DipoleDataset>::iterator iterDipoleDataset;
+  typedef std::map<std::string,DAL1::TBB_DipoleDataset>::iterator iterDipoleDataset;
   TBB_StationGroup group (fileID,groupname);
 
   cout << "[1] Testing objectName() ..." << endl;
@@ -645,7 +645,7 @@ int test_data (std::string const &filename)
 		    H5P_DEFAULT);
 
   if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
+    DAL1::h5get_names (names,fileID,H5G_GROUP);
   } else {
     std::cerr << "Skipping tests - unable to open file." << endl;
     return -1;

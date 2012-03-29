@@ -23,12 +23,12 @@
 
 #include <core/dalArray.h>
 
-namespace DAL {
+namespace DAL1 {
 
   /*!
     \class dalShortArray
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
 
     \brief Represents an n-dimensional array of type \e short
@@ -52,6 +52,6 @@ namespace DAL {
   };
   
   
-} //  END  --  namespace DAL
+} //  END  --  namespace DAL1
 
 #endif //  END  --  #ifndef DALSHORTARRAY_H

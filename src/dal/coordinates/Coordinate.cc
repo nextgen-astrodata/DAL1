@@ -20,7 +20,7 @@
 
 #include <coordinates/Coordinate.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -194,16 +194,16 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                               coordinatesMap
 
-  std::map<DAL::Coordinate::Type,std::string> Coordinate::coordinatesMap ()
+  std::map<DAL1::Coordinate::Type,std::string> Coordinate::coordinatesMap ()
   {
-    std::map<DAL::Coordinate::Type,std::string> coordMap;
+    std::map<DAL1::Coordinate::Type,std::string> coordMap;
 
-    coordMap[DAL::Coordinate::DIRECTION] = "DIRECTION";
-    coordMap[DAL::Coordinate::LINEAR]    = "LINEAR";
-    coordMap[DAL::Coordinate::TABULAR]   = "TABULAR";
-    coordMap[DAL::Coordinate::STOKES]    = "STOKES";
-    coordMap[DAL::Coordinate::SPECTRAL]  = "SPECTRAL";
-    coordMap[DAL::Coordinate::UNDEFINED] = "UNDEFINED";
+    coordMap[DAL1::Coordinate::DIRECTION] = "DIRECTION";
+    coordMap[DAL1::Coordinate::LINEAR]    = "LINEAR";
+    coordMap[DAL1::Coordinate::TABULAR]   = "TABULAR";
+    coordMap[DAL1::Coordinate::STOKES]    = "STOKES";
+    coordMap[DAL1::Coordinate::SPECTRAL]  = "SPECTRAL";
+    coordMap[DAL1::Coordinate::UNDEFINED] = "UNDEFINED";
 
     return coordMap;
   }
@@ -211,11 +211,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                              coordinatesType
 
-  std::vector<DAL::Coordinate::Type> Coordinate::coordinatesType ()
+  std::vector<DAL1::Coordinate::Type> Coordinate::coordinatesType ()
   {
-    std::map<DAL::Coordinate::Type,std::string> coordMap = coordinatesMap();
-    std::map<DAL::Coordinate::Type,std::string>::iterator it;
-    std::vector<DAL::Coordinate::Type> vec;
+    std::map<DAL1::Coordinate::Type,std::string> coordMap = coordinatesMap();
+    std::map<DAL1::Coordinate::Type,std::string>::iterator it;
+    std::vector<DAL1::Coordinate::Type> vec;
 
     for (it=coordMap.begin(); it!=coordMap.end(); ++it) {
       vec.push_back(it->first);
@@ -311,4 +311,4 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

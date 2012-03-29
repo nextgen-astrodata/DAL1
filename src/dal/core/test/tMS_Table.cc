@@ -23,15 +23,15 @@
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::MS_Table;
+using DAL1::MS_Table;
 
 /*!
   \file tMS_Table.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
-  \brief A collection of test routines for the DAL::MS_Table class
+  \brief A collection of test routines for the DAL1::MS_Table class
  
   \author Lars B&auml;hren
  
@@ -606,11 +606,11 @@ int test_expressionNodes (std::string const &filename)
 
   cout << "\n[4] Read data from table with active selection ..." << endl;
   try {
-    DAL::MS_Table tab (filename);
+    DAL1::MS_Table tab (filename);
     std::string column = "ANTENNA1";
     int antenna        = 1;
     // Apply selection to table
-    tab.setSelection(column, DAL::Operator::Equal, antenna);
+    tab.setSelection(column, DAL1::Operator::Equal, antenna);
     /* Read data from table selection */
     std::vector<double> data;
     tab.readData (data, "TIME");

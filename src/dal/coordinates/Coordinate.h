@@ -35,12 +35,12 @@
 #endif
 #endif
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class Coordinate
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Basic properties of a coordinate
@@ -85,7 +85,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Argumented constructor
-    Coordinate (Coordinate::Type const &type=DAL::Coordinate::UNDEFINED);
+    Coordinate (Coordinate::Type const &type=DAL1::Coordinate::UNDEFINED);
     //! Copy constructor
     Coordinate (Coordinate const &other);
     
@@ -199,7 +199,7 @@ namespace DAL { // Namespace DAL -- begin
 
   }; // Class Coordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* COORDINATE_H */
   

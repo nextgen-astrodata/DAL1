@@ -31,12 +31,12 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::TBB_Timeseries;
+using DAL1::TBB_Timeseries;
 
 /*!
   \file tTBB_Timeseries.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief A collection of test routines for the TBB_Timeseries class
@@ -285,7 +285,7 @@ int test_methods (std::string const &filename)
   try {
     uint nofStations              = ts.nofStationGroups();
     std::set<std::string> names   = ts.stationGroupNames();
-    DAL::TBB_StationGroup station = ts.stationGroup(10);
+    DAL1::TBB_StationGroup station = ts.stationGroup(10);
     // Methods of the embedded StationGroup object
     std::string groupName = station.group_name();
     std::string groupType;

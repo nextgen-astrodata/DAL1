@@ -56,7 +56,7 @@ using std::endl;
 /*!
   \file dalCommon.h
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup core
 
   \brief A collection of commonly used routines (for the Data Access Library)
@@ -96,16 +96,16 @@ using std::endl;
   A number of different things are included into this collection of commonly
   used routines:
   - Conversion routines
-    - DAL::julday
+    - DAL1::julday
   - Service functions
-    - DAL::it_exists
-    - DAL::BigEndian
+    - DAL1::it_exists
+    - DAL1::BigEndian
   - Routines for the access of HDF5 attributes
-    - DAL::h5attribute_summary
+    - DAL1::h5attribute_summary
 
 */
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -367,7 +367,7 @@ namespace DAL {
   
 #endif  // DAL_WITH_CASA
     
-} // namespace DAL
+} // namespace DAL1
 
 
 // ==============================================================================

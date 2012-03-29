@@ -34,7 +34,7 @@
 /*!
   \file tcasacore_ms.cc
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief Test building against the "ms" modules of casacore
 

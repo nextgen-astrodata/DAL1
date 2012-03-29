@@ -24,7 +24,7 @@
 /*!
   \file ms2h5.cpp
 
-  \ingroup DAL
+  \ingroup DAL1
 
   \brief Test program for writing measurement set data into an HDF5 file.
 
@@ -36,7 +36,7 @@
 #include <core/dalDataset.h>
 #include <core/dalGroup.h>
 
-using namespace DAL;
+using namespace DAL1;
 
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
       cout << "The first parameter is the dataset name." << endl;
       cout << "The second parameter is the filetype. (optional)" << endl;
       cout << endl;
-      return DAL::FAIL;
+      return DAL1::FAIL;
     }
 
   dalDataset * dataset;
@@ -183,5 +183,5 @@ int main(int argc, char *argv[])
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return DAL::SUCCESS;
+  return DAL1::SUCCESS;
 }

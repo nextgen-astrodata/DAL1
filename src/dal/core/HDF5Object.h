@@ -31,12 +31,12 @@
 
 #include <core/IO_Mode.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   /*!
     \class HDF5Object
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup core
     
     \brief Basic common functionality of a HDF5 object
@@ -337,6 +337,6 @@ namespace DAL { // Namespace DAL -- begin
     
   }; // Class HDF5Object -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* HDF5OBJECT_H */

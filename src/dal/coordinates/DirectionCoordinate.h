@@ -21,19 +21,19 @@
 #ifndef DIRECTIONCOORDINATE_H
 #define DIRECTIONCOORDINATE_H
 
-// DAL header files
+// DAL1 header files
 #include <coordinates/CoordinateBase.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #endif
 
-namespace DAL {   // Namespace DAL -- begin
+namespace DAL1 {   // Namespace DAL1 -- begin
 
   /*!
     \class DirectionCoordinate
 
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
 
     \brief Brief description for class DirectionCoordinate
@@ -195,7 +195,7 @@ namespace DAL {   // Namespace DAL -- begin
     
   }; // Class DirectionCoordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* DIRECTIONCOORDINATE_H */
 

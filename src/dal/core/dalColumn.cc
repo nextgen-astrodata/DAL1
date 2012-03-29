@@ -20,7 +20,7 @@
 
 #include <core/dalColumn.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
@@ -608,10 +608,10 @@ namespace DAL {
 
     if ( dal_COMPLEX_SHORT == getType() )
       {
-        DAL::Complex_Int16 * data = NULL;
+        DAL1::Complex_Int16 * data = NULL;
         try
           {
-            data = (DAL::Complex_Int16*)malloc(sizeof(DAL::Complex_Int16)*length);
+            data = (DAL1::Complex_Int16*)malloc(sizeof(DAL1::Complex_Int16)*length);
           }
         catch ( std::bad_alloc ) {
 	  std::cerr <<
@@ -624,7 +624,7 @@ namespace DAL {
 				   itsName.c_str(),
 				   start,
 				   length,
-				   sizeof(DAL::Complex_Int16),
+				   sizeof(DAL1::Complex_Int16),
 				   field_offsets,
 				   field_sizes,
 				   data ) < 0 )
@@ -639,7 +639,7 @@ namespace DAL {
 				     dal_COMPLEX_SHORT,
 				     shape,
 				     length);
-        itsColumnData->data = (DAL::Complex_Int16 *)data;
+        itsColumnData->data = (DAL1::Complex_Int16 *)data;
       }
     else if ( dal_FLOAT == getType() ) {
       float * data = NULL;
@@ -727,13 +727,13 @@ namespace DAL {
       return sizeof( double );
     }
     else if ( dal_COMPLEX == getType() ) {
-      return sizeof( DAL::Complex_Double );
+      return sizeof( DAL1::Complex_Double );
     }
     else if ( dal_COMPLEX_SHORT == getType() ) {
-        return sizeof( DAL::Complex_Int16 );
+        return sizeof( DAL1::Complex_Int16 );
       }
     else if ( dal_COMPLEX_CHAR == getType() ) {
-      return sizeof( DAL::Complex_Char );
+      return sizeof( DAL1::Complex_Char );
     }
     else {
       std::cerr << "WARNING: " << getType() << " not handled. Please "

@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalArray.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalFileType class
+  \brief Python bindings for the DAL1::dalFileType class
 
   \author Lars B&auml;hren
 */
@@ -32,7 +32,7 @@
 #include "pydal.h"
 #include <core/dalFileType.h>
 
-using DAL::dalFileType;
+using DAL1::dalFileType;
 
 // ==============================================================================
 //

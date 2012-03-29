@@ -21,10 +21,10 @@
 /*!
   \file pydal_core_dalDataset.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup pydal
 
-  \brief Python bindings for the DAL::dalDataset class
+  \brief Python bindings for the DAL1::dalDataset class
 
   \author Lars B&auml;hren
 */
@@ -33,9 +33,9 @@
 #include <core/dalDataset.h>
 
 using std::string;
-using DAL::dalDataset;
-using DAL::dalTable;
-using DAL::dalArray;
+using DAL1::dalDataset;
+using DAL1::dalTable;
+using DAL1::dalArray;
 
 // ==============================================================================
 //
@@ -515,14 +515,14 @@ void export_dalDataset ()
 
   boost::python::class_<dalDataset>("dalDataset")
     .def( boost::python::init<std::string const &,
-		    DAL::dalFileType const &,
-		    DAL::IO_Mode const &>())
+		    DAL1::dalFileType const &,
+		    DAL1::IO_Mode const &>())
     .def( boost::python::init<std::string const &,
-		    DAL::dalFileType::Type const &,
-		    DAL::IO_Mode const &>())
+		    DAL1::dalFileType::Type const &,
+		    DAL1::IO_Mode const &>())
     .def( boost::python::init<std::string const &,
 		    std::string const &,
-		    DAL::IO_Mode const &>())
+		    DAL1::IO_Mode const &>())
     .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
 	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,

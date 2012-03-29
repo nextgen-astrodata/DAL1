@@ -21,7 +21,7 @@
 #ifndef LINEARCOORDINATE_H
 #define LINEARCOORDINATE_H
 
-// DAL header files
+// DAL1 header files
 #include <coordinates/CoordinateBase.h>
 
 // casacore header files
@@ -29,12 +29,12 @@
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #endif
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   /*!
     \class LinearCoordinate
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Brief description for class LinearCoordinate
@@ -187,7 +187,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   }; // Class LinearCoordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* LINEARCOORDINATE_H */
 

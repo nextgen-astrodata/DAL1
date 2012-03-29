@@ -21,7 +21,7 @@
 #ifndef STOKESCOORDINATE_H
 #define STOKESCOORDINATE_H
 
-// DAL header files
+// DAL1 header files
 #include <coordinates/Stokes.h>
 #include <coordinates/CoordinateBase.h>
 
@@ -29,12 +29,12 @@
 #include <coordinates/Coordinates/StokesCoordinate.h>
 #endif
 
-namespace DAL {  // Namespace DAL -- begin
+namespace DAL1 {  // Namespace DAL1 -- begin
   
   /*!
     \class StokesCoordinate
     
-    \ingroup DAL
+    \ingroup DAL1
     \ingroup coordinates
     
     \brief Brief description for class StokesCoordinate
@@ -48,7 +48,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul>
-      <li>DAL::Stokes -- Components of a Stokes coordinate.
+      <li>DAL1::Stokes -- Components of a Stokes coordinate.
     </ul>
 
     <h3>Synopsis</h3>
@@ -59,7 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
   class StokesCoordinate : public CoordinateBase<std::string> {
 
     //! Set of Stokes components represented by this coordinate
-    std::vector<DAL::Stokes> itsValues;
+    std::vector<DAL1::Stokes> itsValues;
 
   public:
     
@@ -70,11 +70,11 @@ namespace DAL {  // Namespace DAL -- begin
     //! Argumented constructor
     StokesCoordinate (Stokes::Component const &value);
     //! Argumented constructor
-    StokesCoordinate (DAL::Stokes const &value);
+    StokesCoordinate (DAL1::Stokes const &value);
     //! Argumented constructor
-    StokesCoordinate (std::vector<DAL::Stokes::Component> const &values);
+    StokesCoordinate (std::vector<DAL1::Stokes::Component> const &values);
     //! Argumented constructor
-    StokesCoordinate (std::vector<DAL::Stokes> const &values);
+    StokesCoordinate (std::vector<DAL1::Stokes> const &values);
     //! Copy constructor
     StokesCoordinate (StokesCoordinate const &other);
     
@@ -109,12 +109,12 @@ namespace DAL {  // Namespace DAL -- begin
     // === Methods ==============================================================
 
     //! Get the Stokes values represented by the coordinate
-    inline std::vector<DAL::Stokes> stokesValues () const {
+    inline std::vector<DAL1::Stokes> stokesValues () const {
       return itsValues;
     }
 
     //! Get the Stokes component types represented by the coordinate
-    std::vector<DAL::Stokes::Component> stokesTypes ();
+    std::vector<DAL1::Stokes::Component> stokesTypes ();
 
     //! Get the Stokes component names represented by the coordinate
     std::vector<std::string> stokesNames ();
@@ -145,9 +145,9 @@ namespace DAL {  // Namespace DAL -- begin
   private:
 
     //! Initialize the internal parameters of the object
-    void init (std::vector<DAL::Stokes::Component> const &values);
+    void init (std::vector<DAL1::Stokes::Component> const &values);
     //! Initialize the internal parameters of the object
-    void init (std::vector<DAL::Stokes> const &values);
+    void init (std::vector<DAL1::Stokes> const &values);
     //! Set the attributes attached to the coordinate
     inline void setAttributes ()
     {
@@ -158,7 +158,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   }; // Class StokesCoordinate -- end
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end
 
 #endif /* STOKESCOORDINATE_H */
 

@@ -37,11 +37,11 @@ foreach (src ${tests})
   ## libraries against which to link
   if (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src}
-      dal
+      dal1
       ${dal_link_libraries}
       )
   else (CASA_FOUND OR CASACORE_FOUND)
-    target_link_libraries(${src} dal)
+    target_link_libraries(${src} dal1)
   endif (CASA_FOUND OR CASACORE_FOUND)
 endforeach (src)
 
@@ -64,7 +64,7 @@ endif (CASACORE_FOUND AND LAPACK_LIBRARIES)
 if (DAL_ENABLE_TESTING)
   
   ## -----------------------------------------------------------------
-  ## [1] Test program mimicing usage of DAL as part of LOFAR OLAP
+  ## [1] Test program mimicing usage of DAL1 as part of LOFAR OLAP
   
   add_test (test_bf2h5writer test_bf2h5writer)
   

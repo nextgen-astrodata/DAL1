@@ -20,7 +20,7 @@
 
 #include <core/MS_Table.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
 #ifdef DAL_WITH_CASA
 
@@ -562,4 +562,4 @@ namespace DAL { // Namespace DAL -- begin
 
 #endif  
 
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

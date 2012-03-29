@@ -21,7 +21,7 @@
 /*!
   \file tBeamFormed.cc
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup data_hl
 
   \brief Test program for beam-formed functionality.
@@ -56,7 +56,7 @@ int test_constructors (std::string const &filename)
 
   cout << "[1] Testing BeamFormed() ..." << endl;
   try {
-    DAL::BeamFormed bf;
+    DAL1::BeamFormed bf;
     //
     bf.summary();
   }
@@ -67,7 +67,7 @@ int test_constructors (std::string const &filename)
   
   cout << "[2] Testing BeamFormed(string) ..." << endl;
   try {
-    DAL::BeamFormed bf (filename);
+    DAL1::BeamFormed bf (filename);
     //
     bf.summary();
   }
@@ -95,7 +95,7 @@ int test_attributes (std::string const &filename)
   cout << "\n[tBeamFormed::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::BeamFormed bf (filename);
+  DAL1::BeamFormed bf (filename);
   int nofBeams = bf.number_of_beams();
 
   cout << "[1] Attributes of the root group..." << endl;
@@ -137,7 +137,7 @@ int test_attributes (std::string const &filename)
   
   if (nofBeams > 0) {
     cout << "[2] Attributes of the beam groups..." << endl;
-    DAL::BeamGroup *group;
+    DAL1::BeamGroup *group;
     for (int beam(0); beam<nofBeams; beam++) {
       try {
 	/* Retrieve the beam group */
@@ -176,15 +176,15 @@ int test_getData (std::string const &filename)
   cout << "\n[tBeamFormed::test_getData]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::BeamFormed * file = NULL;
-  DAL::BeamGroup * beam  = NULL;
+  DAL1::BeamFormed * file = NULL;
+  DAL1::BeamGroup * beam  = NULL;
   int subband            = 0;
   int start              = 0;
   int length             = 20; //441344;
 
   cout << "[1] Extract BeamGroup ..." << endl;
   try {
-    file = new DAL::BeamFormed(filename.c_str());
+    file = new DAL1::BeamFormed(filename.c_str());
     beam = file->getBeam(0);
     //
     beam->summary();

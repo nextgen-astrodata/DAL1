@@ -30,8 +30,8 @@
 #include <time.h>
 #include <vector>
 
-// DAL header files
-#include <dal_config.h>
+// DAL1 header files
+#include <dal1_config.h>
 #include <core/dalCommon.h>
 #include <core/dalDataset.h>
 
@@ -50,7 +50,7 @@ class BF2H5;
 /*!
   \class HDF5Writer
   
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup dal_apps
 
   \author Alwin de Jong
@@ -58,7 +58,7 @@ class BF2H5;
   <h3>Prerequisite</h3>
   
   <ul type="square">
-    <li>DAL::Bf2h5Calculator
+    <li>DAL1::Bf2h5Calculator
     <li>LOFAR::RTCP::Parset
   </ul>
   
@@ -119,8 +119,8 @@ public:
 
   BF2H5 * itsParent;
   std::fstream * rawfile;
-  DAL::dalTable ** table;
-  DAL::dalDataset dataset;
+  DAL1::dalTable ** table;
+  DAL1::dalDataset dataset;
   bool stopWriting;
   std::string itsOutputFile;
   uint8_t waitForDataTimeOut;

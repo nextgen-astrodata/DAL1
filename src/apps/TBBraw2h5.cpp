@@ -24,7 +24,7 @@
 #include <signal.h>
 #include <sstream>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 #include <data_hl/TBBraw.h>
 
 //includes for networking
@@ -57,7 +57,7 @@ namespace bpo = boost::program_options;
 /*!
   \file TBBraw2h5.cpp
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup dal_apps
 
   \brief Read TBB time-series data from a socket or file and generate an HDF5 file.
@@ -68,7 +68,7 @@ namespace bpo = boost::program_options;
 
   <h3>Prerequisite</h3>
 
-  - DAL::TBBraw -- Class to generate a TBB time-series hdf5 file from raw TBB data-frames.
+  - DAL1::TBBraw -- Class to generate a TBB time-series hdf5 file from raw TBB data-frames.
 
   <h3>History</h3>
 
@@ -154,7 +154,7 @@ frames in 200MHz mode (default)
 
             //Global variables
             //! (pointer to) the TBBraw object we are writing to.
-            DAL::TBBraw *tbb;
+            DAL1::TBBraw *tbb;
 
             //!size of the buffer for the UDP-datagram
             // 1 byte larger than the frame size
@@ -854,9 +854,9 @@ bool readFromSockets (std::vector<int> ports,
     if (tbb == NULL)
     {
       // Get timestamp and convert to ISO 8601 format for filename
-      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      timestamp = (time_t) DAL1::TBBraw::getDataTime(bufferPointer);
       timestamp_utc = gmtime( &timestamp );
-      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      timestamp_fraction = DAL1::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
       strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
 
       // Generate filename
@@ -872,7 +872,7 @@ bool readFromSockets (std::vector<int> ports,
       outfile << "_R" << std::setw(3) << std::setfill('0') << n;
 
       // Create file
-      tbb = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+      tbb = new DAL1::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !tbb->isConnected() )
       {
         cout << "[TBBraw2h5] Failed to open output file." << endl;
@@ -971,7 +971,7 @@ bool readStationsFromSockets (std::vector<int> ports,
   double timestamp_fraction;
   char timestamp_buffer[20];
 
-  DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
+  DAL1::TBBraw **TBBfiles = new DAL1::TBBraw* [nofTBBfiles]; 
 
   for (i=0; i<nofTBBfiles; i++) {
     TBBfiles[i]   = NULL;
@@ -1046,9 +1046,9 @@ bool readStationsFromSockets (std::vector<int> ports,
       processingID -= input_buffer_size;
     };
     bufferPointer = (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE));
-    stationId = DAL::TBBraw::getStationId(bufferPointer);
+    stationId = DAL1::TBBraw::getStationId(bufferPointer);
     if ( (TBBfiles[stationId] == NULL) || 
-        (DAL::TBBraw::getDataTime(bufferPointer) > (lasttimes[stationId]+ceil(readTimeout)) ) ){
+        (DAL1::TBBraw::getDataTime(bufferPointer) > (lasttimes[stationId]+ceil(readTimeout)) ) ){
       if (TBBfiles[stationId] != NULL) {
         if (verbose) {
           TBBfiles[stationId]->summary();
@@ -1058,9 +1058,9 @@ bool readStationsFromSockets (std::vector<int> ports,
       };
 
       // Get timestamp and convert to ISO 8601 format for filename
-      timestamp = (time_t) DAL::TBBraw::getDataTime(bufferPointer);
+      timestamp = (time_t) DAL1::TBBraw::getDataTime(bufferPointer);
       timestamp_utc = gmtime( &timestamp );
-      timestamp_fraction = DAL::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
+      timestamp_fraction = DAL1::TBBraw::getDataTimeFraction(bufferPointer) + timestamp_utc->tm_sec;
       strftime (timestamp_buffer, 20, "%Y%m%dT%H%M", timestamp_utc);
 
       // Generate filename
@@ -1075,7 +1075,7 @@ bool readStationsFromSockets (std::vector<int> ports,
       }
       outfile << "_R" << std::setw(3) << std::setfill('0') << n;
 
-      TBBfiles[stationId] = new DAL::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
+      TBBfiles[stationId] = new DAL1::TBBraw(outfile.str()+"_tbb.h5", observer, project, observationID, filterSelection, "LOFAR", antennaSet);
       if ( !TBBfiles[stationId]->isConnected() ) {
         cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
           << outfile.str() << endl;
@@ -1083,7 +1083,7 @@ bool readStationsFromSockets (std::vector<int> ports,
       };       
     };
     if ( TBBfiles[stationId]->processTBBrawBlock(bufferPointer, UDP_PACKET_BUFFER_SIZE) ){ 
-      lasttimes[stationId] = DAL::TBBraw::getDataTime(bufferPointer);
+      lasttimes[stationId] = DAL1::TBBraw::getDataTime(bufferPointer);
     };
     inBufProcessID = processingID;    
   };
@@ -1450,7 +1450,7 @@ int main(int argc, char *argv[])
     // -----------------------------------------------------------------
     // Generate TBBraw object and open output file
 
-    tbb = new DAL::TBBraw(outfile);
+    tbb = new DAL1::TBBraw(outfile);
     if ( !tbb->isConnected() )
     {
       cout << "[TBBraw2h5] Failed to open output file." << endl;

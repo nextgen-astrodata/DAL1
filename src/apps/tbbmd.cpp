@@ -8,7 +8,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/detail/cmdline.hpp>
 
-#include <dal_config.h>
+#include <dal1_config.h>
 #include <data_hl/TBB_Timeseries.h>
 
 #include <measures/Measures/MPosition.h>
@@ -109,7 +109,7 @@ int main (int argc, char *argv[])
 {
   std::vector<std::string> files;
 
-  DAL::TBB_Timeseries *tbb;
+  DAL1::TBB_Timeseries *tbb;
 
   std::map<std::string, casa::MPosition> *positions;
   std::map<std::string, casa::Quantity> *delays;
@@ -479,9 +479,9 @@ int main (int argc, char *argv[])
   for (unsigned int i=0; i<files.size(); i++)
   {
     std::cout<<files[i]<<std::endl;
-    tbb = new DAL::TBB_Timeseries(files[i]);
+    tbb = new DAL1::TBB_Timeseries(files[i]);
 
-    DAL::CommonAttributes c = tbb->commonAttributes();
+    DAL1::CommonAttributes c = tbb->commonAttributes();
 
     if (s_antennaSet) c.setAntennaSet(antennaSet);
     if (s_telescope) c.setTelescope(telescope);

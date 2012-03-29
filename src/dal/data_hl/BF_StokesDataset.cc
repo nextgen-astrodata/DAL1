@@ -20,7 +20,7 @@
 
 #include <data_hl/BF_StokesDataset.h>
 
-namespace DAL { // Namespace DAL -- begin
+namespace DAL1 { // Namespace DAL1 -- begin
   
   // ============================================================================
   //
@@ -86,7 +86,7 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &index,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
-				      DAL::Stokes::Component const &component,
+				      DAL1::Stokes::Component const &component,
 				      hid_t const &datatype,
 				      IO_Mode const &flags)
   {
@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofSamples,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
-				      DAL::Stokes::Component const &component,
+				      DAL1::Stokes::Component const &component,
 				      hid_t const &datatype,
 				      IO_Mode const &flags)
   {
@@ -149,7 +149,7 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &index,
 				      unsigned int const &nofSamples,
 				      std::vector<unsigned int> const &nofChannels,
-				      DAL::Stokes::Component const &component,
+				      DAL1::Stokes::Component const &component,
 				      hid_t const &datatype,
 				      IO_Mode const &flags)
   {
@@ -177,7 +177,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      unsigned int const &index,
 				      std::vector<hsize_t> const &shape,
-				      DAL::Stokes::Component const &component,
+				      DAL1::Stokes::Component const &component,
 				      hid_t const &datatype,
 				      IO_Mode const &flags)
   {
@@ -411,7 +411,7 @@ namespace DAL { // Namespace DAL -- begin
             was encountered.
   */
   bool BF_StokesDataset::open (hid_t const &location,
-			       DAL::Stokes::Component const &component,
+			       DAL1::Stokes::Component const &component,
 			       unsigned int const &nofSamples,
 			       unsigned int const &nofSubbands,
 			       unsigned int const &nofChannels,
@@ -439,7 +439,7 @@ namespace DAL { // Namespace DAL -- begin
             was encountered.
   */
   bool BF_StokesDataset::open (hid_t const &location,
-			       DAL::Stokes::Component const &component,
+			       DAL1::Stokes::Component const &component,
 			       unsigned int const &nofSamples,
 			       std::vector<unsigned int> const &nofChannels,
 			       IO_Mode const &flags)
@@ -451,7 +451,7 @@ namespace DAL { // Namespace DAL -- begin
       Set up attributes attached to the dataset
     */
     setAttributes();
-    itsStokesComponent = DAL::Stokes(component);
+    itsStokesComponent = DAL1::Stokes(component);
 
     /*________________________________________________________________
       Process the parameters defining the (initial) shape of the 
@@ -537,4 +537,4 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   
-} // Namespace DAL -- end
+} // Namespace DAL1 -- end

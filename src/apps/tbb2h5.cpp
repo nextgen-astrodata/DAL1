@@ -21,7 +21,7 @@
 /*!
   \file tbb2h5.cpp
 
-  \ingroup DAL
+  \ingroup DAL1
   \ingroup dal_apps
 
   \brief Write TBB time-series data into an HDF5 file.
@@ -30,7 +30,7 @@
 
   <h3>Prerequisite</h3>
 
-  - DAL::TBB -- High-level interface between TBB data and the DAL; provides the
+  - DAL1::TBB -- High-level interface between TBB data and the DAL1; provides the
   method which carry out the data handling.
 
   - select -- synchronous I/O multiplexing.
@@ -146,7 +146,7 @@
 #include <boost/program_options/detail/cmdline.hpp>
 namespace bpo = boost::program_options;
 
-using namespace DAL;
+using namespace DAL1;
 
 //_______________________________________________________________________________
 // Print usage examples
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
         {
           std::cerr << "Incomplete list of parameters for file mode!" << std::endl;
           std::cerr << desc << std::endl;
-          return DAL::FAIL;
+          return DAL1::FAIL;
         }
     }
     break;
@@ -295,7 +295,7 @@ int main(int argc, char *argv[])
           std::cerr << "Incomplete list of parameters for socket mode!" << std::endl;
           std::cerr << desc << std::endl;
           print_examples(std::cerr);
-          return DAL::FAIL;
+          return DAL1::FAIL;
         }
       break;
     }
@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
     {
       std::cout << "[tbb2h5] Opening input raw file ..." << std::endl;
       if ( !tbb.openRawFile( infile.c_str() ) )
-        return DAL::FAIL;
+        return DAL1::FAIL;
     }
 
   int counter = 0;

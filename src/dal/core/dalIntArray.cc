@@ -20,7 +20,7 @@
 
 #include <core/dalIntArray.h>
 
-namespace DAL {
+namespace DAL1 {
 
   // ============================================================================
   //
